@@ -1,0 +1,173 @@
+{
+  "title": "Title for SEO..",
+  "description": "Description meta for SEO here..",
+  "url": "/",
+  "image": "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXBwfGVufDB8fDB8fHww",
+  "header": {
+    "title": "Header Title here..",
+    "description": "Write your header description in this area... header-description",
+    "intro_text": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "button_1": "Button 1",
+    "button_1_link": "/docs/welcome",
+    "button_2": "Button 2",
+    "button_2_link": "/order",
+    "image": "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXBwfGVufDB8fDB8fHww"
+  },
+  "features": {
+    "title": "Why Chose Us",
+    "description": "Benefits of using our development team services"
+  },
+  "feature_list": [
+    {
+      "icon": "img/icon/analyze.svg",
+      "title": "Features 1",
+      "content": "Features 1 text content information "
+    },
+    {
+      "icon": "img/icon/speed.svg",
+      "title": "Features 2",
+      "content": "Features 2 text content information "
+    },
+    {
+      "icon": "img/icon/peform.svg",
+      "title": "Features 3",
+      "content": "Features 3 text content information "
+    },
+    {
+      "icon": "img/icon/retina.svg",
+      "title": "Features 4",
+      "content": "Features 4 text content information "
+    },
+    {
+      "icon": "img/icon/seo.svg",
+      "title": "Features 5",
+      "content": "Features 5 text content information "
+    },
+    {
+      "icon": "img/icon/help.svg",
+      "title": "Features 6",
+      "content": "Features 6 text content information "
+    }
+  ],
+  "section": {
+    "title": "The Project",
+    "description": "Our development team is experienced in handling website projects, with various technologies, our team dev have handled many customers from various countries.",
+    "image": "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YXBwfGVufDB8fDB8fHww",
+    "intro": "Modern Website Technology",
+    "intro_text": "For all projects, company profiles, blogs, personal, art workers, galleries, spa salons, barbershops, modern online shops, restaurant, coffee shop, hotels, car services,schools, documentation sites, etc.",
+    "list": [
+      {
+        "text": "Gatsby Js"
+      },
+      {
+        "text": "Next Js"
+      },
+      {
+        "text": "Angular"
+      },
+      {
+        "text": "Svelte Kit"
+      },
+      {
+        "text": "Jekyll"
+      },
+      {
+        "text": "Astro Js"
+      },
+      {
+        "text": "Eleventy 11ty"
+      },
+      {
+        "text": "Ducosaurus"
+      },
+      {
+        "text": "Python Django"
+      },
+      {
+        "text": "Flatfile CMS"
+      }
+    ]
+  },
+  "plan": {
+    "title": "Select Your Plan",
+    "description": "Choose our services according to your needs in developing your modern website."
+  },
+  "basic_plan": {
+    "title": "Basic",
+    "icon": "img/icon/basic.svg",
+    "currency": "$",
+    "price": "80",
+    "link": "/basic",
+    "features": [
+      {
+        "text": "Modern PHP site"
+      },
+      {
+        "text": "PHP lang"
+      },
+      {
+        "text": "Flatifle CMS"
+      },
+      {
+        "text": "Unique Themes"
+      },
+      {
+        "text": "Hosting Set up"
+      }
+    ]
+  },
+  "standard_plan": {
+    "title": "CMS",
+    "icon": "img/icon/standard.svg",
+    "currency": "$",
+    "price": "155",
+    "link": "/standard",
+    "features": [
+      {
+        "text": "Modern SSG site"
+      },
+      {
+        "text": "Jekyll Tech"
+      },
+      {
+        "text": "Astro Js Tech"
+      },
+      {
+        "text": "Eleventy 11ty"
+      },
+      {
+        "text": "Hosting Set up"
+      }
+    ]
+  },
+  "pro_plan": {
+    "title": "Pro",
+    "icon": "img/icon/pro.svg",
+    "currency": "$",
+    "price": "255",
+    "link": "/pro",
+    "features": [
+      {
+        "text": "Modern website"
+      },
+      {
+        "text": "React Tech"
+      },
+      {
+        "text": "Ducosaurus"
+      },
+      {
+        "text": "Next Js"
+      },
+      {
+        "text": "Remix Js"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact Docusar Dev",
+    "description": "If you Need Help or Information, you can contact our team developer.",
+    "button": "Contact Us",
+    "link": "/contact"
+  }
+}

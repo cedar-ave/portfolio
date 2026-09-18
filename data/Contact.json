@@ -1,0 +1,29 @@
+{
+  "title": "Meta Tag SEO Title for Contact Page",
+  "description": "Meta Tag SEO Description for Contact Page",
+  "url": "/contact",
+  "form_spree_id": "https://formspree.io/endopinthere",
+  "image": "img/contact.svg",
+  "header": {
+    "title": "Contact Docusa",
+    "description": "If you need help and information, or you have docusaurus project , you can contact our team dev"
+  },
+  "contact_info": [
+    {
+      "title": "Showroom",
+      "content": "Beskuronaso , Deloja - Jalajabu - UR"
+    },
+    {
+      "title": "Phone",
+      "content": "+6287819355589"
+    },
+    {
+      "title": "Whatsapp",
+      "content": "+62895339403223"
+    },
+    {
+      "title": "Email",
+      "content": "axcora@gmail.com"
+    }
+  ]
+}
