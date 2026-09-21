@@ -29,3 +29,16 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.hero__title {
+  font-weight: 500;
+}
+
+.hero__subtitle {
+  font-weight: 400;
+  letter-spacing: -.3px;
+}
+
+.roboto-semibold {
+  font-weight: 600;
+}

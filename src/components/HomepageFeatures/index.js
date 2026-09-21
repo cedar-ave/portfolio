@@ -1,30 +1,32 @@
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
+    title: 'AI tools and pipelines',
+    link: '/experience/ai-tools-and-pipelines',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        I've built MCPs and agent skills that generate and publish quality help content and release notes for an organization.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Docs-as-code & XML CCMS',
+    link: '/experience/docs-as-code',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+      I've built docs-as-code ecosystems from the ground up
       </>
     ),
   },
   {
     title: 'Powered by React',
+    link: '/experience/powered-by-react',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
@@ -35,14 +37,18 @@ const FeatureList = [
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, link, description }) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <Link to={link}>
+          <Svg className={styles.featureSvg} role="img" />
+        </Link>
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
+        <Heading as="h3">
+          <Link to={link}>{title}</Link>
+        </Heading>
         <p>{description}</p>
       </div>
     </div>

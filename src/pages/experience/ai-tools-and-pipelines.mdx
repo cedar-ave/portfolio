@@ -1,0 +1,52 @@
+---
+title: AI tools and pipelines
+---
+
+# AI tools and pipelines
+
+I've built MCPs and AI agent skills that generate and publish quality help content and release notes for an organization. Because the code is proprietary I can't share it here, but below are descriptions of the work and results.
+
+## Sample MCPs
+
+### Zendesk Guide
+
+**What it is**: This MCP is a wrapper around the [Zendesk Help Center API](https://developer.zendesk.com/api-reference/help_center/help-center-api/introduction), including both content management and [theming](https://developer.zendesk.com/api-reference/help_center/help-center-api/theming).
+
+**Why I built it**: With this MCP, I can use natural language prompts to instantly perform actions in Zendesk Guide instead of clicking through UI controls. For example:
+
+- *Move Articles A, C, and Q to the sandbox environment*
+- *Change view permissions for all articles in Category P to internal team members only*
+- *List all articles that contain instructions for the user to perform Task X*
+
+I can also perform actions not possible through the Zendesk Guide UI, like bulk actions or creating redirects. For example:
+
+- *Apply `example label` to all pages that reference `example action` in the title or first paragraph*
+- *Create redirects from Article A to Article B, archive Article A, and add the redirect to the redirect index*
+
+For ultimate time savings, it can also be used in tandem with MCPs for other enterprise tools to perform multi-system actions like:
+
+- *Remove the `This feature will be released in Summer 2027` callout in all articles that contain that callout (scoping created date to the past 3 weeks), publish the articles to Zendesk with the label `release_100.11`, and promote those articles on the help site home page*
+
+### Zendesk Ticketing
+
+**What it is**: This MCP is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). It reads ticket contents, including the user's question and any conversation following. It also reads fields like a users's organization, ticket labels, ticket status, and custom fields like a user's product platform. 
+
+**Why I built it**: This is excellent for research and generating help content from ticket conversations. For example:
+
+- *Find tickets closed in the past 3 months where the `Reason` field contains `training issue` and group the tickets into...* 
+
+**Roadmap**: A ticket with a **Closed** status doesn't mean the answer provided by the agent was correct. Neither does a user's satisfaction score. That's why help content generated from a ticket can't be trusted as accurate.
+
+### Paligo CCMS
+
+### gdocs MCP
+
+This MCP lets me perform one action that the company's MCP did not: manage content as Markdown.
+
+#### Why I built it
+
+Formatting a Google Doc with a Google Drive connection in AI tool is notoriously unpredictable. Applied styles can be offset by a character or two, bullets can misalign, and formatting can disappear. This custom MCP allows the content to be extracted from the Google Doc as Markdown using the Google Docs API's `text/markdown` export MIME type, formats the content straightforwardly Markdown, and converts it into a native Google Doc format.
+
+## AI agent skills
+
+Execute actions in natural language
