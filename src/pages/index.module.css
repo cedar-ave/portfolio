@@ -16,6 +16,11 @@
   }
 }
 
+.textSection {
+  padding: 2rem 0;
+  text-align: left;
+}
+
 .buttons {
   display: flex;
   align-items: center;
