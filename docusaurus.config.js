@@ -40,6 +40,16 @@ const config = {
     locales: ['en'],
   },
 
+  headTags: [
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'}},
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous'}},
+  ],
+
+  // Roboto: all weights (100-900), widths (75-100) and italics
+  stylesheets: [
+    'https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap',
+  ],
+
   presets: [
     [
       'classic',
