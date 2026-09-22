@@ -5,29 +5,82 @@
  */
 
 /* You can override the default Infima variables here. */
+/*
+ * Palette: https://coolors.co/73d3c3-202b49-bed4e6-5f93c7-a6dcf7-f1b753-5e7893-93bcdf-d06e6a
+ * --palette-teal:        #73d3c3
+ * --palette-navy:        #202b49  (dark blue - hero background)
+ * --palette-pale-blue:   #bed4e6
+ * --palette-blue:        #5f93c7
+ * --palette-sky-blue:    #a6dcf7
+ * --palette-gold:        #f1b753
+ * --palette-slate-blue:  #5e7893
+ * --palette-periwinkle:  #93bcdf
+ * --palette-terracotta:  #d06e6a
+ */
 :root {
   --ifm-font-family-base: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #5e7893;
+  --ifm-color-primary-dark: #546c84;
+  --ifm-color-primary-darker: #4f667c;
+  --ifm-color-primary-darkest: #415467;
+  --ifm-color-primary-light: #6884a2;
+  --ifm-color-primary-lighter: #6d8aa9;
+  --ifm-color-primary-lightest: #82a0bd;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  --palette-teal: #73d3c3;
+  --palette-navy: #202b49;
+  --palette-pale-blue: #bed4e6;
+  --palette-blue: #5f93c7;
+  --palette-sky-blue: #a6dcf7;
+  --palette-gold: #f1b753;
+  --palette-slate-blue: #5e7893;
+  --palette-periwinkle: #93bcdf;
+  --palette-terracotta: #d06e6a;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #a6dcf7;
+  --ifm-color-primary-dark: #86cef2;
+  --ifm-color-primary-darker: #76c7f0;
+  --ifm-color-primary-darkest: #47b3ea;
+  --ifm-color-primary-light: #c6eafb;
+  --ifm-color-primary-lighter: #d0eefc;
+  --ifm-color-primary-lightest: #eef8fe;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Hero: dark blue background, white text */
+.hero--primary {
+  --ifm-hero-background-color: var(--palette-navy);
+  --ifm-hero-text-color: #ffffff;
+  background-color: var(--palette-navy);
+  color: #ffffff;
+}
+
+.hero--primary .hero__title,
+.hero--primary .hero__subtitle {
+  color: #ffffff;
+}
+
+/* Footer: light gray */
+.footer {
+  --ifm-footer-background-color: #E6EDF5;
+  --ifm-footer-color: #202124;
+  --ifm-footer-link-color: #333333;
+  --ifm-footer-title-color: var(--palette-navy);
+  background-color: #E6EDF5;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #5e7893;
 }
 
 .hero__title {
@@ -35,10 +88,99 @@
 }
 
 .hero__subtitle {
-  font-weight: 400;
-  letter-spacing: -.3px;
+  font-weight: 300;
 }
 
 .roboto-semibold {
   font-weight: 600;
+}
+
+/* Nested (second-level) navbar dropdowns, e.g. the Experience menu's
+   sub-menus: flyout to the side instead of stacking underneath the parent
+   item. Used by src/theme/NavbarItem/NestedDropdownNavbarItem.js. */
+
+/* Infima's .dropdown__menu sets overflow-y: auto, which per spec forces
+   overflow-x to auto too, clipping our flyout submenus. Any top-level
+   dropdown that holds nested dropdowns needs overflow left visible. */
+.navbar__item--experience + .dropdown__menu {
+  max-height: none;
+  overflow: visible;
+}
+
+.dropdown__menu .dropdown {
+  /* Infima's .dropdown--hoverable rule sets display: inline-flex, sized for
+     the top-level navbar item. Reused here for a nested li, that shrinks it
+     to its own content width, leaving a gap the flyout's left: 100% doesn't
+     actually clear. Force it back to a full-width block row. */
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+.dropdown__menu .dropdown > .dropdown__menu {
+  /* Infima's .dropdown__menu has 0.5rem of top padding, so aligning this
+     flyout's box to top: 0 still leaves its first link sitting 0.5rem below
+     the parent item's link. Pull it up by that padding so the two align. */
+  top: -0.5rem;
+  left: 100%;
+  margin-left: 0.3rem;
+}
+
+.dropdown__menu .dropdown.dropdown--right > .dropdown__menu {
+  left: auto;
+  right: 100%;
+  margin-left: 0;
+  margin-right: 0.3rem;
+}
+
+.dropdown__menu .dropdown > .dropdown__link::after {
+  border-color: transparent transparent transparent currentColor;
+  transform: translateY(-50%) rotate(0deg);
+}
+
+/* Infima shows .dropdown__menu on ANY descendant hover of .dropdown--hoverable
+   (a plain descendant selector), so hovering the outer "Experience" item was
+   revealing every nested sub-menu at once. Force nested sub-menus closed by
+   default, and open only when their own parent item is hovered/focused. */
+.dropdown__menu .dropdown > .dropdown__menu {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dropdown__menu .dropdown:hover > .dropdown__menu,
+.dropdown__menu .dropdown.dropdown--show > .dropdown__menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-top: 3rem;
+}
+
+.text--center h3 {
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.table-of-contents {
+  margin-top: 3rem;
+}
+
+.table-of-contents__link {
+  font-size: 15px;
+}
+
+/* .table-of-contents a:active {
+  font-weight: 600;
+} */
+
+strong {
+  font-weight: 500;
+}
+
+.row {
+  margin-bottom: 4.5rem;
 }
