@@ -42,8 +42,22 @@ GIT_USER=<Your GitHub username> npm run deploy
 
 If you are using GitHub Pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
 
+## Error: Panic occurred at runtime. react-router-config.js not found
+
+```bash
+# Clear Docusaurus cache
+npm run clear # or yarn clear / pnpm clear
+
+# Remove dependencies and lockfiles
+rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml
+
+# Reinstall cleanly
+npm install # or yarn install / pnpm install
+```
+
 ## TODO
 
 - Remove unused gfonts
 - SEO
 - Accessibility
+- Link checker in pipeline
