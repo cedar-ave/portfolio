@@ -5,33 +5,32 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'AI tools and pipelines',
-    link: '/experience/ai-tools-and-pipelines',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Content engineering',
+    link: '/experience/content-engineering',
+    Svg: require('@site/static/img/ai_brain_icon.svg').default,
     description: (
       <>
-        I've built MCPs and agent skills that generate and publish quality help content and release notes for an organization.
+        I build <strong>MCPs</strong> and <strong>AI agent skills</strong> that generate quality, AI-optimized content, facilitate human-in-the-loop reviews, and publish it with automated pipelines.
       </>
     ),
   },
   {
-    title: 'Docs-as-code & XML CCMS',
-    link: '/experience/docs-as-code',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Content development',
+    link: '/experience/content-development',
+    Svg: require('@site/static/img/code_icon.svg').default,
     description: (
       <>
-      I've built docs-as-code ecosystems from the ground up
+      I've built <strong>docs-as-code</strong> ecosystems from the ground up and scaled content support across an organization with <strong>structured authoring</strong> in XML CCMS tools.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    link: '/experience/powered-by-react',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Content engagement',
+    link: '/experience/content-engagement',
+    Svg: require('@site/static/img/bulb_icon.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        I create <strong>AI chatbots</strong>, <strong>help centers</strong>, and <strong>online customer communities</strong>. I build <strong>analytics dashboards</strong> that show if content is moving the needle.
       </>
     ),
   },
@@ -46,10 +45,10 @@ function Feature({ Svg, title, link, description }) {
         </Link>
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h3">
-          <Link to={link}>{title}</Link>
+        <Heading as="h3" className={styles.featureTitle}>
+          <Link to={link} className={styles.featureTitleLink}>{title}</Link>
         </Heading>
-        <p>{description}</p>
+        <p className={styles.featureDescription}>{description}</p>
       </div>
     </div>
   );

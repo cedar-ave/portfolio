@@ -27,8 +27,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'cedar-ave', // Usually your GitHub org/user name.
+  projectName: 'portfolio', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -109,22 +109,47 @@ const config = {
             type: 'dropdown',
             label: 'Experience',
             position: 'left',
+            className: 'navbar__item--experience',
             items: [
-              {label: 'AI tools and pipelines', to: '/experience/ai-tools-and-pipelines'},
-              {label: 'Docs-as-code & XML CCMS', to: '/experience/docs-as-code'},
-              {label: 'Powered by React', to: '/experience/powered-by-react'},
+              {
+                type: 'custom-nestedDropdown',
+                label: 'AI tools and pipelines',
+                to: '/experience/content-engineering',
+                items: [
+                  {label: 'MCPs', to: '/experience/mcps'},
+                  {label: 'AI agent skills', to: '/experience/ai-agent-skills'},
+                ],
+              },
+              {
+                type: 'custom-nestedDropdown',
+                label: 'Content development',
+                to: '/experience/content-development',
+                items: [
+                  {label: 'Docs-as-code', to: '/experience/docs-as-code'},
+                  {label: 'XML in a CCMS', to: '/experience/xml-ccms'},
+                ],
+              },
+              {
+                type: 'custom-nestedDropdown',
+                label: 'Content engagement',
+                to: '/experience/content-engagement',
+                items: [
+                  {label: 'AI chatbot', to: '/experience/ai-chatbot'},
+                  {label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies'},
+                ],
+              },
             ],
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/cedar-ave/portfolio',
             label: 'GitHub',
             position: 'right',
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: 'light',
         links: [
           {
             title: 'Docs',
@@ -140,11 +165,11 @@ const config = {
             items: [
               {
                 label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                href: 'https://stackoverflow.com/users/7848350/hcdocs',
               },
               {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'GitHub',
+                href: 'https://github.com/cedar-ave/portfolio',
               },
               {
                 label: 'X',
@@ -161,7 +186,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/cedar-ave/portfolio',
               },
             ],
           },
