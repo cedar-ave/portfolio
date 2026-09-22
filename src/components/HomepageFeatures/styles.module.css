@@ -9,3 +9,20 @@
   height: 200px;
   width: 200px;
 }
+
+.featureTitle {
+  min-height: calc(2 * var(--ifm-h3-font-size, 1.5rem) * var(--ifm-heading-line-height, 1.25));
+}
+
+.featureDescription {
+  color: #202b49;
+}
+
+.featureTitleLink,
+.featureTitleLink:visited {
+  color: #202b49;
+}
+
+.featureTitleLink:hover {
+  color: #5e7893;
+}
