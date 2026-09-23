@@ -76,6 +76,7 @@
 
 a {
   text-decoration: none;
+  /* color: #485b70; */
 }
 
 a:hover {
@@ -157,16 +158,25 @@ a:hover {
 
 h1 {
   font-size: 2.5rem;
-  margin-top: 3rem;
+  font-weight: 600;
+  letter-spacing: -.3px;
 }
 
 .text--center h3 {
   font-weight: 500;
   font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.table-of-contents {
-  margin-top: 3rem;
+/* .table-of-contents {
+  margin-top: 5rem;
+} */
+
+.blog-post-page .main-wrapper,
+.blog-list-page .main-wrapper,
+.docs-doc-page .main-wrapper,
+.mdx-page .main-wrapper {
+  margin-top: 5rem;
 }
 
 .table-of-contents__link {
@@ -182,5 +192,24 @@ strong {
 }
 
 .row {
-  margin-bottom: 4.5rem;
+  margin-bottom: 4.25rem;
+  /* margin-top: -1rem; */
+}
+
+article h2 {
+  margin-top: 2.5rem;
+  font-size: 1.75rem;
+}
+
+/* Blog list page: post title h2 should sit at the top of its card,
+   not inherit the 2.5rem top margin used for in-article h2 headings. */
+.blog-list-page article h2 {
+  margin-top: 0;
+  letter-spacing: -.2px;
+}
+
+article h3 {
+  margin-top: 2rem;
+  font-size: 1.25rem;
+
 }
