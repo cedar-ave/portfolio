@@ -5,6 +5,7 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 import { themes as prismThemes } from 'prism-react-renderer';
+import remarkImageSize from './plugins/remark-image-size.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -59,6 +60,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
+          remarkPlugins: [remarkImageSize],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -66,6 +68,7 @@ const config = {
         },
         blog: {
           showReadingTime: false,
+          remarkPlugins: [remarkImageSize],
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
