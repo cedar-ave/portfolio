@@ -13,9 +13,9 @@ Every skill follows the same principles:
 - **Keep the context lean.** Tiered reading, disk-based extraction logs, and subagents keep long, high-volume jobs reliable and cost-efficient.
 - **Separate concerns.** Drafting, vocabulary, style, and AI optimization are separate skills, so each one does one job well and can run on any document.
 
-## Source research
+## Source research Ai agent skills
 
-### Source librarian
+### /source-librarian
 
 **What it is**: A cataloging skill that turns raw knowledge into a tagged, indexed library that drafting skills can search. It takes in Zendesk tickets, Jira issues, GitHub files, Gong call transcripts, Slack threads, Google Docs, Tango guides, slides, PDFs, and plain text. For each file, it reads the full content, strips boilerplate, applies tags from a 16-dimension product taxonomy, and writes a PII-free summary and drafting guidance into the file's YAML front matter. It keeps three index layers up to date: a compact master index, a ticket index, and one index shard per workflow.
 
@@ -28,7 +28,7 @@ Example prompts:
 - *Tag this Gong transcript and add it to the source library.*
 - *Re-catalog this Tango guide with --refresh.*
 
-### Source analyzer
+### /source-analyzer
 
 **What it is**: An analysis skill that compares a set of cataloged Tango guides covering the same workflow. It produces two files: a step alignment document that maps every step in every guide to a canonical workflow phase, and a deviation register (CSV) that records every UI label variant and structural difference, with how often it appears and which guide it came from.
 
@@ -40,9 +40,9 @@ Example prompts:
 - *Run source analyzer on the CVO credentialing guides with the slug cvo-credentialing-2026.*
 - *Find variants across these Tango guides.*
 
-## Content generation
+## Content generation AI agent skills
 
-### Diátaxis drafter
+### /diataxis-drafter
 
 **What it is**: A drafting skill that writes customer-facing Help Center articles in any Diátaxis type (how-to guide, tutorial, concept, troubleshooting, or reference), using the knowledge base built by source librarian. It reads in three cost-saving tiers: index files first, then metadata headers only, and finally full reads of just the files I've confirmed are relevant.
 
@@ -54,7 +54,7 @@ Example prompts:
 - *Write a concept article about continuous monitoring.*
 - *Draft how-to, concept, and reference articles for provider roster enrollment.*
 
-### Release docs drafter
+### /release-docs-drafter
 
 **What it is**: A companion to Diátaxis drafter for new features, when the source material isn't in the knowledge base yet. It drafts Diátaxis articles from sources I supply directly: files in a feature's input folder, Jira tickets, Notion pages, Google Docs, slide decks, and web pages.
 
@@ -66,7 +66,7 @@ Example prompts:
 - *Draft release docs for provider-roster-enrollment from the input folder, this Jira epic, and this Notion spec.*
 - *Use this slide deck and Google Doc to draft a reference article for the new monitoring settings.*
 
-### Release notes drafter
+### /release-notes-drafter
 
 **What it is**: A skill that drafts customer-facing release notes for one audience per run (Salesforce app, web app, or API) from a GitHub release, pasted commits, and Jira tickets. It writes a single Markdown file.
 
@@ -78,7 +78,7 @@ Example prompts:
 - *Write API release notes for March 2026 from these Jira keys.*
 - *Draft Salesforce app release notes from this list of commits.*
 
-### Release notes Jira to Google Doc
+### /release-notes-jira-gdoc
 
 **What it is**: A skill that builds complete release notes from every ticket in one or more Jira fix versions, adding detail from linked tickets, remote links, and supporting product materials. It produces Markdown ready to paste into a new Google Doc and ends with an audit log that lists every ticket and link, whether it was read, and whether it was used.
 
@@ -90,47 +90,9 @@ Example prompts:
 - *Show me all fix versions so I can choose which ones to include.*
 - *Draft release notes for 1.98.1 and vApril, and use this product brief and slide deck for context.*
 
-## Content quality optimization
+## Content management automation AI agent skills
 
-### AI optimizer
-
-**What it is**: A review skill that checks a drafted Help Center article against 25 research-backed criteria for how well AI agents can use it, whether they retrieve it through RAG, web fetch, or MCP tool calling. It returns a report ranked by priority (critical, high, and medium), with a readiness rating for each access pattern. It doesn't edit the article unless I ask it to.
-
-**Why I built it**: AI agents now read help content as often as people do, and they fail in ways people don't. RAG systems pull sections out of order, web fetch strips out images, and tool calling picks pages by title. The skill flags sections that can't stand on their own, acronyms that aren't defined in each section, inconsistent terms for the same thing, unclear pronouns, reworded error messages, screenshots without text equivalents, content hidden in tabs or accordions, generic headings, missing checkpoints, and missing failure modes. Every recommendation names the exact section and includes replacement text I can use as is. I limited it to AI optimization so it works alongside my style and vocabulary skills instead of duplicating them.
-
-Example prompts:
-
-- *Run AI optimizer on this troubleshooting article.*
-- *Check just the heading structure of this draft for AI readiness.*
-- *Review this Zendesk article for RAG and web fetch, then apply the critical fixes.*
-
-### Verifiable vocabulary pal
-
-**What it is**: An audit skill that checks a Google Doc, Markdown file, text file, or Word document against Verifiable's controlled vocabulary. It flags every non-preferred term and gives the preferred term, the style guide's reasoning, and a suggested rewrite.
-
-**Why I built it**: Inconsistent terminology confuses readers and hurts search and retrieval. The skill handles details a simple find-and-replace can't: case-sensitive terms, hyphenation, acronyms that must be spelled out on first use, plurals and possessives, exceptions for terms shown literally in the product UI, and look-alike terms that mean different things. For example, it knows that continuous query (an NPDB feature) and continuous monitoring (the product feature built on it) aren't the same thing. When the context is ambiguous, it flags both readings instead of picking one silently.
-
-Example prompts:
-
-- *Check this Google Doc against our vocabulary.*
-- *Run vocabulary pal on draft-about-primary-source-verification.md.*
-- *Flag non-preferred terms in these release notes.*
-
-### Verifiable style pal
-
-**What it is**: An audit skill that checks a document against Verifiable's Technical Style Guide, with the Microsoft Style Guide as a fallback. It returns a numbered list of violations with a suggested fix for each, and I approve fixes one at a time.
-
-**Why I built it**: Consistent style is hard to maintain across many writers, and even harder across AI-generated drafts. The skill checks for ampersands, title case and gerunds in headings, missing serial commas, "click on," quotation marks used for emphasis, split infinitives, third-person instructions, unbolded UI elements and file names, passive voice, and more. The company style guide wins whenever the two guides conflict. Because the report is numbered, I can reply "fix 1, 3, 5" or "fix all," so I stay in control of every change.
-
-Example prompts:
-
-- *Run a style check on this Google Doc.*
-- *Review release-notes-1.99.md for style issues.*
-- *Fix 2, 4, and 7, and skip the rest.*
-
-## Content management automation
-
-### Paligo pal
+### /paligo-pal
 
 **What it is**: A skill for managing content in Paligo, a component content management system, through its REST API. A custom Python MCP server connects Claude to the API. The skill covers documents, folders, forks, images, productions, imports, translation exports and imports, taxonomies, variables, users, and assignments. It also includes a Google Doc to Paligo pipeline that converts a doc into valid DocBook 5.1 XML, uploads its images, and turns Help Center links into Paligo cross-references.
 
@@ -143,7 +105,7 @@ Example prompts:
 - *Add the new topic to the publication and start a production.*
 - *Export this document for translation into Spanish and French.*
 
-### Zendesk Guide pal
+### /zendesk-guide-pal
 
 **What it is**: A skill for Zendesk Help Center operations: article metadata, content tags, labels, redirect rules, and theme management. A custom MCP server with more than 40 tools powers it, and it works in both a production and a sandbox environment.
 
@@ -156,3 +118,43 @@ Example prompts:
 - *Create a 301 redirect from the old CAQH import article to the new one.*
 - *Launch a preview of the theme.*
 - *Deploy the local theme to production.*
+
+## Content quality optimization AI agent skills
+
+### /ai-optimizer
+
+**What it is**: A review skill that checks a drafted Help Center article against 25 research-backed criteria for how well AI agents can use it, whether they retrieve it through RAG, web fetch, or MCP tool calling. It returns a report ranked by priority (critical, high, and medium), with a readiness rating for each access pattern. It doesn't edit the article unless I ask it to.
+
+**Why I built it**: AI agents now read help content as often as people do, and they fail in ways people don't. RAG systems pull sections out of order, web fetch strips out images, and tool calling picks pages by title. The skill flags sections that can't stand on their own, acronyms that aren't defined in each section, inconsistent terms for the same thing, unclear pronouns, reworded error messages, screenshots without text equivalents, content hidden in tabs or accordions, generic headings, missing checkpoints, and missing failure modes. Every recommendation names the exact section and includes replacement text I can use as is. I limited it to AI optimization so it works alongside my style and vocabulary skills instead of duplicating them.
+
+Example prompts:
+
+- *Run AI optimizer on this troubleshooting article.*
+- *Check just the heading structure of this draft for AI readiness.*
+- *Review this Zendesk article for RAG and web fetch, then apply the critical fixes.*
+
+### /vocabulary-pal
+
+**What it is**: An audit skill that checks a Google Doc, Markdown file, text file, or Word document against an organization's custom controlled vocabulary. It flags every non-preferred term and gives the preferred term, the style guide's reasoning, and a suggested rewrite.
+
+**Why I built it**: Inconsistent terminology confuses readers and hurts search and retrieval. The skill handles details a simple find-and-replace can't: case-sensitive terms, hyphenation, acronyms that must be spelled out on first use, plurals and possessives, exceptions for terms shown literally in the product UI, and look-alike terms that mean different things. For example, it knows that continuous query (an NPDB feature) and continuous monitoring (the product feature built on it) aren't the same thing. When the context is ambiguous, it flags both readings instead of picking one silently.
+
+Example prompts:
+
+- *Check this Google Doc against our vocabulary.*
+- *Run vocabulary pal on draft-about-primary-source-verification.md.*
+- *Flag non-preferred terms in these release notes.*
+
+### /style-pal
+
+**What it is**: An audit skill that checks a document against an organization's custom Technical Style Guide, with the Microsoft Style Guide as a fallback. It returns a numbered list of violations with a suggested fix for each, and I approve fixes one at a time.
+
+**Why I built it**: Consistent style is hard to maintain across many writers, and even harder across AI-generated drafts. The skill checks for ampersands, title case and gerunds in headings, missing serial commas, "click on," quotation marks used for emphasis, split infinitives, third-person instructions, unbolded UI elements and file names, passive voice, and more. The company style guide wins whenever the two guides conflict. Because the report is numbered, I can reply "fix 1, 3, 5" or "fix all," so I stay in control of every change.
+
+Example prompts:
+
+- *Run a style check on this Google Doc.*
+- *Review release-notes-1.99.md for style issues.*
+- *Fix 2, 4, and 7, and skip the rest.*
+
+

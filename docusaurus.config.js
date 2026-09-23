@@ -116,7 +116,7 @@ const config = {
                 label: 'AI tools and pipelines',
                 to: '/experience/content-engineering',
                 items: [
-                  {label: 'MCPs', to: '/experience/mcps'},
+                  {label: 'Custom MCPs', to: '/experience/custom-mcps'},
                   {label: 'AI agent skills', to: '/experience/ai-agent-skills'},
                 ],
               },
@@ -125,6 +125,7 @@ const config = {
                 label: 'Content development',
                 to: '/experience/content-development',
                 items: [
+                  {label: 'Technical writing', to: '/experience/technical-writing'},
                   {label: 'Docs-as-code', to: '/experience/docs-as-code'},
                   {label: 'XML in a CCMS', to: '/experience/xml-ccms'},
                 ],
@@ -169,7 +170,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/cedar-ave/portfolio',
+                href: 'https://github.com/cedar-ave',
               },
               {
                 label: 'X',
@@ -186,7 +187,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/cedar-ave/portfolio',
+                href: 'https://github.com/cedar-ave',
               },
             ],
           },
