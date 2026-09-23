@@ -1,0 +1,22 @@
+.title {}
+
+/**
+  Styles here only apply on the blog list/index page (isBlogPostPage === false),
+  not on the individual blog post page.
+**/
+.titleInList {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -.3px;
+  line-height: 1.2;
+}
+
+/**
+  Blog post title should be smaller on smaller devices
+**/
+@media (max-width: 576px) {
+  .title {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+}

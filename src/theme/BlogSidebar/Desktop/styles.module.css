@@ -14,7 +14,7 @@
 
 .sidebarItemTitle {
   font-size: var(--ifm-h3-font-size);
-  font-weight: var(--ifm-font-weight-bold);
+  font-weight: 500;
 }
 
 .sidebarItemList {
@@ -28,6 +28,7 @@
 .sidebarItemLink {
   color: var(--ifm-font-color-base);
   display: block;
+  line-height: 1.5;
 }
 
 .sidebarItemLink:hover {
@@ -47,4 +48,5 @@
 .yearGroupHeading {
   margin-top: 1.6rem;
   margin-bottom: 0.4rem;
+  font-weight: 500;
 }

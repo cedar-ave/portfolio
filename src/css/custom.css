@@ -29,6 +29,11 @@
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 
+  --ifm-link-color: #50657C;
+  --ifm-link-hover-color: #5e7893;
+
+  --ifm-navbar-link-active-color: #50657C;
+
   --palette-teal: #73d3c3;
   --palette-navy: #202b49;
   --palette-pale-blue: #bed4e6;
@@ -38,6 +43,12 @@
   --palette-slate-blue: #5e7893;
   --palette-periwinkle: #93bcdf;
   --palette-terracotta: #d06e6a;
+}
+
+.headshot {
+  width: 200px;
+  height: auto;
+  margin-bottom: 2rem;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -76,12 +87,10 @@
 
 a {
   text-decoration: none;
-  /* color: #485b70; */
 }
 
 a:hover {
   text-decoration: none;
-  color: #5e7893;
 }
 
 .hero__title {
@@ -179,13 +188,19 @@ h1 {
   margin-top: 5rem;
 }
 
-.table-of-contents__link {
-  font-size: 15px;
+#__blog-post-container {
+margin-top: 2rem;
 }
 
-/* .table-of-contents a:active {
-  font-weight: 600;
-} */
+.table-of-contents__link {
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: .25rem;
+}
+
+.table-of-contents__link--active {
+  font-weight: 500;
+}
 
 strong {
   font-weight: 500;
@@ -199,13 +214,22 @@ strong {
 article h2 {
   margin-top: 2.5rem;
   font-size: 1.75rem;
+  font-weight: 500;
 }
 
 /* Blog list page: post title h2 should sit at the top of its card,
    not inherit the 2.5rem top margin used for in-article h2 headings. */
 .blog-list-page article h2 {
   margin-top: 0;
-  letter-spacing: -.2px;
+}
+
+.blog-list-page article {
+  /* margin-bottom: -3rem; */
+}
+
+.blog-list-page article + article {
+  border-top: 1px solid var(--ifm-toc-border-color);
+  padding-top: 1.5rem;
 }
 
 article h3 {
