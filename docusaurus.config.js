@@ -4,7 +4,7 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -41,8 +41,8 @@ const config = {
   },
 
   headTags: [
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'}},
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous'}},
+    { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.googleapis.com' } },
+    { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
   ],
 
   // Roboto: all weights (100-900), widths (75-100) and italics
@@ -96,18 +96,23 @@ const config = {
         title: 'Home',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/json.svg',
         },
         items: [
+          {
+            to: '/about',
+            label: 'About',
+            position: 'left',
+          },
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Samples',
           },
           {
             type: 'dropdown',
-            label: 'Experience',
+            label: 'Portfolio',
             position: 'left',
             className: 'navbar__item--experience',
             items: [
@@ -116,8 +121,8 @@ const config = {
                 label: 'AI tools and pipelines',
                 to: '/experience/content-engineering',
                 items: [
-                  {label: 'Custom MCPs', to: '/experience/custom-mcps'},
-                  {label: 'AI agent skills', to: '/experience/ai-agent-skills'},
+                  { label: 'Custom MCPs', to: '/experience/custom-mcps' },
+                  { label: 'AI agent skills', to: '/experience/ai-agent-skills' },
                 ],
               },
               {
@@ -125,9 +130,9 @@ const config = {
                 label: 'Content development',
                 to: '/experience/content-development',
                 items: [
-                  {label: 'Technical writing', to: '/experience/technical-writing'},
-                  {label: 'Docs-as-code', to: '/experience/docs-as-code'},
-                  {label: 'XML in a CCMS', to: '/experience/xml-ccms'},
+                  { label: 'Technical writing', to: '/experience/technical-writing' },
+                  { label: 'Docs-as-code', to: '/experience/docs-as-code' },
+                  { label: 'XML in a CCMS', to: '/experience/xml-ccms' },
                 ],
               },
               {
@@ -135,18 +140,28 @@ const config = {
                 label: 'Content engagement',
                 to: '/experience/content-engagement',
                 items: [
-                  {label: 'AI chatbot', to: '/experience/ai-chatbot'},
-                  {label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies'},
+                  { label: 'AI chatbot', to: '/experience/ai-chatbot' },
+                  { label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies' },
                 ],
               },
             ],
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          {
+            to: '/resume.pdf',
+            label: 'Resume',
+            position: 'left',
+          },
+          { to: '/blog', label: 'Blog', position: 'left' },
+          {
+            href: 'https://www.linkedin.com/in/marlasowards',
+            label: 'LinkedIn',
+            position: 'right',
+          },
           {
             href: 'https://github.com/cedar-ave/portfolio',
             label: 'GitHub',
             position: 'right',
-          },
+          }
         ],
       },
       footer: {
@@ -171,11 +186,7 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/cedar-ave',
-              },
-              {
-                label: 'X',
-                href: 'https://x.com/docusaurus',
-              },
+              }
             ],
           },
           {
@@ -192,7 +203,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()}, Marla Sowards`,
       },
       prism: {
         theme: prismThemes.github,
