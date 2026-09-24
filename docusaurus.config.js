@@ -158,7 +158,7 @@ const config = {
             ],
           },
           {
-            href: '/pdf/resume.pdf',
+            href: 'pathname:///pdf/resume.pdf',
             label: 'Resume',
             position: 'left',
           },
