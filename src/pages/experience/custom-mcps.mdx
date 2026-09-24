@@ -2,11 +2,15 @@
 title: Custom MCPs
 ---
 
+import { McpHub, ManualVsPrompt, TicketPipeline } from '@site/src/components/McpDiagrams';
+
 # Custom MCPs
 
 I build MCPs to connect systems so I can generate content from the information they hold, set up workflows that cover multiple tools, and eliminate manual, time-consuming work that can otherwise only be done in the application UI.
 
 The code is proprietary to the company I built them for so I can't share the code here, but below are descriptions of what they enabled me to do and the results.
+
+<McpHub />
 
 ## Zendesk Guide MCP
 
@@ -27,6 +31,8 @@ For ultimate time savings, it can also be used in tandem with MCPs for other ent
 
 - *Remove the `This feature will be released in Summer 2027` callout in all articles that contain that callout (scoping created date to the past 3 weeks), publish the articles to Zendesk with the label `release_100.11`, and promote those articles on the help site home page*
 
+<ManualVsPrompt />
+
 ## Zendesk Ticketing MCP
 
 **What it is**: This MCP is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). It reads ticket contents, including the user's question and any conversation following. It also reads fields like a users's organization, ticket labels, ticket status, and custom fields like a user's product platform. 
@@ -36,6 +42,8 @@ For ultimate time savings, it can also be used in tandem with MCPs for other ent
 - *Find tickets closed in the past 3 months where the `Reason` field contains `training issue` and group the tickets into...* 
 
 **Roadmap**: A ticket with a **Closed** status doesn't mean the answer provided by the agent was correct. Neither does a user's satisfaction score. That's why help content generated from a ticket can't be trusted as accurate.
+
+<TicketPipeline />
 
 ## Paligo XML CCMS MCP
 

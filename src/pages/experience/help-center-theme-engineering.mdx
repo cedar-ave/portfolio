@@ -1,0 +1,260 @@
+---
+title: Help center theme engineering
+---
+
+# Help center theme engineering
+
+I took a commercial Zendesk help center theme and made it into a documentation platform driven by configuration files. The company sells healthcare credentialing software in two versions, a Salesforce app and a standalone web app, along with APIs and dozens of data-source integrations. Its help center had outgrown what an off-the-shelf theme could do.
+
+This theme was the technical foundation of a larger relaunch of the help site. For the research and decisions behind that relaunch, see [Help site relaunch](/experience/help-site-relaunch).
+
+The theme is proprietary, so this page gives an overview and leaves out the company's details.
+
+:::tip[At a glance]
+
+- **About 3,600 lines of custom JavaScript** across nine purpose-built modules, plus about 9,000 lines of custom code, styles, templates, and configuration in total.
+- **10 JSON configuration files**, so non-developers can change navigation, menus, badges, and landing pages without touching code.
+- **10 new custom pages**, including landing pages that assemble themselves from article labels.
+- **14 vendor extensions** integrated and placed behind on/off toggles in the theme's settings panel.
+- **No changes to the vendor's core components.** Every customization sits on top of them, so the theme can still take upstream updates.
+
+:::
+
+## The problems
+
+**One help center, two products, and readers who didn't know which product they used.** An article called *How to run a verification* for the Salesforce app is different from an article with the same title for the web app. Readers kept landing on the wrong one, and nothing on the page told them which product an article covered.
+
+**The navigation mirrored Zendesk's data structure, not how readers think.** The stock side navigation showed one long tree of every category. Readers want to start from their product ("I use the web app") and then drill into a task. Changing the tree meant restructuring content in Zendesk itself.
+
+**Search couldn't filter by product.** Zendesk's search page has no built-in way to pick a content tag, and its backend accepts only one tag at a time. We needed readers to filter by product *and* by credentialing type (provider or facility) at once. The stock pagination also showed only First/Previous/Next/Last. On a query with 39 pages of results, that's painful.
+
+**Every small change needed a developer.** Category IDs, menu links, and section titles were hardcoded in templates. Adding a link to a menu meant editing Handlebars and republishing the theme.
+
+**Content published from our XML component content management system (CCMS) didn't fit the theme.** The CCMS writes some headings as styled paragraphs, emits hidden labels that show up as blank lines, and nests ordered lists in a way the theme's CSS didn't expect. The vendor's table of contents skipped those headings entirely.
+
+**We had no data on how content was used.** Nobody could answer "which articles do Salesforce app admins read?"
+
+## The approach
+
+I followed four principles throughout:
+
+1. **Configuration over code.** If a writer or product manager might want to change something, it belongs in a JSON file with its own documentation, not in a template.
+2. **Never fork the vendor.** Every customization wraps, extends, or post-processes the vendor's components. None of them edits the vendor's files. That keeps the theme upgradeable.
+3. **Respect the platform.** Where Zendesk renders something natively and server-side (search results, pagination, breadcrumbs), I enhance it instead of replacing it. Links stay real links. The URL holds the state.
+4. **Accessible by default.** Custom controls use the correct ARIA patterns, support the keyboard, and respect the reader's settings.
+
+## What I built
+
+### 1. Tabbed side navigation, driven by configuration
+
+This is the centerpiece. `<sidenav-tabs>` is a custom HTML element (a Web Component) that splits the article-page navigation into product tabs: *Getting started*, *Release notes*, *Salesforce app*, *Web app*, *Source integrations*, and *APIs*. Inside each tab, it reuses the vendor's own navigation component to render only the categories assigned to that tab.
+
+A single JSON file controls the whole thing. For any category or section, an editor can:
+
+- **exclude** it,
+- **promote** its children up a level (removing a layer of clicks),
+- **group** several categories under a new parent label that doesn't exist in Zendesk,
+- turn it into a **direct link** instead of an expanding node,
+- **rename** it in the navigation only, without renaming it in Zendesk,
+- **reorder** it with a single `position` value,
+- **pin** extra links above or below its contents,
+- **group articles by year** (for long-running release notes), and
+- **shorten titles** in the tree only (for example, *"Salesforce app - November 2025 (v1.97)"* becomes *"November 2025 (v1.97)"*).
+
+All of these can be combined. The configuration file documents itself: it starts with a `_readme` key that explains every option in plain language.
+
+```json
+{
+  "id": "salesforce",
+  "label": "Salesforce app",
+  "categories": [
+    { "id": 1001, "name": "Provider Credentialing Guide", "display_name": "Provider credentialing" },
+    {
+      "label": "Roster management",
+      "categories": [
+        { "id": 1002, "name": "Roster Generation Guide", "display_name": "Roster generation" },
+        { "id": 1003, "name": "Roster Ingestion Guide", "display_name": "Roster ingestion" }
+      ]
+    },
+    { "id": 1004, "name": "Admin Guide", "display_name": "Admins" }
+  ],
+  "pinned_links": [
+    { "name": "FAQ and troubleshooting", "url": "/hc/en-us/p/salesforce-app-help", "position": "bottom" }
+  ]
+}
+```
+
+**Why it matters:** Readers start from their product and find the right article in fewer clicks. Content strategists can change the information architecture in minutes without touching Zendesk's category structure or asking a developer.
+
+**What it took:**
+
+- **Web Components:** a custom element that loads its own configuration and builds the vendor's component inside itself.
+- **Changing the DOM after render:** the vendor component loads its tree lazily as readers expand it, so every transformation (promote, rename, group, reorder, pin) runs through `MutationObserver`s. Each transformation can safely run again as new branches appear. It fixes content up after rendering instead of modifying the vendor's code.
+- **Resilience:** the promotion step needs a tab's whole tree before it can run. I scoped that waiting to each tab so that one slow or failed API call only delays its own tab, and I added timeout fallbacks for empty sections that never trigger a DOM change.
+- **UX details:** on page load, the tab that contains the current article opens automatically. It stops the moment the reader clicks a tab, so it never closes a tree the reader opened.
+- **Accessibility:** tabs follow the ARIA disclosure pattern (`aria-expanded`, `aria-controls`, labeled `region` panels).
+
+### 2. Filtering search results by more than one tag
+
+I rebuilt the search page's filtering on top of Zendesk's native, server-rendered results. Readers can now choose one tag per filter group (*Filter by app*, *Filter by credentialing type*) and combine them. Every result shows color-coded product badges.
+
+Zendesk's backend accepts only one content tag, so I designed a two-tier filter:
+
+- The tag from the highest-priority group goes to Zendesk as the real filter. It drives the result count and pagination on the server.
+- Any other active tag rides along in a custom URL parameter and filters the current page in the browser. If that hides every result on the page, a short notice explains why the page looks empty.
+
+The code comments call out this tradeoff: the second filter narrows the current page but doesn't change the pagination. I accepted that on purpose so we wouldn't have to rebuild pagination from scratch.
+
+Other problems I solved on this page:
+
+- **Recovering real article URLs.** Zendesk's search-result links go through a click-tracking redirect, and every result has the same redirect URL. The real article URL is inside a Base64-encoded payload, so the script decodes it. If anything goes wrong, it falls back to the original link:
+
+  ```js
+  const extractArticleUrl = (resultUrl) => {
+    try {
+      const url = new URL(resultUrl, window.location.origin);
+      if (!url.pathname.endsWith('/search/click')) return resultUrl;
+      const raw = url.searchParams.get('data');
+      if (!raw) return resultUrl;
+      const decoded = atob(raw.split('--')[0]);
+      const match = decoded.match(/https?:\/\/[^\s"\x00-\x1f]+/);
+      return match ? match[0] : resultUrl;
+    } catch {
+      return resultUrl;
+    }
+  };
+  ```
+
+- **Semantic search vs. keyword APIs.** The help center uses semantic search, but the public search API only matches keywords. Looking up badges by re-running the query would silently miss results that matched by meaning. Instead, the script reads each result's section from its breadcrumb and fetches that section's article list. Every visible result gets its badges, no matter how it matched.
+- **Filters that survive other filters.** Zendesk's own Type and Source filter links drop URL parameters they don't recognize. The script adds the custom filter parameter back to them so a reader's selection isn't lost.
+- **Numbered, responsive pagination.** I added a sliding-window pager (for example, *1 … 4 5 6 7 8 … 39*) to the native pagination. It measures whether the controls wrap to a second line and shrinks the window (5 → 3 → 1) until they fit, re-checking when the window is resized (with a debounce).
+- **Security.** Hover-help text comes from configuration files, so it's sanitized with DOMPurify against a strict list of allowed tags and attributes before it goes into the page.
+
+**Why it matters:** Readers find content for their own product and use case. The filters are plain links, so they work with right-click, open-in-new-tab, bookmarks, and the back button.
+
+### 3. One source for product labeling across the site
+
+One configuration file defines every product and credentialing-type badge: its name, content tag, colors, icon, and hover-help text (*"Are you working in Salesforce? Yes, you're using the Salesforce app. No, you're using the web app."*). The same definitions drive badges in search results, the search filter sidebar, home page cards, the content tags on each article, and the info icons on the navigation tabs.
+
+A single badge definition looks like this. `sidebarGroup` decides which search filter it appears under, and `style` sets its colors:
+
+```json
+{
+  "name": "Salesforce app",
+  "tagId": "<content-tag-id>",
+  "icon": "info.svg",
+  "infoIcon": true,
+  "infoIconText": "<span class=\"hover-help-subhead\">Are you working in Salesforce?</span><br><span class=\"hover-help-body\">Yes — You're using the Salesforce app.<br>No — You're using the Web app.</span>",
+  "showInSearchResultsSidebar": true,
+  "showInfoIconInSearchResultsSidebar": true,
+  "sidebarGroup": "app",
+  "style": {
+    "backgroundColor": "var(--color-brand-primary)",
+    "color": "#fff"
+  }
+}
+```
+
+**Why it matters:** Readers see the same visual language everywhere, and a label change happens in one place. To add a new product line, you add one JSON entry.
+
+### 4. Landing pages that build themselves from labels
+
+I created product-specific *FAQ and troubleshooting* pages that assemble themselves. A JSON file describes each page's sections (for example, *Frequently asked questions*, *Troubleshooting*, *Reference*, *Errors*) as label queries with required labels, include lists, and exclude lists, optionally split into subsections for each product. A shared loader fetches the matching articles in parallel, removes duplicates, applies the exclusions, sorts them, and builds an "On this page" table of contents.
+
+Here's part of the configuration for the source integrations help page. Each section lists the labels that pull articles in. `mandatorySubLabel` limits a subsection to one product, and `subsectionLabelsExclude` keeps out articles that belong in a different section of the page:
+
+```json
+[
+  {
+    "title": "Frequently asked questions",
+    "subSections": [
+      { "heading": "Salesforce app", "labels": ["FAQ"], "mandatorySubLabel": "Salesforce_app" },
+      { "heading": "Web app", "labels": ["FAQ"], "mandatorySubLabel": "Web_app" }
+    ],
+    "bottomLine": true
+  },
+  {
+    "title": "Troubleshooting",
+    "subSections": [
+      {
+        "heading": "Salesforce app",
+        "labels": ["Help"],
+        "subsectionLabelsExclude": ["FAQ", "Reference", "Error"],
+        "mandatorySubLabel": "Salesforce_app"
+      },
+      {
+        "heading": "Web app",
+        "labels": ["Help"],
+        "subsectionLabelsExclude": ["FAQ", "Reference"],
+        "mandatorySubLabel": "Web_app"
+      }
+    ],
+    "bottomLine": true
+  }
+]
+```
+
+The loader turns each label into a Help Center API query that also requires the product label:
+
+```js
+const allLabels = [label];
+if (primaryLabel) allLabels.push(primaryLabel);
+if (mandatorySubLabel) allLabels.push(mandatorySubLabel);
+
+const labelsQueryString = allLabels.map(encodeURIComponent).join(',');
+const apiUrl = `/api/v2/help_center/articles.json?label_names=${labelsQueryString}&per_page=100`;
+```
+
+**Why it matters:** When a writer publishes an article with the right labels, it appears on the right landing page automatically. Nobody has to maintain a list of links by hand. Adding a new product's help page takes one new template and one JSON file.
+
+### 5. A home page spotlight that stays accurate
+
+The home page's *Spotlight* module has three columns: the latest release notes for each product, curated popular articles, and featured articles.
+
+- **Release notes were ordered by curated position, not by date.** Release notes were often bulk-edited or backfilled, so `created_at` and `updated_at` didn't reflect the actual release order. I read recency from each section's manually arranged position, the same order editors set in Zendesk.
+- **Popular articles were matched without regard to case.** Zendesk's label filter matches case exactly, and different authors capitalized labels differently.
+- **The article list was fetched efficiently.** All pages are fetched in parallel, the combined request is shared by both loaders that need it, and results are cached in `localStorage` with a versioned key and a time limit, so a code change can never serve data in an old format.
+
+### 6. A "Quick links" menu with flyouts
+
+I built a top-bar menu with Alpine.js. It lists topic headings, each with a flyout of links and optional *New* badges. The flyouts detect when they would run off the edge of the screen and open to the left instead. The menu works with the keyboard and focus, and it closes on Escape or an outside click. The links live in JSON, and the fetch is cache-busted with the theme's publish timestamp, so editors see changes as soon as they publish.
+
+### 7. Table of contents rules, without editing the vendor's code
+
+To teach the vendor's table-of-contents extension our content rules, I wrapped its `getHeaders` method at runtime instead of editing its file:
+
+- It includes the CCMS's paragraph-styled headings at the same heading levels the table of contents is configured to show, then puts everything back in document order with `compareDocumentPosition`.
+- It skips headings inside callouts, which aren't section landmarks.
+- It shows only H2s on release notes, where the lower-level headings are change-by-change detail.
+
+To tell whether the current article is a release note without an extra API call (which would also fail on the local preview server), the template writes the article's breadcrumb URLs into a small JSON block, and the script reads the category from it.
+
+### 8. Content quality fixes and analytics
+
+- **Cleanup for CCMS output:** depth classes on nested ordered lists so they're numbered 1 → a → i correctly, hiding the blank title blocks produced by hidden labels, and copy-link buttons on every heading so readers and support agents can share a link to a specific section.
+- **Analytics:** Google Tag Manager with custom `dataLayer` events. Each article view sends metadata including section, content tags (converted from IDs to readable names), votes, and dates. Reader properties such as role and organization are also sent, so the team can see which content each audience uses.
+
+### 9. Integrating vendor extensions and supporting multiple environments
+
+I integrated 14 of the vendor's extensions (table of contents, previous/next links, alerts, a video gallery, a contacts widget, improved ticket forms, and others). Each one sits behind its own toggle in the theme's *Extensions* settings panel, alongside toggles for my own modules.
+
+I also found and fixed a problem with multiple environments. The Help Center API always returns article URLs on the production domain, so every dynamically loaded link in staging sent people to production. A small `toRelativeUrl` utility, applied across the modules that load content, keeps every link on the domain the reader is currently using.
+
+## How I worked
+
+- **Git workflow:** feature branches merged into an integration branch, then cherry-picked into a branch that deploys to a Zendesk sandbox for testing before production.
+- **Documentation that lives with the code:** each module begins with a header explaining what it does, what it depends on, and *why* it takes its approach. The configuration files document themselves for the non-developers who maintain them.
+- **Failure handling:** every module checks for missing configuration, failed API calls, and absent page elements, and fails without breaking the rest of the page.
+
+## Skills demonstrated
+
+- **Front end:** vanilla JavaScript (ES2020+), Web Components, `MutationObserver`, async/await with parallel requests, Alpine.js, Handlebars/Curlybars templating, responsive CSS
+- **Platform:** Zendesk Guide theming, the Help Center REST API, content tags, labels, custom pages, and the theme manifest and settings
+- **Architecture:** configuration-driven design, extending vendor code without forking it, progressive enhancement, caching strategy
+- **Quality:** accessibility (ARIA, keyboard support), sanitization against cross-site scripting (DOMPurify), handling edge cases, documenting tradeoffs
+- **Content strategy:** information architecture, taxonomy design, integrating CCMS publishing output
+- **Analytics:** Google Tag Manager, GA4 event and user-property design
+
+## The result
+
+The help center went from a well-designed template to a documentation platform built around the company's products and readers. Readers can tell which product an article covers, filter search the way they think, and navigate by product. Content and product teams can change navigation, menus, badges, and landing pages by editing a JSON file. And because I never edited the vendor's core, the company can still take upstream theme updates.

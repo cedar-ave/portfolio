@@ -1,0 +1,337 @@
+---
+title: Choosing a CCMS
+description: How I defined objectives, researched the industry, scored four documentation architectures against 13 criteria, and ran a structured trial before selecting Paligo as a component content management system.
+---
+
+# Choosing a CCMS
+
+As the only technical writer at a healthcare software company with two products, public APIs, and dozens of data-source integrations, I needed a documentation platform that would let one person do the work of a team. Instead of picking a tool by reputation, I ran a structured evaluation: I defined what customers, the business, and the writer each needed; researched how leading software companies organize their content; mapped four publishing architectures; costed them; and scored the finalists against 13 criteria. **Paligo, a component content management system (CCMS), scored 56 out of 65, ahead of docs-as-code (46) and the existing Google Docs and PDF approach (33).** I then confirmed the result with a trial that had written success criteria and a 21-item test log before recommending it. Paligo became the single source for the company's product documentation in its help center.
+
+The company's platform is proprietary, so this page gives an overview and leaves out the company's details.
+
+:::tip[At a glance]
+
+- **The decision:** How to author, manage, and publish product documentation that could scale with the products without scaling the headcount.
+- **The options:** Stay with Google Docs and PDFs, write directly in the help center, build a docs-as-code site, or adopt a CCMS that publishes to the help center.
+- **My method:** Objectives first, then industry research, architecture mapping, cost and effort estimates, a 13-criterion scoring matrix, a hands-on trial, and a requirements-driven vendor conversation.
+- **What changed my mind:** My first proposal was a docs-as-code site. The analysis showed it would spend the writer's time maintaining infrastructure instead of improving content, so I followed the evidence to a CCMS.
+- **The result:** Content reuse, variables, SME review workflows, version history, and one-step publishing to the help center, plus a documentation process built into the product development lifecycle.
+
+:::
+
+## The problem
+
+The company ran its help center on Zendesk. For support content, it was a good fit: it deflected tickets and calls, and customers already knew where to find it. But Zendesk is a support platform, not a content management system. Product documentation lived elsewhere, in guides written in Google Docs and delivered as PDFs.
+
+Neither half of that setup could grow with the products. Every guide was a standalone file, so the same instructions were copied into several places and drifted apart. Customers had to know a guide existed, open it, and then trust that it was current. And every update depended on one writer doing it by hand.
+
+I started by naming exactly what was missing. I didn't want to evaluate tools against a vague sense that "the current way is slow." I wanted a list of capabilities that I could check each option against:
+
+| Capability the help center lacked | Why it mattered |
+|---|---|
+| Granular version control | Supports good process and prevents accidental loss of work |
+| Content reuse and single-sourcing | Saves time and keeps the same instruction consistent everywhere it appears |
+| A custom information architecture | Lets structure follow how users think, not how the platform stores data |
+| Plain-text or structured markup | Removes manual formatting, which saves time and keeps output consistent |
+| Authoring tools with validation and automation | Saves time and increases accuracy |
+| Global find and replace with pattern matching | Makes sweeping changes, like a renamed feature, safe and fast |
+| Linting for spelling, grammar, style, and brand terms | Raises quality without adding a review step |
+| Automated testing | Catches broken output before users do |
+| Hands-free, continuous deployment | Gets new and updated content to users as soon as it's ready |
+
+## How I approached the decision
+
+I broke the decision into steps. Each step produced something I could show to stakeholders and something the next step depended on.
+
+1. **Define objectives before looking at tools.** What do customers need from documentation? What does the business need? What does a solo writer need to stay productive?
+2. **Research how others solve it.** Learn the patterns mature software companies use instead of inventing one.
+3. **Map the architectures.** Identify every realistic way to get content from an author to a user, with the steps, costs, and time to value of each.
+4. **Analyze each option on its own terms.** Look for the strongest version of every option, including the one I started out favoring.
+5. **Score the finalists against shared criteria.** Put every option on the same scale so the trade-offs are visible.
+6. **Test the leader in a real trial.** Write success criteria first, then try to break the tool with real content.
+7. **Take requirements and hard questions to the vendor.** Go into the sales conversation with a checklist, not a wish list.
+8. **Plan for adoption.** A tool is only as good as the process around it.
+
+## Step 1: Define the objectives
+
+I wrote requirements from three perspectives, each phrased as a need with a concrete example so it could be tested later.
+
+### What customers need
+
+| Need | What it looks like in practice |
+|---|---|
+| **Consistent** | Publish one article under several help center categories. Reuse partial content, like a shared procedure, across articles. |
+| **Accurate** | Have subject matter experts (SMEs) review new and updated content before it's published. |
+| **Timely** | Deploy changes immediately. A typo fix shouldn't wait on the same review cycle as a new feature guide. |
+| **Professional** | Keep headings, bold text, lists, and tables intact on the way to the help center, and use the help center's styles so content matches the brand. |
+| **Connected** | Keep cross-links between articles and links to external sites working after publishing. |
+| **Visual** | Upload images, GIFs, and videos once and publish them with the content. Support enlarging images. |
+| **Chunked** | Organize content under several levels of headings and display notes and warnings in callouts. |
+| **Curated** | Find obsolete pages and broken links easily. |
+| **Multipurpose** | Publish release notes, large reference tables, and text that appears in the product's interface. |
+| **Accessible** | Produce semantic HTML and alt text that support users with impairments. |
+
+### What the business needs
+
+| Need | Details |
+|---|---|
+| **An acceptable benefit-to-cost ratio** | Time saved in the authoring tool can't be spent again cleaning up output in the help center. |
+| **SME review** | Team members can comment on content before it's published. |
+| **Advanced content management** | A strategy for documenting two products that overlap but aren't the same. |
+| **User feedback** | Publishing doesn't remove the help center's "Was this article helpful?" widget, or the tool provides an equivalent. |
+| **Usage data** | Republishing an article doesn't erase its analytics history. |
+| **Quality checks** | Automated spelling, grammar, and style checks. |
+| **Minimal manual steps** | Global find and replace with pattern matching. |
+| **Testing** | The ability to A/B test versions of a page and timestamp content changes to measure their effect. |
+
+Behind the scenes, I also required **version control with an attributed change history**, and I listed **roadmap needs** so the choice wouldn't box us in later: support for more contributors, translation, and future AI features such as generated alt text, natural-language style checks, and content summaries.
+
+The two product lines were the hardest requirement. An article called *How to run a verification* means something different for each product. Any solution had to keep shared content in one place while letting each product's version differ where it needed to.
+
+## Step 2: Research how other companies do it
+
+Before designing anything, I studied how established software companies organize help content. A clear pattern emerged: many split it into two genres with different jobs.
+
+| Support content | Documentation content |
+|---|---|
+| Reactive | Proactive |
+| The unhappy path | The happy path |
+| Focused on solving problems | Focused on learning |
+| Covers about 20% of the product | Covers 100% of the product |
+
+Microsoft is a clear example:
+
+| | Microsoft Support | Microsoft Learn |
+|---|---|---|
+| **Audience** | Users having trouble with a product | Users on a learning path |
+| **Genre** | Technical help and troubleshooting | Online learning and product education |
+| **Content** | Steps to resolve issues, troubleshooting tips, fixes for common problems | Product guides, training modules, getting started |
+
+ServiceNow, Datadog, Citrix, and GitHub follow the same model, each with a separate support site and docs site.
+
+This research did two things. It gave me a vocabulary for talking to stakeholders about *why* product documentation and support articles behave differently. And it showed that separating the two is a mainstream choice, not a risky one, which made a separate docs site a legitimate option to evaluate rather than dismiss.
+
+## Step 3: Map the architectures
+
+Next I laid out every realistic path from an author's draft to a user's screen.
+
+| | Write in Zendesk | Structured authoring integration | Separate docs site |
+|---|---|---|---|
+| **Destination** | Zendesk | Zendesk | A dedicated docs site |
+| **Real-world examples** | Zendesk's own documentation team | Paligo, Oxygen XML, MadCap Flare | Datadog, GitHub |
+| **Main advantages** | Version control, no cost | Some automation, content reuse, scales after initial investment | Automation, version control, continuous deployment, content reuse, full control over features and design |
+| **Main drawbacks** | Manual, doesn't scale | Subscriptions can be expensive; content must be structured in XML and mapped | Building customer sign-in may take significant work |
+| **Time to value** | Immediate | 2 to 3 weeks | Depends on the solution |
+| **Workflow** | Store text in Git, convert to HTML, build the category tree in Zendesk, paste into each article's code editor | Build the category tree in Zendesk, structure content as XML topics, map them in the tool, and publish through its integration | Store text in Git; a static site generator builds the site; pipelines publish updates automatically |
+
+I also collected licensing data for the structured authoring tools. Oxygen cost about $50 per user per month. MadCap Flare cost $195 per user per month plus $42 per user per month for its Zendesk connector. Paligo's Zendesk integration required a mid-tier subscription, with full functionality at the top tier. Paligo stood out in this group because its Zendesk integration was built in rather than bought as an add-on.
+
+Together with the existing Google Docs and PDF approach, that gave me four candidates.
+
+## Step 4: Analyze each option
+
+I gave every option a fair hearing. For each one, I asked what it would be like for the customer reading the content, for the writer producing it, and for the engineers and designers who would need to support it.
+
+### Option A: Keep Google Docs and PDFs
+
+The status quo had real strengths. The learning curve was close to zero: type, export a PDF, upload it. Uploading could even be automated through Zendesk's REST API.
+
+But it failed customers in ways that got worse with every new guide:
+
+- **Customers couldn't search across guides.** Each PDF was an island. A user who didn't know which guide held an answer had no way to find it.
+- **Updates didn't reach readers.** A customer who downloaded a guide last quarter had no reason to download it again, so they kept working from outdated instructions.
+- **Reuse was nearly impossible.** A procedure that appeared in three guides had to be updated three times, and it was easy to miss one.
+- **It couldn't scale.** I asked stakeholders to picture dozens of documents representing different versions of different guides. That was where we were heading.
+
+**Verdict:** Easy today, expensive tomorrow. It scored lowest of the three finalists.
+
+### Option B: Write directly in Zendesk
+
+Writing in the help center's editor, or pasting converted HTML into it, had the fastest time to value and no licensing cost. Keeping source files in Git would even add version control.
+
+The problem was labor. Every article meant building its place in the category tree by hand and pasting content into its code editor. There was no reuse, so a shared procedure was still maintained in every copy. The REST API could remove some of the manual work, but not the core problem: **the effort grew in a straight line with the amount of content, and there was only one writer.**
+
+**Verdict:** A reasonable stopgap, not a strategy. I kept it on the map as a baseline and didn't carry it into the final scoring.
+
+### Option C: Build a docs-as-code site
+
+This was my first proposal, and I made the strongest case for it I could. The company's API reference already ran on a docs-as-code site, so I knew the approach worked in our environment. A separate site would deliver nearly every capability on my gap list: Git version control, reuse, plain-text markup, linting, automated tests, and continuous deployment.
+
+I costed it in detail so stakeholders could weigh it realistically.
+
+| Component | Cost |
+|---|---|
+| Open-source static site generator (Hugo, Gatsby, or Jekyll) | Free |
+| GitHub repository | Free |
+| Site hosting and CDN | About $100 to $150 per month |
+| Google Analytics | Free |
+| Customer sign-in solution | To be determined |
+
+| Who | One-time setup | Ongoing upkeep |
+|---|---|---|
+| **Engineering** | About 2 days: provision the repository, choose the hosting location, build the deployment pipeline with me, set up the custom domain, and enable customer sign-in | A few hours, 2 to 3 times a year: renew the domain certificate and fix unexpected deployment or sign-in issues |
+| **UI/UX design** | About 2 days: information architecture, branding, and a smooth path between the docs site and the support site | A few hours, 2 to 3 times a year: review changes and weigh in on user feedback |
+| **Customer success** | About 1 day: align the docs site with the support site | A few hours, 2 to 3 times a year |
+| **Technical writer** | 2 to 3 weeks: choose the tool, design the information architecture, migrate content, apply brand standards, configure pipelines, and test | Ongoing |
+
+On paper, it looked efficient. Then I stress-tested my own recommendation by asking what docs-as-code is actually *for*, and whether that purpose applied to us:
+
+- **Its main benefit is letting engineers contribute to docs.** That wasn't going to happen here, so we'd pay the cost without collecting the main benefit.
+- **It takes the writer's time to build and maintain.** Every hour spent on pipelines, dependencies, and broken builds is an hour not spent on content. With one writer, that trade-off is severe.
+- **Content isn't code.** Treating it as code brings developer tools, but not tools designed for managing content, like structured reuse and taxonomies.
+- **It may not scale well.** More guides mean bigger repositories, more complex deployments, and harder updates.
+- **It would split the help experience.** Product documentation on one site and slightly different help content on another could confuse users unless it was carefully governed.
+
+Engineering reviews also depended on pull requests in GitHub, which not every reviewer was comfortable with or had access to. That would have made SME review, one of the core requirements, harder rather than easier.
+
+**Verdict:** Powerful and flexible, but it would have made me an infrastructure maintainer first and a writer second, or required a dedicated champion on the engineering team.
+
+### Option D: Adopt a CCMS that publishes to Zendesk
+
+I'll be candid: **I expected Paligo to be too heavy-handed for our needs.** A CCMS with XML-based structured authoring can be a lot of tool for a small team.
+
+The analysis showed otherwise. Paligo stores content as reusable topics, snippets, and variables, so one change updates every place it appears. It also turned out to include many of the features that had drawn me to docs-as-code in the first place: **branching, version history, tagging, and variables.** It published directly into the existing help center, which meant customers kept a single place to go for help, with one login and one search. And Paligo and Zendesk managed the infrastructure, which left me free to focus on content.
+
+The trade-offs were real, and I wrote them down: less design freedom than a custom site, a limited REST API, a learning curve for structured authoring, and a mapping between Paligo and Zendesk that could get complicated.
+
+**Verdict:** The best balance of scale, reuse, review, and focus on content for a team of one, if it held up in a real trial.
+
+## Step 5: Score the finalists
+
+To make the trade-offs visible side by side, I scored the three strongest options on 13 criteria, each on a scale from 1 (poor) to 5 (excellent). Every option was scored as a way to publish into or alongside the existing help center, so the comparison was apples to apples. I wrote a short reason next to every score so anyone could challenge it.
+
+| Criterion | Google Docs and PDFs | Docs-as-code | Paligo |
+|---|:-:|:-:|:-:|
+| **Ease of access for users** | 2: Opening a Google Doc requires an account; cross-linking is difficult | 2: Users need separate logins for separate help resources | 5: One customer login reaches all help resources |
+| **Ease of finding information** | 1: No search across the body of docs | 4: Searches all docs, but not knowledge base articles | 4: Searches docs and knowledge base articles, though possibly not as one experience |
+| **Ease of creating content** | 3: Reuse is very difficult | 4: Reuse is moderately difficult | 4: Reusable topics, snippets, and variables |
+| **Ease of updating content** | 2: Basic find and replace only; no tagging | 3: Advanced find and replace; lightweight tagging | 5: Content reuse and taxonomies |
+| **Ease of getting updates for users** | 1: Users rarely re-download a document to check for changes | 5: Published immediately to the live site | 5: Published immediately to the live site |
+| **Ease of the surrounding process** | 2: Manual steps to create and upload each PDF | 4: Automated, but technical hiccups need diagnosis and sometimes engineering help | 4: Manual one-step publish; mapping to Zendesk can be complex |
+| **Ease of customization** | 1: Can only link to a file | 5: Complete freedom | 3: Limited by Paligo and Zendesk |
+| **Ease of automation** | 5: Upload PDFs through the Zendesk REST API | 5: Automate most steps | 4: Limited REST API |
+| **Scalability** | 1: Dozens of documents for different versions of different guides | 3: More guides mean bigger repositories, harder deployments, and harder updates | 5: Designed for large amounts of content and many contributors |
+| **Learning curve** | 5: Type, create a PDF, and upload | 3: Different from the company's tech stack | 3: Structured authoring is new |
+| **Focus on content, not infrastructure** | 4: Just type | 1: Constant infrastructure maintenance | 5: Paligo and Zendesk manage the infrastructure |
+| **Support for release notes and custom content** | 3: No change from today | 5: Automated pipeline from Jira to a Zendesk page | 4: The REST API can import, but supported formats are limited |
+| **Support for reviews by several people** | 3: Manually request reviews, share timelines, and send reminders | 2: Reviews happen in GitHub pull requests, which not everyone can use | 5: Up to 10 reviewers included, with tracked timelines and automatic notifications |
+| **Total (out of 65)** | **33** | **46** | **56** |
+
+### Reading the scores
+
+A total is only useful if you understand what's behind it, so I looked at where each option won and lost.
+
+- **Docs-as-code beat Paligo on customization, automation, and release notes.** Those are real advantages, and I said so.
+- **Paligo won decisively on the criteria that matter most for a solo writer:** scalability, focus on content, ease of updates, and multi-person review. On "focus on content," the gap was 5 to 1, the widest in the matrix.
+- **Paligo was also the only option that improved access for customers,** because it kept everything behind the single login they already used.
+- **Paligo scored 3 or higher on every criterion.** Docs-as-code had three scores of 2 or lower, and Google Docs and PDFs had six. A tool without a serious weakness is safer than one that excels in some areas and fails in others.
+
+The heuristic I applied was simple: **choose the option that puts the most of the writer's time into content that reaches users**, and treat customization as a nice-to-have unless it solves a user problem.
+
+## Step 6: Prove it in a trial
+
+A score is still a prediction. Before recommending a purchase, I ran a trial with success criteria written in advance, so the result couldn't be shaped by first impressions.
+
+### Success criteria
+
+| Perspective | What I measured |
+|---|---|
+| **Author experience** | Effort needed to structure content as topics and reuse components, fragments, and variables |
+| | Ease of branching and cross-references |
+| | Accuracy of publishing new and updated content to Zendesk |
+| | Control over layouts in Zendesk |
+| **Reviewer experience** | How complex reviewing is for SMEs |
+| **Contributor experience** | How complex contributing is for occasional authors |
+
+### What I tested
+
+I used real content and kept a test log so I could report exactly what worked. I tested 21 scenarios across four areas.
+
+| Area | Scenarios tested |
+|---|---|
+| **Structuring content** | Imported existing content, created topics, set up subsections, created a template, applied taxonomies |
+| **Reuse** | Created and reused a variable, shared snippets across two guides, reused a single step in several articles and confirmed an edit updated all of them, created cross-references |
+| **Publishing to Zendesk** | Built publications from several folders, published to Zendesk, changed content and republished, removed content and republished, checked how Zendesk URLs changed after a title or file name change, enabled custom styles, published a release notes table, images, and external links |
+| **Versioning** | Branched a layout, branched content, reviewed version history |
+
+Testing that a reused step updated everywhere was the heart of the trial. Reuse was the main reason to choose a CCMS, so I verified it directly instead of trusting the feature list.
+
+### The questions I asked
+
+Each round of testing produced questions, and I pursued them until I understood how the tool would behave in production. A few examples:
+
+- **What happens to reused text if I delete the page it came from?** A reuse model is only safe if deleting a source can't silently break other articles.
+- **Does republishing erase an article's analytics?** If it did, we'd lose the data we needed to measure content performance.
+- **What happens to a user's bookmark when a title changes?** The trial showed that renaming a file could change its Zendesk URL, so I raised redirects as a requirement before it could cause 404 errors for customers.
+- **Can I change a numbered list to a bulleted one, or give a table a title, without rebuilding it?** Small editing costs add up fast for a single writer.
+- **What are "orphan topics," and how do I find them?** Unused content is a maintenance cost, so I wanted a way to find it.
+- **How do I apply a layout to only some pages, and how much structure should I use for a basic topic versus a complex one?**
+
+## Step 7: Take requirements to the vendor
+
+I went into the vendor conversation with the requirements tables from step 1 and a list of questions about the risks that the documentation didn't answer:
+
+- Which Paligo and Zendesk subscription levels do we need, and what do they cost?
+- Can the help center's category tree be built in Paligo, or must it be built in Zendesk and then mapped?
+- **If someone edits a Paligo-published article directly in Zendesk, is their change overwritten at the next publish?**
+- **How realistic is a help center where half the content comes from Paligo and half is written in Zendesk?** Could labels conflict, articles be deleted by accident, or changes be overwritten?
+
+The last two questions mattered most. The support team would keep writing troubleshooting articles in Zendesk while I published product documentation from Paligo. I needed to know the two could coexist without anyone losing work.
+
+## Step 8: Plan for governance and adoption
+
+My written summary included a risk I wanted leadership to address early: publishing product documentation into the same help center as support articles would require a governance strategy. Without one, we'd end up with duplicate or conflicting articles on the same topic and navigation that exposed our internal team boundaries to customers. I recommended settling ownership up front, possibly led by the design team, because it would save "some big headaches in the future."
+
+After the company adopted Paligo, I presented the new platform and a documentation process to the product managers. The goal was to make documentation a predictable part of every release, not an afterthought.
+
+### Documentation in the product development lifecycle
+
+| Phase | Documentation outcomes | Tools |
+|---|---|---|
+| **Discovery** | A shared understanding of the problem and the users | |
+| **Solution design** | Documentation needs identified; audiences, purposes, formats, and delivery methods defined; Jira epics and tasks created | Google Docs, Jira |
+| **Execution** | Sources gathered and SMEs interviewed; outlines approved; documentation written in Paligo, reviewed, and approved; release notes drafted | Jira, Paligo, internal test environments, Figma |
+| **Delivery** | Documentation and release notes published to the help center; user experience tested | Paligo, Zendesk |
+| **Monitoring** | Metrics and customer conversations monitored for opportunities; ad hoc requests triaged; documentation strategy refined | Zendesk reports, Google Analytics, Jira |
+
+### How product managers and I worked together
+
+1. **Plan.** Together we defined the audience, format, delivery, and purpose. I created the Jira epic and tasks. For example, one feature might need an implementation guide for customer success, additions to the feature manuals, removal of outdated content, and release notes.
+2. **Share.** The product manager gave an overview of the changes, pointed me to SMEs, shared specs and presentations, and tagged me in relevant Slack threads. We built the outline together.
+3. **Review.** The product manager reviewed content before publishing, often with Paligo's reviewer tools.
+4. **Advocate.** Product managers encouraged customer-facing teams to share help content with users and surface it in the product.
+
+### Measuring what we published
+
+I also connected the help center to analytics so documentation decisions could be based on data. Zendesk's reports showed search click-through rates, searches with no results, and helpful or unhelpful votes. Google Analytics added bounce rate, time on page, returning users, and user paths. Together they could reveal things like:
+
+- **A frequently searched feature may have a usability problem**, which is useful information for the product team, not just for docs.
+- **Whether a specific article is helping** or needs another pass.
+- **Low page views may mean users don't know the help center exists**, which is a discoverability problem to solve with customer success.
+
+## Continuing to evaluate after launch
+
+Choosing the tool wasn't the end of the evaluation. As I used Paligo in production, I kept a running list of questions that pushed the platform further and fed into best practices and vendor conversations:
+
+- How do I see everywhere a piece of reused text appears before I change it?
+- Can I put a reusable component in a table, or reuse part of a sentence?
+- Can I generate a report of broken links, or find articles that aren't in any publication?
+- Can the REST API publish a single file, and how are other teams using it to publish updates automatically?
+- Can I set up redirects so a renamed or deleted article doesn't send users to a 404 page?
+
+## The impact
+
+- **One source for every product.** Shared procedures, terms, and product names live in one place as reusable components and variables. An update made once appears everywhere it's used.
+- **One place for customers to get help.** Product documentation and support articles live in the same help center, behind the same login, and are found by the same search.
+- **Faster, safer updates.** Publishing to the help center takes one step, and version history and branching protect the work.
+- **Built-in SME review.** Up to 10 reviewers could comment in Paligo with tracked timelines and automatic reminders, instead of email threads and chasing people.
+- **A writer focused on writing.** Paligo and Zendesk handled the infrastructure, so my time went to content instead of pipelines.
+- **A repeatable process.** Documentation became a defined part of the product development lifecycle, with clear roles for product managers and measurable outcomes.
+
+To see how I designed the content model and reuse strategy after the company adopted Paligo, read [Structured authoring in Paligo](/experience/paligo-structured-authoring).
+
+## What this shows
+
+Choosing a platform is a decision the team lives with for years, so I treat it as a research problem, not a shopping trip. I start with what users and the business need, write those needs down as testable requirements, study how others solve the same problem, and put every option on the same scale with reasons anyone can check. Then I test the leader against criteria I wrote before I started.
+
+Most importantly, I let the evidence change my mind. I started out favoring docs-as-code, and I had the skills to build it. The analysis showed that a CCMS was the better fit for this team, these users, and this stage of the company, so that's what I recommended.

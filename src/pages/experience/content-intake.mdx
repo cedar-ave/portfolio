@@ -1,0 +1,194 @@
+---
+title: Content intake and prioritization
+description: How I designed a Jira intake form and triage process that turns requests for new content into labeled, prioritized stories, starting from the problem the requester is trying to solve instead of the solution they asked for.
+---
+
+import {
+  RequestToRootProblem,
+  IntakeFlow,
+  RequestFormMockup,
+} from '@site/src/components/IntakeDiagrams';
+
+# Content intake and prioritization
+
+Requests for new content came from every corner of the organization, and almost all of them arrived as a finished solution: *"We need a guide for this." "Can we get an FAQ for that?"* Taking those requests at face value turns a documentation team into an order desk and fills the backlog with bandages that never reach the real problem. **I designed an intake system that treats every content request the way a product manager treats a feature request: start with the problem, not the proposed solution.** A Jira form asks requesters what problem they're trying to solve before it asks what they want. Each submission automatically becomes a story in a dedicated Content Development project, where a structured triage review finds the root problem and standardized labels record what triggered the request and what kind of content it needs. The result is an organized, measurable, repeatable way to decide what to build next, and far better odds that what we build actually fixes something.
+
+The company's details are left out. The form mockup and examples on this page are recreated from my original design and use illustrative content.
+
+:::tip[At a glance]
+
+- **1 front door** for every request for new content, from any team.
+- **Problem first:** the form's first question is "What problem are you trying to solve?", not "What do you want?"
+- **4 defined urgency tiers**, so "urgent" means the same thing no matter who's asking.
+- **Automatic Jira stories:** every submission lands in the Content Development project as a story, with the requester's answers already filled in.
+- **10 triage questions** that separate the root problem from the requested solution and size the work.
+- **15 standardized labels** (8 trigger labels and 7 content-type labels) that make the backlog sortable, reportable, and comparable over time.
+- **1 dashboard plan** to measure cycle time, bottlenecks, and aging work.
+
+:::
+
+## The problem: requests arrive as solutions
+
+People are good at noticing pain and quick to prescribe a fix. By the time a request reached the content team, the requester had usually already decided what the answer was: a new guide, a new FAQ, a one-pager. The request described the *deliverable*. It rarely described the *problem*.
+
+That's a problem for three reasons:
+
+- **The requested solution is often a bandage.** A new guide doesn't help if readers can't find the existing one, or if the real confusion comes from a label in the product.
+- **Every request looks equally urgent.** Without shared definitions, the loudest or most recent ask wins, and work that prevents real customer harm can wait behind work that doesn't.
+- **Nothing gets measured.** Requests scattered across chats and meetings can't be counted, compared, or learned from. There was no way to see where requests came from, how long they took, or which kinds kept coming back.
+
+Here are the kinds of requests I mean. In each one, the fix that solves the problem looks different from the fix that was requested.
+
+| What was requested | The problem underneath | What actually solves it |
+| --- | --- | --- |
+| "We need a new guide for the reporting feature." | Readers misread one filter label and file tickets about missing data. The guide already exists. | A clearer label in the product, a callout in the existing article, and a link in the support team's reply template. |
+| "Can we make an FAQ for new customers?" | New customers don't know the help site exists, so they never find the answers already written. | Introducing the help site during onboarding. See [Analytics dashboard design](/experience/analytics-dashboard-design) for how I measured that awareness gap. |
+| "Write an article explaining this error message." | The error message doesn't tell users what to do next. | Rewriting the message in the product, plus a short troubleshooting entry for the edge cases. |
+| "Sales needs a one-pager on feature X." | Reps can't find existing content quickly during calls. | Better navigation and search, and a short list of links the team can share. |
+
+*Illustrative examples.*
+
+Each of those requests would have produced *something*. Only a conversation about the problem produces the *right* thing.
+
+## My approach: product management for content
+
+I modeled the intake process on how a good product manager handles feature requests from customers and colleagues. They don't build what's asked for; they find out why it's being asked for. Five principles shaped the design:
+
+1. **Problem before solution.** Ask what's broken before asking what to build. The requested deliverable is useful information, but it's a hypothesis, not a spec.
+2. **One front door.** Every request enters the same way, so every request can be compared with every other.
+3. **Shared definitions.** Urgency tiers come with written criteria so requesters rate their own requests consistently.
+4. **Label for learning.** Every story is tagged with *why* it came in and *what kind* of content it needs, so patterns show up in reports instead of in hindsight.
+5. **Automate the busywork.** Jira creates the story, fills the fields, and flags priority work, so the team spends its time on judgment, not data entry.
+
+## The request form
+
+The form is short on purpose: five questions and an attachment field. Each question earns its place by feeding a decision the content team has to make later.
+
+<RequestFormMockup />
+
+| Question | Field type | Why it's there |
+| --- | --- | --- |
+| What problem are you trying to solve? | Open text | Comes first on purpose. It moves the requester from "what I want" to "what's wrong" and gives triage its starting point. |
+| Describe the new content you're requesting. | Open text | Captures the requester's idea without letting it define the work. Their proposal is a useful hypothesis. |
+| Who is the audience for the content? | Picklist | Determines voice, depth, where the content lives, and who reviews it. A picklist keeps answers consistent enough to report on. |
+| How urgent is this request? | Picklist with definitions | Gives a starting point for priority, using criteria everyone reads the same way. |
+| What content already exists about this topic, even if it's not in great shape? | Links or attachments | Stops duplicate content before it starts and often reveals that the fix is an update, not something new. Accepts docs, wiki pages, PRDs, drafts, recordings, and tickets. |
+| Attachments | Files | Screenshots, drafts, and customer examples that show the problem in context. |
+
+### Urgency tiers
+
+"Urgent" is the most overused word in any request queue. I replaced it with four tiers, each with a definition written into the form itself, so requesters choose a tier by matching criteria rather than by gut feel.
+
+| Urgency | Definition |
+| --- | --- |
+| **Mission critical** | Blocking a launch, legal obligation, or customer impact. Must address immediately to prevent measurable harm. |
+| **Time sensitive** | Tied to a specific date or event with external visibility. Delay would reduce relevance or credibility. |
+| **Nice to have by a certain date** | Helps a project or team but is not time-bound. Not blocking or externally visible. |
+| **Flexible** | Schedule when capacity allows. No impact if delayed. Optimize timing for impact. |
+
+The definitions do a second job: they make the cost of *waiting* explicit. A requester who reads "no impact if delayed" is much less likely to pick "mission critical" for a nice-to-have.
+
+## From form to Jira story
+
+The form lives in Jira and is attached to a dedicated **Content Development** project. When someone submits it, Jira creates a **story** in that project automatically. The requester's answers become the story's description and fields, and their attachments carry over. The requester is recorded as the reporter, so they're notified as the story moves forward, and any follow-up conversation happens in the story's comments instead of in scattered messages.
+
+<IntakeFlow />
+
+1. **Submit.** A team member fills out the form, starting with the problem.
+2. **Create.** Jira turns the submission into a story in the Content Development project, fields already filled in.
+3. **Triage.** The content team reviews the story to find the root problem, asking clarifying questions in the comments when needed.
+4. **Label and rank.** The team applies trigger and content-type labels and confirms the priority.
+5. **Automate.** Jira automation flags stories with priority triggers so they surface at the top of the backlog.
+6. **Build and publish.** The work moves through drafting, SME review, and publishing on the board like any other story.
+7. **Measure.** A Jira dashboard reports on cycle time, bottlenecks, and aging work across every request.
+
+Using Jira instead of a spreadsheet or a shared inbox was a deliberate choice. Stories hold multiple attachments and a threaded conversation. Status changes are timestamped, which makes cycle time measurable for free. JQL queries and automation rules can sort, flag, and route work without anyone touching it.
+
+## Triage: finding the root problem
+
+Every story gets a triage review before it's prioritized. This is where the problem-first design pays off. The review works through ten questions, grouped by the decision each one supports:
+
+**Understand the problem**
+
+- What is the actual problem to be solved?
+- What materials already exist?
+- Should we create new content or update existing content?
+
+**Size the impact**
+
+- What percentage of this request comes from customers?
+- Which audiences is the content applicable to?
+- How much time will implementing this request save?
+
+**Plan the work**
+
+- How much time should this request take to complete?
+- What priority should this request be given?
+- Who are the subject matter experts?
+- If needed, how will we communicate this change to stakeholders?
+
+The first question is the most important one. Here's how it plays out on the reporting-guide request from the table above:
+
+<RequestToRootProblem />
+
+The requester asked for a new guide. Triage showed that a guide already existed and that readers were getting stuck on a single ambiguous filter label. A new guide would have repeated the existing one and left the confusing label in place, so the tickets would have kept coming. The better answer was three small fixes: a label change sent to the product team, a callout in the existing article, and a link in the support team's reply template. Together they took less effort than a new guide and addressed the cause instead of the symptom.
+
+Triage doesn't mean saying no. It means saying yes to the right thing. Sometimes the root problem *is* missing content, and the requested guide is exactly right. The point is to know that before the work starts, not after it ships and the tickets keep coming.
+
+## Labels that make the backlog measurable
+
+After triage, the story gets labels from a fixed set. Labels are multiselect, so a request prompted by both a product update and a wave of support tickets can carry both. Because every story uses the same vocabulary, the backlog can be filtered, reported on, and compared over time.
+
+### Trigger labels: why did this request come in?
+
+| Label | Category | When to use | Example |
+| --- | --- | --- | --- |
+| `content-trigger-product-update` | Product-driven | A product update, feature release, deprecation, or renaming. | A new onboarding flow, a settings UI change, a pricing update. |
+| `content-trigger-user-feedback` | User-driven | Users flag issues directly through feedback forms, comments, or ratings. | A reader rates an article as unhelpful. |
+| `content-trigger-support-ticket` | Support-driven | A support ticket surfaces a knowledge gap or repeated misunderstanding. | High ticket volume about login issues or account settings. |
+| `content-trigger-analytics-support` | Support-driven | The support team's analytics research reveals needs and gaps. | A high volume of tickets on a particular topic. |
+| `content-trigger-legal` | Compliance and legal | The legal, privacy, or compliance team flags a required change. | New terms of service or a regulatory change. |
+| `content-trigger-analytics-help-site` | Data-driven | Help site metrics show poor performance or unexpected behavior. | Bounce rate over 80%, low time on page, poor search click-through. |
+| `content-trigger-site-maintenance` | Brand-driven | Maintenance or planned improvements to the help site. | A new masthead or closer brand alignment. |
+| `content-trigger-other` | Miscellaneous | A request that doesn't fit another category. | — |
+
+### Content-type labels: what kind of work is it?
+
+| Label | Use for |
+| --- | --- |
+| `type-help-article` | A single help center article, new or updated. |
+| `type-guide` | A longer, multi-part guide or end-to-end workflow. |
+| `type-site-ux` | Navigation, layout, or other help site experience changes. |
+| `type-analytics` | Measurement and reporting work on content performance. |
+| `type-release-notes` | Release notes and change announcements. |
+| `type-automation` | Tooling or automation that supports the content workflow. |
+| `type-other` | Work that doesn't fit another type. |
+
+### Automation for priority triggers
+
+Some triggers carry built-in urgency no matter how the request was rated. A legal or compliance change can't wait for the next planning cycle, and content tied to a product launch has a hard date. I planned Jira automation rules that flag stories carrying those triggers so they rise to the top of the backlog and notify the team, rather than depending on someone to spot them.
+
+Labels also turn the backlog into a source of insight. If `content-trigger-support-ticket` keeps showing up on the same product area, that's a signal for the product team, not just the content team. If `content-trigger-analytics-help-site` requests cluster in one category of articles, that category needs a structural fix, not one-off edits.
+
+## Measuring the system
+
+A process is only repeatable if you can see how it's performing. I scoped a Jira dashboard to answer the questions a content lead needs to manage a queue:
+
+| Dashboard gadget | Question it answers |
+| --- | --- |
+| Average time from story created to completed, by trigger or content type | Which kinds of requests take longest, and where should we invest in templates or tooling? |
+| Average time in each status | Where do stories get stuck? For example, are they waiting in SME review? |
+| Content funnel overview | How many requests are in each phase right now? |
+| Blocked content | Which stories are blocked, and on what? |
+| Aging stories | Which stories haven't moved in more than 14 days? |
+| Approval SLA compliance | Are reviews and approvals meeting internal deadlines? |
+
+With this dashboard, capacity conversations stop being opinions. When a stakeholder asks why their request hasn't shipped, the answer is on the board: where it sits in the queue, what's ahead of it, and why.
+
+## What this project shows
+
+- **I solve root problems, not stated ones.** The whole system is built around one question: *what problem are you trying to solve?* That question regularly turns a large request into a smaller, better fix, and occasionally reveals that the real fix belongs to another team.
+- **I bring product thinking to content.** Treating content requests like feature requests, with discovery, sizing, and prioritization, makes the content team a strategic partner instead of an order desk.
+- **I build systems, not one-off fixes.** One intake form, one set of definitions, one label vocabulary, and one dashboard make the process repeatable for anyone who runs it after me.
+- **I make work measurable.** Labels and timestamped statuses turn a stream of requests into data that shows where requests come from, how long they take, and where the process slows down.
+- **I use automation to protect judgment.** Jira handles story creation, field mapping, and priority flags, so people spend their time on the conversations that matter.

@@ -1,0 +1,154 @@
+---
+title: Structured authoring in Paligo
+description: How I designed and built a single-source content library in Paligo, with reuse at four levels of granularity, so one writer could keep six guides for two product lines accurate and consistent in a Zendesk help center.
+---
+
+# Structured authoring in Paligo
+
+I'm an expert Paligo user and a specialist in single-sourcing and structured authoring. As the only technical writer at a healthcare software company, I designed and built the company's Paligo content library from scratch in about three months: **more than 300 DocBook XML topics and about 20,000 words, published as six guides for two product lines into the company's Zendesk help center.** I designed reuse at four levels, from whole topics down to single words. One caution I wrote once appears in 35 topics. Product names and interface icons are variables. Cross-references resolve by ID, so links stay correct when titles change. The result is a library where one change, published once, updates every guide that uses it. That's how a team of one produced and maintained documentation at the scale of a team.
+
+The company's platform is proprietary, so this page gives an overview and leaves out the company's details. The diagrams are my own illustrations, based on the structure of the real content.
+
+:::tip[At a glance]
+
+- **The platform:** Paligo, a component content management system (CCMS) that stores content as reusable XML components and publishes it to a help center, a website, or PDF.
+- **What I built:** 6 publications, more than 300 topics, about 2,000 reusable text segments, 15 reusable admonitions, and 4 variable sets.
+- **How much reuse:** 188 forks, 144 embedded topics, 99 placements of reusable admonitions, 116 placements of variables, and 106 cross-references that resolve by ID.
+- **Where it published:** Straight into Zendesk, where each publication became a help center category with sections and articles.
+- **Why it matters:** Customers get the same accurate instruction everywhere it appears, and the company gets documentation that scales with its products instead of with its headcount.
+
+:::
+
+## What Paligo is, and why it changes how you write
+
+Most writing tools store a document as one long file. Paligo stores it as a database of **components**. The main component is a **topic**: a self-contained section, such as one task or one concept, written in DocBook, an XML standard for technical documentation. A **publication** is a table of contents that doesn't contain topics. It links to them with **forks**, so the same topic can appear in several publications while existing only once.
+
+Paligo breaks content down further than topics. It stores every paragraph, list item, and procedure step as its own text segment, so any of them can be reused, reviewed, and translated on its own. **Informal topics** package smaller pieces, such as a note or caution, for reuse. **Variables** hold words, phrases, and images that change with context. At publish time, Paligo assembles all of these pieces into finished output for Zendesk, HTML5, PDF, and other channels.
+
+This model is powerful, but only if the content is designed for it. If you paste in documents and write them the old way, you get none of the benefits of a CCMS and still pay its cost. My job was to design a content model that made reuse natural, safe, and easy to maintain.
+
+I chose Paligo after a structured evaluation of four documentation architectures. To see how I made that decision, read [Choosing a CCMS](/experience/ccms-evaluation). This page covers what I built once I'd chosen it.
+
+![Diagram of the single-source model: four kinds of reusable components (topics, reusable admonitions, text fragments, and variables) feed six publications built from forks. At publish time, variables, image variables, forks, and cross-references are resolved, and the result is published to the Zendesk help center as categories, sections, and articles.](/img/paligo/single-source-model.svg)
+
+## Designing the content model
+
+Before I wrote a single topic, I made the structural decisions that everything else would depend on. Getting these right early is what makes a CCMS maintainable years later.
+
+### Topic granularity that matches the destination
+
+Paligo maps a publication's hierarchy to Zendesk. The publication becomes a category, first-level topics become sections, and the topics under them become articles. That meant **topic boundaries were also article boundaries** for customers. I sized topics around a single user goal (*Turn on monitoring*, *Re-verify a credential*, *Import a provider's profile*), so each article answered one question and each topic could be reused without dragging unrelated content along with it.
+
+### A folder architecture that follows the user's journey
+
+Each guide got the same structure: a **Publication** folder that holds only the publication, and a **Topics** folder with numbered subfolders that follow the order in which a customer does the work. For the provider-data clearinghouse guide, those were *1. Overview*, *2. Prepare*, *3. Import a provider's profile*, *4. Attestation and re-attestation*, and *5. Review a provider's profile*. The main product guide had 14 of these folders, from *Get started* through *Troubleshoot* and *Reference*.
+
+Components used by more than one guide went in a **Shared** folder, and variable sets lived in one central location. Anyone opening the library could tell where a topic belonged, what order it came in, and whether changing it would affect other guides.
+
+### Names that make reuse findable
+
+Reuse only works if you can find what already exists. I named every reusable component for **what it says and when to use it**, not where I first used it: *Credentials tab name caution*, *Turn off pop-up blockers*, *Continuous monitoring note*, *Existing databank account caution*. A writer who searches Paligo for "caution" or "monitoring" finds the approved component instead of writing a slightly different version, which is how duplicate content starts.
+
+## Reuse at every level of granularity
+
+The most important skill in structured authoring is choosing the **right** reuse mechanism for each kind of repetition. Too little reuse, and the same instruction drifts apart across copies. Too much, or the wrong kind, and a small edit has consequences no one can predict. I used four levels, each for a specific job.
+
+![Diagram of four reuse levels, from larger to smaller: topics in publications through forks (188 forks, 7 topics shared across guides), topics inside topics (144 embeds, one short task reused in 6 places), reusable admonitions (15 admonitions in 99 placements, one caution in 35 topics), and variables (116 placements across 4 variable sets).](/img/paligo/reuse-granularity.svg)
+
+### Level 1: Topics shared across publications
+
+Some tasks are part of more than one workflow. For example, *Re-import a provider's profile* belongs in the main product guide, where credentialing specialists manage providers, and in the clearinghouse guide, where it's the last step of a re-attestation cycle. I linked the same topic into both publications with forks. **Customers see the task where they need it, and I maintain it in one place.**
+
+### Level 2: Topics embedded in other topics
+
+Short procedures that show up in the middle of larger tasks are a common source of drift. *Re-verify a credential* is one sentence and one icon, but it's a step in six different workflows. Instead of rewriting it six times, I wrote it once as its own topic and embedded it with `xi:include` wherever a task needed it. *Turn on monitoring* is embedded in five places. There are 144 of these embeds across the library.
+
+### Level 3: Reusable admonitions
+
+This is where structured authoring solved a real customer problem. The Salesforce version of the product is highly configurable, and customers often rename tabs and modals. An instruction that says "Go to the **Credentials** tab" is wrong for any customer who renamed that tab, and nothing tells them why.
+
+I wrote one caution for that situation, *"The name of the **Credentials** tab may be customized to something else for your organization,"* as a reusable informal topic. I placed it in **35 topics**. A second caution about a customizable modal appears in **32**. If the product team changes how customization works, I update one component, and every procedure that depends on it is corrected in the next publish.
+
+In total, 15 reusable admonitions cover 99 placements. Some of them contain other reusable parts. The *Continuous monitoring note*, for example, is reused across guides, and it uses a variable for the title of the customer's success manager:
+
+```xml
+<note>
+  <para>If your organization uses the Salesforce app and you are not a new
+    customer, continuous monitoring may not be enabled ... Talk with your
+    <phrase xinfo:variable="28" xinfo:varset="320"/> to learn more.</para>
+  <para>New customers ... are enrolled in continuous monitoring by default.</para>
+</note>
+```
+
+That's reuse nested inside reuse: a variable inside an admonition that's inside dozens of topics. When a role title changes, one edit updates it across the library.
+
+### Level 4: Variables for words and images
+
+I built four variable sets:
+
+- **Product names.** The Salesforce product name alone appears in 39 places. Product names are the first thing to change in a rebrand, and with variables, a rebrand is a one-line edit instead of a search-and-replace across hundreds of articles.
+- **Role and service names.** Customer-facing role titles and service names, such as the customer success manager, change as a company reorganizes. They're stored once.
+- **Salesforce interface icons.** I created an **image variable set** of 18 Salesforce icons (refresh, edit, delete, filter, and more), so a step can say "click the refresh icon" and show the actual icon inline.
+- **Web app interface icons.** A second image variable set holds the standalone web app's icons.
+
+Image variables are an underused feature, and they pay off twice. Readers see exactly which icon to click, in context, instead of hunting through a screenshot. And when the product team redesigns an icon, I replace one image in the variable set instead of finding and re-cropping every screenshot that shows it.
+
+## Writing with semantic markup
+
+Structured authoring isn't only about reuse. It's also about marking up content by what it **is**, not how it should look, so every output can style it correctly and machines can understand it.
+
+![Anatomy of one topic, "Turn on monitoring." On the left is the simplified DocBook XML source: a procedure whose first step includes a reused admonition through xi:include, whose second step uses an image variable for the heartbeat icon, and a note with an ID-based cross-reference. On the right is the rendered article: numbered steps, a note that the Credentials tab name may be customized, the inline icon, and a working link to "Change monitoring frequency."](/img/paligo/topic-anatomy.svg)
+
+Throughout the library:
+
+- **Tasks are procedures, not lists.** I wrote 41 procedures with 166 steps, including substeps and step alternatives for places where a user can reach the same result in more than one way. Procedures tell the output, search, and any future AI assistant that the content is a sequence of actions.
+- **Interface text is marked as interface text.** Button and field names use `guilabel` (45 times) and keyboard keys use `keycap`, so they're styled consistently and can be checked against the product.
+- **Reference content is structured data.** For the practitioner databank guide, I built reusable *parameter set* tables that list exactly which provider information a scan requires in each case. The data sources catalog and fees reference are tables too, so they're easy to scan and update.
+- **Cross-references resolve by ID.** All 106 internal cross-references and links point to a component's ID, not to a URL or a hard-coded title. Paligo fills in the current title and the correct Zendesk URL at publish time, so links survive renamed topics and restructured guides.
+- **Every component carries a status.** Content moves through Paligo's workflow to a *released* state, so it's always clear what's approved for customers.
+
+## Using structure to handle different audiences
+
+Paligo offers filtering, also called profiling, which shows or hides content based on attributes such as product or audience. Filtering is the right tool when each audience gets its **own** output. But the help center published one article for everyone, and customers couldn't choose a filter when they read it. Filtered content would have been hidden from some of the readers who needed it.
+
+So I handled audience differences with structure. The parent topic holds what every reader needs, and embedded child topics hold what only some readers need, each under a heading that tells readers whether it applies to them.
+
+![Diagram of a parent topic, "Evaluate a databank report," which contains a shared note and a shared important admonition about confidentiality. Two child topics are embedded with xi:include: one for organizations that credential their own providers, and one for organizations whose providers are credentialed by a verification team.](/img/paligo/audience-branching.svg)
+
+I used the same pattern for product differences. *Change monitoring frequency for a provider* is a shared parent topic with separate children for the Salesforce app and the verification team's application. Readers see a clear heading for their situation. I maintain the shared parts once and the different parts separately.
+
+Knowing when **not** to use a feature is part of expertise. I reserved filtering for cases where each audience gets its own publication, and used variables only for values that truly swap one-for-one, like names and icons. Where the steps themselves differ, I used separate topics.
+
+## Publishing to Zendesk without surprises
+
+A CCMS is only as good as its output. I learned how the Paligo-to-Zendesk integration behaves in production and designed around its edge cases:
+
+- **Republishing updates articles in place.** Paligo creates new articles for new topics and updates existing ones, so routine updates don't create duplicate articles or break existing links.
+- **Paligo doesn't delete articles from Zendesk.** So every restructure included a check of the help center for articles left behind by the old structure, so customers wouldn't find outdated duplicates.
+- **Titles and file names can affect URLs.** I treated a title change on a published topic as a change to a public URL and raised redirects as a requirement, so customers wouldn't hit 404 errors.
+- **Edits made directly in Zendesk are overwritten at the next publish.** The rule was simple: Paligo-published articles are edited in Paligo. Support articles written in Zendesk lived alongside them without conflict.
+- **The output needed help center support.** Paligo's HTML has patterns a stock theme doesn't expect, such as headings styled as paragraphs and deeply nested ordered lists. I later handled those in the help center theme itself. See [Help center theme engineering](/experience/help-center-theme-engineering).
+
+## Why this matters
+
+**For customers,** single-sourcing means the same instruction reads the same way everywhere, and an update reaches every article at once. There's no drift between guides and no outdated copies.
+
+**For the company,** it means documentation scales with the products instead of with headcount. One writer maintained six guides because every recurring caution, name, icon, and procedure existed in exactly one place.
+
+**For the future,** structured content is an asset that keeps paying off:
+
+- **It's ready for translation.** Paligo stores each paragraph as a segment with translation memory, so a new language would reuse translations wherever the same text appears.
+- **It's ready for AI.** Small, self-contained, semantically tagged topics are exactly what retrieval systems and AI assistants need to find and cite accurate answers. Well-structured content is the foundation for trustworthy AI help.
+- **It's ready for automation.** Because the content is XML with consistent rules, it can be generated and published programmatically. I later built an AI agent skill and a custom MCP server that convert approved Google Docs into valid DocBook, upload images, create cross-references, and publish through Paligo's REST API. See [AI agent skills](/experience/ai-agent-skills) and [Custom MCPs](/experience/custom-mcps).
+
+## Skills demonstrated
+
+- **Structured authoring:** DocBook 5 XML, topic-based writing, semantic markup (procedures, GUI labels, tables, admonitions), minimalism
+- **Single-sourcing and reuse strategy:** forks, embedded topics, informal topics, text fragments, text and image variables, and knowing when to use filtering and when not to
+- **Information architecture:** topic granularity, folder architecture, naming conventions, and mapping a publication hierarchy to help center categories, sections, and articles
+- **Publishing:** the Paligo-to-Zendesk integration, republishing behavior, URL stability, and governance for help centers with mixed sources
+- **Content operations:** release workflows, maintainability, and translation and AI readiness
+
+## The result
+
+In about three months, the company went from standalone guides in Google Docs and PDFs to a structured, single-source library in Paligo that published six guides for two product lines straight into its help center. Every shared instruction, caution, name, and icon lives in one place, and one publish updates it everywhere. The library was built to grow with more products, more writers, more languages, and AI-driven help, without having to be rebuilt.

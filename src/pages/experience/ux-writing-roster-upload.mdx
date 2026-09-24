@@ -1,0 +1,106 @@
+---
+title: UX writing for a file upload
+description: How I rewrote the interface text for a data-import feature and shipped the change myself with Claude Code, so users could upload a correctly formatted file on the first try.
+---
+
+# UX writing for a file upload
+
+:::important
+The product is proprietary, so images below are not screenshots of the product. They are mockups constructed by Claude that illustrate the changes.
+:::
+
+When a new data-import feature shipped with interface text that contradicted how it worked and gave users no path to success, I didn't file a ticket and wait. I rewrote the text as a short checklist of the exact rules the file had to follow, linked it to the full guidelines in the help center, and made the change in the product's code myself with Claude Code. **The result was an upload screen that tells users what a valid file looks like before they upload one.** That heads off the support tickets a failed upload creates and turns trial and error into success on the first try.
+
+The product is proprietary, so this page gives an overview and leaves out the company's details.
+
+:::tip[At a glance]
+
+- **The feature:** roster ingestion, where healthcare organizations upload a CSV file to add, remove, or update provider records in a Salesforce app.
+- **What I found:** 3 separate problems on one screen: text cut off mid-sentence, wording that promised something the feature couldn't do, and file rules that were mentioned but never explained.
+- **What I did:** Replaced a vague paragraph with 4 specific, testable rules and a link to the full formatting guidelines.
+- **How I shipped it:** I made the change in the codebase myself with Claude Code instead of adding it to an engineering backlog.
+- **Why it matters:** Users can get it right the first time, and the support team spends less time on questions the screen should have answered.
+
+:::
+
+## The feature
+
+Customer organizations maintain rosters of the healthcare providers they work with. Roster ingestion let an administrator upload a CSV file to bring that roster into the app. In one upload, the app would add new providers, remove departed ones, and update records that had changed.
+
+It's a high-stakes moment for the user. A roster can hold hundreds of providers, and a bad import either fails or, worse, brings in bad data. The upload screen was the only guidance users had at that moment.
+
+## The problems
+
+I reviewed the screen as a first-time user would see it, right after the feature was released. Here's what it said:
+
+> Upload a CSV to import provider roster information into Salesforce including providers that have been added, removed or have updated information. Rosters must be formatted correctly to
+
+That's where the text stopped. The instruction was cut off in the interface, so users never saw the end of the sentence. It was the one that mattered most.
+
+![Mockup of the original upload screen, with the heading "Upload Files," instructions cut off mid-sentence, and no formatting rules](/img/samples/roster-upload-before.png)
+
+**The screen told users the file had rules but not what the rules were.** "Rosters must be formatted correctly" is a warning, not an instruction. A user had two options: log a support ticket, or upload, fail, adjust, and try again until something worked. Both are expensive. The first costs the support team time. The second costs the customer time and confidence in the product.
+
+**The wording contradicted how the feature worked.** The buttons, headings, and confirmation messages all used the plural: *Upload files*, *Drop files*, *1 of 1 files uploaded*. But the import accepted only one file. A user who took the screen at its word and uploaded several files got an error the interface had practically invited.
+
+**The first sentence was spent on the wrong thing.** It described what the feature does, which the user already knew because they had chosen to open it. The space the user needed for *how to succeed* went to *what this is*.
+
+## My approach
+
+Before I wrote anything, I worked out what a user actually needs in order to succeed on this screen and what causes imports to fail. My thinking went like this:
+
+1. **Put the task first.** A user on this screen wants to upload a roster. The heading should say so plainly and in the singular, because one file is what the feature accepts.
+2. **Turn warnings into rules.** Every "must be formatted correctly" hides a specific requirement. I pulled out the ones that tripped up users most often and wrote each as a direct instruction a user can check against their own file.
+3. **Put the essentials in the interface and the details in the help center.** A screen can't hold a full formatting specification, and it shouldn't try. The screen gives the few rules most users need. A link leads to the full guidelines for everyone else.
+4. **Make the words match the software.** Every label, button, and message had to describe what the feature actually does.
+
+## The fix
+
+I replaced the paragraph with a short, scannable checklist:
+
+> **Upload a roster CSV file.** Make sure to:
+>
+> - Include all data in a single tab of a single CSV file.
+> - Put addresses in a single field.
+> - Give each column heading a unique name.
+> - Remove all columns you don't want to import.
+>
+> [CSV formatting guidelines](#)
+
+![Mockup of the improved upload screen, with the heading "Upload a roster CSV file," four formatting rules, and a link to the full guidelines](/img/samples/roster-upload-after.png)
+
+### Before and after
+
+| | Before | After |
+|---|---|---|
+| **Heading** | Framed around multiple files | "Upload a roster CSV file" (singular, task-first) |
+| **Formatting help** | "Rosters must be formatted correctly to…" (cut off) | 4 specific rules the user can check against their file |
+| **Path to more help** | None. Log a ticket or keep guessing. | A link to the full CSV formatting guidelines in the help center |
+| **Accuracy** | Plural wording for a single-file feature | Wording that matches what the feature accepts |
+| **Length** | One long sentence that didn't fit on the screen | Short lines that fit and can be scanned in seconds |
+
+Each rule does real work:
+
+- **"A single tab of a single CSV file"** heads off two failures at once: uploading several files, and exporting from a spreadsheet with data spread across tabs.
+- **"Addresses in a single field"** addresses a common mismatch. Many source systems split addresses into street, city, state, and ZIP columns.
+- **"A unique name for each column heading"** prevents mapping errors that are hard to diagnose after an upload fails.
+- **"Remove columns you don't want to import"** keeps unwanted data out of the app and makes the file easier to map.
+
+## Shipping it myself with Claude Code
+
+Interface text usually lives in the codebase, which puts a content fix behind an engineering ticket, a sprint, and a queue. A small, high-value change like this one can sit in a backlog for months.
+
+Instead, I used Claude Code to find the strings in the product's code, update the heading, instructions, and labels, and prepare the change for review. The work stayed with the person who understood the user problem best, and engineers were free to focus on engineering.
+
+This is how I like to work. I don't stop at identifying a problem or writing a recommendation. I use the tools available to carry a fix all the way into the product, and I bring the judgment to know what the fix should be.
+
+## The impact
+
+- **Fewer avoidable support tickets.** The questions users had been sending to support are now answered on the screen, where they arise.
+- **Success on the first try.** Users can check their file against 4 clear rules before they upload instead of learning the rules through errors.
+- **More trust in the product.** When the words on a screen match what the software does, users trust the rest of it too.
+- **A quicker path from problem to fix.** Because I could make the change myself, the improvement reached users without waiting in an engineering queue.
+
+## What this shows
+
+A few sentences of interface text can decide whether a feature launch goes smoothly or turns into a stream of support tickets. Good UX writing comes from understanding where users fail and why, and from putting the right information in front of them at the moment they need it. That's work I love to do: noticing the friction, figuring out its cause, writing the fix, and shipping it.

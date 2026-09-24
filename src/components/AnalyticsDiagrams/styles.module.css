@@ -1,0 +1,595 @@
+/* Diagrams and dashboard mockups for /experience/analytics-dashboard-design.
+   Colors follow the site palette in src/css/custom.css and switch with the
+   light/dark theme. The two chart series colors (--ad-a, --ad-b) were checked
+   for colorblind separation and contrast in both themes. */
+
+.figure,
+.dash {
+  --dg-node-bg: #ffffff;
+  --dg-node-stroke: #93bcdf;
+  --dg-zendesk-bg: #e6eef9;
+  --dg-zendesk-stroke: #5f93c7;
+  --dg-ga-bg: #fdf1dc;
+  --dg-ga-stroke: #c98a1c;
+  --dg-sf-bg: #e3f6f2;
+  --dg-sf-stroke: #3fa592;
+  --dg-hub-bg: #202b49;
+  --dg-hub-stroke: #202b49;
+  --dg-key-bg: #eef3f9;
+  --dg-edge: #8a9bb0;
+  --dg-muted: #5c6b7a;
+
+  --ad-a: #3a7fc4;
+  --ad-b: #c98a1c;
+  --ad-grid: #e3e8ee;
+  --ad-surface: #ffffff;
+  --ad-panel: #f6f8fb;
+  --ad-border: #d5dde6;
+  --ad-ink: #1c1e21;
+  --ad-ink-2: #4a5663;
+  --ad-ink-3: #6b7885;
+}
+
+:global([data-theme='dark']) .figure,
+:global([data-theme='dark']) .dash {
+  --dg-node-bg: #242526;
+  --dg-node-stroke: #5e7893;
+  --dg-zendesk-bg: #22324a;
+  --dg-zendesk-stroke: #93bcdf;
+  --dg-ga-bg: #3d3120;
+  --dg-ga-stroke: #f1b753;
+  --dg-sf-bg: #1f3b37;
+  --dg-sf-stroke: #73d3c3;
+  --dg-hub-bg: #2f3d63;
+  --dg-hub-stroke: #a6dcf7;
+  --dg-key-bg: #2a3548;
+  --dg-edge: #7f8fa3;
+  --dg-muted: #aab6c3;
+
+  --ad-a: #4a8ed4;
+  --ad-b: #bd851a;
+  --ad-grid: #34373b;
+  --ad-surface: #242526;
+  --ad-panel: #1d1e20;
+  --ad-border: #3d4148;
+  --ad-ink: #e3e3e3;
+  --ad-ink-2: #b8c0c9;
+  --ad-ink-3: #8e98a3;
+}
+
+/* ---------- Diagram figures ---------- */
+
+.figure {
+  margin: 2rem 0 2.5rem;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  font-family: var(--ifm-font-family-base);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--dg-muted);
+  text-align: center;
+}
+
+.node { fill: var(--dg-node-bg); stroke: var(--dg-node-stroke); stroke-width: 1.25; }
+.zendesk { fill: var(--dg-zendesk-bg); stroke: var(--dg-zendesk-stroke); stroke-width: 1.25; }
+.ga { fill: var(--dg-ga-bg); stroke: var(--dg-ga-stroke); stroke-width: 1.25; }
+.sf { fill: var(--dg-sf-bg); stroke: var(--dg-sf-stroke); stroke-width: 1.25; }
+.hub { fill: var(--dg-hub-bg); stroke: var(--dg-hub-stroke); stroke-width: 1.5; }
+.keyRow { fill: var(--dg-key-bg); }
+.rowLine { stroke: var(--dg-node-stroke); stroke-width: 0.75; opacity: 0.6; }
+
+.title { fill: var(--ifm-font-color-base); font-size: 14px; font-weight: 500; }
+.sub { fill: var(--dg-muted); font-size: 12px; }
+.field { fill: var(--ifm-font-color-base); font-size: 12.5px; font-family: var(--ifm-font-family-monospace); }
+.fieldKey { fill: var(--ifm-font-color-base); font-size: 12.5px; font-weight: 600; font-family: var(--ifm-font-family-monospace); }
+.hubTitle { fill: #ffffff; font-size: 15px; font-weight: 500; }
+.hubSub { fill: #bed4e6; font-size: 12px; }
+.heading {
+  fill: var(--dg-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.edgeLabel { fill: var(--dg-muted); font-size: 11px; font-style: italic; }
+
+.edge { fill: none; stroke: var(--dg-edge); stroke-width: 1.5; }
+.edgeKey { fill: none; stroke: var(--dg-ga-stroke); stroke-width: 1.75; }
+.arrow { fill: var(--dg-edge); }
+.dot { fill: var(--dg-ga-stroke); }
+
+/* ---------- Dashboard mockups ---------- */
+
+.dash {
+  margin: 2rem 0 2.5rem;
+  border: 1px solid var(--ad-border);
+  border-radius: 10px;
+  background: var(--ad-surface);
+  color: var(--ad-ink);
+  overflow: hidden;
+}
+
+.dashBadge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.45rem 1rem;
+  background: var(--ad-panel);
+  border-bottom: 1px solid var(--ad-border);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ad-ink-3);
+}
+
+.dashHead {
+  padding: 1.1rem 1.25rem 0.25rem;
+}
+
+.dashQuestion {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ad-ink);
+}
+
+.dashMetric {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: var(--ad-ink-2);
+}
+
+.dashBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 1.25rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+@media (max-width: 720px) {
+  .dashBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.chartWrap {
+  position: relative;
+  min-width: 0;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kpi {
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  background: var(--ad-panel);
+  border: 1px solid var(--ad-border);
+}
+
+.kpiValue {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ad-ink);
+}
+
+.kpiLabel {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--ad-ink-2);
+}
+
+.control {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.controlLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ad-ink);
+}
+
+.segmented {
+  display: flex;
+  border: 1px solid var(--ad-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segBtn {
+  flex: 1;
+  padding: 0.3rem 0.4rem;
+  border: 0;
+  border-left: 1px solid var(--ad-border);
+  background: var(--ad-surface);
+  color: var(--ad-ink-2);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.segBtn:first-child {
+  border-left: 0;
+}
+
+.segBtn[aria-pressed='true'] {
+  background: var(--ifm-color-primary);
+  color: var(--ifm-background-color);
+  font-weight: 600;
+}
+
+.checkList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--ad-ink-2);
+  cursor: pointer;
+}
+
+.check input {
+  accent-color: var(--ifm-color-primary);
+}
+
+.lockedChip {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--ad-border);
+  background: var(--ad-panel);
+  font-size: 0.8rem;
+  color: var(--ad-ink-2);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--ad-ink-2);
+  cursor: pointer;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--ad-ink-2);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.swatchA { background: var(--ad-a); }
+.swatchB { background: var(--ad-b); }
+
+.chartSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--ifm-font-family-base);
+  overflow: visible;
+}
+
+.gridLine { stroke: var(--ad-grid); stroke-width: 1; }
+.baseline { stroke: var(--ad-ink-3); stroke-width: 1; }
+.tick { fill: var(--ad-ink-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.catLabel { fill: var(--ad-ink-2); font-size: 11.5px; }
+.annot { fill: var(--ad-ink-2); font-size: 11px; font-style: italic; }
+.annotLine { stroke: var(--ad-ink-3); stroke-width: 1; }
+.barA { fill: var(--ad-a); }
+.barB { fill: var(--ad-b); }
+.hit { fill: transparent; cursor: pointer; }
+.hitActive { fill: var(--ad-ink); opacity: 0.05; }
+
+.tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  min-width: 170px;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--ad-border);
+  background: var(--ad-surface);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ad-ink-2);
+  transform: translate(-50%, calc(-100% - 10px));
+  white-space: nowrap;
+}
+
+.tooltip strong {
+  display: block;
+  color: var(--ad-ink);
+  margin-bottom: 0.15rem;
+}
+
+.tipRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tipRow span:last-child {
+  margin-left: auto;
+  padding-left: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ad-ink);
+}
+
+/* Horizontal ranked bars (deflection) */
+
+.rankList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rankItem {
+  margin: 0;
+}
+
+.rankBtn {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) 3.5rem;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.22rem 0.35rem;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ad-ink-2);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rankBtn:hover,
+.rankBtn:focus-visible {
+  background: var(--ad-panel);
+}
+
+.rankBtn[aria-pressed='true'] {
+  background: var(--ad-panel);
+  color: var(--ad-ink);
+  box-shadow: inset 3px 0 0 var(--ad-a);
+}
+
+.rankLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankTrack {
+  height: 14px;
+}
+
+.rankBar {
+  height: 100%;
+  min-width: 2px;
+  border-radius: 0 4px 4px 0;
+  background: var(--ad-a);
+  transition: width 0.25s ease;
+}
+
+.rankValue {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ad-ink);
+}
+
+.rankHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) 3.5rem;
+  gap: 0.65rem;
+  padding: 0 0.35rem 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ad-ink-3);
+  border-bottom: 1px solid var(--ad-grid);
+  margin-bottom: 0.3rem;
+}
+
+.rankHead span:last-child {
+  text-align: right;
+}
+
+.empty {
+  padding: 1.5rem 0;
+  text-align: center;
+  color: var(--ad-ink-3);
+  font-size: 0.9rem;
+}
+
+.drill {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  border: 1px dashed var(--ad-border);
+  background: var(--ad-panel);
+  font-size: 0.85rem;
+  color: var(--ad-ink-2);
+}
+
+.drillTitle {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  color: var(--ad-ink);
+}
+
+.drillRow {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) 2.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.drillBar {
+  height: 10px;
+  border-radius: 0 3px 3px 0;
+  background: var(--ad-a);
+}
+
+.drillNote {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ad-ink-3);
+}
+
+.dashFoot {
+  padding: 0.6rem 1.25rem 0.9rem;
+  border-top: 1px solid var(--ad-border);
+  font-size: 0.8rem;
+  color: var(--ad-ink-3);
+}
+
+/* Small multiples (article age) */
+
+.multiples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+@media (max-width: 720px) {
+  .multiples {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.multTitle {
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ad-ink);
+}
+
+.multSub {
+  margin: 0 0 0.6rem;
+  font-size: 0.8rem;
+  color: var(--ad-ink-3);
+}
+
+.multRow {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1.5fr) minmax(0, 1fr) 3.2rem;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.2rem 0;
+  font-size: 0.83rem;
+  color: var(--ad-ink-2);
+}
+
+.multLabel {
+  line-height: 1.25;
+}
+
+.multRank {
+  color: var(--ad-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.multHighlight {
+  color: var(--ad-ink);
+  font-weight: 600;
+}
+
+.multBarA,
+.multBarB {
+  height: 12px;
+  border-radius: 0 4px 4px 0;
+}
+
+.multBarA { background: var(--ad-a); }
+.multBarB { background: var(--ad-b); }
+
+/* Narrow screens: keep the column chart legible and give ranked labels a full row. */
+.chartScroll {
+  overflow-x: auto;
+}
+
+.chartInner {
+  position: relative;
+}
+
+@media (max-width: 720px) {
+  .chartScroll .chartInner {
+    min-width: 560px;
+  }
+
+  .rankBtn,
+  .rankHead {
+    grid-template-columns: minmax(0, 1fr) 3.5rem;
+    row-gap: 0.2rem;
+  }
+
+  .rankBtn .rankLabel {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .rankHead span:nth-child(2) {
+    display: none;
+  }
+}
+
+.hit:focus {
+  outline: none;
+}
+
+.hit:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}

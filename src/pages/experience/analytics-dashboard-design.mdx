@@ -1,0 +1,168 @@
+---
+title: Analytics dashboard design
+description: How I joined Google Analytics 4 and Zendesk data at the user level to design dashboards that show which customers don't know the help site exists and which articles come right before a support ticket.
+---
+
+import {
+  SourceMap,
+  JoinModel,
+  AwarenessDashboard,
+  DeflectionDashboard,
+  ArticleAgeComparison,
+} from '@site/src/components/AnalyticsDiagrams';
+
+# Analytics dashboard design
+
+Our help center and our support queue were measured by two tools that had never met. Google Analytics 4 (GA4) knew what readers did on the site. Zendesk knew who opened tickets. Neither could say whether the documentation was actually reducing support load. **I saw that joining the two at the level of an individual user would answer questions neither tool could answer alone:** *Which customer organizations don't know the help site exists? Which articles are people reading just before they give up and file a ticket, and what do those tickets say?* I audited six data sources, designed the data model that connects them, and designed three dashboards. Each one is built around a single business question, a headline number, and the filters needed to act on it.
+
+The company's details are left out. The dashboard mockups on this page are recreated from my original designs and use illustrative data.
+
+:::tip[At a glance]
+
+- **6 data sources audited** across Zendesk Guide, Zendesk Support, GA4, and Salesforce, each mapped to what it can and can't answer.
+- **40+ metrics compared** between GA4 and Zendesk to decide which tool is the source of truth for each question.
+- **3 join keys** (Zendesk user ID, article ID, and customer organization) that turn page views, people, content, tickets, and accounts into one dataset.
+- **1 custom GA4 event**, fired through Tag Manager, to capture the moment a reader leaves an article to open a ticket.
+- **3 decision-focused dashboards**: site awareness, ticket deflection, and article performance.
+
+:::
+
+## The problem: every tool had part of the picture
+
+The help center had plenty of data. It was just spread across tools that each answered a narrow slice of the question.
+
+**Zendesk's built-in reports couldn't be trusted without context.** Zendesk counts every article view, including admin and test activity. As the person who built and tested the help center, I was one of its heaviest "readers." Any report that couldn't filter me out would overstate engagement.
+
+**The one report that came closest to measuring deflection was a dead end.** Zendesk offers a report of articles that led to ticket creation, but it can't show *which* tickets were created, can't filter by ticket tag, and can't filter by customer organization. It could tell us that an article had a problem, but not what the problem was or who it affected.
+
+**GA4 knew behavior but not outcomes.** GA4 could show paths through the site, bounce rates, returning readers, and activity by organization, and it could filter out admin traffic. But it had no idea a ticket existed. By default it also keeps user-level exploration data for only two months, which is too short to see trends across a customer's onboarding.
+
+**Nobody had defined a "user."** Account counts from Salesforce looked like the obvious denominator for "what share of a customer's users read the docs?" They weren't. Some customers share logins, and provisioned accounts aren't the same as people. A coverage metric built on raw account counts would be wrong in ways nobody would notice.
+
+## My approach
+
+I worked from four principles:
+
+1. **Start from the decision, not the data.** Every dashboard begins with a question someone will act on. Each question names who acts on it: customer success, support, or the documentation team. Metrics that don't inform a decision don't make the cut.
+2. **One source of truth per question.** When two tools report the same metric differently, pick the tool whose definition matches the question and document why.
+3. **Define terms before counting them.** "User," "view," and "deflection" each get a written definition before they appear on a chart.
+4. **Make the data act like the reader.** Filter out internal and admin activity by default, benchmark against a known-good baseline, and account for how long content has existed.
+
+## Step 1: Audit every source
+
+I inventoried every place help center data lived. For each one, I recorded what it offered, what it couldn't do, and how to get the data out: manual export, dataset export, a REST API, or an integration.
+
+<SourceMap />
+
+Two findings shaped everything after this step:
+
+- **The Zendesk Help Center API exposes numeric user IDs, and so can GA4.** If GA4 recorded the same Zendesk user ID with every event, a page view could be joined to a person, that person's organization, and the tickets they opened. That was the insight the rest of the design depends on. I wrote a Node.js script to pull articles, categories, sections, and users from the API so the join could be automated instead of rebuilt by hand every month.
+- **Ticket data could be pulled incrementally.** Zendesk's incremental export endpoint returns only what changed since the last run. That made a recurring refresh practical without re-downloading the whole ticket history.
+
+## Step 2: Decide which tool owns which question
+
+GA4 and Zendesk overlap on many metrics but rarely agree on them. Zendesk counts article pages only, while GA4 counts every page, including landing pages, error pages, and the request form. Rather than reconcile every discrepancy, I compared the two tools metric by metric (more than 40 in all) and assigned each question to the tool best suited to answer it.
+
+| Question | Owner | Why |
+| --- | --- | --- |
+| How do readers move through the site? What do they click? | GA4 | Only GA4 tracks page paths, button clicks, and custom events. |
+| Which organizations are reading, and who specifically? | GA4 | GA4 reports by organization and user and can exclude admin traffic. Zendesk often can't. |
+| New vs. returning readers | GA4 | Zendesk doesn't report it. GA4's retention window needs to be extended to see long-term trends. |
+| Search effectiveness: click-through rate, searches with no results, tickets created after a search | Zendesk | Zendesk's search data is richer and tied directly to tickets. |
+| Self-service ratio, deflection, articles linked to tickets, knowledge capture | Zendesk | These metrics depend on ticket data that only Zendesk has. |
+| Everything that needs both behavior *and* outcome | The joined model | Neither tool can answer these alone. That's the point of the join. |
+
+This became the rule of thumb for the team: **GA4 for behavior and lookups by person or organization, Zendesk for the bulk of reporting, and the joined model for questions that cross the line between reading and asking for help.**
+
+## Step 3: Design the join
+
+With the sources and owners settled, I designed the data model that makes the dashboards possible.
+
+<JoinModel />
+
+A few design decisions carry most of the weight:
+
+- **The Zendesk user ID is the linchpin.** It links a GA4 event to a person, the person to an organization, and the organization to its Salesforce account. It also links the person to the tickets they requested.
+- **Article IDs are parsed from the page path.** Zendesk article URLs contain the article ID, so every GA4 page view can be matched to its article record, category, section, and publish date without any manual tagging.
+- **A custom event captures the moment of failure.** I specified a Tag Manager event that fires when a reader clicks through from an article to submit a request. That turns "this person viewed an article and, at some point, opened a ticket" into "this article was the last thing they read before asking for help," which is a much stronger signal.
+- **Category and section landing pages are included.** Readers often give up on a landing page before they reach an article. Pulling category and section URLs from the API means those pages count too.
+- **Admins are excluded before anything is counted.** Filtering happens on the user's role in the model, not as an optional checkbox someone might forget to tick.
+
+## Step 4: Define the metrics
+
+Before designing any charts, I wrote down the three core metrics and how each would be calculated.
+
+- **Resource awareness:** the number of users at each organization who have done a meaningful amount of activity on the site, compared with that organization's *defined* active users (not its raw account count).
+- **Page value:** a baseline for every article across upvotes, downvotes, exits, average time on page, and tickets submitted from the page. The dashboard tracks dips and spikes against that baseline rather than raw totals, because a change is more actionable than a level.
+- **Search effectiveness:** click-through rate, clicks by term, searches with no results, and tickets created after a search. Together these reveal three kinds of failure: topics we haven't covered, content readers can't find, and terminology that doesn't match how customers talk.
+
+## The dashboards
+
+Each dashboard follows the same layout, which I designed so a busy stakeholder can read it in five seconds:
+
+- **The title is the question.** The subtitle is the exact metric that answers it.
+- **One headline number sits at top right** for the reader who only glances.
+- **Filters map to the person who acts.** Ticket tags help support, article categories help writers, and onboarding phase helps customer success.
+- **A benchmark sits inside the chart** so "good" is visible, not assumed.
+
+### Site awareness: who doesn't know the help site exists?
+
+**The question:** How many people at each customer organization have used the help site at all? A low number, especially for an organization that has finished onboarding, points to an education gap, not a content gap. The fix is outreach, not writing.
+
+<AwarenessDashboard />
+
+**Design decisions:**
+
+- **Grouped bars, not a percentage.** Showing readers next to total users keeps the size of each organization visible. 7% of 100 users and 7% of 14 users are very different problems.
+- **The internal team is pinned first as a benchmark.** It shows what coverage looks like when everyone knows the site exists.
+- **Sort by lowest coverage.** One click moves the organizations that need outreach to the front.
+- **Admin and test accounts are always excluded.** It's a fixed filter, not an optional checkbox, so nobody can accidentally count test activity as real readership.
+- **Planned filters** include view date, user creation date, time since the organization passed each onboarding phase, and customer type. With those, customer success can ask, "Of organizations 90 days past go-live, which still have low coverage?"
+
+**How it gets used:** An organization with zero readers, like Customer I in the mockup, goes straight to its customer success manager with a specific ask: introduce the help site during the next check-in.
+
+### Ticket deflection: which articles come right before a ticket?
+
+**The question:** How many readers view an article and then open a ticket, and which articles and ticket tags are involved? This sets a baseline for reducing that number and shows writers exactly where readers get stuck.
+
+<DeflectionDashboard />
+
+**Design decisions:**
+
+- **Filter by ticket tag and article category.** These are the two filters Zendesk's built-in report lacks. Ticket tags show *what* readers misunderstood. Categories show *where* that content lives and who owns it.
+- **Count vs. rate.** Raw counts favor popular articles. Rate (tickets divided by views) exposes articles that fail a large share of their readers. In the mockup, switching to Rate moves a low-traffic primary-source article from near the bottom of the list to the top, while the high-traffic "Open the credentialing application" article drops to the bottom. These are different problems with different fixes.
+- **Drill-through to the tickets themselves.** Selecting an article breaks its tickets down by tag. In the full design, it opens the actual ticket list so a writer can read what the customer asked, which the built-in report can't do.
+
+**How it gets used:** A writer filters to their category, switches to Rate, and starts with the top article. The ticket tags point to which section of the article to rewrite, and the tickets show the customer's own words for the problem.
+
+### Article performance: what to promote, fix, or retire
+
+**The question:** Which articles deserve a spot on the help center landing page, and which should be restructured or removed? GA4's path exploration answers the follow-up question: when an article gets few views, is it because nobody needs it or because nobody can find it?
+
+While designing this view, I noticed a flaw in the obvious approach. Ranking articles by total views would always put a brand-new article at the bottom and could get it flagged for deletion days after it launched. So I built article age into the design.
+
+<ArticleAgeComparison />
+
+**Design decisions:**
+
+- **Normalize by days live.** Views divided by days since publishing puts a 9-day-old article and a 4-year-old article on the same scale. For even tighter comparisons, the design compares each article's first 30 or 90 days with other articles' first 30 or 90 days, so launch promotion doesn't skew the result.
+- **Pair views with quality signals.** Bounce rate and reader ratings sit next to views. A popular article with a high bounce rate is a rewrite candidate, not a success.
+- **A lookup table goes with every chart.** Every bar chart pairs with a filterable table (by date range, category, reader organization, user role, and publish date) so writers can find a specific article without hovering over bars.
+
+## What's next on the roadmap
+
+The data model was built to grow. Next on the roadmap:
+
+- **Returning readers by organization** over the past several months, to separate one-time visits from habits.
+- **A helpfulness score** that combines bounce rate and reader rating, so articles can be ranked on a single scale and the worst ones improved or retired.
+- **Content freshness:** time since each article or category was last updated, surfaced alongside traffic so heavily read, outdated content gets reviewed first.
+- **Review readiness** as part of a full content lifecycle view: articles under review, approved, and assigned.
+
+## What this project shows
+
+- **I find value where systems meet.** The most useful insight here wasn't in either tool. It was in a shared user ID that made two partial datasets into one complete one.
+- **I think about data quality before visualization.** Admin noise, an undefined denominator, a two-month retention window, and article age would each have made the dashboards confidently wrong. I designed around all four before drawing a chart.
+- **I design dashboards for decisions.** Every view names its question, its owner, and the action it should trigger, so it gets used rather than admired.
+- **I plan for the long term.** An automated extraction script, incremental exports, and extended retention mean the dashboards stay current without monthly manual work.
+
+This analytics work grew out of the [help site relaunch](/experience/help-site-relaunch), where I first tied the help site's measurement to the support team's goals.

@@ -1,0 +1,120 @@
+---
+title: Help site relaunch
+description: How I relaunched a 650-article Zendesk help site around evidence, combining feedback from stakeholders across the company with usage data to replace a 17-tile home page with a search-first, product-aware experience tied to support goals.
+---
+
+import {
+  EvidenceToDecisions,
+  HomeBeforeAfter,
+} from '@site/src/components/RelaunchDiagrams';
+
+# Help site relaunch
+
+I led the relaunch of a company's Zendesk help site, and I made every major decision from evidence instead of opinion. **Before changing anything, I collected feedback from stakeholders across the company and analyzed how customers actually used the site, then designed the new version around what both sources agreed on.** The old home page asked readers to choose from 17 tiles with unclear, overlapping titles. The new site leads with search, sends readers straight to content for the product they use, labels all 650+ articles with a 74-term taxonomy so results can be told apart and filtered, and puts a path to support on every page. I also tied the site's analytics to the support team's goals, so the help site is now measured by what the business cares about: fewer tickets and faster answers, not just page views.
+
+The company's details are left out. The diagrams on this page are recreated from my original work and use illustrative content.
+
+:::tip[At a glance]
+
+- **17 home page tiles → a handful of clear entry points**, organized by product and topic.
+- **Search-first design:** a global search bar is the most prominent element on every page.
+- **74-label taxonomy applied to 650+ articles**, so search results carry product badges and can be filtered by product.
+- **Promoted search terms chosen from real usage**: what readers typed, plus what customer-facing teams heard most.
+- **Related articles on every article**, generated from visitors' reading patterns.
+- **Help content and step-by-step guides combined** and organized automatically by label, so pages stay current with little upkeep.
+- **A path to support on every page**, which turns each ticket into a signal about what the site is missing.
+- **Analytics joined to support goals** such as ticket deflection.
+
+:::
+
+## The problem: a help site organized around itself
+
+The company sold two versions of its product, an app that runs inside Salesforce and a standalone web app, and both versions had features with the same names. The original help site didn't account for that, and it didn't account for how people look for help.
+
+- **Too many doors and no signs.** The home page showed 17 tiles. Several titles overlapped, and none told a reader which tile applied to them. A new customer had to guess.
+- **Identical results for different products.** A search for a common task could return several articles with the same title, each for a different product. Nothing on the results page showed which was which, so readers often opened the wrong one and followed steps that didn't match their screen.
+- **Help content lived apart from the guides.** Troubleshooting articles, FAQs, and cheat sheets weren't connected to the step-by-step guides they supported, so readers who got stuck partway through a task had to start over somewhere else.
+- **Support was hard to reach.** When the site couldn't answer a question, the path to a person wasn't obvious. That frustrated customers and hid the most useful feedback the site could get: what it failed to answer.
+- **Success was measured in page views.** Site analytics weren't connected to the support team's metrics, so no one could say whether the help site was reducing tickets.
+
+## How I decided what to build
+
+A relaunch is an easy place for opinions to win. Everyone who uses a help site has a favorite fix, and the loudest one tends to ship. I set a different rule for myself: **no change goes in unless it's supported by what people told me, by what the data showed, or ideally by both.**
+
+### Listening across the company
+
+I gathered feedback from the teams who see the help site from different angles. Support agents knew which questions customers asked over and over and which articles they linked to most. Customer-facing teams knew where new customers got lost during onboarding. Product managers knew which features were changing and which differences between the two apps confused people. Fellow writers knew which parts of the content were hard to maintain.
+
+I didn't treat any of it as a finished spec. I treated each comment the way I treat any request: as a clue about an underlying problem. (I later turned this approach into a formal process; see [Content intake and prioritization](/experience/content-intake).)
+
+### Reading the usage data
+
+Then I checked those clues against what readers actually did: what they searched for, which articles they opened, how they moved between pages, and where they left for support. The data did two jobs. It confirmed which stakeholder concerns affected the most readers, and it caught patterns no one had mentioned.
+
+<EvidenceToDecisions />
+
+### Where the evidence pointed
+
+Each major change in the relaunch traces back to a question I asked and the evidence I used to answer it.
+
+| The question | Evidence I used | What I decided |
+| --- | --- | --- |
+| Where do readers start? | Search and navigation behavior; feedback that customers didn't know which tile to choose | Make search the most prominent element on every page and cut 17 tiles down to a few product- and topic-based entry points. |
+| Why do readers open the wrong article? | Support reports of customers following steps for the other product; search results with identical titles | Label every article by product, show a product badge on every search result, and add product filters. |
+| How do readers tell which product they use? | Recurring confusion reported by customer-facing teams | Add hover help to each product badge: *"Are you working in Salesforce? Yes, you're using the Salesforce app. No, you're using the web app."* |
+| What should we promote? | Top search terms from site data, plus the questions support heard most | Promote those terms and popular articles on the home page. |
+| What do readers need next? | Visitors' reading patterns across articles | Add a related-articles list to every article, generated from those patterns. |
+| How do we learn what's missing? | Ticket trends and the gap between site metrics and support metrics | Put a path to support on every page and measure the site against support goals like ticket deflection. |
+
+*Evidence summarized; illustrative wording.*
+
+## What changed
+
+### A home page with clear entry points
+
+I replaced the 17 tiles with a small set of entry points organized by product and by topic. A reader who uses the web app goes straight to web app content. A reader who's new starts at *Getting started*. Nobody has to decode a tile title to find their way in.
+
+<HomeBeforeAfter />
+
+### Search first, and search that knows about products
+
+Search became the most prominent element on the home page and a global search bar appears on every page. Readers who know what they want can skip navigation entirely.
+
+To make results usable, I designed a taxonomy of **74 labels** and applied it to **all 650+ articles**. The labels do several jobs at once:
+
+- **Product badges on every result.** When three results share the same title, each one now shows the name of the product it applies to, so readers pick the right one the first time.
+- **Hover help on each badge.** An information icon explains how to tell which product you're using, for readers who aren't sure.
+- **Product filters.** Checkboxes narrow results to one product.
+- **Promoted search terms** based on what readers searched for and what customer-facing teams heard most often.
+
+### Content that leads to the next answer
+
+- **Related articles** appear on every article, generated from visitors' usage patterns, so the next step is always one click away.
+- **Popular and key articles** are highlighted on the home page.
+- **Help content sits beside the guides.** I combined the step-by-step guides with troubleshooting articles, FAQs, and cheat sheets. These pages are assembled automatically by label, so when a writer publishes an article with the right labels it appears in the right place, with no list of links to maintain by hand.
+
+### A path to a person on every page
+
+An invitation to contact support appears at the top of every page and at the bottom of most. This helps customers, and it helps the content team: every ticket that starts from a help article shows where the site fell short and what content or interface change could have answered the question instead.
+
+### A stronger foundation
+
+I rebuilt the site on a new Zendesk theme extended with custom CSS and in-house work against Zendesk's APIs, and I moved the theme into source control with a tested deployment process. That work is described in [Help center theme engineering](/experience/help-center-theme-engineering).
+
+## Keeping the site healthy after launch
+
+A relaunch that isn't maintained starts decaying the day it ships. I put ongoing processes in place so the new site would keep improving:
+
+- **Cleanup:** removing outdated information and merging duplicate articles.
+- **Regular audits** of articles on a recurring schedule.
+- **A formal intake process** for new content requests, so each one is evaluated against the problem it's meant to solve. See [Content intake and prioritization](/experience/content-intake).
+- **Reader feedback front and center:** the *Was this page helpful?* prompt is emphasized so readers can flag weak articles directly.
+- **Analytics tied to business goals.** I combined an analytics strategy that had focused only on site usage with the support team's goals and metrics, such as ticket deflection. See [Analytics dashboard design](/experience/analytics-dashboard-design) for how I joined site data and ticket data.
+
+## What this project shows
+
+- **I make decisions from evidence.** Every major change traces back to stakeholder feedback, usage data, or both, which made the plan easy to explain and hard to derail.
+- **I listen widely and synthesize.** I brought together perspectives from support, customer-facing teams, product, and writing, and turned them into one coherent design instead of a list of competing requests.
+- **I design for how readers actually look for help.** Search first, product-aware results, and the next answer always one click away.
+- **I build for low upkeep.** A shared taxonomy and label-driven pages mean the site organizes itself as content is added.
+- **I connect content to business outcomes.** The help site is now measured by its effect on support, not just by traffic.
