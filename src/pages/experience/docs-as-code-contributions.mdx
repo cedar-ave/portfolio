@@ -1,0 +1,243 @@
+---
+title: 'Docs-as-code: Scaling contributions'
+description: How I wrote a contributor guide and set up processes that let engineers, product managers, and support staff across a company contribute to a docs-as-code help site without a writer becoming the bottleneck.
+---
+
+import {
+  AudienceLayers,
+  ContributorPath,
+  TwoOnRamps,
+  ReviewModel,
+  ReleaseNotesFlow,
+} from '@site/src/components/DocsAsCodeDiagrams';
+
+# Docs-as-code: Scaling contributions
+
+**A docs platform only scales if people outside the docs team can use it, so I built the system that let them.** After I built a company's [docs-as-code platform](/experience/docs-as-code), I wrote a contributor guide of more than 100 articles, published on the same platform, that took engineers, product managers, and support staff from "which repo is this page in?" to a merged change. It gives each audience only the depth it needs: an **Edit this page** link and a browser editor for a quick fix, a six-step path with local builds and editor linters for product teams, and more than 50 admin articles so the platform never depended on one person. I paired it with processes that keep writers from becoming a bottleneck: product teams document features in the same sprint and publish without waiting, writers follow behind with editorial edits, and engineers write release notes in the work items they already use. The result was a help site that grew with the product teams instead of waiting on a docs queue.
+
+The company's details are left out. Examples on this page are adapted from the original guide, with names, URLs, and product details replaced.
+
+:::tip[At a glance]
+
+- **A 100+ article contributor guide**, built and published on the platform it documents.
+- **Three layers for three audiences:** occasional contributors, product team contributors, and platform admins.
+- **A six-step path** (Find, Clone, Change, Check, Build, Publish) with a "You are here" marker on every step.
+- **Two on-ramps:** edit in the browser with nothing to install, or work locally in VS Code. Both lead to the same pull request and build checks.
+- **Copy-and-paste templates, a Markdown cheat sheet, and a writing quick reference** with wrong-and-right examples.
+- **Guardrails that catch mistakes automatically:** editor linters, build errors for broken links and duplicate IDs, and required validation builds on pull requests.
+- **Review that doesn't block:** teams publish accurate docs right away, and the writer's editorial pass follows in a separate pull request.
+- **Release notes from engineering work items**, so engineers contribute without opening a docs repo.
+- **Support built in:** a help channel, reader feedback piped to Slack, and one-on-one coaching.
+
+:::
+
+## The problem: one writer, many teams
+
+The docs platform served a suite of healthcare data applications. Their docs lived in many repos, across several products and product versions, and changed with every sprint. No writing team could keep up alone. The people who knew what had changed were the engineers and product managers building it.
+
+That created three risks I wanted to design out:
+
+- **Writers become the bottleneck.** If every change goes through a writer, docs lag behind the product and teams stop trying to help.
+- **Docs-as-code scares people off.** Git, branches, Markdown, YAML, and build tools are second nature to some contributors and brand new to others. A support specialist who spots a wrong step shouldn't need to learn a build pipeline to fix it.
+- **The platform depends on one person.** If only I knew how the theme, pipelines, and API tooling worked, the whole system was one resignation away from trouble.
+
+## Designing for three audiences
+
+I didn't write one guide for everyone. I identified three groups of contributors, worked out what each one actually had to do, and built a layer of the guide for each.
+
+<AudienceLayers />
+
+The layers are linked but separate. The quick-fix path never mentions the build pipeline. The contributor pages link to admin articles in a short **Admins** note at the bottom, so curious readers can go deeper, but nobody is required to.
+
+## A path anyone can follow
+
+For product team contributors, I broke the process into six steps and gave each step its own page. Every step also has a safety net: a tool, template, or check that catches the most common mistake at that point.
+
+<ContributorPath />
+
+Every step page opens with a **You are here** box that lists the whole path and marks the current step, so a reader who lands on a page from search knows where they are and what comes next. It's plain DocFX Markdown:
+
+```md title="check-the-docs.md"
+> [!NOTE]
+> #### You are here
+> @find-the-docs.md
+>
+> [Clone the docs](clone-repo.md)
+>
+> @docs.md
+>
+> **<i class="fa fa-check"></i> Check the docs**
+>
+> @build-the-docs.md
+>
+> @publish-the-docs.md
+```
+
+The `@` references are DocFX cross-references by page ID, so the box stays correct even if a page is renamed or moved.
+
+## Two on-ramps, one review path
+
+Most outside contributions are small: a wrong step, a renamed button, a missing prerequisite. Asking someone to install Node.js and clone a repo to fix one sentence would stop most of them from bothering. So the guide offers two ways in.
+
+<TwoOnRamps />
+
+- **Quick fix in the browser.** Pages on the customer site have an **Edit this page** link in its footer that opens the page's source file in the repo. The contributor edits it in the browser, commits to a new branch, and opens a pull request. Nothing to install.
+- **Full workflow in VS Code.** For larger changes, contributors clone the repo, work on a branch, lint and preview locally, and push.
+
+Both paths end in the same pull request, the same validation build, and the same automatic publishing, so the easy path isn't a less safe one. I customized the site footer so the edit link sits next to a link to the contributor guide:
+
+```html title="footer.tmpl.partial (theme)"
+{{#if _enableContributionLinksFooter}}
+  <span class="pull-right">
+    {{#docurl}}<a href="{{docurl}}" class="contribution-link">
+      <span class="fa fa-pencil"></span>Edit this page</a>{{/docurl}}
+    | <a href="{{_authorInstructions}}">Contributor reference</a>
+    | <a href="#top">Back to top</a>
+  </span>
+{{/if}}
+```
+
+Each site turns the links on and points them at the guide with two settings in `docfx.json`, so the feature scales to every site without changing theme code.
+
+## Step 1 answered: where do the docs live?
+
+In a system spread across many repos, the first question is often the hardest: *which repo holds this page?* The answer depended on the product and the release, so I wrote a map that answers it directly. A simplified version:
+
+| Docs for | Repo | Branch | Includes |
+| --- | --- | --- | --- |
+| Classic edition apps | Platform repo, `Docs/` folder | `main` | Product articles, REST API specs |
+| Classic edition engine API | Engine repo, `Docs/` folder | `release/6.0` | Engine articles, .NET API source |
+| Previous release | Platform repo, `Docs/` folder | `release/20.3` | All docs for that release |
+| Cloud edition CLI | CLI repo, `Docs/` folder | `main` | CLI articles |
+| Cloud edition engine API | Engine repo, `Docs/` folder | `main` | Engine articles, .NET API source, ETL guide |
+| Other applications | One dedicated repo per product | `main` | Product articles |
+
+*Illustrative; repo and product names are generalized.*
+
+## Making it easy to write well
+
+Contributors who aren't writers need help with *what* to write as much as *how* to publish it. I gave them three tools.
+
+### Copy-and-paste templates
+
+Templates for concept, task, and troubleshooting articles, each with a short prompt for what goes in each section. The troubleshooting template, for example:
+
+```md title="Outline - Troubleshooting"
+---
+uid: filename.md
+title: Title
+---
+
+# Title
+
+## Symptoms
+
+Describe what the user experiences.
+
+## What's happening
+
+Explain the issue.
+
+## Solution
+
+If possible, provide the solution or workaround.
+```
+
+### A Markdown cheat sheet
+
+One page covers everything specific to the platform: callouts, icons, reusable snippets, pulling code samples from files, and cross-reference patterns for every situation. For example:
+
+| To link to | Pattern | Example |
+| --- | --- | --- |
+| A heading on the same page | `[link name](#heading-name)` | `[Column definitions](#column-definitions)` |
+| Another article, using its title | `@uid` | `@interface-tour.md` |
+| A heading in another article | `@uid#heading-name` | `@tools-ribbon.md#connection-manager` |
+| Another article, inside parentheses | `(<xref:article.md>)` | `...(see <xref:validation-scripts.md>).` |
+
+The cheat sheet also explains *why* some features are off-limits. In-page tabs work on the website, but content in inactive tabs doesn't appear in PDFs, and many customers relied on PDFs. The guide asks teams not to use tabs and gives the reason, so contributors understand the rule instead of guessing at it.
+
+### A writing quick reference
+
+Instead of pointing contributors at a long style guide, I summarized the rules that come up most, each with a wrong and a right example:
+
+| Guideline | Wrong | Right |
+| --- | --- | --- |
+| Use fewer words | ...in situations where... | ...when... |
+| Use active voice | ...when data marts are loaded... | ...when data marts load... |
+| Use present tense | ...the application will save the files... | ...the application saves the files... |
+| Use second person | ...the files need to be re-uploaded... | ...re-upload the files... |
+| Make headings imperative | Designing a data mart | Design a data mart |
+| Click, don't select, buttons | Select the **OK** button. | Click **OK**. |
+
+## Guardrails instead of gatekeepers
+
+I wanted mistakes caught by tools, early and automatically, not by a writer at the end. The guide sets contributors up with checks at every stage:
+
+- **While typing:** markdownlint and Vale extensions in VS Code underline formatting, style, and spelling problems as the contributor writes. See [Docs-as-code: Linting](/experience/docs-as-code-linting).
+- **While building:** a local build lists broken links and missing anchors in its output. Two pages with the same ID fail the build, so a copied-and-pasted page can't silently replace another.
+- **At the pull request:** a validation build, including automated linting, has to pass before the change can merge.
+- **Before going live:** anyone can publish a branch to a preview site to show stakeholders.
+
+The guide also turns error-prone tasks into checklists. Renaming an article, for example, means changing four things: the file name, the ID in its metadata header, cross-references in other articles, and every table of contents that lists it. Removing one adds deleting its unused images.
+
+## Troubleshooting from real problems
+
+I wrote the troubleshooting section from the problems contributors actually hit, one short article per error, with the fix up front. The build page leads with the fix that solved most problems:
+
+> **Try this first:** If you have built before, run `npm install`. The site framework might have changed since you last built.
+
+Other entries cover specific errors, like a Node.js release that broke local builds (roll back to a named version) or a JSON parsing error during install (a two-line change in the build script). Each fix I wrote down was a question I didn't have to answer again.
+
+## Review without a bottleneck
+
+For product teams, I documented a process where writers never block a release.
+
+<ReviewModel />
+
+- **Document in the sprint.** Teams plan doc work with feature work and write incrementally, so docs are never a pile of work at the end of a release.
+- **Teams own accuracy.** The pull request needs a passing build and review by the team, not by a writer, so accurate docs publish as soon as they merge.
+- **Writers own polish, afterward.** A notification tells the writer when a pull request touches docs. The writer adds a task to the docs board and follows up with an editorial pull request.
+
+Engineers get their docs out on their schedule, and every change still gets an editorial pass.
+
+## Reaching engineers where they already work
+
+Some contributors were never going to open a docs repo, and they didn't need to. For release notes, known issues, and bug reports, the contribution model moved into the engineering work items they already filled out. The guide defines four fields on each work item and exactly how they're used:
+
+| Work item | State | Publish | Becomes |
+| --- | --- | --- | --- |
+| Feature or backlog item | Closed | Yes | A **What's new** item |
+| Bug | Closed | Yes | A fixed bug |
+| Bug | Not closed | Yes | A known issue |
+
+<ReleaseNotesFlow />
+
+Generated notes go into a pull request that posts to the engineering Slack channel with a 24-hour review window. The draft ends with a table of work items that *didn't* qualify, so reviewers can spot a note that was missed because someone forgot to fill in a field. The guide also covers the edge cases, like marking duplicates as *Yes, but covered elsewhere* so one feature doesn't produce two notes.
+
+## Documenting the platform itself
+
+To make sure the platform never depended on me, about half the guide is for admins. It covers how the system works and why it was built that way:
+
+- **The theme:** how template layers override each other, how to test theme changes safely, and how changes reach every site.
+- **Every repo and pipeline:** a map of what each one builds, which branch it uses, and where it deploys.
+- **API docs:** how .NET and REST reference docs are configured, generated, and split into pages.
+- **Site features:** version navigation, single-sourced terms, banners, feedback, PDFs, redirects, and linting rules.
+- **Design decisions:** articles record the problem, the solutions I rejected, and why the chosen one won, so a future admin doesn't undo a fix without knowing what it solved.
+- **An archive** of retired processes, so old decisions stay traceable.
+
+## Support and feedback loops
+
+A guide answers the questions someone thought of in advance. For everything else, I set up support channels:
+
+- **A help channel.** Contributors post questions in a dedicated Slack channel, and the guide points to it wherever a reader might get stuck.
+- **Reader feedback.** A **Was this page helpful?** form on every page feeds a spreadsheet, and new responses post to a Slack feedback channel so contributors see what readers say about their pages.
+- **A docs board.** Requests and follow-up edits go on a shared board. Access comes from a group membership, so adding a contributor is one step and no one has to manage permissions person by person.
+- **One-on-one coaching.** I walked new contributors through their first change, so their first pull request was a guided one.
+
+## What this project shows
+
+- **I design processes for scale, not heroics.** The guide, the templates, and the review model let many teams contribute without every change going through me.
+- **I design for each audience.** Occasional contributors, product teams, and admins each get the depth their job needs and no more.
+- **I prefer guardrails to gatekeepers.** Linters, build checks, and required validation builds catch mistakes automatically and early, so review can focus on substance.
+- **I meet contributors where they work.** An edit link on every page, a browser editor, and release notes written in work items remove reasons not to contribute.
+- **I plan for continuity.** Detailed admin docs and recorded design decisions mean the platform can outlast any one person, including me.

@@ -1,0 +1,83 @@
+/* Diagrams for /experience/docs-as-code. Colors follow the site palette and
+   switch with the light/dark theme. */
+
+.figure {
+  --dc-node-bg: #ffffff;
+  --dc-node-stroke: #93bcdf;
+  --dc-platform-bg: #e6eef9;
+  --dc-platform-stroke: #5f93c7;
+  --dc-source-bg: #fdf1dc;
+  --dc-source-stroke: #c98a1c;
+  --dc-deploy-bg: #e3f6f2;
+  --dc-deploy-stroke: #3fa592;
+  --dc-hub-bg: #202b49;
+  --dc-frame: #f6f8fb;
+  --dc-frame-stroke: #d5dde6;
+  --dc-edge: #8a9bb0;
+  --dc-muted: #5c6b7a;
+
+  margin: 2rem 0 2.5rem;
+}
+
+:global([data-theme='dark']) .figure {
+  --dc-node-bg: #242526;
+  --dc-node-stroke: #5e7893;
+  --dc-platform-bg: #22324a;
+  --dc-platform-stroke: #93bcdf;
+  --dc-source-bg: #3d3120;
+  --dc-source-stroke: #f1b753;
+  --dc-deploy-bg: #1f3b37;
+  --dc-deploy-stroke: #73d3c3;
+  --dc-hub-bg: #2f3d63;
+  --dc-frame: #1d1e20;
+  --dc-frame-stroke: #3d4148;
+  --dc-edge: #7f8fa3;
+  --dc-muted: #aab6c3;
+}
+
+.scroll { overflow-x: auto; }
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  font-family: var(--ifm-font-family-base);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--dc-muted);
+  text-align: center;
+}
+
+/* Boxes */
+.node { fill: var(--dc-node-bg); stroke: var(--dc-node-stroke); stroke-width: 1.25; }
+.platform { fill: var(--dc-platform-bg); stroke: var(--dc-platform-stroke); stroke-width: 1.25; }
+.source { fill: var(--dc-source-bg); stroke: var(--dc-source-stroke); stroke-width: 1.25; }
+.deploy { fill: var(--dc-deploy-bg); stroke: var(--dc-deploy-stroke); stroke-width: 1.25; }
+.gate { fill: var(--dc-source-bg); stroke: var(--dc-source-stroke); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.hub { fill: var(--dc-hub-bg); stroke: var(--dc-hub-bg); stroke-width: 1.5; }
+.frame { fill: var(--dc-frame); stroke: var(--dc-frame-stroke); stroke-width: 1; }
+
+/* Text */
+.title { fill: var(--ifm-font-color-base); font-size: 14px; font-weight: 500; }
+.sub { fill: var(--dc-muted); font-size: 12px; }
+.mono { fill: var(--dc-muted); font-size: 11.5px; font-family: var(--ifm-font-family-monospace); }
+.hubTitle { fill: #ffffff; font-size: 15px; font-weight: 500; }
+.hubSub { fill: #bed4e6; font-size: 12px; }
+.label { fill: var(--dc-muted); font-size: 11px; font-style: italic; }
+.stepNum { fill: var(--dc-muted); font-size: 11px; font-weight: 600; }
+.heading {
+  fill: var(--dc-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Lines */
+.edge { fill: none; stroke: var(--dc-edge); stroke-width: 1.5; }
+.edgeDashed { fill: none; stroke: var(--dc-edge); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.arrow { fill: var(--dc-edge); }

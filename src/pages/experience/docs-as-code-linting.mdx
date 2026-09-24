@@ -1,0 +1,280 @@
+---
+title: 'Docs-as-code: Linting'
+description: How I built automated linting for a docs-as-code platform, with a custom Vale house style of 96 rules, a tuned markdownlint config, and custom scripts, all enforced in the pull request pipeline so every change was checked before it published.
+---
+
+import { LintCheckpoints, ValeFlow, StyleCuration } from '@site/src/components/DocsAsCodeDiagrams';
+
+# Docs-as-code: Linting
+
+**I turned a company's style guide into code and made the build pipeline enforce it.** On the [docs-as-code platform I built](/experience/docs-as-code), every pull request ran through automated linting before it could merge. I chose Vale to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. Custom scripts caught what neither tool could, such as broken links, images without alt text, and page titles that didn't match their headings. The same rules ran in the writer's editor, on the command line, and in the pipeline, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas. With engineers, product managers, and support staff all writing docs, linting in the pipeline is what kept the site consistent.
+
+The company's details are left out. Rule files and configs on this page are excerpts from my original work, with company-specific terms removed.
+
+:::tip[At a glance]
+
+- **Linting is part of the automated pipeline:** every pull request is linted, and errors block the merge.
+- **One rule set, three checkpoints:** the editor, the command line, and the pipeline all use the same config files from one repo.
+- **Vale house style:** 96 rules for word choice, voice, headings, numbers, punctuation, inclusive language, and docs-as-code problems like leftover merge conflict markers.
+- **A spelling list of about 300 product and technical terms**, so real mistakes stand out instead of getting lost in false alarms.
+- **markdownlint tuned for DocFX:** consistent headings and lists, only the HTML the site needs, and no conflict between DocFX page titles and H1s.
+- **Custom scripts** for broken links, missing alt text, unused images, and title mismatches, including one that fixes missing alt text automatically.
+
+:::
+
+## Why lint docs at all
+
+The platform had many contributors: writers, engineers, product managers, and support staff, working across many repos. Without automation, consistency depended on an editor catching everything in review. That doesn't scale, and it turns review into a list of nitpicks that makes contributors less willing to help.
+
+Linting moves the mechanical checks out of review and into the tools. The linter flags *utilize* and suggests *use*. The pipeline stops a page with a leftover merge conflict marker before customers see it. People review what only people can check: is it accurate, is it clear, is it what the reader needs.
+
+## One rule set, three checkpoints
+
+I kept every linting config in one shared rules repo and used the same files everywhere linting runs.
+
+<LintCheckpoints />
+
+1. **In the editor.** The markdownlint and Vale extensions for VS Code underline problems as the contributor types, with a message explaining the rule.
+2. **On the command line.** Contributors and admins can lint a whole folder at once, for example before a large restructure:
+
+   ```bash
+   markdownlint 'articles/**/*.md' --config .markdownlint.jsonc
+   vale --config vale.ini articles
+   ```
+
+3. **In the pipeline.** Every pull request runs the linters automatically. Errors fail the validation build and block the merge. Warnings appear in the pipeline log for the author and reviewers.
+
+Because all three use the same files, a contributor who fixes what the editor underlines already knows the pipeline will pass.
+
+## Linting in the automated pipeline
+
+The pipeline is what turns a style guide from a suggestion into a standard. Linting runs as steps in the pull request validation build, before DocFX builds the site:
+
+```yaml title="Pull request validation (simplified)"
+- script: npx markdownlint-cli 'articles/**/*.md' --config .markdownlint.jsonc
+  displayName: 'Lint Markdown formatting'
+
+- script: vale --config vale.ini --minAlertLevel error articles
+  displayName: 'Lint style, grammar, and spelling'
+
+- powershell: npx gulp
+  displayName: 'Build with DocFX (fails on broken references and duplicate page IDs)'
+```
+
+Each check guards something different:
+
+| Stage | Tool | Fails the build when |
+| --- | --- | --- |
+| Formatting | markdownlint | Headings, lists, or HTML break the shared rules |
+| Style and spelling | Vale | A rule set to `error` finds a problem, such as a merge conflict marker |
+| Site build | DocFX | A cross-reference is broken or two pages share an ID |
+
+Only changes that pass every stage can merge, and merging triggers the publish pipeline. Nothing reaches customers without being linted.
+
+## Why I chose Vale
+
+For style, grammar, and spelling, I chose [Vale](https://vale.sh/), an open-source linter for prose. It describes itself as bringing "code-like linting to prose," and it fit a docs-as-code platform better than any grammar checker built for word processors.
+
+- **The style guide becomes code.** Vale rules are small YAML files. They live in Git, change through pull requests, and have a history, like the docs they check.
+- **It understands Markdown.** Vale parses the structure of a page, so it skips code blocks and URLs and can apply a rule only to headings, or only to sentences. A code sample never triggers a prose rule, and heading rules check only headings.
+- **It runs anywhere, offline.** Vale is a single program with no runtime to install, and it runs on Windows, macOS, and Linux. Nothing is sent to an outside service, which mattered for unreleased product docs at a healthcare company.
+- **It's fast enough for every pull request.** Vale's own benchmark lints GitLab's docs, 2,827 Markdown pages with 82 rules, in under 20 seconds.
+- **It works in the editor and in the pipeline.** Vale has a VS Code extension and a command-line tool that runs in any build pipeline, so both use the same rules.
+- **It starts from proven style guides.** Microsoft, Google, and others publish Vale styles, and Vale lists teams at AWS, Microsoft, GitLab, and Docker among its users. I didn't have to write every rule from scratch.
+
+<ValeFlow />
+
+## Building the house style
+
+I didn't load public styles as-is. Some of their rules contradicted each other or the company's voice, and a style that flags things the team has agreed to ignore trains people to ignore it. Instead, I curated one house style.
+
+<StyleCuration />
+
+I copied the rules we wanted from public Vale styles into one folder, edited the copies, and pointed Vale at that folder only:
+
+```ini title="vale.ini"
+StylesPath = vale-rules
+MinAlertLevel = warning   # suggestion, warning, or error
+
+[*.{md}]
+BasedOnStyles = Linting
+```
+
+The original public files stay untouched. When a public style releases an update, we compare it with our copies and pull in what we want, instead of losing our edits to an overwrite.
+
+### What the rules check
+
+| Category | Example rules | What they catch |
+| --- | --- | --- |
+| Word choice | Terms, Wordiness, TooWordy, ComplexWords | *utilize*, *in order to*, *prior to* |
+| Voice and tense | Passive, FutureTense, FirstPerson, Contractions | *will save* instead of *saves*, passive constructions |
+| Headings | Headings, HeaderGerunds, HeadingPunctuation | Title case, *-ing* headings, trailing punctuation |
+| Numbers and dates | DateFormat, Ranges, Percentages, AMPM | Inconsistent dates, ranges, and times |
+| Punctuation | OxfordComma, EmDash, EnDash, Quotes | Missing serial commas, spaced dashes, curly quotes |
+| Inclusive language | Gender, GenderBias, DefaultBranch | Gendered terms, `master` for a default branch |
+| Docs-as-code problems | MergeConflictMarkers, CodeblockFences, Links | Leftover `<<<<<<<` markers, unlabeled code blocks |
+
+### Example rules
+
+Vale rules use a handful of rule types. I used five of them, each for a different kind of check.
+
+**Substitution** swaps a word for the preferred one, and its `replace` action tells the writer exactly what to use instead:
+
+```yaml title="Terms.yml (excerpt)"
+extends: substitution
+message: "Prefer '%s' over '%s'."
+level: warning
+ignorecase: true
+action:
+  name: replace
+swap:
+  in order to: to
+  utilize: use
+  prior to: before
+  and/or: a or b|a, b, or both
+  okay: OK
+```
+
+**Existence** flags a pattern anywhere it appears. This one enforces present tense:
+
+```yaml title="FutureTense.yml"
+extends: existence
+message: 'Avoid using future tense: "%s". Use present tense instead.'
+level: warning
+ignorecase: true
+raw:
+  - "(going to( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "will( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "won't( |\n|[[:punct:]])[a-zA-Z]*|"
+  - "[a-zA-Z]*'ll( |\n|[[:punct:]])[a-zA-Z]*)"
+```
+
+**Scoped rules** check only one part of the page. This one looks only at headings and suggests an imperative verb instead of an *-ing* word:
+
+```yaml title="HeaderGerunds.yml"
+extends: substitution
+message: 'Can this header start with an imperative verb, instead of a gerund (ing word)?'
+level: suggestion
+scope: heading
+swap:
+  '^\w*ing.*': 'Troubleshooting'
+```
+
+**Error-level rules** fail the pipeline. A merge conflict marker in a published page is never acceptable, so this rule checks the raw file and stops the build:
+
+```yaml title="MergeConflictMarkers.yml"
+extends: existence
+message: 'Merge conflict marker "%s" found.'
+level: error
+scope: raw
+raw:
+  - '\n<<<<<<< .+\n|\n=======\n|\n>>>>>>> .+\n'
+```
+
+**Occurrence** counts things. This one suggests splitting sentences longer than 30 words:
+
+```yaml title="SentenceLength.yml"
+extends: occurrence
+message: "Try to keep sentences short (< 30 words)."
+scope: sentence
+level: suggestion
+max: 30
+token: \b(\w+)\b
+```
+
+### Spelling without the noise
+
+A spell checker that flags every product name gets turned off. I set up the spelling rule to skip things that aren't prose, such as link text in brackets, URLs, and version numbers, and to read from an ignore list of about 300 product and technical terms, like *datamart*, *nullable*, *upsert*, and *FHIR*.
+
+```yaml title="Spelling.yml"
+extends: spelling
+message: "Did you really mean '%s'?"
+custom: true
+filters:
+  - \[.*?\]
+  - (http|https)://(\S+\.(com|net|org|edu|gov)(\/\S+)?)/
+  - \b[0-9]+.*?\b
+ignore:
+  - Linting/spelling-ignore.txt
+```
+
+When a writer needs an exception on one page, they can turn a rule off around a passage instead of turning it off everywhere:
+
+```md
+<!-- vale Linting.Spelling = NO -->
+Text with an intentional unusual spelling
+<!-- vale Linting.Spelling = YES -->
+```
+
+### Alert levels
+
+Each rule has a level, which decides where it shows up:
+
+| Level | Examples | Where it shows up |
+| --- | --- | --- |
+| Suggestion | Sentence length, gerund headings, contractions | In the editor, if the writer lowers the minimum level to see them |
+| Warning | Word choice, future tense, default branch names | In the editor and the pipeline log |
+| Error | Merge conflict markers | Everywhere, and it fails the build |
+
+Setting levels was a judgment call for each rule. A rule at `error` must never be wrong, because it blocks a release. A style preference that has good exceptions belongs at `warning` or `suggestion`, where it informs without blocking.
+
+## markdownlint, tuned for DocFX
+
+For Markdown formatting, I used markdownlint and tuned its config for how the site was built:
+
+```jsonc title=".markdownlint.jsonc"
+{
+  "MD013": false,                     // no line-length limit for prose
+  "MD003": { "style": "atx" },        // # headings, not underlines
+  "MD004": { "style": "dash" },       // - for bullets, everywhere
+  "MD033": { "allowed_elements": ["i", "span"] },  // only icon HTML
+  "MD022": { "lines_above": 1, "lines_below": 0 },
+  "single-title": { "front_matter_title": "" },     // DocFX titles aren't a second H1
+  "proper-names": { "names": ["SQL", "Active Directory", "PowerShell", "URL", "ETL"] }
+}
+```
+
+A few of these settings came from how the platform worked:
+
+- **`single-title`:** DocFX pages have a `title` in their metadata and an H1. By default, markdownlint counts that as two titles. This setting removes a false alarm that would have appeared on every page.
+- **`MD033`:** only `<i>` and `<span>` are allowed, because the site uses them for icons. Any other HTML is flagged, which keeps content portable and consistent.
+- **`.markdownlintignore`:** skips PDF cover pages, which use a special layout.
+
+## Custom scripts for what linters miss
+
+Some problems span more than one file, or need a fix rather than a warning. For those, I wrote scripts:
+
+| Script | What it does |
+| --- | --- |
+| Broken links | Runs a link checker on every Markdown file and writes a report of broken internal and external links |
+| Title mismatch | Compares each page's metadata title with its H1 and lists pages where they differ |
+| Unused images | Finds images that no page references, so they can be removed |
+| Alternate text | Adds alt text to images that have none, based on the image file name |
+| Spell check | Runs a spell check across the whole content folder |
+| Line endings | Finds files without a blank line at the end |
+
+The alternate text script fixes the problem instead of just reporting it. For every image reference with empty alt text, it builds alt text from the file name:
+
+```md
+Before: ![](media/create-value-set.png)
+After:  ![create value set](media/create-value-set.png)
+```
+
+It fixes missing alt text across the whole content folder in one run, and writers can then improve the generated text where a better description matters.
+
+I also used DocFx Companion Tools to check links and catch malformed tables, which break silently in Markdown:
+
+```plaintext
+DocLinkChecker --docfolder articles --table
+
+Malformed table in articles/user-guide/lookup-lists.md, line 32.
+Table should finish by character '|'.
+```
+
+## What this project shows
+
+- **I automate quality.** Linting in the pipeline means every change is checked the same way, whoever wrote it.
+- **I turn standards into code.** A house style of 96 rules in Git is reviewable, versioned, and enforced, not a document people forget to read.
+- **I choose tools deliberately.** Vale fit docs-as-code: rules as code, Markdown-aware, offline, fast, and the same in the editor and the pipeline.
+- **I tune for signal, not noise.** Curated rules, a spelling list, careful alert levels, and DocFX-aware settings keep false alarms low, so people trust the linter instead of ignoring it.
+- **I write scripts when tools fall short.** Custom scripts caught cross-file problems and fixed some automatically.

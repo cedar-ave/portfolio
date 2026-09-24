@@ -130,7 +130,9 @@ const config = {
                 to: '/experience/content-development',
                 items: [
                   { label: 'Technical writing', to: '/experience/technical-writing' },
-                  { label: 'Docs-as-code', to: '/experience/docs-as-code' },
+                  { label: 'Docs-as-code: Standing it up', to: '/experience/docs-as-code' },
+                  { label: 'Docs-as-code: Scaling contributions', to: '/experience/docs-as-code-contributions' },
+                  { label: 'Docs-as-code: Linting', to: '/experience/docs-as-code-linting' },
                   { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
                   { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
                   { label: 'Content intake and prioritization', to: '/experience/content-intake' },

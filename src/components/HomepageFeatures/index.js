@@ -10,7 +10,7 @@ const FeatureList = [
     Svg: require('@site/static/img/ai_brain_icon.svg').default,
     description: (
       <>
-        I build <strong>MCPs</strong> and <strong>AI agent skills</strong> that generate quality, AI-optimized content, facilitate human-in-the-loop reviews, and publish it with automated pipelines.
+        Custom MCPs • AI agent skills for ingesting source material, authoring, validating, facilitating human-in-the-loop reviews, publishing, and managing the content lifecycle
       </>
     ),
   },
@@ -20,7 +20,7 @@ const FeatureList = [
     Svg: require('@site/static/img/code_icon.svg').default,
     description: (
       <>
-      I've built <strong>docs-as-code</strong> ecosystems from the ground up and scaled content support across an organization with <strong>structured authoring</strong> in XML CCMS tools.
+     Docs-as-code • Structured authoring in XML CCMS tools
       </>
     ),
   },
@@ -30,7 +30,7 @@ const FeatureList = [
     Svg: require('@site/static/img/bulb_icon.svg').default,
     description: (
       <>
-        I create <strong>AI chatbots</strong>, <strong>help centers</strong>, and <strong>online customer communities</strong>. I build <strong>analytics dashboards</strong> that show if content is moving the needle.
+        AI chatbots • Help centers • Online customer communities • Analytics reporting
       </>
     ),
   },

@@ -1,11 +1,347 @@
 ---
 title: Docs-as-code
+description: How I built a company's docs-as-code platform from scratch with DocFX, from installing the toolchain to a shared theme, generated .NET and REST API reference, automated quality checks, and per-site pipelines that deploy to production.
 ---
 
-# Docs-as-code
+import {
+  EcosystemMap,
+  LocalDevLoop,
+  ApiDocsFlow,
+  TemplateLayers,
+  PublishPipeline,
+} from '@site/src/components/DocsAsCodeDiagrams';
 
-An organization I worked for had a limited number of guides managed as Word documents and published as PDFs. 
+# Docs-as-code: a DocFX platform built from scratch
 
+**I designed and built a company's entire docs-as-code platform from scratch, from the first `npm install` to automated deployments in production.** I chose the tools, wrote the build scripts, engineered a shared theme that every docs site installs as an npm package, generated .NET and REST API reference directly from source code and API specs, wired in automated quality checks, and wrote the pipelines that publish every site to cloud storage on merge. I chose DocFX because it was one of the only static site generators that supported .NET API documentation, which the company needed. The result was a customer help site for a suite of healthcare data applications, assembled from many repos and several product versions, that any writer or engineer could contribute to with Git and Markdown and that ran with very little overhead.
 
+The company's details are left out. Code samples on this page are simplified from my original work, and names, URLs, and storage accounts are replaced with placeholders.
 
-I've built docs-as-code ecosystems from the ground up.
+:::tip[At a glance]
+
+- **Built from scratch:** repo structure, build tooling, theme, pipelines, hosting, quality checks, and the contributor guide.
+- **Tool chosen for a hard requirement:** DocFX, one of the only static site generators that could generate .NET API documentation.
+- **One command to start:** `npm install` sets up the whole toolchain, including DocFX, so a new contributor can build a site without installing DocFX or configuring anything by hand.
+- **One theme everywhere:** a custom DocFX theme published as an npm package; a fix to the theme reaches every site on its next build.
+- **Reference docs generated from source:** .NET API docs from C# projects, and REST API docs from 13 REST API specs, split into navigable pages by scripts I wrote.
+- **Automated deployments:** one reusable pipeline file publishes any site to production or a preview environment.
+- **Quality checks built in:** linting with markdownlint and a custom Vale style guide runs in the pipeline, plus scripts for broken links, missing alt text, and more. See [Docs-as-code: Linting](/experience/docs-as-code-linting).
+- **Web and PDF from one source:** the same Markdown produces the site and downloadable PDF guides.
+
+:::
+
+## The starting point
+
+When I started, the company's guides were a small set of Word documents published as PDFs. That couldn't keep up with what the company needed:
+
+- **Developers needed API reference.** The data platform's processing engine was extended through a C# plugin API, and customers needed reference docs for its classes and interfaces. The platform also exposed about a dozen REST services.
+- **Docs had to live with the code.** Product teams worked in their own repos. Docs that lived far away from the code went stale.
+- **Several product versions were live at once.** Customers on an older release needed docs for that release, and switching versions had to be easy.
+- **PDFs still mattered.** Many customers couldn't reach the website, so guides still had to ship as PDFs.
+- **Most contributors weren't writers.** Engineers and product managers had to be able to fix a page without learning a publishing tool.
+
+Docs-as-code solved all of these at once: write in Markdown, store it in Git, review it in pull requests, and let a pipeline build and publish it.
+
+## Why I chose DocFX
+
+I evaluated static site generators against the requirements above instead of starting from a favorite. One requirement ruled out almost everything: **DocFX was one of the only static site generators that supported .NET API documentation, which the company needed.** It reads C# projects and turns their code and XML comments into reference pages, with no separate tool to maintain.
+
+| Requirement | How DocFX met it |
+| --- | --- |
+| .NET API reference generated from code | `docfx metadata` extracts reference docs from C# projects. |
+| REST API reference | Builds reference pages from Swagger files, and plugins can split them into one page per operation. |
+| PDFs from the same source | `docfx pdf` renders a PDF for each table of contents. |
+| A branded site | Every part of the default template can be overridden, file by file. |
+| Reliable cross-references | Every page has a unique ID, so links like `@get-started.md` survive moves. |
+
+DocFX had one drawback: local builds were unreliable on some versions of macOS. I planned around it instead of letting it block the choice. Mac users could write and commit as usual, then run the pipeline to publish their branch to the preview site, and I documented that path in the contributor guide.
+
+## How the whole system fits together
+
+I built the platform in layers so each site would stay small and every shared improvement would be made once.
+
+<EcosystemMap />
+
+- **A starter template repo** holds everything a new site needs: `docfx.json`, the Gulp build script, the pipeline files, linting rules, and a sample folder structure. Teams fork it for a dedicated docs repo, or copy it into a `Docs/` folder in their product repo.
+- **A theme repo and npm package** hold the look and behavior of the site. A pipeline publishes the theme as an npm package whenever it changes, and every site installs it.
+- **Docs sources** live wherever the team works: dedicated docs repos, docs folders beside product code, and the API sources the reference docs are generated from.
+- **One pipeline per site** builds that site and deploys it to its own path on a single docs domain, in production or a preview environment.
+
+The rest of this page walks through the platform in the order I built it and the order a new site is set up.
+
+## Step 1: Install the toolchain
+
+Contributors install three things once: VS Code, Node.js, and Gulp. **They never install DocFX.** I made each project download its own copy of DocFX the first time `npm install` runs, so every laptop and every build agent runs the same build with no manual setup.
+
+```json title="package.json (scripts)"
+"scripts": {
+  "postinstall": "gulp ensureDocfx",
+  "docfx:update": "gulp updateDocfx",
+  "build": "gulp && docfx build --serve",
+  "start": "gulp run"
+}
+```
+
+The `ensureDocfx` task checks for DocFX in the project, and if it's missing, fetches the latest release from GitHub and unzips it into a local folder:
+
+```ts title="gulpfile.ts (simplified)"
+export async function ensureDocfx() {
+  if (existsSync(join(docFxLibDir, 'docfx.exe'))) return;
+  if (!existsSync(docFxLibDir)) mkdirSync(docFxLibDir);
+
+  const release = await got('https://api.github.com/repos/dotnet/docfx/releases/latest').json();
+  const zip = await got(release.assets[2].browser_download_url, { responseType: 'buffer' });
+  writeFileSync(join(docFxLibDir, 'docfx.zip'), zip.rawBody);
+  await extract(join(docFxLibDir, 'docfx.zip'), { dir: docFxLibDir });
+}
+```
+
+Upgrading DocFX is one command: `npm run docfx:update` removes the local copy and downloads the newest one.
+
+## Step 2: Set up a new site
+
+The first decision for a new site is where its files live, and I gave teams a clear way to choose:
+
+| | Dedicated docs repo | Docs folder in a product repo |
+| --- | --- | --- |
+| **Pros** | Forked straight from the starter template, so shared files are easy to keep current. Builds from the repo root. | Docs sit next to the code they describe, so they're more likely to be updated with it. |
+| **Cons** | Easier to forget because it's away from the code. | Shared files are copied in by hand and must be updated by hand. Builds run from the `Docs` folder. |
+
+Either way, the site has the same shape:
+
+```plaintext
+Docs/                    (or the repo root)
+  articles/
+    install-guide/       one folder per guide
+      toc.yml
+      *.md
+      media/
+    user-guide/
+      toc.yml
+  restapi/               Swagger files for REST API reference
+  specs/                 generated landing pages for the REST API docs
+  sourcedContent/        reusable terms and messages (JSON)
+  builds/
+    publish.yml          the pipeline
+    variables.yml        this site's settings
+  docfx.json
+  gulpfile.ts
+  package.json
+  index.md               the site's home page
+```
+
+To create a site, a contributor clones the repo, runs one PowerShell command that syncs the latest starter files into it, and then runs `npm install` and `npm start`. The build runs and the site opens in their browser.
+
+## Step 3: Configure the site in one file
+
+I put every site-specific setting in `docfx.json`, so teams could configure their site without touching the shared theme. The file tells DocFX what to build, which theme layers to apply, and which features to turn on.
+
+```json title="docfx.json (simplified)"
+{
+  "build": {
+    "template": ["default", "node_modules/@company/docs-theme"],
+    "content": [{
+      "files": ["articles/**/*.md", "articles/**/toc.yml", "toc.yml", "index.md", "restapi/**"],
+      "exclude": ["articles/**/cover.md"]
+    }],
+    "resource": [{ "files": ["articles/**/media/**", "sourcedContent/**"] }],
+    "overwrite": "specs/**/*.md",
+    "globalMetadata": {
+      "_homePath": "/product-name/",
+      "_enableSearch": true,
+      "_enableBreadcrumb": true,
+      "_enableFeedback": true,
+      "_enableVersionDropdown": true,
+      "_enableContributionLinksFooter": true,
+      "_showDevMenu": ""
+    },
+    "fileMetadata": {
+      "_noindex": { "**/includes/**": true },
+      "_enableFeedback": { "**/includes/**": false }
+    },
+    "dest": "_site"
+  }
+}
+```
+
+The `globalMetadata` flags work like feature switches for the theme. A site without API docs hides the developer menu. A site with one version hides the version dropdown. `fileMetadata` sets behavior by path, so reusable snippets in `includes` folders are never indexed by search engines and never show a feedback form.
+
+## Step 4: Build one theme and share it everywhere
+
+The default DocFX site didn't look or behave like the company's product, and I didn't want each team restyling its own copy. So I exported the default DocFX template, overrode the partials and styles I needed to change, and **published the result as an npm package.** Every site lists the package as a dependency and pulls the newest version on every build. A fix I merged into the theme reached every site the next time its pipeline ran, with no change to the site's repo.
+
+<TemplateLayers />
+
+DocFX applies templates in the order they're listed and lets later layers replace files from earlier ones. I used that behavior in two ways:
+
+- **Shared theme, local extensions.** The company theme sits on top of the default template. API sites add plugin layers on top of that.
+- **Safe testing.** The theme repo includes a test site that lists a local copy of the theme last, so my changes override the published package. I could preview a change locally before publishing it to every site.
+
+Features I built into the theme include:
+
+- **A common header** across every section of the docs domain, with menus for applications and developer resources.
+- **A version switcher that keeps your place.** Choosing another release takes the reader to the same page in that release, based on the URL path, instead of dropping them on the home page.
+- **Single-sourced terms and messages.** Writers type a placeholder such as `{{ product }}` and a script replaces it with the value in `sourcedContent/terms.json`. Styled notices, such as *This section applies to the cloud edition*, work the same way from `messages.json`. A product rename becomes a one-line change.
+- **Reader feedback** on every page, and **Improve this doc** links that open the page's source file in the repo.
+- **Callouts, image lightboxes, and copy buttons** on code blocks.
+
+### Example: one theme, two folder structures
+
+A good test of a shared theme is the site that doesn't fit it. One section of the site was nested a level deeper than the others: its articles lived at `/section/articles/guide/page.html` instead of `/guide/articles/page.html`. The theme's relative link to its stylesheet, `../styles/main.css`, was right for every other site and one level too shallow for this one. It also had to stay as-is for local builds of the same section, because locally the extra level didn't exist.
+
+I considered copying the style files into every folder level from the Gulp script or the pipeline, and rejected both: the nesting depth varied from page to page, so either approach would be fragile and slow. Instead I made the path configurable. The theme builds every style link from a variable:
+
+```html
+<link rel="stylesheet" href="{{_rel}}{{_stylesPath}}styles/main.css">
+```
+
+The variable is empty by default. A one-line `jq` script sets it to `../` in `docfx.json`, and the pipeline runs that script only for sites that turn it on in their variables file. Local builds skip it. One theme, two structures, and nothing to maintain by hand.
+
+## Step 5: Give writers a fast local loop
+
+Writers need to see their change right away. I wrote the Gulp build so that `npm start` builds the site, serves it, and rebuilds whenever a file changes.
+
+<LocalDevLoop />
+
+The default Gulp task runs thirteen jobs in parallel: the DocFX build, Sass compilation, and copying fonts, icons, image lightbox files, and clipboard scripts into the output. `gulp run` adds BrowserSync to serve the site and watchers on the articles, the Sass files, and the theme, so a saved change appears in the browser a few seconds later.
+
+I also made the same script work in the pipeline. When the build fails, it writes errors in the format Azure DevOps understands, so a broken build shows a clear error in the pipeline run instead of a wall of logs:
+
+```ts
+console.error('##vso[task.logissue type=error]Error in DocFx build process: ' + result.error);
+```
+
+## Step 6: Generate API reference from source
+
+API reference was the reason I chose DocFX, and it's where I spent the most engineering effort. Reference docs that are generated from code change when the code changes, so they're never out of date.
+
+<ApiDocsFlow />
+
+### .NET API reference
+
+A `metadata` section in `docfx.json` points DocFX at the C# projects that define the engine's plugin interfaces. When the build runs, DocFX reads the projects and their XML comments and writes YAML models, then turns the models into reference pages.
+
+```json title="docfx.json (metadata)"
+"metadata": [{
+  "src": [{
+    "files": ["Models/Models.csproj", "Engine.PluginInterfaces/Engine.PluginInterfaces.csproj"],
+    "exclude": ["**/bin/**", "**/obj/**"],
+    "src": "../Shared"
+  }],
+  "dest": "obj/api",
+  "memberLayout": "separatePages",
+  "namespaceLayout": "nested"
+}]
+```
+
+By default DocFX puts a whole API on one long page. `memberLayout` and `namespaceLayout` split it into a page per member under an expandable menu, which is far easier to browse. The Gulp script runs `docfx metadata` only when a site defines a `metadata` section, so sites without API docs build just as fast as before.
+
+### REST API reference
+
+REST reference came from the Swagger files of 13 services, and each needed work before DocFX could use it:
+
+1. **Convert when needed.** DocFX supported Swagger 2 but not OpenAPI 3, so newer specs were converted first.
+2. **Add a description.** Each file needs a description at the top for its landing page to render, and I made sure every spec had one.
+3. **Build a tags object.** DocFX's split plugins group operations by tag, but many specs didn't list their tags. I wrote a shell script that uses `jq` to collect the tags from every operation, remove duplicates, and add a `tags` object to the file.
+4. **Generate landing pages.** Without landing pages, the index pages for each tag rendered empty and looked broken. I wrote a Python script that reads each spec and writes Markdown overwrite files into `specs/`, one per tag with links to its operations, plus a root page with the service description.
+5. **Split the pages at build time.** The pipeline installs two DocFX plugins from NuGet that split each spec into a page per tag and a page per operation.
+
+The core of the tag script is two `jq` commands:
+
+```bash title="GenerateApiTags.sh (core)"
+jq '.paths[][] | ({name: .tags[]})?' "$file" > tags.json   # collect every tag
+jq -s 'unique | {tags: .}' tags.json > object.json          # dedupe into a tags object
+jq -s add copy.json object.json > "$file"                   # merge it into the spec
+```
+
+Conceptual articles such as overviews, tutorials, and get-started guides sit beside the reference docs, and one table of contents joins them, so each API has a single guide on the web and a single PDF.
+
+## Step 7: Build and deploy with one reusable pipeline
+
+Every site runs the same pipeline file. What makes each site different lives in a short variables file:
+
+```yaml title="builds/variables.yml"
+variables:
+- name: SitePrefix                # the site's path on the docs domain
+  value: product-name
+- name: DocsRootDirectory         # '' for a docs repo, '/Docs' inside a product repo
+  value: '/Docs'
+- name: RaiseRelativeStylePaths   # nested sites only
+  value: false
+```
+
+<PublishPipeline />
+
+The pipeline runs two ways:
+
+- **Automatically on merge.** Merging into `main` builds the site and publishes it to production. Only customer-ready content goes into `main`.
+- **Manually from any branch.** Anyone can run the pipeline from a feature branch and check **PROD**, **DEV**, both, or neither. Publishing a branch to the preview site is how reviewers see a change before it goes live. With neither checked, the pipeline still builds the site and saves it as a downloadable artifact.
+
+```yaml title="builds/publish.yml (excerpt)"
+parameters:
+- name: runondev
+  displayName: DEV
+  type: boolean
+  default: false
+- name: runonprod
+  displayName: PROD
+  type: boolean
+  default: true
+
+trigger:
+  batch: true
+  branches:
+    include: [main]
+
+steps:
+- task: Npm@1                       # installs the latest theme package
+  displayName: 'npm install'
+  inputs:
+    workingDir: $(Build.SourcesDirectory)$(DocsRootDirectory)
+
+- powershell: |
+    Set-Location $(Build.SourcesDirectory)$(DocsRootDirectory)
+    npx gulp
+  displayName: 'Run Gulp (which also runs DocFX)'
+
+- task: AzCopy@1
+  displayName: 'Copy to production storage'
+  condition: '${{ parameters.runonprod }}'
+  inputs:
+    SourcePath: '$(Build.ArtifactStagingDirectory)'
+    DestinationObject: 'wwwroot/$(SitePrefix)'
+```
+
+Pull requests also run automated linting before they can merge, so every change is checked for formatting, style, and spelling before it reaches this pipeline. See [Docs-as-code: Linting](/experience/docs-as-code-linting).
+
+Because each site deploys to its own folder in shared blob storage, many repos combine into one docs domain, and each team ships on its own schedule without waiting on anyone else. Older product versions build from their release branches into their own paths, which is what the version switcher links between.
+
+## Step 8: Produce PDFs from the same source
+
+Many customers couldn't reach the website, so PDFs had to come from the same Markdown. I added a `pdf` section to `docfx.json` and a PDF layer to the theme, and set up rendering with wkhtmltopdf:
+
+- **One table of contents, one PDF.** Each guide's `toc.yml` produces a PDF of that guide, in the same order as the website.
+- **Cover pages from Markdown.** A `cover.md` file in each guide becomes its cover, built from shared snippets for the version and release date.
+- **Web-only and PDF-only content.** Two CSS classes hide content in one format or the other, so a link to another guide appears on the web, and a plain reference appears in the PDF.
+- **An orphan check for free.** DocFX's appendix option collects every article that isn't in a table of contents, which doubled as a report of pages no one could navigate to.
+- **Dated filenames.** A script adds the release date to each PDF's filename so it's always clear which release a PDF covers.
+
+## Scaling contributions
+
+A docs platform only works if people outside the docs team can use it. I also wrote the contributor guide and set up the review processes that let engineers, product managers, and support staff contribute. That work is described in [Docs-as-code: Scaling contributions](/experience/docs-as-code-contributions).
+
+## Results
+
+- **A complete docs-as-code platform, built from scratch,** that served a suite of healthcare data applications, their APIs, and several product versions from one domain.
+- **Low overhead.** New sites start from a template, the theme updates itself, and publishing is a merge.
+- **Accurate API reference** for the .NET plugin API and 13 REST API specs, generated from the code and specs so it stays current.
+- **Consistent quality** from automated linting in the editor and the pipeline instead of line edits in review.
+- **Contributions from across the company**, because the tools matched how engineers already worked.
+
+## What this project shows
+
+- **I can build a platform from nothing.** I made every decision, from choosing the generator to writing the scripts, theme, and pipelines that run it.
+- **I choose tools against requirements.** DocFX won because it met a hard requirement, .NET API docs, and I planned around its weak spots instead of ignoring them.
+- **I engineer for scale and low upkeep.** A shared theme, a starter template, and one reusable pipeline mean each improvement is made once and reaches every site.
+- **I solve problems with code.** When the tools fell short, I wrote the missing piece: `jq` and Python scripts for API docs, a configurable style path for nested sites, and lint scripts for problems the linters missed.
+- **I make complex systems usable.** A contributor guide and coaching turned a technical platform into something any engineer or writer could use. See [Docs-as-code: Scaling contributions](/experience/docs-as-code-contributions).
