@@ -137,7 +137,10 @@ const config = {
                 items: [
                   { label: 'Technical writing', to: '/experience/technical-writing' },
                   { label: 'Docs-as-code', to: '/experience/docs-as-code' },
-                  { label: 'XML in a CCMS', to: '/experience/xml-ccms' },
+                  { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
+                  { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
+                  { label: 'Content intake and prioritization', to: '/experience/content-intake' },
+                  { label: 'UX writing', to: '/experience/ux-writing-roster-upload' },
                 ],
               },
               {
@@ -145,14 +148,17 @@ const config = {
                 label: 'Content engagement',
                 to: '/experience/content-engagement',
                 items: [
+                  { label: 'Help site relaunch', to: '/experience/help-site-relaunch' },
                   { label: 'AI chatbot', to: '/experience/ai-chatbot' },
+                  { label: 'Help center theme engineering', to: '/experience/help-center-theme-engineering' },
+                  { label: 'Analytics dashboard design', to: '/experience/analytics-dashboard-design' },
                   { label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies' },
                 ],
               },
             ],
           },
           {
-            to: '/resume.pdf',
+            href: '/pdf/resume.pdf',
             label: 'Resume',
             position: 'left',
           },
