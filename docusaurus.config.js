@@ -11,8 +11,8 @@ import remarkImageSize from './plugins/remark-image-size.mjs';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Hi! I\'m Marla.',
-  tagline: 'I\'m an AI-fluent documentation engineer who builds the pipelines that keep documentation up to date as products change.',
+  title: 'Marla Sowards',
+  tagline: 'AI-Fluent Content Engineer • Technical Communicator • Knowledge Manager • AI Chatbot Builder • DocOps Developer',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -100,7 +100,7 @@ const config = {
       navbar: {
         title: 'Home',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'site logo',
           src: 'img/json.svg',
         },
         items: [
@@ -108,12 +108,6 @@ const config = {
             to: '/about',
             label: 'About',
             position: 'left',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: 'Samples',
           },
           {
             type: 'dropdown',

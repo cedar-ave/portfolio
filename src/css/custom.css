@@ -268,3 +268,7 @@ article h3 {
   font-weight: 500;
   font-size: 1rem;
 }
+
+.hero .container {
+  max-width: 700px;
+}
