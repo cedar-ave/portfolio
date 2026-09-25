@@ -28,6 +28,7 @@
   --ifm-color-primary-lightest: #82a0bd;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-code-padding-horizontal: 0.4rem;
 
   --ifm-link-color: #50657C;
   --ifm-link-hover-color: #5e7893;
@@ -246,9 +247,17 @@ article h6 {
 
 /* Tag archive page (/blog/tags/*): tighten the gap below the
    "View all tags" link and above the first article card — Infima's
-   margin-bottom--xl (5rem) on the header is much larger than needed. */
-.blog-tags-post-list-page header.margin-bottom--xl {
-  margin-bottom: 1.5rem !important;
+   margin-bottom--xl (5rem) on the header is much larger than needed.
+   This must live inside the same `docusaurus.infima` cascade layer as
+   the utility class: Docusaurus wraps Infima's CSS in `@layer
+   docusaurus.infima`, and per the CSS cascade-layers spec a layered
+   !important declaration always wins over an unlayered !important
+   one regardless of selector specificity — so an unlayered override
+   here would silently lose to Infima's rule despite matching. */
+@layer docusaurus.infima {
+  .blog-tags-post-list-page header.margin-bottom--xl {
+    margin-bottom: 1.5rem !important;
+  }
 }
 
 .blog-list-page article.blogPostCard,
@@ -270,6 +279,82 @@ article h6 {
 .blog-tags-post-list-page article.blogPostCard:hover {
   box-shadow: 0 6px 18px rgba(94, 120, 147, 0.28);
   transform: translateY(-2px);
+}
+
+.blog-tags-post-list-page code {
+  padding-left: .8rem;
+  padding-right: .8rem;
+  font-family: var(--ifm-font-family-base);
+  font-weight: 500;
+}
+
+/* Tags overview page (/blog/tags): give each letter's block (the
+   <article> containing the "A", "B", ... heading and its tags) the
+   same gray rounded background used by the blog post cards above
+   (.blogPostCard), so the two pages feel consistent. The tags
+   themselves are left unstyled. */
+.blog-tags-list-page article {
+  background: #F5F6F8;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+[data-theme='dark'] .blog-tags-list-page article {
+  background: #212429;
+}
+
+.blog-tags-list-page article h2 {
+  margin-top: 0;
+}
+
+.blog-tags-list-page article hr {
+  display: none;
+}
+
+/* Individual tag pills inside each letter block: a touch darker
+   than the block's gray so they stand out slightly, while staying
+   in the same gray family rather than introducing a new hue. */
+.blog-tags-list-page article ul li a[href^="/blog/tags/"] {
+  background: #E2EAF2;
+}
+
+[data-theme='dark'] .blog-tags-list-page article ul li a[href^="/blog/tags/"] {
+  background: #1A1D21;
+}
+
+/* The tag shape's pointed left edge (::before) is drawn from borders
+   only, so it has no fill by default and was showing the block's
+   background through instead of the tag's own color. Fill it to
+   match the tag pill so the point reads as part of the same shape. */
+.blog-tags-list-page article ul li a[href^="/blog/tags/"]::before {
+  background: #E2EAF2;
+}
+
+[data-theme='dark'] .blog-tags-list-page article ul li a[href^="/blog/tags/"]::before {
+  background: #1A1D21;
+}
+
+/* The small circular "hole punch" (::after) should show the block's
+   background through it, not the tag's. */
+.blog-tags-list-page article ul li a[href^="/blog/tags/"]::after {
+  background: #F5F6F8;
+}
+
+[data-theme='dark'] .blog-tags-list-page article ul li a[href^="/blog/tags/"]::after {
+  background: #212429;
+}
+
+/* Post-count badge: a darker gray than the tag pill so the count
+   stays visually distinct from the tag it belongs to. */
+.blog-tags-list-page article ul li a[href^="/blog/tags/"] span {
+  background: #C9CED6;
+  color: var(--ifm-color-black);
+}
+
+[data-theme='dark'] .blog-tags-list-page article ul li a[href^="/blog/tags/"] span {
+  background: #0F1114;
+  color: var(--ifm-color-white);
 }
 
 [data-theme='dark'] .blog-list-page article.blogPostCard:hover,
