@@ -99,6 +99,7 @@ a:hover {
 
 .hero__subtitle {
   font-weight: 300;
+  font-size: 1.25rem;
 }
 
 .roboto-semibold {
@@ -112,14 +113,14 @@ a:hover {
 /* Infima's .dropdown__menu sets overflow-y: auto, which per spec forces
    overflow-x to auto too, clipping our flyout submenus. Any top-level
    dropdown that holds nested dropdowns needs overflow left visible. */
-.navbar__item--experience + .dropdown__menu {
+.navbar__item--experience+.dropdown__menu {
   max-height: none;
   overflow: visible;
 }
 
 /* Portfolio dropdown items: match body text weight instead of Infima's
    bolder default link weight. */
-.navbar__item--experience + .dropdown__menu .dropdown__link {
+.navbar__item--experience+.dropdown__menu .dropdown__link {
   font-weight: 400;
 }
 
@@ -133,7 +134,7 @@ a:hover {
   width: 100%;
 }
 
-.dropdown__menu .dropdown > .dropdown__menu {
+.dropdown__menu .dropdown>.dropdown__menu {
   /* Infima's .dropdown__menu has 0.5rem of top padding, so aligning this
      flyout's box to top: 0 still leaves its first link sitting 0.5rem below
      the parent item's link. Pull it up by that padding so the two align. */
@@ -142,14 +143,14 @@ a:hover {
   margin-left: 0.3rem;
 }
 
-.dropdown__menu .dropdown.dropdown--right > .dropdown__menu {
+.dropdown__menu .dropdown.dropdown--right>.dropdown__menu {
   left: auto;
   right: 100%;
   margin-left: 0;
   margin-right: 0.3rem;
 }
 
-.dropdown__menu .dropdown > .dropdown__link::after {
+.dropdown__menu .dropdown>.dropdown__link::after {
   border-color: transparent transparent transparent currentColor;
   transform: translateY(-50%) rotate(0deg);
 }
@@ -158,14 +159,14 @@ a:hover {
    (a plain descendant selector), so hovering the outer "Experience" item was
    revealing every nested sub-menu at once. Force nested sub-menus closed by
    default, and open only when their own parent item is hovered/focused. */
-.dropdown__menu .dropdown > .dropdown__menu {
+.dropdown__menu .dropdown>.dropdown__menu {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.dropdown__menu .dropdown:hover > .dropdown__menu,
-.dropdown__menu .dropdown.dropdown--show > .dropdown__menu {
+.dropdown__menu .dropdown:hover>.dropdown__menu,
+.dropdown__menu .dropdown.dropdown--show>.dropdown__menu {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
@@ -179,7 +180,7 @@ h1 {
 
 .text--center h3 {
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   margin-bottom: 0.5rem;
 }
 
@@ -195,7 +196,7 @@ h1 {
 }
 
 #__blog-post-container {
-margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .table-of-contents__link {
@@ -212,10 +213,9 @@ strong {
   font-weight: 500;
 }
 
-.row {
+/* .row {
   margin-bottom: 4.25rem;
-  /* margin-top: -1rem; */
-}
+} */
 
 article h2 {
   margin-top: 2.5rem;
@@ -223,7 +223,10 @@ article h2 {
   font-weight: 500;
 }
 
-article h3, article h4, article h5, article h6 {
+article h3,
+article h4,
+article h5,
+article h6 {
   font-weight: 500;
 }
 
@@ -233,13 +236,25 @@ article h3, article h4, article h5, article h6 {
   margin-top: 0;
 }
 
-.blog-list-page article {
-  /* margin-bottom: -3rem; */
+.blog-list-page article.blogPostCard {
+  background: #F5F6F8;
+  border: 1px solid #E9EBEF;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  transition: border-color 0.15s ease;
 }
 
-.blog-list-page article + article {
-  border-top: 1px solid var(--ifm-toc-border-color);
-  padding-top: 1.5rem;
+[data-theme='dark'] .blog-list-page article.blogPostCard {
+  background: #212429;
+  border-color: #2c2f36;
+}
+
+.blog-list-page article.blogPostCard:hover {
+  border-color: var(--ifm-link-color);
+}
+
+.blog-list-page article.blogPostCard+article.blogPostCard {
+  margin-top: 1.5rem;
 }
 
 article h3 {
@@ -260,7 +275,8 @@ article h3 {
   border: .5px solid var(--ifm-toc-border-color);
 }
 
-.navbar__link, .navbar__title {
+.navbar__link,
+.navbar__title {
   font-weight: 400;
 }
 
@@ -270,5 +286,19 @@ article h3 {
 }
 
 .hero .container {
-  max-width: 700px;
+  max-width: 900px;
+}
+
+.hero__title {
+  font-weight: 700;
+  font-size: 3rem;
+}
+
+.footer__copyright {
+  font-size: 14px;
+  margin-top: 2rem;
+}
+
+.footer {
+  padding-top: 2.5rem;
 }

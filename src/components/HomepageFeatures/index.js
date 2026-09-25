@@ -5,32 +5,32 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Content engineering',
+    title: 'AI-powered content engineering',
     link: '/experience/content-engineering',
     Svg: require('@site/static/img/ai_brain_icon.svg').default,
     description: (
       <>
-        Custom MCPs • AI agent skills for ingesting source material, authoring, validating, facilitating human-in-the-loop reviews, publishing, and managing the content lifecycle
+        Custom MCPs • AI agent skills for ingesting source material, authoring, validating, optimizing, facilitating human-in-the-loop reviews, publishing, and managing the content lifecycle • AI-assisted pipelines
       </>
     ),
   },
   {
-    title: 'Content development',
+    title: 'Scalable content development',
     link: '/experience/content-development',
     Svg: require('@site/static/img/code_icon.svg').default,
     description: (
       <>
-     Docs-as-code • Structured authoring in XML CCMS tools
+     Docs-as-code • Structured authoring in XML CCMS tools • Content lifecycle management • Taxomony-informed information architecture • Knowledge management strategy
       </>
     ),
   },
   {
-    title: 'Content engagement',
+    title: 'Outcomes-driven content engagement',
     link: '/experience/content-engagement',
     Svg: require('@site/static/img/bulb_icon.svg').default,
     description: (
       <>
-        AI chatbots • Help centers • Online customer communities • Analytics reporting
+        AI chatbots • Help centers • Online customer communities • Analytics reporting • Executive priority alignment
       </>
     ),
   },

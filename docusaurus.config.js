@@ -12,7 +12,7 @@ import remarkImageSize from './plugins/remark-image-size.mjs';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-Fluent Content Engineer • Technical Communicator • Knowledge Manager • AI Chatbot Builder • DocOps Developer',
+  tagline: 'AI-Fluent Content Engineer • Technical Writer and Editor • Docs-as-Code and CCMS Workflows • Zendesk Master • AI Conversation Designer • AI-Assisted Pipelines',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -184,15 +184,15 @@ const config = {
             ],
           },
           {
-            title: 'Community',
+            title: 'Links',
             items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/users/7848350/hcdocs',
-              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/cedar-ave',
+              },
+              {
+                label: 'Stack Overflow',
+                href: 'https://stackoverflow.com/users/7848350/hcdocs',
               }
             ],
           },
@@ -210,7 +210,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()}, Marla Sowards`,
+        copyright: `Copyright © ${new Date().getFullYear()} Marla Sowards`,
       },
       prism: {
         theme: prismThemes.github,
