@@ -122,6 +122,7 @@ const config = {
                 items: [
                   { label: 'Custom MCPs', to: '/experience/custom-mcps' },
                   { label: 'AI agent skills', to: '/experience/ai-agent-skills' },
+                  { label: 'Knowledge taxonomy for AI drafting', to: '/experience/ai-knowledge-taxonomy' },
                 ],
               },
               {
@@ -133,9 +134,12 @@ const config = {
                   { label: 'Docs-as-code: Standing it up', to: '/experience/docs-as-code' },
                   { label: 'Docs-as-code: Scaling contributions', to: '/experience/docs-as-code-contributions' },
                   { label: 'Docs-as-code: Linting', to: '/experience/docs-as-code-linting' },
+                  { label: 'Docs-as-code: Customizations', to: '/experience/docs-as-code-customizations' },
+                  { label: 'API documentation', to: '/experience/api-documentation' },
+                  { label: 'Automated release notes', to: '/experience/automated-release-notes' },
                   { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
                   { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
-                  { label: 'Content intake and prioritization', to: '/experience/content-intake' },
+                  { label: 'Content request form and prioritization', to: '/experience/content-intake' },
                   { label: 'UX writing', to: '/experience/ux-writing-roster-upload' },
                 ],
               },

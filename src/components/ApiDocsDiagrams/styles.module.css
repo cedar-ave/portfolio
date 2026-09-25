@@ -1,4 +1,4 @@
-/* Diagrams for /experience/docs-as-code. Colors follow the site palette and
+/* Diagrams for /experience/api-documentation. Colors follow the site palette and
    switch with the light/dark theme. */
 
 .figure {
@@ -81,11 +81,3 @@
 .edge { fill: none; stroke: var(--dc-edge); stroke-width: 1.5; }
 .edgeDashed { fill: none; stroke: var(--dc-edge); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .arrow { fill: var(--dc-edge); }
-
-/* Customizations page: page wireframe and numbered markers */
-.pageTitle { fill: var(--ifm-font-color-base); font-size: 18px; font-weight: 600; }
-.markerNum { fill: #ffffff; font-size: 11px; font-weight: 600; }
-.bar { fill: var(--dc-frame-stroke); }
-.divider { stroke: var(--dc-frame-stroke); stroke-width: 1; }
-.stamp { fill: var(--dc-platform-stroke); }
-.stampText { fill: var(--dc-node-bg); font-size: 8.5px; font-weight: 600; letter-spacing: 0.06em; }

@@ -13,6 +13,8 @@ import {
 
 # Docs-as-code: a DocFX platform built from scratch
 
+![docs site home page](/img/dos-docs-home-page.png)
+
 **I designed and built a company's entire docs-as-code platform from scratch, from the first `npm install` to automated deployments in production.** I chose the tools, wrote the build scripts, engineered a shared theme that every docs site installs as an npm package, generated .NET and REST API reference directly from source code and API specs, wired in automated quality checks, and wrote the pipelines that publish every site to cloud storage on merge. I chose DocFX because it was one of the only static site generators that supported .NET API documentation, which the company needed. The result was a customer help site for a suite of healthcare data applications, assembled from many repos and several product versions, that any writer or engineer could contribute to with Git and Markdown and that ran with very little overhead.
 
 The company's details are left out. Code samples on this page are simplified from my original work, and names, URLs, and storage accounts are replaced with placeholders.
@@ -185,6 +187,8 @@ Features I built into the theme include:
 - **Reader feedback** on every page, and **Improve this doc** links that open the page's source file in the repo.
 - **Callouts, image lightboxes, and copy buttons** on code blocks.
 
+For the full list of what I changed in DocFX's default template, and why, see [Docs-as-code: Customizations](/experience/docs-as-code-customizations).
+
 ### Example: one theme, two folder structures
 
 A good test of a shared theme is the site that doesn't fit it. One section of the site was nested a level deeper than the others: its articles lived at `/section/articles/guide/page.html` instead of `/guide/articles/page.html`. The theme's relative link to its stylesheet, `../styles/main.css`, was right for every other site and one level too shallow for this one. It also had to stay as-is for local builds of the same section, because locally the extra level didn't exist.
@@ -255,6 +259,8 @@ jq -s add copy.json object.json > "$file"                   # merge it into the 
 ```
 
 Conceptual articles such as overviews, tutorials, and get-started guides sit beside the reference docs, and one table of contents joins them, so each API has a single guide on the web and a single PDF.
+
+For how the REST and .NET API docs differ, and how I kept both current across two product editions, see [API documentation](/experience/api-documentation).
 
 ## Step 7: Build and deploy with one reusable pipeline
 

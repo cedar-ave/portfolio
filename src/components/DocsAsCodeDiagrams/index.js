@@ -763,3 +763,336 @@ export function StyleCuration() {
     </Figure>
   );
 }
+
+/* ---------- Customizations page (/experience/docs-as-code-customizations) ---------- */
+
+function Marker({ x, y, n }) {
+  return (
+    <g>
+      <circle cx={x} cy={y} r={11} className={styles.hub} />
+      <text x={x} y={y + 4} textAnchor="middle" className={styles.markerNum}>{n}</text>
+    </g>
+  );
+}
+
+/* ---------- 13. Anatomy of a customized page ---------- */
+
+export function PageAnatomy() {
+  const navItems = [
+    { y: 126, t: 'Get started', c: 'title' },
+    { y: 146, t: 'Overview', c: 'sub' },
+    { y: 166, t: 'System requirements', c: 'sub' },
+    { y: 206, t: 'Install', c: 'title' },
+    { y: 226, t: 'Prepare the server', c: 'sub' },
+    { y: 246, t: 'Install the agent', c: 'sub' },
+    { y: 286, t: 'Schedule jobs', c: 'title' },
+    { y: 334, t: 'Jobs (v2)', c: 'sub' },
+  ];
+  const affixLinks = ['Request a feature', 'Ask the community', "What's new", 'Download PDFs'];
+
+  return (
+    <Figure
+      titleId="dac-anatomy"
+      title="Anatomy of a page on the customized docs site"
+      desc="A wireframe of one docs page with eleven numbered customizations: a version switcher, a home icon and breadcrumb, search, styled navigation headings with a Deprecated stamp, a status banner, an applies-to banner, a single-sourced edition notice, an image lightbox and copy button, a feedback form, help and resource links in the right sidebar, and a footer with legal links and edit links."
+      viewBox="0 0 960 540"
+      caption="Every numbered element is something I added to DocFX's default template or changed in it. The list below explains each one.">
+      <rect x={10} y={10} width={940} height={520} rx={10} className={styles.frame} />
+
+      {/* shared header */}
+      <rect x={10} y={10} width={940} height={36} rx={10} className={styles.hub} />
+      <rect x={10} y={30} width={940} height={16} className={styles.hub} />
+      <text x={30} y={33} className={styles.hubSub}>Shared site header</text>
+
+      {/* subnav: version switcher, breadcrumb, search */}
+      <rect x={10} y={46} width={940} height={40} className={styles.platform} />
+      <rect x={30} y={55} width={96} height={22} rx={4} className={styles.node} />
+      <text x={42} y={70} className={styles.mono}>v21.1 ▾</text>
+      <text x={160} y={70} className={styles.sub}>›  ⌂  ›  Install guide  ›  Install the agent</text>
+      <rect x={770} y={55} width={160} height={22} rx={4} className={styles.node} />
+      <text x={782} y={70} className={styles.mono}>install.config</text>
+      <Marker x={142} y={66} n={1} />
+      <Marker x={440} y={66} n={2} />
+      <Marker x={752} y={66} n={3} />
+
+      {/* left navigation */}
+      <rect x={30} y={100} width={190} height={345} rx={6} className={styles.node} />
+      {navItems.map((i) => (
+        <text key={i.t} x={46} y={i.y} className={styles[i.c]}>{i.t}</text>
+      ))}
+      <rect x={38} y={235} width={3} height={15} className={styles.stamp} />
+      <line x1={46} x2={204} y1={184} y2={184} className={styles.divider} />
+      <line x1={46} x2={204} y1={264} y2={264} className={styles.divider} />
+      <rect x={46} y={298} width={74} height={16} rx={3} className={styles.stamp} />
+      <text x={83} y={309.5} textAnchor="middle" className={styles.stampText}>DEPRECATED</text>
+      <text x={126} y={310} className={styles.sub}>Jobs (v1)</text>
+      <Marker x={222} y={104} n={4} />
+
+      {/* article column */}
+      <rect x={240} y={100} width={460} height={28} rx={4} className={styles.source} />
+      <text x={254} y={118} className={styles.title}>⚠  Coming soon: this feature isn't released yet.</text>
+      <Marker x={709} y={114} n={5} />
+
+      <rect x={240} y={136} width={460} height={28} rx={4} className={styles.platform} />
+      <text x={254} y={154} className={styles.title}>Applies to:   ✔ Cloud edition    ✔ Classic edition</text>
+      <Marker x={709} y={150} n={6} />
+
+      <text x={240} y={193} className={styles.pageTitle}>Install the Product Name agent</text>
+      <rect x={240} y={204} width={440} height={7} rx={3} className={styles.bar} />
+      <rect x={240} y={218} width={400} height={7} rx={3} className={styles.bar} />
+      <rect x={240} y={232} width={420} height={7} rx={3} className={styles.bar} />
+
+      <rect x={240} y={248} width={460} height={26} rx={4} className={styles.deploy} />
+      <text x={254} y={265} className={styles.title}>☁  This section applies to the cloud edition.</text>
+      <Marker x={709} y={261} n={7} />
+
+      <rect x={240} y={286} width={210} height={72} rx={4} className={styles.node} />
+      <text x={345} y={318} textAnchor="middle" className={styles.sub}>screenshot</text>
+      <text x={345} y={340} textAnchor="middle" className={styles.mono}>⤢ click to enlarge</text>
+      <rect x={466} y={286} width={234} height={72} rx={4} className={styles.frame} />
+      <text x={478} y={326} className={styles.mono}>PS&gt; .\install.ps1</text>
+      <rect x={644} y={292} width={48} height={18} rx={3} className={styles.node} />
+      <text x={668} y={305} textAnchor="middle" className={styles.sub}>Copy</text>
+      <Marker x={709} y={322} n={8} />
+
+      <rect x={240} y={370} width={440} height={7} rx={3} className={styles.bar} />
+      <rect x={240} y={384} width={380} height={7} rx={3} className={styles.bar} />
+
+      <rect x={240} y={400} width={460} height={45} rx={6} className={styles.node} />
+      <text x={256} y={427} className={styles.title}>Was this article helpful?</text>
+      <rect x={520} y={411} width={70} height={24} rx={4} className={styles.deploy} />
+      <text x={555} y={427} textAnchor="middle" className={styles.sub}>✔ YES</text>
+      <rect x={600} y={411} width={70} height={24} rx={4} className={styles.source} />
+      <text x={635} y={427} textAnchor="middle" className={styles.sub}>✖ NO</text>
+      <Marker x={709} y={422} n={9} />
+
+      {/* right sidebar */}
+      <rect x={726} y={100} width={204} height={150} rx={6} className={styles.node} />
+      <text x={742} y={124} className={styles.heading}>Help and resources</text>
+      {affixLinks.map((t, i) => (
+        <text key={t} x={742} y={150 + i * 24} className={styles.sub}>› {t}</text>
+      ))}
+      <Marker x={918} y={112} n={10} />
+
+      <rect x={726} y={262} width={204} height={110} rx={6} className={styles.node} />
+      <text x={742} y={286} className={styles.heading}>In this article</text>
+      <rect x={742} y={302} width={150} height={7} rx={3} className={styles.bar} />
+      <rect x={742} y={322} width={120} height={7} rx={3} className={styles.bar} />
+      <rect x={742} y={342} width={136} height={7} rx={3} className={styles.bar} />
+
+      {/* footer */}
+      <line x1={10} x2={950} y1={458} y2={458} className={styles.divider} />
+      <text x={46} y={490} className={styles.sub}>© Company   ·   Terms   ·   Legal notice   ·   Other edition's docs</text>
+      <text x={930} y={490} textAnchor="end" className={styles.sub}>✎ Edit this page   |   Contributor reference   |   Back to top</text>
+      <Marker x={28} y={486} n={11} />
+    </Figure>
+  );
+}
+
+/* ---------- 14. Single sourcing: write once, reach everywhere ---------- */
+
+export function SingleSourceFlow() {
+  const sources = [
+    { t: 'Markdown partials', s: 'shared steps in includes/ and partials/' },
+    { t: 'terms.json', s: 'product and feature names' },
+    { t: 'messages.json', s: 'styled edition notices' },
+    { t: 'Front matter', s: 'statusMessage, appliesTo' },
+    { t: 'docfx.json metadata', s: 'footer, support links, switches' },
+  ];
+  const outputs = [
+    { t: 'Web pages', s: 'terms, notices, banners, links' },
+    { t: 'PDF guides', s: 'shared steps, covers, dates' },
+    { t: 'Search index', s: 'fragments left out' },
+  ];
+  const hub = { x: 370, y: 135, w: 220, h: 120 };
+  const hubCy = hub.y + hub.h / 2;
+
+  return (
+    <Figure
+      titleId="dac-single-source"
+      title="Single sourcing: write once, reach every page"
+      desc="Five sources of reusable content, Markdown partials, a terms dictionary, a messages dictionary, front matter flags, and docfx.json metadata, flow into the DocFX build and the theme, which resolve includes at build time, swap placeholders in the page, and render banners only when set. The results reach web pages, PDF guides, and the search index, which leaves out the reusable fragments."
+      viewBox="0 0 960 380"
+      caption="An edit in the left column reaches every page that uses it. A product rename, a new edition, or a new support URL became a one-line change.">
+      <defs>
+        <ArrowMarker id="ss-arrow" />
+      </defs>
+
+      <text x={130} y={28} textAnchor="middle" className={styles.heading}>Write once</text>
+      <text x={480} y={28} textAnchor="middle" className={styles.heading}>Applied by the build and theme</text>
+      <text x={830} y={28} textAnchor="middle" className={styles.heading}>Reaches</text>
+
+      {sources.map((s, i) => {
+        const y = 45 + i * 65;
+        return (
+          <path
+            key={`e-${s.t}`}
+            d={`M240,${y + 25} C305,${y + 25} 305,${hubCy} ${hub.x - 2},${hubCy}`}
+            className={styles.edge}
+            markerEnd="url(#ss-arrow)"
+          />
+        );
+      })}
+      {outputs.map((o, i) => {
+        const y = 75 + i * 90;
+        return (
+          <path
+            key={`o-${o.t}`}
+            d={`M${hub.x + hub.w},${hubCy} C655,${hubCy} 655,${y + 32} 718,${y + 32}`}
+            className={styles.edge}
+            markerEnd="url(#ss-arrow)"
+          />
+        );
+      })}
+
+      {sources.map((s, i) => (
+        <Box key={s.t} x={20} y={45 + i * 65} w={220} h={50} kind="source" lines={[{ t: s.t }, { t: s.s, c: 'sub' }]} />
+      ))}
+
+      <Box
+        x={hub.x}
+        y={hub.y}
+        w={hub.w}
+        h={hub.h}
+        kind="hub"
+        rx={10}
+        lines={[
+          { t: 'DocFX build + theme', c: 'hubTitle' },
+          { t: 'includes resolved at build', c: 'hubSub' },
+          { t: 'placeholders swapped on the page', c: 'hubSub' },
+          { t: 'banners render only when set', c: 'hubSub' },
+        ]}
+      />
+
+      {outputs.map((o, i) => (
+        <Box key={o.t} x={720} y={75 + i * 90} w={220} h={64} kind="deploy" lines={[{ t: o.t }, { t: o.s, c: 'sub' }]} />
+      ))}
+    </Figure>
+  );
+}
+
+/* ---------- 15. Metadata cascade: switches instead of forks ---------- */
+
+export function MetadataCascade() {
+  const tiers = [
+    { kind: 'platform', t: 'globalMetadata', s: 'every page on the site', m: '_enableFeedback: true' },
+    { kind: 'platform', t: 'fileMetadata', s: 'pages that match a path', m: '**/partials/**: false' },
+    { kind: 'source', t: 'Front matter', s: 'one page', m: '_enableFeedback: false' },
+  ];
+
+  return (
+    <Figure
+      titleId="dac-metadata"
+      title="How one setting flows from the site to a single page"
+      desc="Three levels of settings, from broad to narrow: globalMetadata in docfx.json applies to every page, fileMetadata applies to pages that match a path pattern, and front matter applies to one page. The most specific setting wins. A theme partial then checks the setting and renders or skips its element."
+      viewBox="0 0 960 230"
+      caption="Every feature I added is a switch, not a fork. Sites turn features on or off in docfx.json, and the most specific setting wins.">
+      <defs>
+        <ArrowMarker id="md-arrow" />
+      </defs>
+
+      <text x={20} y={28} className={styles.heading}>Broad</text>
+      <text x={720} y={28} textAnchor="end" className={styles.heading}>Narrow: the most specific setting wins</text>
+      <path d="M72,24 L436,24" className={styles.edgeDashed} markerEnd="url(#md-arrow)" />
+
+      {tiers.map((t, i) => {
+        const x = 20 + i * 240;
+        return (
+          <g key={t.t}>
+            <Box x={x} y={50} w={200} h={100} kind={t.kind} lines={[{ t: t.t }, { t: t.s, c: 'sub' }, { t: t.m, c: 'mono' }]} />
+            <path d={`M${x + 200},100 L${x + 238},100`} className={styles.edge} markerEnd="url(#md-arrow)" />
+          </g>
+        );
+      })}
+
+      <Box
+        x={740}
+        y={50}
+        w={200}
+        h={100}
+        kind="hub"
+        rx={10}
+        lines={[
+          { t: 'Theme partial', c: 'hubTitle' },
+          { t: '{{#if _enableFeedback}}', c: 'hubSub' },
+          { t: 'renders or skips the form', c: 'hubSub' },
+        ]}
+      />
+
+      <text x={480} y={190} textAnchor="middle" className={styles.sub}>
+        Result: the feedback form shows on every article, but never on shared fragments or on a landing page that opts out.
+      </text>
+    </Figure>
+  );
+}
+
+/* ---------- 16. Closing the loop with readers ---------- */
+
+export function FeedbackLoop() {
+  const top = [
+    { t: 'Reader on a page', s: 'helpful? no → reason' },
+    { t: 'Form handler', s: 'posts to a script endpoint' },
+    { t: 'Response sheet', s: 'URL, answer, reason, text' },
+    { t: 'Team alert', s: 'new row → chat channel' },
+  ];
+  const bottom = [
+    { t: 'Page views', s: 'analytics on every page' },
+    { t: 'Page inventory', s: 'index.json from every site' },
+    { t: 'Zero-view report', s: 'merges and tags pages' },
+    { t: 'Dashboard', s: 'by guide and content type' },
+  ];
+  const xs = [20, 210, 400, 590];
+
+  return (
+    <Figure
+      titleId="dac-feedback"
+      title="How reader feedback and usage data reached the docs team"
+      desc="Top lane: a reader answers whether a page was helpful and, if not, picks a reason and adds a suggestion. The form posts to a script endpoint that adds a row to a response sheet, and each new row sends an alert to the team's chat channel. Bottom lane: analytics records page views, a script combines them with the page inventory from every site to find pages with zero views and tags pages by guide and content type, and a dashboard shows the results. Both lanes feed the docs team, who fix, merge, or prune pages through a pull request, and the fix reaches readers on the next publish."
+      viewBox="0 0 960 330"
+      caption="Two feedback channels DocFX doesn't have: what readers say about a page, and which pages no one reads.">
+      <defs>
+        <ArrowMarker id="fb-arrow" />
+      </defs>
+
+      <text x={20} y={26} className={styles.heading}>Reader feedback</text>
+      <text x={20} y={228} className={styles.heading}>Usage analytics</text>
+
+      {/* top lane edges */}
+      {xs.slice(0, 3).map((x) => (
+        <path key={`t-${x}`} d={`M${x + 160},72 L${x + 188},72`} className={styles.edge} markerEnd="url(#fb-arrow)" />
+      ))}
+      <path d="M750,72 C860,72 860,72 860,130" className={styles.edge} markerEnd="url(#fb-arrow)" />
+
+      {/* bottom lane edges */}
+      <path d="M100,304 L100,318 L480,318 L480,306" className={styles.edge} markerEnd="url(#fb-arrow)" />
+      <path d="M370,272 L398,272" className={styles.edge} markerEnd="url(#fb-arrow)" />
+      <path d="M560,272 L588,272" className={styles.edge} markerEnd="url(#fb-arrow)" />
+      <path d="M750,272 C860,272 860,272 860,214" className={styles.edge} markerEnd="url(#fb-arrow)" />
+
+      {/* loop back to the reader */}
+      <path d="M778,172 L100,172 L100,106" className={styles.edgeDashed} markerEnd="url(#fb-arrow)" />
+      <text x={440} y={165} textAnchor="middle" className={styles.label}>the fix reaches readers on the next publish</text>
+
+      {top.map((b, i) => (
+        <Box key={b.t} x={xs[i]} y={40} w={160} h={64} kind={i === 0 ? 'deploy' : 'node'} lines={[{ t: b.t }, { t: b.s, c: 'sub' }]} />
+      ))}
+      {bottom.map((b, i) => (
+        <Box key={b.t} x={xs[i]} y={240} w={160} h={64} kind="source" lines={[{ t: b.t }, { t: b.s, c: 'sub' }]} />
+      ))}
+
+      <Box
+        x={780}
+        y={132}
+        w={160}
+        h={80}
+        kind="hub"
+        rx={10}
+        lines={[
+          { t: 'Docs team acts', c: 'hubTitle' },
+          { t: 'fix, merge, or prune', c: 'hubSub' },
+          { t: 'pull request → publish', c: 'hubSub' },
+        ]}
+      />
+    </Figure>
+  );
+}

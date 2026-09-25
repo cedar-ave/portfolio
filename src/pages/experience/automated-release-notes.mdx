@@ -1,0 +1,219 @@
+---
+title: Automated release notes
+description: How I replaced hand-written, email-reviewed release notes with a pipeline that generates notes from engineering work items, runs one review in a pull request, and publishes to the customer portal by script, with known issues and critical bug reports that refresh themselves every day.
+---
+
+import {
+  TypicalVsAutomated,
+  PipelineMap,
+  WorkItemSimulator,
+} from '@site/src/components/ReleaseNotesDiagrams';
+
+# Automated release notes
+
+![release notes query](/img/release-notes-query.png)
+**I replaced the usual release notes routine (chasing engineers, drafting by hand, emailing drafts around, pasting fixes into a web page) with a pipeline that generates release notes from the engineering team's own work items and publishes them to the customer portal by script.** Engineers and product managers write each note once, in four fields on the work item they're already closing. At every release, a tool compares the new release with the last one, pulls in every change that shipped, applies publishing rules, sorts the notes by product, and commits them to a Git repo as Markdown. I edit once, PMs review once in a pull request, and scripts assemble, style, and post the page. The same four fields also drive known issues and critical bug reports that refresh themselves every day without anyone touching them. Nobody chases engineers for what changed, nobody copies text between tools, and every published line traces back to the work item behind it.
+
+The company's details are left out. Product names, examples, and IDs on this page are illustrative, and the diagrams are recreated from my original design.
+
+:::tip[At a glance]
+
+- **Written once, at the source:** 4 fields on each engineering work item are the only input.
+- **Rules instead of judgment calls:** 5 publishing rules decide whether a work item becomes a new feature, a fixed bug, a known issue, or a critical bug entry.
+- **3 publications from 1 set of fields:** release notes, known issues, and critical and high bug reports.
+- **1 review round:** PMs review a Markdown diff in a pull request, usually within 24 hours, instead of trading comments in email threads.
+- **0 copy-paste:** scripts turn Markdown into styled HTML and post it through the portal's REST API.
+- **Hands-off reports:** known issues and critical bug pages rebuild on a daily schedule. Changing one means editing a work item field.
+- **Built-in safety net:** every shipped work item that *didn't* get a note is listed for reviewers, so missing notes get caught before customers notice.
+
+:::
+
+## How release notes usually get made
+
+On most teams, release notes are a manual project that starts over at every release:
+
+1. **Chase the changes.** A technical writer combs through tickets, chat threads, and meeting notes to work out what shipped, and asks engineers about the parts that aren't clear.
+2. **Draft from scratch.** The writer rewrites what they found in a document or wiki page, often without the context the engineer had when they made the change.
+3. **Circulate for review.** The draft goes out to PMs and engineers by email or a shared doc.
+4. **Merge the feedback.** Comments come back in different threads, at different times, and sometimes contradict each other. The writer reconciles them by hand, and a second round of review follows.
+5. **Reformat and paste.** The final text gets copied into the web platform and reformatted to fit it.
+6. **Fix it after it's live.** Every correction after publishing means another hand edit on the live page.
+
+It works, but it doesn't scale. Everything runs through the writer. Changes nobody mentioned don't make the notes. Style drifts from release to release. And no one can easily tell which ticket a published note came from.
+
+<TypicalVsAutomated />
+
+## The core idea: write the note where the work happens
+
+The person who knows the most about a change is the engineer or PM who just finished it, and they know it best at the moment they close the work item. So that's where I put the release note.
+
+I added a custom **RN** (release notes) tab to the Feature, Product Backlog Item, and Bug work item types in Azure DevOps. It has four fields:
+
+| Field | What it's for | Type |
+| --- | --- | --- |
+| **Publish** | Should this work item become a published note? **Yes**, **No**, or **Yes, but covered elsewhere** | Single-select |
+| **Release Note** | The customer-facing text of the note | Rich text |
+| **Product(s) affected** | Which product section the note is sorted under | Multi-select |
+| **Version(s) affected** | Which version's known issues and bug report pages it appears on | Multi-select |
+
+Each choice here solves a specific problem:
+
+- **Dropdowns instead of free text** for products and versions, so sorting and filtering never break on a typo.
+- **"Yes, but covered elsewhere"** handles the common case where several work items describe one feature. One work item carries the note, and the others are marked as covered, so the notes never repeat themselves and nothing looks forgotten.
+- **Using fields the team already had.** Work item type, state, and severity already existed and were already kept up to date. I built on them instead of asking people to maintain anything new.
+
+## Rules, not judgment calls, decide what publishes
+
+Once the fields exist, publishing is a matter of logic, not memory. Five rules combine the four new fields with each work item's type, state, and severity:
+
+| Work item type | State | Severity | Publish | Becomes |
+| --- | --- | --- | --- | --- |
+| Feature or product backlog item | Closed | Any | Yes | A **What's new** item in the release notes |
+| Bug | Closed | Any | Yes | A **Fixed bug** in the release notes |
+| Bug | Not closed | Any | Yes | A **Known issue** |
+| Bug | Not closed | Critical or High | Any | An entry in the **open critical and high bugs** report |
+| Bug | Closed in the past 60 days | Critical or High | Yes | An entry in the **closed critical and high bugs** report |
+
+A bug's life shows how neatly this fits together. While it's open and marked **Publish: Yes**, it's a known issue. The day it closes, it drops off the known issues page on its own and shows up as a fixed bug in the next release notes. Nobody has to remember to move it.
+
+Try it below. Change the fields on the work item and see where it would publish.
+
+<WorkItemSimulator />
+
+## The pipeline, end to end
+
+<PipelineMap />
+
+Here's what happens at each release.
+
+### 1. Generate the notes by comparing releases
+
+A release notes extension for Azure DevOps compares the new release with the previous one and collects every work item that changed between them. A Handlebars template I wrote then:
+
+- Filters out work items that don't meet the publishing rules
+- Builds each note from the work item's fields: a heading from the title, the text from **Release Note**, and the work item ID
+- Sorts the notes into **What's new** and **Fixed bugs** sections, grouped by product
+- Exports the result to a date-named branch in a dedicated release notes Git repo
+
+The file naming convention (`YYYY-MM-DD`) isn't cosmetic. Every downstream script finds, orders, and assembles files by date, so one consistent name removes a whole class of manual steps.
+
+### 2. Clean and edit once, in Markdown
+
+A script converts the export into clean Markdown with [pandoc](https://pandoc.org/) and fixes the formatting left over from the conversion. Then the writer makes one editing pass against a short writing guide (more on that [below](#a-style-guide-built-for-the-pipeline)) and searches the repo for each work item ID to remove anything that was already published in an earlier release.
+
+A script also generates the table of contents from the **What's new** headings. If a heading is edited, the writer reruns the script instead of fixing links by hand.
+
+### 3. Review once, in a pull request
+
+The notes go to PMs as a pull request, not an email. That one change removes most of the friction of a typical review:
+
+- **Reviewers see exactly what will publish,** as a readable Markdown diff.
+- **Comments attach to the exact line** they're about, in one place, visible to everyone.
+- **PMs can fix a note themselves,** in the browser or in VS Code, and I documented both paths step by step.
+- **The notification is automatic.** Creating the pull request posts a link to the program management chat channel.
+- **The review has a clear window,** usually 24 hours, and the reviewer list carries over from the previous release's pull request.
+
+The review also has a built-in safety net. At the bottom of the file is a table of every work item that shipped in the release but *didn't* qualify for a note:
+
+```markdown
+| Area path       | Work item title                           | Release note | Products | ID     | Type |
+|-----------------|-------------------------------------------|--------------|----------|--------|------|
+| Data governance | Subsets cannot be edited                  |              |          | 369351 | Bug  |
+| Data governance | API only returns top 50 identity roles    |              |          | 371550 | Bug  |
+| Core platform   | Install on Windows 11 fails               |              |          | 331629 | Bug  |
+```
+
+This was something PMs asked for. It makes the question "did we miss anything?" answerable at a glance. If a reviewer spots a work item that deserves a note, they add it to the file, and the table is removed before publishing.
+
+### 4. Publish by script
+
+When the software is posted, publishing takes two commands:
+
+- **Assemble:** a script combines every release's file into one page for the year in reverse chronological order and adds a table of contents linking to each release.
+- **Publish:** a script converts the Markdown to HTML, applies the portal's styles as inline CSS, and posts the page through the portal's REST API.
+
+Fixing a published note works the same way: change the Markdown file and rerun the two scripts. There's no editing on the live page.
+
+### One clear rule about the source of truth
+
+A pipeline with two sources of truth eventually disagrees with itself, so I defined exactly when the source of truth changes hands. **Until the notes are exported, the work item is the source. After export, the Markdown file in the repo is.** Changing a work item field after export does nothing, and every guide that touches the process says so up front. That rule keeps late edits from getting lost and means nobody has to wonder which version is real.
+
+## Known issues and critical bugs: fully hands-off
+
+Release notes are a snapshot of one release. Known issues and critical bug reports are *live*: they need to be accurate on any given day. So I made them publish themselves.
+
+- **One scheduled build per product version.** Each build runs a saved Azure DevOps query, passes the results through a release notes template using the same fields and rules, transforms the output to HTML with the portal's styles, and posts it through the REST API.
+- **Two queries, one report.** The critical and high bugs page combines an *open* list and a *closed in the past 60 days* list. A script merges them into a single page, sorted by severity and product.
+- **A daily trigger.** A scheduled Power Automate flow starts the builds every day and posts a link to each run in a chat channel, so it's easy to see that the refresh ran.
+- **Updating a report means editing a work item.** To add or remove a known issue, change **Publish**. To reword it, edit **Release Note**. To move it to a different version's page, change **Version(s) affected**. The next refresh publishes the change.
+
+Nobody has to publish or clean up these pages, and they can't go stale.
+
+## Solving the hard parts
+
+Every automation meets real-world tools that don't quite fit together. These are the problems I hit and how I worked through them.
+
+### The export was half HTML, half Markdown
+
+The **Release Note** field is rich text, which is stored as HTML. When the extension exported notes as Markdown, that HTML often came through untouched, and the "Markdown" came out like this:
+
+```markdown
+| Note                                                             | Product  |
+|------------------------------------------------------------------|----------|
+| New <br>functionality <span style="color: blue">is added</span>  | Catalog  |
+```
+
+That's not something to hand to a PM for review. I documented and tested three options:
+
+| Option | How it works | Tradeoff | Result |
+| --- | --- | --- | --- |
+| **HTML → Markdown → HTML** | Export pure HTML, clean it, convert it to Markdown with pandoc for review, then convert it back to HTML to publish | Two conversions, but the input is consistent and predictable | **Used for release notes** |
+| **Markdown → HTML** | Export Markdown and use scripted find-and-replace to clean up the leftover HTML | One conversion, but the cleanup depends on patterns | **Used in the scheduled builds** |
+| **Template helper** | A Markdown helper in the template, suggested by the vendor's support team | No extra scripts, if it worked | Didn't work, so I dropped it |
+
+Choosing the first option for release notes was a deliberate tradeoff. An extra conversion step costs nothing to run, while messy input costs a person's time on every release.
+
+### The portal only accepted inline styles
+
+The customer portal only accepted inline CSS on these pages, and its tables had to follow specific formats. I kept one normal CSS file in the repo and used [juice](https://www.npmjs.com/package/juice) to inline it at publish time. That way the styles stay in one maintainable file, and the portal gets the format it needs.
+
+### Publishing by API overwrote edits made in the portal
+
+Because the scripts replace the whole page, anything added through the portal's editor, like an image, gets wiped on the next publish. So images had to live in the source too. I wrote a script that uploads a release's images to the portal's storage through the API and returns their URLs, ready to paste into the Markdown file. Now images survive every republish.
+
+### Small details that break automation
+
+I wrote down the gotchas so the next person wouldn't have to rediscover them. For example, every Markdown file has to end with a blank line. Otherwise, when files are combined, the last line of one release runs into the heading of the next and breaks the heading. The portal's API also returns results in pages, so a helper script loops through them and gathers the IDs needed to publish into one file.
+
+## A style guide built for the pipeline
+
+Automation changes what a style guide should say. A typical guide would ask for fixed bugs to be written as completed fixes ("Fixed an issue where…"). But bug text is pulled straight from the bug work item, and engineers write bugs as symptoms, before they're fixed. Asking them to rewrite every bug when they close it wouldn't have worked in practice.
+
+So the style works *with* the source. A fixed bug is written as the symptom, in present tense, as a short phrase without an article. The section heading **Fixed bugs** already tells the reader it's resolved.
+
+| Correct | Incorrect |
+| --- | --- |
+| `Metadata service returns an error` | `The metadata service returned an error. This is now fixed.` |
+| `ODBC driver fails when refreshing metadata` | `ODBC driver used to fail when refreshing metadata` |
+| `Rerunning a batch does not remap TableHistoryID on BindingHistories` | `We fixed an issue where rerunning a batch did not remap IDs` |
+
+When a bug really needs more explanation, an italic **Details** sentence follows it on the same line:
+
+```markdown
+**TableID could not be mapped to an EntityID** errors occur \| *Details: Logic is updated to reduce instances of the errors.*
+```
+
+**What's new** items follow different rules. They're complete sentences, their headings come from the work item title, and they're written to show customers why the upgrade is worth it. The same guide covers known issues and critical bugs, so all three publications read as one voice.
+
+## Where people still add the most value
+
+Automation took care of completeness and consistency, which let people spend time on the parts that need judgment. Every quarter I published a **What changed** recap for a wider audience: clients, sales, services, and executives. I asked each PM for a short "press release" on their area, supplemented it with the feature work items and release planning decks, and wrote a high-level story with screenshots and demo videos. The release notes answer "what exactly changed?" The recap answers "why should I care?"
+
+## What this project shows
+
+- **I think in systems.** I didn't try to write release notes faster. I changed where they come from, so the whole process got simpler instead of just quicker.
+- **I reason from first principles.** The best person to describe a change is the one who made it, at the moment they finish it. Every design choice follows from that.
+- **I replace judgment calls with clear rules.** Five publishing rules and four fields make the output predictable, testable, and easy to explain to anyone.
+- **I design for the people in the loop.** Engineers fill in fields they're already looking at. PMs review in a tool they already use. Missing notes surface on their own.
+- **I evaluate options and commit.** When the tools didn't fit together, I laid out the alternatives, tested them, dropped the one that failed, and picked the right option for each path.
+- **I build things other people can run.** Every step, script, and gotcha is documented, so the process doesn't depend on me.

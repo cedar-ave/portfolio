@@ -1,0 +1,246 @@
+---
+title: API documentation
+description: How I built and ran API reference sites for a healthcare data platform, with REST API docs generated from 13 service specs and .NET API docs generated from the processing engine's source code, and why I treated them as two different products.
+---
+
+import {
+  TwoApiTypes,
+  RestApiPipeline,
+  EngineApiPipeline,
+  EditionSources,
+} from '@site/src/components/ApiDocsDiagrams';
+
+# API documentation: two kinds of reference, generated from source
+
+**I built and ran the API documentation for a healthcare data platform: REST API reference for 13 web services, and .NET API reference for the SDK developers used to extend the platform's processing engine.** Both were generated from the source of truth, the service specs and the C# code, so they changed when the product changed instead of drifting out of date. I recognized early that these were two different products for two different audiences, with different sources, toolchains, and failure modes, and I built a separate pipeline for each. Where the tools fell short, I wrote the missing pieces: spec conversion, scripts that generate tags and landing pages, and runbooks that let other writers and engineers update the API docs without waiting on me.
+
+The company's details are left out. Names, paths, and examples on this page are generalized from my original work.
+
+:::tip[At a glance]
+
+- **Two API doc sets, built differently on purpose:** REST API docs for anyone calling the platform over HTTP, and .NET API docs for developers writing plugins for the processing engine.
+- **Generated from source:** REST reference from Swagger files pulled from the running services, .NET reference from the engine's C# projects and XML comments.
+- **Tooling I wrote to fill gaps:** a spec conversion step for OpenAPI 3 files, a script that builds each spec's tags, and a script that generates the landing pages DocFX couldn't.
+- **Two product editions:** a classic edition and a cloud edition, each with its own branch and sources, with shared sources wherever the APIs were the same.
+- **Maintainable by others:** runbooks that split everyday tasks (swap a spec, reorder the menu) from admin tasks (run the scripts, change the configuration), plus troubleshooting articles for every build error I hit.
+
+:::
+
+## Two kinds of API docs, and why they're different
+
+"API docs" sounds like one thing. On this platform it was two, and treating them as one would have served neither audience well.
+
+- **REST API docs** describe the platform's **web services**: the HTTP endpoints for identity, authorization, metadata, data processing, and service discovery. Readers are integrators and application developers who send requests and read responses. They care about routes, parameters, request bodies, response codes, and authentication. The source of truth is each service's **Swagger (OpenAPI) spec**.
+- **.NET API docs** describe the **processing engine's extensibility SDK**: the C# classes and interfaces a developer implements to add a plugin to the engine. Readers are .NET developers writing code that runs *inside* the platform. They care about namespaces, classes, method signatures, and inheritance. The source of truth is the **C# source code** and its XML comments.
+
+<TwoApiTypes />
+
+The difference goes all the way down:
+
+| | REST API docs | .NET API docs |
+| --- | --- | --- |
+| **What it documents** | HTTP web services | A C# SDK for extending the processing engine |
+| **Who reads it** | Integrators calling the platform over HTTP | .NET developers writing engine plugins |
+| **Source of truth** | Swagger JSON files from each running service | C# projects and their XML comments |
+| **Where the source lives** | A `restapi/` folder in the docs repo | The engine's product repo, one branch per edition |
+| **How it's generated** | DocFX reads the specs, and two plugins split them into a page per tag and a page per operation | `docfx metadata` compiles the projects and extracts YAML models, then DocFX renders them |
+| **What a contributor changes** | Adds, removes, or replaces a JSON file, or edits the menu order | Updates code comments in the product repo |
+| **Build requirement** | Nothing extra | .NET build tools on the build machine |
+| **Typical failures** | Unsupported spec version, missing description, missing tags, duplicate definitions | Missing build tools or SDK, package source errors, page styling |
+
+Because the two sets had nothing in common below the surface, I gave each one its own pipeline, its own runbook, and its own troubleshooting articles, and put both on the same help site under a single developer menu so readers could find them in one place.
+
+:::info[Screenshot placeholder: developer menu]
+
+Add a screenshot of the help site's developer menu showing both the REST API and .NET API entries.
+Suggested file: `static/img/samples/api-docs-developer-menu.png`
+
+:::
+
+{/* To add the screenshot: save it to the suggested file, delete the placeholder box above, then delete this instruction line and the comment markers so only the image line remains.
+![The developer menu lists REST API reference and .NET API reference side by side.](/img/samples/api-docs-developer-menu.png) */}
+
+## How I built the REST API docs
+
+The REST API site had three layers, and I planned them together so a reader could go from "what is this service?" to "what does this endpoint return?" in two clicks:
+
+1. **A landing page** listing every service with a one-line description.
+2. **Conceptual articles** explaining what each service does, how its data fits into the platform, and how to authenticate.
+3. **Reference pages** for every tag and every operation, generated from the specs.
+
+<RestApiPipeline />
+
+### Step 1: Get the spec from the running service
+
+Each service published its own Swagger file, but not at a consistent address. Some served the JSON under `/swagger/swagger.json`, others under `/swagger/ui/index`, and versioned services added a version segment to the path. I documented the pattern for each service so anyone refreshing the docs after a release knew exactly where to find the current spec:
+
+| Service | Where the spec lives (generalized) |
+| --- | --- |
+| Authorization service | `https://<server>/Authorization/swagger/ui/swagger.json` |
+| Data processing service, v1 | `https://<server>/DataProcessingService/docs/v1/swagger` |
+| Data processing service, v2 | `https://<server>/DataProcessingService2/swagger/ui/index` |
+| Discovery service | `https://<server>/DiscoveryService/swagger/swagger.json` |
+| Identity service | `https://<server>/identity/swagger/ui/index/v1/swagger.json` |
+| Metadata service, v2 | `https://<server>/MetadataService2/swagger/swagger.json` |
+
+### Step 2: Convert newer specs to a version DocFX can read
+
+DocFX supported Swagger 2 but not OpenAPI 3, and newer services had moved to OpenAPI 3. Rather than wait for DocFX or hand-edit specs, I added a conversion step with an open-source spec converter that downgrades an OpenAPI 3 file to Swagger 2. The docs stayed current while the services moved on.
+
+### Step 3: Require a description
+
+DocFX builds each service's landing page from the `description` in the spec's `info` object. Engineers often left it empty, which produced a blank landing page. I made the description a required part of adding a spec and made sure every spec had one that tells the reader what the service does and when to use it:
+
+```json title="restapi/metadata-service-v2.json (top of file)"
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v2",
+    "title": "Metadata Service V2",
+    "description": "The metadata database stores information about source systems and data marts on the platform. Client applications insert, update, remove, and retrieve that information by sending HTTP requests to the Metadata Service V2. Version 2 adds routes that make data marts easier to manage, and it authenticates through the platform's identity service."
+  }
+}
+```
+
+### Step 4: Generate tags and landing pages with scripts
+
+This is where DocFX fell short, and where I wrote code:
+
+- **Tags.** DocFX's split plugins group operations by tag, but many specs used tags on their operations without declaring them in a top-level `tags` object. I wrote a shell script that uses `jq` to collect every tag from every operation, remove duplicates, and merge a `tags` object into the spec.
+- **Landing pages.** Without a landing page, each tag's index page rendered empty and looked broken. I wrote a Python script that reads each spec and writes a Markdown overwrite file for every tag, with links to its operations, plus a root page built from the service description.
+
+Admins run both scripts before publishing, so refreshing the specs after a release never means hand-editing JSON. The scripts are covered in more detail in [Docs-as-code](/experience/docs-as-code#rest-api-reference).
+
+### Step 5: Build, split, and order the pages
+
+At build time, the pipeline installs two DocFX plugins that split each spec into a page per tag and a page per operation, so a reader lands on exactly the endpoint they searched for instead of scrolling one enormous page. The order of services in the menu is controlled by one file, `restapi/toc.yml`, so a contributor can reorder the site without touching the specs.
+
+The everyday tasks became short enough to fit in two lines of the runbook:
+
+- **To change the API docs:** add, remove, or replace a `.json` file in `restapi/`.
+- **To change their order on the site:** edit `restapi/toc.yml`.
+
+```plaintext title="Docs source layout (REST API)"
+articles/
+  api-reference/
+    rest-api/
+      rest-api-landing-page.md   the landing page
+  platform-services/             conceptual articles for each service
+builds/
+restapi/
+  toc.yml                        menu order
+  authorization-service.json
+  metadata-service-v2.json
+  ...
+specs/                           generated landing pages (overwrite files)
+docfx.json
+index.md
+```
+
+:::info[Screenshot placeholder: REST API landing page]
+
+Add a screenshot of the REST API landing page listing each service and its description.
+Suggested file: `static/img/samples/api-docs-rest-landing-page.png`
+
+:::
+
+{/* To add the screenshot: save it to the suggested file, delete the placeholder box above, then delete this instruction line and the comment markers so only the image line remains.
+![The REST API landing page lists each web service with a one-line description.](/img/samples/api-docs-rest-landing-page.png) */}
+
+:::info[Screenshot placeholder: REST API operation page]
+
+Add a screenshot of a single generated operation page, showing the route, parameters, and response codes.
+Suggested file: `static/img/samples/api-docs-rest-operation-page.png`
+
+:::
+
+{/* To add the screenshot: save it to the suggested file, delete the placeholder box above, then delete this instruction line and the comment markers so only the image line remains.
+![A generated REST API operation page shows the HTTP method, route, parameters, and responses.](/img/samples/api-docs-rest-operation-page.png) */}
+
+## How I built the .NET API docs
+
+The engine's .NET reference worked on completely different principles. There was no spec to download: the documentation *was* the code.
+
+<EngineApiPipeline />
+
+### Step 1: Point DocFX at the code, not a copy
+
+The engine's docs lived in a `Docs/` folder inside the engine's product repo, beside the C# projects they describe. A `metadata` section in that folder's `docfx.json` references the projects directly. Keeping the docs in the same repo meant a developer who changed a public interface could update its XML comments in the same pull request, and the reference pages would change on the next build.
+
+### Step 2: Build one branch per edition
+
+The platform shipped in two editions, and the engine's SDK differed between them. I mapped each edition to a branch of the engine repo so each set of docs was built from the code customers actually ran:
+
+- **Classic edition:** built from the `release/6.0` branch.
+- **Cloud edition:** built from the `main` branch.
+
+Both branches carry their own `metadata` configuration, so the two sites can diverge as the code diverges.
+
+### Step 3: Make local builds predictable
+
+Generating .NET reference compiles the projects, so the build machine needs .NET build tools. I tracked down the minimum a writer needed: **Visual Studio Build Tools with the .NET desktop build workload**, installed with the defaults. Writers never had to open Visual Studio itself. With those installed, the same `npm start` command that builds any other docs site extracts the .NET API models into `obj/api` and renders them.
+
+I also set one rule to keep the repo clean: `obj/api` is build output, and it's never checked in. The pipeline regenerates it on every build, which guarantees the published reference matches the code in the branch.
+
+:::info[Screenshot placeholder: .NET API namespace page]
+
+Add a screenshot of the .NET API reference showing the nested namespace menu on the left and a namespace overview.
+Suggested file: `static/img/samples/api-docs-dotnet-namespace-page.png`
+
+:::
+
+{/* To add the screenshot: save it to the suggested file, delete the placeholder box above, then delete this instruction line and the comment markers so only the image line remains.
+![The .NET API reference groups classes and interfaces under an expandable namespace menu.](/img/samples/api-docs-dotnet-namespace-page.png) */}
+
+:::info[Screenshot placeholder: .NET API class page]
+
+Add a screenshot of a single class or interface page, showing its members and inheritance.
+Suggested file: `static/img/samples/api-docs-dotnet-class-page.png`
+
+:::
+
+{/* To add the screenshot: save it to the suggested file, delete the placeholder box above, then delete this instruction line and the comment markers so only the image line remains.
+![A .NET API class page lists the class's members, inheritance, and descriptions from the code comments.](/img/samples/api-docs-dotnet-class-page.png) */}
+
+### Step 4: Document every failure once
+
+.NET builds fail in ways Markdown builds never do, and the error messages rarely point at the cause. Each time I solved one, I wrote a troubleshooting article so the next person wouldn't have to:
+
+- **Nothing generated in `obj/api`:** the metadata step didn't run or couldn't find the projects.
+- **.NET SDK errors:** the build machine had the wrong SDK or was missing the build tools.
+- **"Unable to load the service index":** a NuGet package source the build couldn't reach.
+- **Styling problems on engine pages:** generated pages that didn't pick up the site theme.
+
+## Two editions, one set of rules
+
+Running two editions could have doubled the maintenance. I kept it down by sharing sources wherever the APIs matched and splitting them only where they differed.
+
+<EditionSources />
+
+- **REST API docs:** the cloud edition's REST landing page and conceptual articles pointed at the classic edition's source files, because the services worked the same way. The cloud edition's reference specs lived in their own docs repo, so they could change with the cloud services without affecting the classic edition.
+- **.NET API docs:** the SDK differed between editions, so each edition built from its own branch of the engine repo from the start.
+
+## Built to be maintained by others
+
+API docs that only one person can update are a risk to the company. I wrote each runbook in two tiers so the right person could do the right task:
+
+- **Contributors** get the everyday tasks: where the source files are, how to get a fresh spec from a service, how to convert it, how to write its description, and how to reorder the menu.
+- **Admins** get the rest: how to run the tag and landing-page scripts, how the `metadata` and plugin configuration works, and how to fix the build when it breaks.
+
+Every runbook ends with links to its troubleshooting articles. For more on how I set up contributions across the company, see [Docs-as-code: Scaling contributions](/experience/docs-as-code-contributions).
+
+## Results
+
+- **Accurate reference for 13 REST services and the engine's .NET SDK,** generated from specs and code so it stays current with every release.
+- **Readers land on the right page.** Split pages, generated landing pages, and service descriptions replaced blank index pages and single enormous reference pages.
+- **Two editions without double the work,** by sharing REST sources and branching .NET sources only where the code differed.
+- **Fast, low-risk updates.** Refreshing the REST docs after a release is a file swap and a script run, and the .NET docs rebuild themselves from the branch.
+- **No single point of failure.** Contributor and admin runbooks, plus a troubleshooting article for every build error, let others maintain the docs.
+
+## What this project shows
+
+- **I analyze the problem before I build.** I saw that "API docs" meant two different products with different readers, and I designed each one for its audience instead of forcing them into one process.
+- **I'm comfortable in developer tooling.** Swagger and OpenAPI specs, C# projects, .NET build tools, NuGet, `jq`, Python, and CI pipelines were all part of the job.
+- **I fill gaps with code.** When DocFX couldn't read a spec or render a landing page, I converted the spec and wrote the scripts that generated what was missing.
+- **I plan for change.** Branch-per-edition builds and shared sources let the docs follow the product as it evolved.
+- **I make my work transferable.** Runbooks and troubleshooting articles turned a specialized process into something any contributor could run.
