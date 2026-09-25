@@ -5,13 +5,11 @@ import Link from '@docusaurus/Link';
 import styles from './styles.module.css';
 function ReadMoreLabel() {
   return (
-    <b>
-      <Translate
-        id="theme.blog.post.readMore"
-        description="The label used in blog post item excerpts to link to full blog posts">
-        Read more
-      </Translate>
-    </b>
+    <Translate
+      id="theme.blog.post.readMore"
+      description="The label used in blog post item excerpts to link to full blog posts">
+      Read more
+    </Translate>
   );
 }
 export default function BlogPostItemFooterReadMoreLink(props) {
@@ -27,7 +25,11 @@ export default function BlogPostItemFooterReadMoreLink(props) {
         },
         {title: blogPostTitle},
       )}
-      className={clsx(styles.readMoreLink, className)}
+      className={clsx(
+        'button button--primary button--sm',
+        styles.readMoreLink,
+        className,
+      )}
       {...linkProps}>
       <ReadMoreLabel />
     </Link>

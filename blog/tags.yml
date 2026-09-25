@@ -1,19 +1,11 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+Docs-as-code:
+  label: Docs-as-code
+  permalink: /docs-as-code
+  description: Writing in Markdown, managing files in Git, deploying content to a help site with a static-site generator
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+Open source:
+  label: Open source
+  permalink: /open-source
+  description: Using open-source tools to build content architectures and pipelines, drawing on industry expertise and utilizing tooling often at low-to-no cost
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description

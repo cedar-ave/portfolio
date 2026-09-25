@@ -188,6 +188,10 @@ h1 {
   margin-top: 5rem;
 } */
 
+.blog-list-page .button--sm {
+  font-size: 0.85rem;
+}
+
 .blog-post-page .main-wrapper,
 .blog-list-page .main-wrapper,
 .docs-doc-page .main-wrapper,
@@ -200,7 +204,7 @@ h1 {
 }
 
 .table-of-contents__link {
-  font-size: 15px;
+  font-size: 1rem;
   line-height: 1.5;
   padding-bottom: .25rem;
 }
@@ -231,36 +235,51 @@ article h6 {
 }
 
 /* Blog list page: post title h2 should sit at the top of its card,
-   not inherit the 2.5rem top margin used for in-article h2 headings. */
-.blog-list-page article h2 {
+   not inherit the 2.5rem top margin used for in-article h2 headings.
+   Applies to the main blog list and the tag archive pages
+   (/blog/tags/*), which render the same BlogPostItem cards. */
+.blog-list-page article h2,
+.blog-tags-post-list-page article h2 {
   margin-top: 0;
+  margin-bottom: 0.25rem;
 }
 
-.blog-list-page article.blogPostCard {
+/* Tag archive page (/blog/tags/*): tighten the gap below the
+   "View all tags" link and above the first article card — Infima's
+   margin-bottom--xl (5rem) on the header is much larger than needed. */
+.blog-tags-post-list-page header.margin-bottom--xl {
+  margin-bottom: 1.5rem !important;
+}
+
+.blog-list-page article.blogPostCard,
+.blog-tags-post-list-page article.blogPostCard {
+  position: relative;
   background: #F5F6F8;
-  border: 1px solid #E9EBEF;
   border-radius: 16px;
-  padding: 1.5rem 1.75rem;
-  transition: border-color 0.15s ease;
+  padding: 1.75rem 2rem .5rem;
+  margin-bottom: 2rem;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-[data-theme='dark'] .blog-list-page article.blogPostCard {
+[data-theme='dark'] .blog-list-page article.blogPostCard,
+[data-theme='dark'] .blog-tags-post-list-page article.blogPostCard {
   background: #212429;
-  border-color: #2c2f36;
 }
 
-.blog-list-page article.blogPostCard:hover {
-  border-color: var(--ifm-link-color);
+.blog-list-page article.blogPostCard:hover,
+.blog-tags-post-list-page article.blogPostCard:hover {
+  box-shadow: 0 6px 18px rgba(94, 120, 147, 0.28);
+  transform: translateY(-2px);
 }
 
-.blog-list-page article.blogPostCard+article.blogPostCard {
-  margin-top: 1.5rem;
+[data-theme='dark'] .blog-list-page article.blogPostCard:hover,
+[data-theme='dark'] .blog-tags-post-list-page article.blogPostCard:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
 article h3 {
   margin-top: 2rem;
   font-size: 1.25rem;
-
 }
 
 .navbar__logo {

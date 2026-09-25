@@ -1,0 +1,6 @@
+{
+  "theme.tags.tagsPageLink": {
+    "message": "View all tags",
+    "description": "The label of the link targeting the tag list page"
+  }
+}

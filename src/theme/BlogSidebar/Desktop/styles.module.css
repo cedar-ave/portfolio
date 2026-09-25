@@ -50,3 +50,10 @@
   margin-bottom: 0.4rem;
   font-weight: 500;
 }
+
+/* The first year heading should align with the top of the first
+   article box in the main column, not inherit the spacing used
+   between year groups further down the list. */
+.sidebar > div:first-child > .yearGroupHeading {
+  margin-top: 0;
+}

@@ -4,22 +4,12 @@ import {useBlogPost} from '@docusaurus/plugin-content-blog/client';
 import {ThemeClassNames} from '@docusaurus/theme-common';
 import EditMetaRow from '@theme/EditMetaRow';
 import TagsListInline from '@theme/TagsListInline';
-import ReadMoreLink from '@theme/BlogPostItem/Footer/ReadMoreLink';
 import styles from './styles.module.css';
 export default function BlogPostItemFooter() {
   const {metadata, isBlogPostPage} = useBlogPost();
-  const {
-    tags,
-    title,
-    editUrl,
-    hasTruncateMarker,
-    lastUpdatedBy,
-    lastUpdatedAt,
-  } = metadata;
-  // A post is truncated if it's in the "list view" and it has a truncate marker
-  const truncatedPost = !isBlogPostPage && hasTruncateMarker;
+  const {tags, editUrl, lastUpdatedBy, lastUpdatedAt} = metadata;
   const tagsExists = tags.length > 0;
-  const renderFooter = tagsExists || truncatedPost || editUrl;
+  const renderFooter = tagsExists || editUrl;
   if (!renderFooter) {
     return null;
   }
@@ -57,18 +47,10 @@ export default function BlogPostItemFooter() {
   // BlogPost footer - list view
   else {
     return (
-      <footer className={clsx('row docusaurus-mt-lg', styles.footer)}>
+      <footer className={clsx('docusaurus-mt-lg', styles.footer)}>
         {tagsExists && (
-          <div className={clsx('col', {'col--9': truncatedPost})}>
+          <div className={styles.tagsRow}>
             <TagsListInline tags={tags} />
-          </div>
-        )}
-        {truncatedPost && (
-          <div
-            className={clsx('col text--right', {
-              'col--3': tagsExists,
-            })}>
-            <ReadMoreLink blogPostTitle={title} to={metadata.permalink} />
           </div>
         )}
       </footer>
