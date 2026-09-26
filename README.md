@@ -54,6 +54,45 @@ Each image still gets click-to-zoom for free from the site-wide `docusaurus-them
 
 Source: [src/components/Gallery](src/components/Gallery)
 
+### HomepageFeatures
+
+Renders the three-column "what I do" feature row on the homepage ([src/pages/index.js](src/pages/index.js)). Not registered globally — it's a single hardcoded section, not a reusable MDX tag.
+
+```jsx
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
+
+<HomepageFeatures />
+```
+
+Content (title, link, icon, description) lives in the `FeatureList` array inside the component itself — edit [src/components/HomepageFeatures/index.js](src/components/HomepageFeatures/index.js) directly rather than passing props.
+
+Source: [src/components/HomepageFeatures](src/components/HomepageFeatures)
+
+### Page diagrams
+
+Each `*Diagrams` folder under [src/components](src/components) is a set of bespoke inline-SVG figures and small interactive dashboard mockups written for one experience page, not shared components. They aren't registered in [src/theme/MDXComponents.js](src/theme/MDXComponents.js) — each experience `.mdx` page imports the named exports it needs directly:
+
+```mdx
+import { SourceMap, JoinModel, AwarenessDashboard } from '@site/src/components/AnalyticsDiagrams';
+
+<SourceMap />
+```
+
+They take no props; each exported component is a self-contained figure with its data baked in. A shared set of internal helpers (`Figure`, `Box`, `DashFrame`, `Segmented`, etc.) in each folder's `index.js` keeps the figures in a folder visually consistent, styled by that folder's `styles.module.css`.
+
+| Component folder | Used by | Exports |
+| --- | --- | --- |
+| [AnalyticsDiagrams](src/components/AnalyticsDiagrams) | [analytics-dashboard-design.mdx](src/pages/experience/analytics-dashboard-design.mdx) | `SourceMap`, `JoinModel`, `AwarenessDashboard`, `DeflectionDashboard`, `ArticleAgeComparison` |
+| [ApiDocsDiagrams](src/components/ApiDocsDiagrams) | [api-documentation.mdx](src/pages/experience/api-documentation.mdx) | `TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources` |
+| [DocsAsCodeDiagrams](src/components/DocsAsCodeDiagrams) | [docs-as-code.mdx](src/pages/experience/docs-as-code.mdx), [docs-as-code-contributions.mdx](src/pages/experience/docs-as-code-contributions.mdx), [docs-as-code-customizations.mdx](src/pages/experience/docs-as-code-customizations.mdx), [docs-as-code-linting.mdx](src/pages/experience/docs-as-code-linting.mdx) | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop` |
+| [IntakeDiagrams](src/components/IntakeDiagrams) | [content-intake.mdx](src/pages/experience/content-intake.mdx) | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
+| [McpDiagrams](src/components/McpDiagrams) | [custom-mcps.mdx](src/pages/experience/custom-mcps.mdx) | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
+| [RelaunchDiagrams](src/components/RelaunchDiagrams) | [help-site-relaunch.mdx](src/pages/experience/help-site-relaunch.mdx) | `EvidenceToDecisions`, `HomeBeforeAfter` |
+| [ReleaseNotesDiagrams](src/components/ReleaseNotesDiagrams) | [automated-release-notes.mdx](src/pages/experience/automated-release-notes.mdx) | `TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator` |
+| [SkillDiagrams](src/components/SkillDiagrams) | [ai-agent-skills.mdx](src/pages/experience/ai-agent-skills.mdx) | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
+
+Data used in dashboard mockups (e.g. `AwarenessDashboard`, `DeflectionDashboard`, `WorkItemSimulator`) is illustrative, not real company data — see the constants near the top of each file.
+
 ## Deployment
 
 Using SSH:
