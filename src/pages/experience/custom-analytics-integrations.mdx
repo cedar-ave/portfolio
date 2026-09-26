@@ -1,0 +1,173 @@
+---
+title: Custom analytics integrations
+description: How I used Google Tag Manager and Zendesk's own page data to send GA4 information about which people and which customer organizations read which articles, and where readers gave up and contacted support.
+---
+
+# Custom analytics integrations
+
+Zendesk's standard analytics could tell us *how many* people viewed an article. It couldn't tell us *who* they were, *which customer* they worked for, or *where on the site* they gave up and asked support for help. I built a Google Tag Manager integration into our help center theme. It captures the reader's organization, role, and identity, along with detailed information about each article, and sends it to Google Analytics 4 (GA4). That gave customer success, support, and the documentation team data that Zendesk's own reports couldn't provide.
+
+This work fed the data model behind my [analytics dashboard design](/experience/analytics-dashboard-design). The company's details are left out.
+
+:::tip[At a glance]
+
+- **Google Tag Manager on every page** of the help center, added directly to the theme's templates.
+- **User properties on every page view:** organization, role, admin status, company email domain, and Zendesk user identifier.
+- **A custom article-view event** with 16 article attributes (including author, dates, votes, and section), plus the article's content tags converted from IDs to readable names.
+- **"Contact support" click tracking** that records which reader clicked and which page they were on when they gave up and opened a ticket.
+
+:::
+
+## What Google Tag Manager is
+
+[Google Tag Manager](https://tagmanager.google.com/) (GTM) sits between a website and its analytics tools. Instead of hardcoding each tracking script into the site, you add one small GTM snippet. Then you manage everything else in GTM's web interface:
+
+- **Tags** send data somewhere, such as a GA4 page view or a custom event.
+- **Triggers** decide when a tag fires, such as when a page loads or someone clicks a certain button.
+- **Variables** hold values the tags send, such as the page URL or a reader's organization.
+
+The site talks to GTM through the **data layer**, a JavaScript array (`window.dataLayer`). The site pushes structured information into it, and GTM reads that information and passes it to GA4 or any other tool. As a result, analytics can change (a new event, a new parameter, a new destination) in GTM without republishing the help center theme.
+
+## The problem with the standard setup
+
+Zendesk's recommended approach, described in [Setting up Google Analytics and third-party analytics for your help center](https://support.zendesk.com/hc/en-us/articles/4408828643098-Setting-up-Google-Analytics-and-third-party-analytics-for-your-help-center), is to paste a GA tracking ID into the admin settings. That's quick, and it gives you standard traffic reporting. But GA only sees what's in the URL and the page title. It has no idea who the reader is or what the page is about.
+
+Zendesk's native reports had the opposite problem. They could count article views, votes, and searches, but they couldn't break those numbers down by the reader's **customer organization**. For a B2B software company, that's the most important breakdown there is.
+
+## Where the data comes from
+
+Zendesk already knows a lot about each page and each reader. It just doesn't hand that information to analytics tools. I found two places to get it:
+
+**1. Help center template objects.** Zendesk themes are written in Curlybars, a Handlebars-based template language. On the article page, the [article object](https://developer.zendesk.com/api-reference/help_center/help-center-templates/objects/#article-object) exposes properties such as `id`, `title`, `author`, `created_at`, `edited_at`, `promoted`, `internal`, `vote_sum`, `vote_count`, `upvote_count`, and `comment_count`. The [user object](https://developer.zendesk.com/api-reference/help_center/help-center-templates/objects/#user-object) exposes the reader's `name`, `id`, `role`, and `organizations`. Zendesk fills these in on the server before the page reaches the browser, so I could write them straight into JavaScript variables in the template:
+
+```handlebars
+<script>
+  var zendeskArticleId = '{{article.id}}';
+  var zendeskArticleTitle = '{{article.title}}';
+  var zendeskArticleAuthor = '{{article.author.name}}';
+  var zendeskArticleEditedAt = '{{article.edited_at}}';
+  var zendeskArticleVoteSum = "{{article.vote_sum}}";
+  var zendeskSection = '{{section.name}}';
+  var zendeskSectionId = '{{section.id}}';
+  // ...and nine more article properties
+</script>
+```
+
+**2. The `HelpCenter` JavaScript object.** On every page, Zendesk also provides a global `HelpCenter.user` object in the browser, with the signed-in reader's role, email address, identifier, and organizations. Because the theme's `script.js` loads on every page, it was the right place to capture who the reader is.
+
+## What I built
+
+### 1. Tag Manager in the theme
+
+I added the GTM container snippet to the top of `document_head.hbs`, so it loads as early as possible on every page. I added GTM's `<noscript>` fallback to the start of `header.hbs`, since that template opens the page body. From then on, every change to tags and triggers happened in GTM, not in the theme.
+
+### 2. Reader identity on every page
+
+On every page load, `script.js` reads the reader's details from `HelpCenter.user` and pushes them into the data layer as a custom event. GTM uses that event to set the values as **GA4 user properties**, so they're attached to everything the reader does during the visit.
+
+```js
+var userRole = HelpCenter.user.role;
+var isAdmin = HelpCenter.user.is_admin;
+var domain = HelpCenter.user.email.split('@')[1];
+var zendeskIdentifier = HelpCenter.user.identifier;
+var zendeskUserOrganization = HelpCenter.user.organizations[0].name;
+
+window.dataLayer = window.dataLayer || [];
+
+dataLayer.push({
+  'event': 'set_zendesk_user_properties', // triggers a GTM tag
+  'user_properties': {
+    'zendeskUserRole': userRole,
+    'zendeskAdmin': isAdmin,
+    'zendeskUserCompany': domain,
+    'zendeskIdentifier': zendeskIdentifier,
+    'zendeskUserOrganization': zendeskUserOrganization
+  }
+});
+```
+
+The email domain works as a backup company identifier, and admin status let us filter our own staff out of the reports. The Zendesk user identifier became the key that later let us [join GA4 activity to Zendesk tickets](/experience/analytics-dashboard-design).
+
+### 3. A detailed article-view event
+
+On article pages, the template pushes a `zendesk_article_view` event with 16 attributes from the page's template objects: article ID, title, URL, author name and ID, created/updated/edited dates, internal and promoted flags, vote and comment counts, and section name and ID.
+
+Content tags took extra work. Our content tags mark which product and credentialing type an article covers, which made them one of the most useful things to report on. But the template objects don't include them, and the Help Center API returns them only as opaque IDs. So the script makes two API calls: one to the Guide content tags endpoint to build an ID-to-name lookup, and one to the article endpoint to get the article's tag IDs. Then it converts the IDs to readable names:
+
+```js
+async function getArticleContentTagNamesLookup() {
+  const tagNamesMap = new Map();
+  const response = await fetch('/api/v2/guide/content_tags');
+  if (response.ok) {
+    const data = await response.json();
+    (data.records || []).forEach(tag => tagNamesMap.set(tag.id, tag.name));
+  }
+  return tagNamesMap;
+}
+
+async function getArticleContentTagNames() {
+  const tagNamesLookup = await getArticleContentTagNamesLookup();
+  const articleRes = await fetch(`/api/v2/help_center/articles/${zendeskArticleId}.json`);
+  const { article } = await articleRes.json();
+  return article.content_tag_ids
+    .map(id => tagNamesLookup.get(id))
+    .filter(name => name !== undefined);
+}
+```
+
+After that, the full event goes into the data layer. Numbers and true/false values are converted from template strings into their proper types, so GA4 can sort and filter on them correctly:
+
+```js
+window.dataLayer.push({
+  event: 'zendesk_article_view',
+  zendeskArticleId: zendeskArticleId,
+  zendeskArticleTitle: zendeskArticleTitle,
+  zendeskArticlePromoted: String(zendeskArticlePromoted) === 'true',
+  zendeskArticleVoteSum: parseInt(zendeskArticleVoteSum) || 0,
+  zendeskSection: zendeskSection,
+  zendeskArticleContentTags: zendeskArticleContentTags,
+  // ...plus the remaining article attributes
+});
+```
+
+The script handles failure throughout. If the article ID is missing, it skips the event. If either API call fails, it logs the error and sends the event without content tags instead of losing the page view.
+
+### 4. Finding the breaking point: "Contact support" clicks
+
+The most valuable signal was the moment a reader stopped looking for an answer and asked for help. I set up a Tag Manager event that fires when a reader clicks a **Contact support** button. The page the reader was on is recorded with the click, and the user properties from step 2 are already attached, so every click answers two questions:
+
+- **Who gave up?** The reader, their role, and their organization.
+- **Where did they give up?** The exact article or landing page they were on when they decided the help site couldn't help them.
+
+To give readers (and the tracking) a consistent way out, I added the same Contact support call-to-action to every product landing page, every FAQ and troubleshooting page, and the error page.
+
+This turns "this person read something and, at some point, opened a ticket" into "this was the last page they read before asking for help." An article with a lot of Contact support clicks has a problem, and joining those clicks to the resulting tickets shows what the problem is.
+
+## Why this is more than a standard GA setup
+
+| | Built-in Zendesk GA integration | This integration |
+|---|---|---|
+| **Setup** | Paste a tracking ID into admin settings | GTM container in the theme, plus custom data-layer events |
+| **Who the reader is** | Anonymous visitor | Organization, role, admin status, company domain, Zendesk user identifier |
+| **What the page is** | URL and page title | 16 article attributes, including section, plus readable content-tag names |
+| **Support escalation** | Not tracked | Contact support clicks, tied to the reader and the page they were on |
+| **Changing tracking** | Limited to what the integration sends | New events and destinations configured in GTM without republishing the theme |
+| **Joining to other data** | Not possible | The Zendesk user identifier links GA4 activity to tickets and customer accounts |
+
+## What the data made possible
+
+**Knowing which customers read the documentation.** With views broken down by organization, we could see which customers used the help site and which didn't. That tells you as much about customer success as about the documentation. If an organization that finished onboarding months ago has almost no help-site activity, either its people weren't shown the resources during training, or something is keeping them out (such as login problems, not knowing the site exists, or internal policies). Either way, the fix is a conversation with a customer success manager, not a new article, and now we could tell them *which* accounts needed that conversation.
+
+**Seeing which roles read what.** Reports by role could show whether administrators and end users were finding the content written for them.
+
+**Measuring content by product.** Because content tags arrived as readable names, we could compare Salesforce app content with web app content, and provider credentialing with facility credentialing, without matching IDs by hand.
+
+**Finding where the documentation fails.** Contact support clicks, combined with the reader's organization and the page they left from, showed exactly which articles and landing pages weren't answering people's questions. That gives the documentation team a prioritized list of pages to fix.
+
+## Skills demonstrated
+
+- **Analytics engineering:** Google Tag Manager (tags, triggers, variables, data layer), GA4 custom events and user properties
+- **Zendesk platform:** Curlybars template objects, the `HelpCenter` JavaScript object, the Help Center and Guide REST APIs
+- **JavaScript:** async/await, working with APIs, ID-to-name lookups with `Map`, converting data types, handling failures
+- **Data strategy:** choosing the attributes and join keys that make analytics data useful beyond the site itself
+- **Working across teams:** turning help-site behavior into insights that customer success, support, and documentation could each act on

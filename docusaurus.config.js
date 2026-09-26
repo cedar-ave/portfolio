@@ -159,6 +159,14 @@ const config = {
                   { label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies' },
                 ],
               },
+              {
+                type: 'custom-nestedDropdown',
+                label: 'Zendesk',
+                to: '/experience/zendesk',
+                items: [
+                  { label: 'Custom analytics integrations', to: '/experience/custom-analytics-integrations' },
+                ],
+              },
             ],
           },
           {
