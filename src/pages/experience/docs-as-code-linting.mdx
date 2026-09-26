@@ -1,13 +1,13 @@
 ---
-title: 'Docs-as-code: Linting'
-description: How I built automated linting for a docs-as-code platform, with a custom Vale house style of 96 rules, a tuned markdownlint config, and custom scripts, all enforced in the pull request pipeline so every change was checked before it published.
+title: 'Docs-as-code: Linting in Vale'
+description: How I built automated linting for a docs-as-code platform, with a custom Vale house style of 96 rules and a tuned markdownlint config, enforced in the pull request pipeline so every change was checked before it published.
 ---
 
 import { LintCheckpoints, ValeFlow, StyleCuration } from '@site/src/components/DocsAsCodeDiagrams';
 
-# Docs-as-code: Linting
+# Docs-as-code: Linting in Vale
 
-**I turned a company's style guide into code and made the build pipeline enforce it.** On the [docs-as-code platform I built](/experience/docs-as-code), every pull request ran through automated linting before it could merge. I chose Vale to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. Custom scripts caught what neither tool could, such as broken links, images without alt text, and page titles that didn't match their headings. The same rules ran in the writer's editor, on the command line, and in the pipeline, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas. With engineers, product managers, and support staff all writing docs, linting in the pipeline is what kept the site consistent.
+**I turned a company's style guide into code and made the build pipeline enforce it.** On the [docs-as-code platform I built](/experience/docs-as-code), every pull request ran through automated linting before it could merge. I chose Vale to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Docs-as-code: Linting with custom scripts](/experience/docs-as-code-linting-scripts). The same rules ran in the writer's editor, on the command line, and in the pipeline, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas. With engineers, product managers, and support staff all writing docs, linting in the pipeline is what kept the site consistent.
 
 The company's details are left out. Rule files and configs on this page are excerpts from my original work, with company-specific terms removed.
 
@@ -18,7 +18,7 @@ The company's details are left out. Rule files and configs on this page are exce
 - **Vale house style:** 96 rules for word choice, voice, headings, numbers, punctuation, inclusive language, and docs-as-code problems like leftover merge conflict markers.
 - **A spelling list of about 300 product and technical terms**, so real mistakes stand out instead of getting lost in false alarms.
 - **markdownlint tuned for DocFX:** consistent headings and lists, only the HTML the site needs, and no conflict between DocFX page titles and H1s.
-- **Custom scripts** for broken links, missing alt text, unused images, and title mismatches, including one that fixes missing alt text automatically.
+- **Custom scripts** for broken links, missing alt text, unused images, and title mismatches. See [Docs-as-code: Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 
 :::
 
@@ -240,27 +240,9 @@ A few of these settings came from how the platform worked:
 - **`MD033`:** only `<i>` and `<span>` are allowed, because the site uses them for icons. Any other HTML is flagged, which keeps content portable and consistent.
 - **`.markdownlintignore`:** skips PDF cover pages, which use a special layout.
 
-## Custom scripts for what linters miss
+## Beyond Vale and markdownlint
 
-Some problems span more than one file, or need a fix rather than a warning. For those, I wrote scripts:
-
-| Script | What it does |
-| --- | --- |
-| Broken links | Runs a link checker on every Markdown file and writes a report of broken internal and external links |
-| Title mismatch | Compares each page's metadata title with its H1 and lists pages where they differ |
-| Unused images | Finds images that no page references, so they can be removed |
-| Alternate text | Adds alt text to images that have none, based on the image file name |
-| Spell check | Runs a spell check across the whole content folder |
-| Line endings | Finds files without a blank line at the end |
-
-The alternate text script fixes the problem instead of just reporting it. For every image reference with empty alt text, it builds alt text from the file name:
-
-```md
-Before: ![](media/create-value-set.png)
-After:  ![create value set](media/create-value-set.png)
-```
-
-It fixes missing alt text across the whole content folder in one run, and writers can then improve the generated text where a better description matters.
+Vale and markdownlint check what's inside one file. Some problems live between files, such as a link to a page that moved or an image no page uses, and some need a fix rather than a warning. For those, I wrote custom scripts: fixers that brought existing content up to the markdownlint rules so the pipeline could enforce them, and audits for broken links, unused images, title mismatches, and spelling. They're covered in the companion article, [Docs-as-code: Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 
 I also used DocFx Companion Tools to check links and catch malformed tables, which break silently in Markdown:
 
@@ -277,4 +259,4 @@ Table should finish by character '|'.
 - **I turn standards into code.** A house style of 96 rules in Git is reviewable, versioned, and enforced, not a document people forget to read.
 - **I choose tools deliberately.** Vale fit docs-as-code: rules as code, Markdown-aware, offline, fast, and the same in the editor and the pipeline.
 - **I tune for signal, not noise.** Curated rules, a spelling list, careful alert levels, and DocFX-aware settings keep false alarms low, so people trust the linter instead of ignoring it.
-- **I write scripts when tools fall short.** Custom scripts caught cross-file problems and fixed some automatically.
+- **I write scripts when tools fall short.** Custom scripts caught cross-file problems and fixed some automatically. See [Docs-as-code: Linting with custom scripts](/experience/docs-as-code-linting-scripts).

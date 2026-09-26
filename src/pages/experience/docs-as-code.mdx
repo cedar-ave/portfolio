@@ -27,7 +27,7 @@ The company's details are left out. Code samples on this page are simplified fro
 - **One theme everywhere:** a custom DocFX theme published as an npm package; a fix to the theme reaches every site on its next build.
 - **Reference docs generated from source:** .NET API docs from C# projects, and REST API docs from 13 REST API specs, split into navigable pages by scripts I wrote.
 - **Automated deployments:** one reusable pipeline file publishes any site to production or a preview environment.
-- **Quality checks built in:** linting with markdownlint and a custom Vale style guide runs in the pipeline, plus scripts for broken links, missing alt text, and more. See [Docs-as-code: Linting](/experience/docs-as-code-linting).
+- **Quality checks built in:** linting with markdownlint and a custom Vale style guide runs in the pipeline, plus scripts for broken links, missing alt text, and more. See [Docs-as-code: Linting in Vale](/experience/docs-as-code-linting) and [Docs-as-code: Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 - **Web and PDF from one source:** the same Markdown produces the site and downloadable PDF guides.
 
 :::
@@ -318,7 +318,7 @@ steps:
     DestinationObject: 'wwwroot/$(SitePrefix)'
 ```
 
-Pull requests also run automated linting before they can merge, so every change is checked for formatting, style, and spelling before it reaches this pipeline. See [Docs-as-code: Linting](/experience/docs-as-code-linting).
+Pull requests also run automated linting before they can merge, so every change is checked for formatting, style, and spelling before it reaches this pipeline. See [Docs-as-code: Linting in Vale](/experience/docs-as-code-linting).
 
 Because each site deploys to its own folder in shared blob storage, many repos combine into one docs domain, and each team ships on its own schedule without waiting on anyone else. Older product versions build from their release branches into their own paths, which is what the version switcher links between.
 
@@ -349,5 +349,5 @@ A docs platform only works if people outside the docs team can use it. I also wr
 - **I can build a platform from nothing.** I made every decision, from choosing the generator to writing the scripts, theme, and pipelines that run it.
 - **I choose tools against requirements.** DocFX won because it met a hard requirement, .NET API docs, and I planned around its weak spots instead of ignoring them.
 - **I engineer for scale and low upkeep.** A shared theme, a starter template, and one reusable pipeline mean each improvement is made once and reaches every site.
-- **I solve problems with code.** When the tools fell short, I wrote the missing piece: `jq` and Python scripts for API docs, a configurable style path for nested sites, and lint scripts for problems the linters missed.
+- **I solve problems with code.** When the tools fell short, I wrote the missing piece: `jq` and Python scripts for API docs, a configurable style path for nested sites, and [lint scripts](/experience/docs-as-code-linting-scripts) for problems the linters missed.
 - **I make complex systems usable.** A contributor guide and coaching turned a technical platform into something any engineer or writer could use. See [Docs-as-code: Scaling contributions](/experience/docs-as-code-contributions).

@@ -1,0 +1,221 @@
+---
+title: 'Docs-as-code: Linting with custom scripts'
+description: How I wrote Bash and Python scripts that caught what off-the-shelf linters can't, such as broken links, orphaned images, and mismatched titles, and fixed old content in bulk so strict lint rules could be enforced in the pipeline.
+---
+
+import { ScriptRoles, CheckStages } from '@site/src/components/DocsAsCodeDiagrams';
+
+# Docs-as-code: Linting with custom scripts
+
+**When the off-the-shelf linters stopped short, I wrote the checks myself, and I wrote scripts that fix problems, not just report them, so the team could turn on strict rules in the pipeline without breaking every pull request.** On the [docs-as-code platform I built](/experience/docs-as-code), [Vale and markdownlint](/experience/docs-as-code-linting) checked every pull request. But a linter reads one file at a time, and some of the most damaging problems on a docs site live between files: a link to a page that moved, an image no page uses anymore, a search result title that doesn't match the page it opens. And on a site with hundreds of existing pages, turning on a new lint rule floods the build with errors that nobody in the current pull request wrote. I wrote a set of Bash and Python scripts to close both gaps. Two of them repaired every violation of a markdownlint rule across the whole content set in one run, which let those rules be enforced from then on. The rest audited the site for broken links, orphaned images, spelling, and mismatched titles, and wrote reports a writer could work through in order instead of hunting page by page.
+
+This is the companion to [Docs-as-code: Linting in Vale](/experience/docs-as-code-linting). The company's details are left out. Scripts on this page are simplified excerpts from my original work, with product names and paths replaced.
+
+:::tip[At a glance]
+
+- **Checks that span files:** broken links, unused images, spelling across the whole site, and page titles that don't match their headings.
+- **Fixers that make gates possible:** two scripts brought every existing page into line with a markdownlint rule in one run, so the rule could fail the build without blocking everyone's next pull request.
+- **Reports built for action:** each audit writes one file with a consistent marker, so a writer can search it and fix problems in order.
+- **Low noise by design:** each script skips the folders and page types that would cause false alarms, such as generated API pages, cover pages, and shared snippets.
+- **Pre-build scripts that keep generated content valid:** scripts repair API specs and generate missing pages before DocFX runs, so the build never publishes an empty page.
+- **Small and readable:** Bash, `find`, `sed`, `grep`, `jq`, Python, and two npm packages. Anyone on the team could read, run, and change them.
+
+:::
+
+## Why linting belongs in the pipeline, and why linters aren't enough
+
+Automated linting turns quality from something a reviewer has to remember into something the system guarantees. A check in the pipeline runs on every change, from every contributor, the same way every time. It catches a problem minutes after it's written, when it's cheapest to fix, instead of after a customer finds it. And it frees reviewers to judge what only a person can: accuracy, clarity, and whether the page answers the reader's question.
+
+Two things make that harder than it sounds:
+
+1. **Linters see one file at a time.** markdownlint and Vale check what's inside a page. They can't tell you that a link points to a page that was renamed last month, or that dozens of screenshots in the repo aren't used by any page.
+2. **A new gate fails on old content.** Turn a rule on at the error level in a repo with years of content, and every pull request fails on problems its author didn't create. Teams respond by turning the rule off. A gate only survives if the existing content passes it on the day it's turned on.
+
+My scripts addressed both. Fixers brought existing content up to the rules so the pipeline could enforce them. Audits covered the cross-file checks that no single-file linter can do.
+
+<ScriptRoles />
+
+## The scripts
+
+| Script | Type | What it catches | Output |
+| --- | --- | --- | --- |
+| Alternate text | Fixer | Images with empty alt text (markdownlint rule MD045) | Fixes every page in place |
+| Blank line endings | Fixer | Files that don't end with a newline (markdownlint rule MD047) | Fixes every page in place |
+| Broken links | Audit | Broken links between pages and to outside sites | One report, `link-status.md` |
+| Title mismatch | Audit | Pages whose metadata title differs from their H1 | A list of each mismatched pair |
+| Unused images | Audit | Images that no page references | A log that becomes a `git rm` list |
+| Spell check | Audit | Misspellings across all content, with a project dictionary | A report in the terminal |
+
+## Fixers: making a rule enforceable
+
+### Alternate text
+
+An image without alt text is an accessibility failure: a screen reader skips it or reads out the file name. markdownlint catches this with rule MD045. But the site had many older screenshots with empty alt text, so enforcing MD045 in the pipeline would have failed almost any pull request that touched an older page.
+
+I wrote a script that finds every image reference with empty alt text and fills it in from the image's file name. The team already gave screenshots descriptive, dash-separated names, so the name made a reasonable first description:
+
+```md
+Before: ![](media/create-value-set.png)
+After:  ![create value set](media/create-value-set.png)
+```
+
+The core of the script pulls the file name out of the image path, turns dashes into spaces, drops the extension, and writes the result between the empty brackets:
+
+```bash title="script_AlternateText.sh (simplified)"
+while read line || [ -n "$line" ]; do
+  if [[ $line =~ "![]" ]]; then
+    # File name = the text after the last / in the path
+    imageFilename=$(echo "$line" | grep -oE "[^/]+$" | sed 's|-| |g' | sed -E 's/\.png|\.jpg|\)//g')
+    # Put it between the empty brackets
+    altText=$(echo "$line" | sed -E "s/(\S+\[)(\].\S+.)/\1$imageFilename\2/")
+    # Escape [ ] / so sed can safely swap the old line for the new one
+    ...
+    sed -i "s|$plainLine|$finishedLine|" "$file"
+  fi
+done < "$file"
+```
+
+A few details kept it safe to run on the whole site:
+
+- **It doesn't skip the last line.** Bash's `read` silently drops a file's last line when the file doesn't end with a newline. The `|| [ -n "$line" ]` catches that line too, so an image at the very end of a page isn't missed.
+- **It skips pages it can't handle.** A few pages placed images inside HTML instead of Markdown. The script excludes them by name, instead of guessing and corrupting them.
+- **It escapes before it replaces.** Image paths contain slashes and brackets, which have special meaning to `sed`. The script escapes them first, so a path never breaks the replacement.
+
+One run fixed every image on the site. Writers then improved the generated text wherever a richer description mattered, and from then on, MD045 caught new cases in the editor and in the pipeline.
+
+### Blank line endings
+
+markdownlint's rule MD047 requires every file to end with a newline. Files without one also add a *No newline at end of file* warning to every Git diff that touches them. Many editors don't add the newline, so old files often failed the rule.
+
+This script adds the newline to any file that's missing it:
+
+```bash title="script_BlankLineEndings.sh"
+for file in $(find . -type f -name "*.md"); do
+  if [ "$(tail -c1 "$file"; echo x)" != $'\nx' ]; then
+    echo "" >> "$file"
+  fi
+done
+```
+
+The `echo x` is the key. Command substitution in Bash strips trailing newlines, so `$(tail -c1 "$file")` alone can never show whether the last character is a newline. Adding `x` after it keeps the newline in place, so the comparison works.
+
+## Audits: checks that span files
+
+### Broken links
+
+Broken links are the problem readers notice first, and a docs site with many repos and several product versions makes them easy to create. I used the open-source [markdown-link-check](https://github.com/tcort/markdown-link-check) and wrapped it in a script that checks every Markdown file and writes one report:
+
+```bash title="script_BrokenLinks.sh"
+find \( -name 'node_modules' -o -name 'specs' -o -name 'templates' \
+        -o -name 'vale-styles' -o -name 'link-status.md' \) -prune \
+  -o -name '*.md' -exec markdown-link-check {} \; > link-status.md
+```
+
+- **It skips what isn't content.** Dependencies, generated API pages, templates, Vale's rule files, and the report itself are pruned, so every result is a real page.
+- **The report is searchable.** markdown-link-check marks each link with a symbol. Searching the report for the regex `\[[^✓]\]` jumps straight to every link that didn't pass, and skips the thousands that did.
+- **Each tool owns one check.** Cross-references between DocFX pages are checked by the DocFX build itself, which fails on a broken reference. The script covers links in Markdown, so nothing is reported twice.
+
+### Title and heading mismatch
+
+Each DocFX page has a `title` in its metadata, which shows in the browser tab and in search results, and an H1 at the top of the page. When a writer changes one and forgets the other, a reader clicks a search result for one thing and lands on a page that says another.
+
+This script compares the two on every page and lists each pair that doesn't match:
+
+```bash title="script_MatchYamlTitleAndH1.sh (simplified)"
+for file in $(find . -type f -name "*.md"); do
+  # Keep only the lines up to the first H1
+  sed -E '/^# .*?$/q' "$file" > page.txt
+  # The metadata title
+  sed '3q;d' page.txt | sed 's/title: //g' > yaml.txt
+  # The H1
+  grep -Eow "^# .*$" page.txt | sed 's/# //g' > heading.txt
+
+  if ! cmp -s yaml.txt heading.txt; then
+    printf 'The file "%s" has a title that differs from its H1\n' "$file"
+  fi
+done
+```
+
+- **It stops at the first H1.** In a Bash or PowerShell code sample, comments also start with `#` and a space. Reading only up to the first real H1 keeps a code comment from being mistaken for a heading.
+- **It knows the exceptions.** PDF cover pages, shared snippets, include files, and a short list of pages whose titles differ on purpose are excluded. An audit that flags intentional differences teaches people to ignore it.
+
+### Unused images
+
+When a product's interface changes, writers add new screenshots, and old ones stay in the repo. Unused images slow down every clone and build, and because the build copies them to the site, an outdated or unreleased screen can still be published and found.
+
+The key design decision was to **check the built site, not the Markdown source**. Images are referenced through shared snippets, templates, and CSS as well as pages. Searching only the Markdown would flag images that are in use. So the script runs after a fresh local build, indexes every HTML, CSS, and JavaScript file in the output, and then looks for each image's name:
+
+```bash title="script_UnusedImages.sh (simplified)"
+files=(`find . -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' \)`)
+images=(`find . -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \)`)
+
+for image in ${images[*]}; do
+  name=`basename -s .png $image`; name=`basename -s .jpg $name`
+  name=`basename -s @2x $name`   # retina copies count as the same image
+  if ! grep -qhs "\b$name\b" ${files[*]}; then
+    echo "$image" >> ./find-unused_images.log
+  fi
+done
+```
+
+- **It starts clean.** The instructions have the admin delete the old build output first, so an image referenced by a page that no longer exists doesn't count as used.
+- **The output becomes the fix.** A search and replace turns the log into a list of `git rm` commands, so the whole cleanup lands in one pull request that a reviewer can check.
+- **I reused before I wrote.** The script adapts an open-source script for finding unused images in app projects, changed for a docs site's file types and folders.
+
+### Spell check
+
+Vale checked spelling on every pull request, but only in the files each change touched. This script sweeps the whole site at once. This script runs [spellchecker-cli](https://www.npmjs.com/package/spellchecker-cli) across the articles, the REST API pages, and the home page:
+
+```bash title="script_SpellCheck.sh"
+spellchecker --files 'articles/**/*.md' 'restapi/*.md' 'index.md' \
+  --quiet --dictionaries spelling.txt
+```
+
+The work was in the dictionary. On a healthcare data platform, product names, acronyms, and data terms outnumber real typos. I ran the tool once with `--generate-dictionary` to list every unknown word, kept the valid terms in `spelling.txt`, and from then on the report showed only real mistakes. The same principle shaped the ignore list for [Vale's spelling rule](/experience/docs-as-code-linting#spelling-without-the-noise): a spell checker full of false alarms gets turned off.
+
+## Pre-build scripts: keeping generated content valid
+
+Some content isn't written but generated, and a generator's input can be incomplete. These scripts run before DocFX builds the site, so the build never publishes a broken or empty page:
+
+- **API tags.** DocFX splits REST API reference into pages by tag, but many API specs used tags without declaring them. A `jq` script collects every tag, removes duplicates, and adds the missing `tags` object to the spec. See [API documentation](/experience/api-documentation).
+- **API landing pages.** Without a landing page, each tag's index page rendered empty and looked broken. A Python script reads each spec and writes a landing page for every tag, with links to its operations.
+- **Dated PDF file names.** After `docfx pdf` runs, a script adds the product version and the build date to each PDF's file name, such as `v4.2_install-guide_14Mar2023.pdf`, so a customer always knows which release a PDF covers.
+- **A user-only PDF.** A customer asked for a user guide without admin tasks. A script builds a copy of the table of contents without the admin articles and fixes its relative paths, so the same Markdown produces both guides. See [Docs-as-code: Customizations](/experience/docs-as-code-customizations#pdfs-that-look-finished).
+
+## Where each check belongs in a pipeline
+
+Each script runs from the repo with no prompts, uses only standard tools, skips known false alarms, and writes one report. That's the shape of a pipeline step. But not every check belongs at the same stage, and putting a check in the wrong place does real harm: a slow or unreliable check that blocks merges teaches people to rerun the build until it passes.
+
+<CheckStages />
+
+| Check | Stage | Why |
+| --- | --- | --- |
+| Alt text, line endings | Once, as fixers, then the markdownlint rule on every pull request | Fix the backlog once; the linter stops it from coming back |
+| markdownlint, Vale, title mismatch, spelling | Every pull request | Fast, per page, and the same result every time |
+| API tags, landing pages | Before the build | The build depends on their output |
+| External links, unused images | On a schedule | Outside sites change without a commit, and the image check needs a full build |
+
+Turning an audit into a gate takes one change: fail the step when the report isn't empty.
+
+```yaml title="An audit as a pipeline step (sketch)"
+- script: |
+    ./scripts/script_MatchYamlTitleAndH1.sh > title-report.txt
+    if [ -s title-report.txt ]; then cat title-report.txt; exit 1; fi
+  displayName: 'Check that page titles match their H1s'
+```
+
+## Results
+
+- **Rules that could be enforced.** The fixers brought every existing page into line with MD045 and MD047 in one run each, so the pipeline could hold every new change to those rules.
+- **Accessibility at scale.** Every Markdown image on the site got alt text in one pass, and markdownlint caught new images without it before they merged.
+- **Site-wide audits became routine.** Checking every link, image, title, and word on the site by hand isn't realistic. The scripts turned each into one command and a clear list of fixes.
+- **A leaner repo.** Unused images were removed in a single reviewable pull request, not left to pile up.
+
+## What this project shows
+
+- **I understand what makes a quality gate work.** It has to pass on existing content, run fast, and rarely be wrong, or people route around it.
+- **I build fixers, not just reporters.** When a problem is mechanical, I fix every instance at once instead of handing people a list.
+- **I think beyond one file.** Links, images, and titles break between pages, and I built checks that look across the whole site and the built output.
+- **I handle edge cases.** The last line of a file, a code comment that looks like a heading, an image inside HTML: each script accounts for the cases that break naive versions.
+- **I reuse before I build.** I wrapped open-source tools where they existed and wrote code only for what they didn't cover.
+- **I put each check where it belongs.** Fast, reliable checks gate pull requests. Slow or network-bound checks run on a schedule.
