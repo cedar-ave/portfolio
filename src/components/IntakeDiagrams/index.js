@@ -66,21 +66,20 @@ function Figure({ titleId, title, desc, viewBox, caption, minWidth, children }) 
 
 export function RequestToRootProblem() {
   const options = [
-    { t: 'New standalone guide', s: 'Treats the symptom', chosen: false },
-    { t: 'Clearer label in the UI', s: 'Sent as product feedback', chosen: true },
-    { t: 'Update existing article', s: 'Adds the missing callout', chosen: true },
-    { t: 'Brief support team', s: 'Link the fix in replies', chosen: true },
+    { t: 'New FAQ page', s: 'Another page no one finds', chosen: false },
+    { t: 'Help site intro', s: 'Built into onboarding', chosen: true },
+    { t: 'Track site awareness', s: 'Readers per customer org', chosen: true },
   ];
-  const optY = (i) => 62 + i * 72;
+  const optY = (i) => 70 + i * 80;
 
   return (
     <Figure
       titleId="in-root"
       title="Triage turns a requested solution into a root problem, then weighs every way content could fix it"
-      desc="A request arrives as a solution: we need a new guide for the reporting feature. Triage questions ask what problem the requester is solving, who hits it and how often, what already exists, and how much time a fix would save. The answers reveal the root problem: readers misread one filter label and open tickets about it. Four fixes are weighed. A new standalone guide only treats the symptom. A clearer UI label, an update to the existing article, and a support team briefing address the cause and are chosen."
+      desc="A request arrives as a solution: can we make an FAQ for new customers? Triage questions ask what problem the requester is solving, who hits it and how often, what already exists, how much time a fix would save, and whether new content is needed. The answers reveal the root problem: new customers don't know the help site exists, so they never find answers that are already written. Three fixes are weighed. A new FAQ page would be one more page no one finds. Introducing the help site during onboarding and tracking help site awareness by customer organization address the cause and are chosen."
       viewBox="0 0 900 360"
       minWidth={700}
-      caption="Illustrative example. The request named a deliverable. Triage found a comprehension problem that three smaller, faster fixes solved at the source.">
+    >
       <defs>
         <ArrowMarker id="in-root-arrow" />
         <ArrowMarker id="in-root-arrow-key" kind="arrowKey" />
@@ -100,7 +99,7 @@ export function RequestToRootProblem() {
         const y = optY(i) + 30;
         return (
           <path
-          key={o.t}
+            key={o.t}
             d={`M685 180 C705 180 690 ${y} ${708} ${y}`}
             className={o.chosen ? styles.edgeKey : styles.edgeMuted}
             markerEnd={o.chosen ? 'url(#in-root-arrow-key)' : 'url(#in-root-arrow)'}
@@ -116,9 +115,8 @@ export function RequestToRootProblem() {
         kind="request"
         lh={19}
         lines={[
-          { t: '“We need a new guide', c: 'quote' },
-          { t: 'for the reporting', c: 'quote' },
-          { t: 'feature.”', c: 'quote' },
+          { t: '“Can we make an FAQ', c: 'quote' },
+          { t: 'for new customers?”', c: 'quote' },
           { t: 'Solution-shaped request', c: 'sub' },
         ]}
       />
@@ -148,11 +146,11 @@ export function RequestToRootProblem() {
         kind="root"
         lh={19}
         lines={[
-          { t: 'Readers misread one' },
-          { t: 'filter label and open' },
-          { t: 'tickets about it' },
-          { t: 'The guide existed.', c: 'sub' },
-          { t: 'The label was the gap.', c: 'sub' },
+          { t: "New customers don't" },
+          { t: 'know the help site' },
+          { t: 'exists' },
+          { t: 'The answers were written.', c: 'sub' },
+          { t: 'Nobody knew where.', c: 'sub' },
         ]}
       />
 
@@ -319,15 +317,6 @@ const URGENCY = [
   },
 ];
 
-const AUDIENCES = [
-  'Customer end users',
-  'Customer administrators',
-  'Support team',
-  'Customer success team',
-  'Sales team',
-  'All employees',
-];
-
 function Chip({ children, tone }) {
   return <span className={`${styles.chip} ${tone ? styles[tone] : ''}`}>{children}</span>;
 }
@@ -339,7 +328,7 @@ export function RequestFormMockup() {
   const [desc, setDesc] = useState(
     'A new step-by-step guide for the reporting feature, with screenshots of every filter.'
   );
-  const [audience, setAudience] = useState(AUDIENCES[0]);
+  const [audience, setAudience] = useState('Customer end users');
   const [urgency, setUrgency] = useState('time');
   const [links, setLinks] = useState('Existing reporting article; support macro for filter questions');
   const [view, setView] = useState('submitted');
@@ -389,11 +378,7 @@ export function RequestFormMockup() {
             <span className={styles.label}>
               Who is the audience for the content? <em className={styles.req}>Required</em>
             </span>
-            <select value={audience} onChange={(e) => setAudience(e.target.value)}>
-              {AUDIENCES.map((a) => (
-                <option key={a}>{a}</option>
-              ))}
-            </select>
+            <input type="text" value={audience} onChange={(e) => setAudience(e.target.value)} />
           </label>
 
           <fieldset className={styles.field}>
@@ -425,7 +410,7 @@ export function RequestFormMockup() {
             </span>
             <input type="text" value={links} onChange={(e) => setLinks(e.target.value)} />
             <span className={styles.help}>
-              Google Docs, Confluence pages, PRDs, drafts, communications, recordings, Jira tickets, etc.
+              Google Docs or Slides, Notion pages, PRDs, communications, recordings, transcripts, Jira tickets, etc.
             </span>
           </label>
 

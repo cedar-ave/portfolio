@@ -109,7 +109,7 @@ This is where DocFX fell short, and where I wrote code:
 - **Tags.** DocFX's split plugins group operations by tag, but many specs used tags on their operations without declaring them in a top-level `tags` object. I wrote a shell script that uses `jq` to collect every tag from every operation, remove duplicates, and merge a `tags` object into the spec.
 - **Landing pages.** Without a landing page, each tag's index page rendered empty and looked broken. I wrote a Python script that reads each spec and writes a Markdown overwrite file for every tag, with links to its operations, plus a root page built from the service description.
 
-Admins run both scripts before publishing, so refreshing the specs after a release never means hand-editing JSON. The scripts are covered in more detail in [Docs-as-code](/experience/docs-as-code#rest-api-reference).
+Admins run both scripts before publishing, so refreshing the specs after a release never means hand-editing JSON. The scripts are covered in more detail in [Standing it up](/experience/docs-as-code-standing-it-up#rest-api-reference).
 
 ### Step 5: Build, split, and order the pages
 
@@ -227,7 +227,7 @@ API docs that only one person can update are a risk to the company. I wrote each
 - **Contributors** get the everyday tasks: where the source files are, how to get a fresh spec from a service, how to convert it, how to write its description, and how to reorder the menu.
 - **Admins** get the rest: how to run the tag and landing-page scripts, how the `metadata` and plugin configuration works, and how to fix the build when it breaks.
 
-Every runbook ends with links to its troubleshooting articles. For more on how I set up contributions across the company, see [Docs-as-code: Scaling contributions](/experience/docs-as-code-contributions).
+Every runbook ends with links to its troubleshooting articles. For more on how I set up contributions across the company, see [Scaling contributions](/experience/docs-as-code-contributions).
 
 ## Results
 

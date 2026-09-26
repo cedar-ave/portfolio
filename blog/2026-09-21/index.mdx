@@ -1,0 +1,78 @@
+---
+draft: true
+slug: solving-the-real-problem
+title: When what they ask for doesn't solve the real problem
+authors: marla
+tags: [Quality improvement, Governance]
+---
+
+import { RequestFormMockup, RequestToRootProblem } from '@site/src/components/IntakeDiagrams';
+import { AwarenessDashboard } from '@site/src/components/AnalyticsDiagrams';
+
+I once sat by two product managers who were phenomenal at handling requests for new software features. Often team members would come to them and insist on something like, *We really need to add a new feature that lets users do X. Our users are clamoring for it. We might lose customers over this!* The PMs would respond, ***What is the problem you're trying to solve?*** The conversation immediately shifted to a discussion about root causes, user goals, business value, and real evidence. More often than not, it quickly became clear that the proposed solution was not the right course of action.
+
+## I took it to heart
+
+I love as a technical writer when someone on the team comes to me with a request for new content. It shows they see the value of content and trust me to help. But this magic question works just as well on the requests I receive as it does on product feature requests. For example:
+
+| What was requested | The problem underneath | What actually solves it |
+| --- | --- | --- |
+| **"Can we make an FAQ for new customers?"** | New customers don't know the help site exists, so they never find the answers already written. | Introduce the help site during onboarding. |
+| **"Write an article explaining this error message."** | The error message doesn't tell users what to do next. | Rewrite the message in the product, plus a add short troubleshooting entry for the edge cases. |
+| **"Sales needs a one-pager on feature X."** | This already exists, but reps can't find existing content quickly during calls. | Improve the navigation and search, and provide a short list of links the team can share. |
+
+## What I asked each time
+
+A company I worked for used Jira heavily across the org. I created a Jira form and asked team members to submit requests with it.
+
+I knew the form needed to be as short and as painless to fill out as possible, so I narrowed everything down to five questions, with the most important at the top:
+
+- What problem are you trying to solve?
+- Describe the new content you're requesting.
+- Who is the audience for the content?
+- How urgent is this request?
+- What content already exists about this topic, even if it's not in great shape?
+
+### A note on urgency
+
+*Urgent* is the most overused word in any request queue. I gave the requester four options, each with a definition written into the form itself:
+
+- **Mission critical:** Blocking a launch, legal obligation, or customer impact. Must address immediately to prevent measurable harm.
+- **Time sensitive:** Tied to a specific date or event with external visibility. Delay would reduce relevance or credibility.
+- **Nice to have by a certain date:** Helps a project or team but is not time-bound. Not blocking or externally visible.
+- **Flexible:** Schedule when capacity allows. No impact if delayed. Optimize timing for impact.
+
+### What the form looked like
+
+This isn't a screenshot of the form - it's just an illustration - but here's the (clickable!) mockup of what it looked like:
+
+<RequestFormMockup />
+
+## Capturing the request
+
+A submitted form immediately became a ticket on my **Content Development** Jira board. This is important for two reasons:
+
+- **A requester could see the status of their request anytime.** They could also change it, supply additional information, or tell me to hurry up!
+- **I could track my workload on a dashboard.** A dashboard helped me and my manager see how much work was requested, scope it, and visualize progress.
+
+## Resolving the request
+
+Next was a collaborative effort between me, my manager, and the requester.
+
+<RequestToRootProblem />
+
+First, a short triage defined the root problem. A couple helpful questions to ask when triaging:
+
+* What percentage of this request comes from customers?
+* How much time will implementing this request save?
+* How will we communicate this change to stakeholders?
+
+Next, a quick brainstorm designed a solution.
+
+
+The most critical part of the flow above was the final box: **Track site awareness**. Each time we settled on a solution, ideally we'd come up with some way to measure the effect. In this case, I captured which customers visited a page on the help site and which organizations they belonged to. That way, a visualization could show which customer organizations had visitors to the help site and after how long of period after onboarding. Then we could identify which organizations may not have received education that the site existed, or identify other potential barriers to customers visiting the site.
+
+The following is just an illustration:
+
+<AwarenessDashboard />
+

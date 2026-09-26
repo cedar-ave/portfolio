@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-/* Diagrams for /experience/docs-as-code and /experience/docs-as-code-contributions.
+/* Diagrams for /experience/docs-as-code-standing-it-up and /experience/docs-as-code-contributions.
    Names and details are generalized. */
 
 /* ---------- shared pieces ---------- */

@@ -8,4 +8,12 @@ Open source:
   permalink: /open-source
   description: Using open-source tools to build content architectures and pipelines, drawing on industry expertise and utilizing tooling often at low-to-no cost
 
+Quality improvement:
+  label: Quality improvement
+  permalink: /quality-improvement
+  description: Using principles of quality improvement to drive measurable improvement
 
+Governance:
+  label: Governance
+  permalink: /governance
+  description: Ensuring content follows processes around creating and retiring content

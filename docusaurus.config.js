@@ -12,7 +12,7 @@ import remarkImageSize from './plugins/remark-image-size.mjs';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-Fluent Content Engineer • Technical Writer and Editor • Docs-as-Code and CCMS Workflows • Zendesk Master • AI Conversation Designer • AI-Assisted Pipelines',
+  tagline: 'AI-fluent content engineer • Technical writer and editor • Docs-as-code and CCMS workflows • Zendesk master • AI conversation designer • AI-assisted pipelines',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -135,17 +135,31 @@ const config = {
                 to: '/experience/content-development',
                 items: [
                   { label: 'Technical writing', to: '/experience/technical-writing' },
-                  { label: 'Docs-as-code: Standing it up', to: '/experience/docs-as-code' },
-                  { label: 'Docs-as-code: Scaling contributions', to: '/experience/docs-as-code-contributions' },
-                  { label: 'Docs-as-code: Linting in Vale', to: '/experience/docs-as-code-linting' },
-                  { label: 'Docs-as-code: Linting with custom scripts', to: '/experience/docs-as-code-linting-scripts' },
-                  { label: 'Docs-as-code: Customizations', to: '/experience/docs-as-code-customizations' },
                   { label: 'API documentation', to: '/experience/api-documentation' },
                   { label: 'Automated release notes', to: '/experience/automated-release-notes' },
-                  { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
-                  { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
                   { label: 'Content request form and prioritization', to: '/experience/content-intake' },
                   { label: 'UX writing', to: '/experience/ux-writing-roster-upload' },
+                ],
+              },
+              {
+                type: 'custom-nestedDropdown',
+                label: 'XML CCMS',
+                to: '/experience/xml-ccms',
+                items: [
+                  { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
+                  { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
+                ],
+              },
+              {
+                type: 'custom-nestedDropdown',
+                label: 'Docs-as-code',
+                to: '/experience/docs-as-code',
+                items: [
+                  { label: 'Standing it up', to: '/experience/docs-as-code-standing-it-up' },
+                  { label: 'Scaling contributions', to: '/experience/docs-as-code-contributions' },
+                  { label: 'Linting in Vale', to: '/experience/docs-as-code-linting' },
+                  { label: 'Linting with custom scripts', to: '/experience/docs-as-code-linting-scripts' },
+                  { label: 'Customizations', to: '/experience/docs-as-code-customizations' },
                 ],
               },
               {

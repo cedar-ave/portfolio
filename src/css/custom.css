@@ -30,6 +30,8 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-code-padding-horizontal: 0.4rem;
 
+  --ifm-font-weight-bold: 500;
+
   --ifm-link-color: #50657C;
   --ifm-link-hover-color: #5e7893;
 
@@ -100,7 +102,7 @@ a:hover {
 
 .hero__subtitle {
   font-weight: 300;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
 }
 
 .roboto-semibold {
@@ -205,16 +207,12 @@ h1 {
 }
 
 .table-of-contents__link {
-  font-size: 1rem;
+  font-size: .9rem;
   line-height: 1.5;
   padding-bottom: .25rem;
 }
 
 .table-of-contents__link--active {
-  font-weight: 500;
-}
-
-strong {
   font-weight: 500;
 }
 
@@ -405,4 +403,50 @@ article h3 {
 
 .footer {
   padding-top: 2.5rem;
+}
+
+table {
+  border: none;
+}
+
+thead {
+  background: #5e7893;
+}
+
+table tr {
+  border-top: none;
+}
+
+table tbody tr:nth-child(2n) {
+  background-color: #f0f5f9;
+}
+
+table thead tr {
+  border-bottom: none !important;
+}
+
+table th,
+table td {
+  font-size: .9rem;
+  border: none;
+  border-bottom: 1px solid var(--ifm-table-border-color);
+  text-align: left;
+  vertical-align: top;
+  padding: 6px;
+}
+
+table th {
+  font-size: .9rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+table th:first-child,
+table td:first-child {
+  padding-left: 10px;
+}
+
+table th:last-child,
+table td:last-child {
+  padding-right: 10px;
 }

@@ -1,5 +1,5 @@
 ---
-title: 'Docs-as-code: Scaling contributions'
+title: 'Scaling contributions'
 description: How I wrote a contributor guide and set up processes that let engineers, product managers, and support staff across a company contribute to a docs-as-code help site without a writer becoming the bottleneck.
 ---
 
@@ -11,9 +11,9 @@ import {
   ReleaseNotesFlow,
 } from '@site/src/components/DocsAsCodeDiagrams';
 
-# Docs-as-code: Scaling contributions
+# Scaling contributions
 
-**A docs platform only scales if people outside the docs team can use it, so I built the system that let them.** After I built a company's [docs-as-code platform](/experience/docs-as-code), I wrote a contributor guide of more than 100 articles, published on the same platform, that took engineers, product managers, and support staff from "which repo is this page in?" to a merged change. It gives each audience only the depth it needs: an **Edit this page** link and a browser editor for a quick fix, a six-step path with local builds and editor linters for product teams, and more than 50 admin articles so the platform never depended on one person. I paired it with processes that keep writers from becoming a bottleneck: product teams document features in the same sprint and publish without waiting, writers follow behind with editorial edits, and engineers write release notes in the work items they already use. The result was a help site that grew with the product teams instead of waiting on a docs queue.
+**A docs platform only scales if people outside the docs team can use it, so I built the system that let them.** After I built a company's [docs-as-code platform](/experience/docs-as-code-standing-it-up), I wrote a contributor guide of more than 100 articles, published on the same platform, that took engineers, product managers, and support staff from "which repo is this page in?" to a merged change. It gives each audience only the depth it needs: an **Edit this page** link and a browser editor for a quick fix, a six-step path with local builds and editor linters for product teams, and more than 50 admin articles so the platform never depended on one person. I paired it with processes that keep writers from becoming a bottleneck: product teams document features in the same sprint and publish without waiting, writers follow behind with editorial edits, and engineers write release notes in the work items they already use. The result was a help site that grew with the product teams instead of waiting on a docs queue.
 
 The company's details are left out. Examples on this page are adapted from the original guide, with names, URLs, and product details replaced.
 
@@ -175,7 +175,7 @@ Instead of pointing contributors at a long style guide, I summarized the rules t
 
 I wanted mistakes caught by tools, early and automatically, not by a writer at the end. The guide sets contributors up with checks at every stage:
 
-- **While typing:** markdownlint and Vale extensions in VS Code underline formatting, style, and spelling problems as the contributor writes. See [Docs-as-code: Linting in Vale](/experience/docs-as-code-linting).
+- **While typing:** markdownlint and Vale extensions in VS Code underline formatting, style, and spelling problems as the contributor writes. See [Linting in Vale](/experience/docs-as-code-linting).
 - **While building:** a local build lists broken links and missing anchors in its output. Two pages with the same ID fail the build, so a copied-and-pasted page can't silently replace another.
 - **At the pull request:** a validation build, including automated linting, has to pass before the change can merge.
 - **Before going live:** anyone can publish a branch to a preview site to show stakeholders.
