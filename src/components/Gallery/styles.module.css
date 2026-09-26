@@ -1,0 +1,29 @@
+.gallery {
+  --gallery-columns: 3;
+
+  display: grid;
+  grid-template-columns: repeat(var(--gallery-columns), 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.gallery :global(p) {
+  /* MDX wraps each standalone image in a <p>; unwrap it so the grid
+     controls layout directly instead of stacking paragraphs. */
+  display: contents;
+}
+
+.gallery img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .gallery {
+    --gallery-columns: 2;
+  }
+}
