@@ -109,34 +109,6 @@ a:hover {
   font-weight: 600;
 }
 
-/* Nested (second-level) navbar dropdowns, e.g. the Experience menu's
-   sub-menus: flyout to the side instead of stacking underneath the parent
-   item. Used by src/theme/NavbarItem/NestedDropdownNavbarItem.js. */
-
-/* Infima's .dropdown__menu sets overflow-y: auto, which per spec forces
-   overflow-x to auto too, clipping our flyout submenus. Any top-level
-   dropdown that holds nested dropdowns needs overflow left visible. */
-.navbar__item--experience+.dropdown__menu {
-  max-height: none;
-  overflow: visible;
-}
-
-/* Portfolio dropdown items: match body text weight instead of Infima's
-   bolder default link weight. */
-.navbar__item--experience+.dropdown__menu .dropdown__link {
-  font-weight: 400;
-}
-
-.dropdown__menu .dropdown {
-  /* Infima's .dropdown--hoverable rule sets display: inline-flex, sized for
-     the top-level navbar item. Reused here for a nested li, that shrinks it
-     to its own content width, leaving a gap the flyout's left: 100% doesn't
-     actually clear. Force it back to a full-width block row. */
-  display: block;
-  position: relative;
-  width: 100%;
-}
-
 .dropdown__menu .dropdown>.dropdown__menu {
   /* Infima's .dropdown__menu has 0.5rem of top padding, so aligning this
      flyout's box to top: 0 still leaves its first link sitting 0.5rem below

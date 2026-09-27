@@ -114,75 +114,9 @@ const config = {
             position: 'left',
           },
           {
-            type: 'dropdown',
+            to: '/portfolio',
             label: 'Portfolio',
             position: 'left',
-            className: 'navbar__item--experience',
-            items: [
-              {
-                type: 'custom-nestedDropdown',
-                label: 'AI tools and pipelines',
-                to: '/experience/content-engineering',
-                items: [
-                  { label: 'Custom MCPs', to: '/experience/custom-mcps' },
-                  { label: 'AI agent skills', to: '/experience/ai-agent-skills' },
-                  { label: 'Knowledge taxonomy for AI drafting', to: '/experience/ai-knowledge-taxonomy' },
-                ],
-              },
-              {
-                type: 'custom-nestedDropdown',
-                label: 'Content development',
-                to: '/experience/content-development',
-                items: [
-                  { label: 'Technical writing', to: '/experience/technical-writing' },
-                  { label: 'API documentation', to: '/experience/api-documentation' },
-                  { label: 'Automated release notes', to: '/experience/automated-release-notes' },
-                  { label: 'Content request form and prioritization', to: '/experience/content-intake' },
-                  { label: 'UX writing', to: '/experience/ux-writing-roster-upload' },
-                ],
-              },
-              {
-                type: 'custom-nestedDropdown',
-                label: 'XML CCMS',
-                to: '/experience/xml-ccms',
-                items: [
-                  { label: 'Structured authoring in Paligo', to: '/experience/paligo-structured-authoring' },
-                  { label: 'Choosing a CCMS', to: '/experience/ccms-evaluation' },
-                ],
-              },
-              {
-                type: 'custom-nestedDropdown',
-                label: 'Docs-as-code',
-                to: '/experience/docs-as-code',
-                items: [
-                  { label: 'Standing it up', to: '/experience/docs-as-code-standing-it-up' },
-                  { label: 'Scaling contributions', to: '/experience/docs-as-code-contributions' },
-                  { label: 'Linting in Vale', to: '/experience/docs-as-code-linting' },
-                  { label: 'Linting with custom scripts', to: '/experience/docs-as-code-linting-scripts' },
-                  { label: 'Customizations', to: '/experience/docs-as-code-customizations' },
-                ],
-              },
-              {
-                type: 'custom-nestedDropdown',
-                label: 'Content engagement',
-                to: '/experience/content-engagement',
-                items: [
-                  { label: 'Help site relaunch', to: '/experience/help-site-relaunch' },
-                  { label: 'AI chatbot', to: '/experience/ai-chatbot' },
-                  { label: 'Help center theme engineering', to: '/experience/help-center-theme-engineering' },
-                  { label: 'Analytics dashboard design', to: '/experience/analytics-dashboard-design' },
-                  { label: 'Standing up docs at companies', to: '/experience/standing-up-docs-at-companies' },
-                ],
-              },
-              {
-                type: 'custom-nestedDropdown',
-                label: 'Zendesk',
-                to: '/experience/zendesk',
-                items: [
-                  { label: 'Custom analytics integrations', to: '/experience/custom-analytics-integrations' },
-                ],
-              },
-            ],
           },
           {
             to: '/resume',

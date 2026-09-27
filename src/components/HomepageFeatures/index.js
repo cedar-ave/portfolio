@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 const FeatureList = [
   {
     title: 'AI-powered content engineering',
-    link: '/experience/content-engineering',
+    link: '/portfolio',
     Svg: require('@site/static/img/ai_brain_icon.svg').default,
     description: (
       <>
@@ -16,7 +16,7 @@ const FeatureList = [
   },
   {
     title: 'Scalable content development',
-    link: '/experience/content-development',
+    link: '/portfolio',
     Svg: require('@site/static/img/code_icon.svg').default,
     description: (
       <>
@@ -26,7 +26,7 @@ const FeatureList = [
   },
   {
     title: 'Outcomes-driven content engagement',
-    link: '/experience/content-engagement',
+    link: '/portfolio',
     Svg: require('@site/static/img/bulb_icon.svg').default,
     description: (
       <>
