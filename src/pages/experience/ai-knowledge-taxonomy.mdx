@@ -1,23 +1,70 @@
 ---
-title: Knowledge taxonomy for AI drafting
+title: Drafting new content with generative AI
 description: How I designed a faceted taxonomy and a support-field crosswalk that let AI draft accurate help articles from thousands of mixed sources, while cutting the tokens spent finding the right ones.
 ---
 
-# Knowledge taxonomy for AI drafting
+# Drafting new content with generative AI
 
-**I designed the knowledge architecture that let AI write accurate help content from thousands of scattered sources, and I made it cheap to run.** Support tickets, call transcripts, engineering files, and step-by-step guides held the answers customers needed, but no AI model can read all of them every time it drafts an article. I built a faceted taxonomy of 16 categories and about 400 controlled terms, and paired it with a crosswalk that turned the support team's existing ticket fields into those tags automatically. Each source was read once, tagged, summarized, and given a note about which articles it could support. After that, drafting runs found the right sources by scanning one-line index entries instead of re-reading files. Ticket exports shrank by about 85 percent before the model saw them, and drafting read 70 to 80 percent fewer files. The taxonomy also required every ticket to be checked for how-to steps, explanations, warnings, and FAQs, not just fixes. That surfaced product knowledge that had never made it into the docs before.
+Before AI became a common tool, each time I needed to draft new content I spent hours tracking down and reading through the most relevant (and most recent) support tickets, source code, demo transcripts, roadmap slides, Jira tickets, implementation manuals, PRDs, enablement guides, wiki pages, and so many more sources of product knowledge.
+
+I wanted generative AI to take over, but requiring AI to re-ingest each piece of source material each time I needed it to draft a new article was slow and expensive, not to mention impossible to scale.
+
+I designed an approach that did not require generative AI to re-ingest each piece of source material each time and allowed it to rapidly focus in on the content most relevant to the topic I provided. I built a faceted taxonomy of 16 categories and about 400 controlled terms. Each piece of source material (after being turned into Markdown) was read **once**, tagged, summarized, and given a note about which types of new content it could support.
+
+Following is a redacted example:
+
+```yaml
+---
+title: "Credentialing"
+source_type: "implementation_guide"
+source_url: "https://..."
+created_at: "2026-06-19"
+summary: >
+  Lightweight baseline credentialing how-to in the Salesforce app: <redacted steps>.
+drafting_guidance: >
+  Source for a short how-to article on <redacted objectives> in the Verifiable Salesforce app. Useful as a baseline reference compared to the more elaborate customer-specific guides for <redacted customer organization names> that include <redacted features>. Contains a specific best-practice / warning callout: <redacted errors>. Contains a conceptual note on <reacted feature actions>. Includes <redacted customer-specific field> — flag as customer-specific if drafting generic content. Pair with broader customer credentialing guides for the full lifecycle.
+platform:
+  - salesforce-app
+section:
+  - provider-credentialing
+  - getting-started
+module:
+  - provider-credentialing
+  - provider-application
+  - credentialing-workflow
+feature:
+  - create-provider
+workflow:
+  - provider-onboarding
+  - credentialing-review
+stage:
+  - create
+  - submission
+  - review
+object:
+  - provider
+role:
+  - credentialing-specialist
+  - customer-admin
+intent:
+  - task-oriented
+  - faq
+lifecycle:
+  - onboarding
+  - daily-operations
+---
+```
+
+An index held reference to...
+
+After that, drafting runs found the right sources by scanning one-line index entries instead of re-reading files. The taxonomy also required every ticket to be checked for how-to steps, explanations, warnings, and FAQs, not just fixes. That surfaced product knowledge that had never made it into the docs before.
 
 The company's name and product details are left out. Tag values and examples on this page are excerpts from my original work, with company-specific terms removed.
 
 :::tip[At a glance]
 
 - **A faceted taxonomy with 16 categories and about 400 terms,** covering product areas, features, workflows, objects, user roles, lifecycle stages, compliance, issues, and technical components.
-- **A crosswalk from support fields to taxonomy tags,** so the classification support agents already did on every ticket became content metadata for free.
 - **Rules for required tags,** so every source was findable by product area, workflow, and purpose, and troubleshooting and integration sources carried the detail they needed.
-- **About 85 percent less ticket data** reached the model, because fields and boilerplate were removed before reading.
-- **Two-layer indexes** let the drafting skill find sources by scanning tags, which cut file reads by 70 to 80 percent.
-- **Every ticket checked for every article type,** which surfaced how-to steps, explanations, warnings, and best practices hidden in support conversations.
-
 :::
 
 ## The problem: the knowledge existed, but no one could find it
@@ -45,7 +92,7 @@ I chose a **faceted** taxonomy over a traditional hierarchy. A folder tree force
 
 The other facets cover platform, package, section, integrations, compliance standards, and implementation work.
 
-Strictly speaking, this is a **faceted classification scheme**: a set of controlled vocabularies, one per facet. It isn't a single hierarchy, and it isn't a formal ontology with machine-readable rules. It does encode lightweight relationships between the domain's objects, workflows, stages, and roles, though, and those relationships are what made the crosswalk possible.
+Strictly speaking, this is a **faceted classification scheme**: a set of controlled vocabularies, one per facet. It isn't a single hierarchy, and it isn't a formal ontology with machine-readable rules. It does encode lightweight relationships between the domain's objects, workflows, stages, and roles.
 
 ### Rules that kept it trustworthy
 
@@ -55,27 +102,6 @@ A taxonomy is only useful if people and machines apply it the same way. I wrote 
 - **Required facets.** Every source needs `platform`, `section`, `module`, `workflow`, and `intent`. Troubleshooting sources also need `issue` and `technical`. Integration sources also need `integration`.
 - **An honest unknown.** When a source gives no clear signal for platform, it's tagged `undetermined` instead of guessed. A wrong tag is worse than an admitted gap.
 - **Tag broadly, never aspirationally.** For retrieval, a missing tag costs more than an extra one, so the skill tags everything the content covers directly, and nothing it doesn't.
-
-## The crosswalk: reusing work support was already doing
-
-Support agents already sorted every ticket they closed. They filled in fields like product area, source type, ticket category, and verification issue. That was expert classification, and before the crosswalk it went unused.
-
-I mapped the values in those fields to taxonomy tags. A crosswalk usually maps one field value to many tags, because one support category implies several facets at once:
-
-| Support field value | Taxonomy tags it produces |
-| --- | --- |
-| Source Type: `license` | `module: licenses` · `object: license` · `feature: verify-license` · `workflow: license-verification` |
-| Ticket Category: `sync_issue` | `issue: sync-failure` · `module: incoming-sync` · `technical: sync-engine` |
-| Ticket Category: `packet_export` | `module: packet-export` · `feature: export-packet-pdf` · `issue: pdf-export-error` |
-| Ticket Category: `enablement` | `lifecycle: onboarding` · `intent: training` |
-
-Not every value maps cleanly, and the crosswalk says so.
-
-- **Weighting, not tagging.** When a ticket is marked "not source related," the crosswalk tells the model to lean toward setup and permission topics instead of verification.
-- **Opaque codes decoded.** A shorthand like `S&E` becomes sanctions monitoring, sanctions screening, and the right government data integration. A model would likely misread that code on its own.
-- **Catch-alls sent back to the text.** Values like `misc` or `other` tell the model to classify from the ticket's content instead of forcing a match.
-
-The crosswalk also acts as a filter. It marks only 10 of about 42 ticket fields for extraction. SLA timers, sentiment scores, agent IDs, and priority flags help run a support queue, but they don't help write an article, so they never reach the model.
 
 ## How the taxonomy saved tokens
 
@@ -87,7 +113,7 @@ The design moves the expensive reading to one step that happens once, and makes 
 
    ```plaintext
    [zendesk_ticket] salesforce-app licenses verify-license license-verification
-   task-oriented troubleshooting verification-failure · [License shows as not found](zendesk_ticket/zd-ticket-10482.md)
+   task-oriented troubleshooting verification-failure · [License shows as not found](zendesk_ticket/zd-ticket-12345.md)
    ```
 
    A drafting run scans hundreds of these lines to find candidates, reads a short summary for each match, and opens full files only for sources that are confirmed relevant. Compared with opening every candidate, that cuts reading by 70 to 80 percent.
@@ -110,22 +136,3 @@ Saving tokens mattered, but the bigger win was what the model found.
 **Content matched the reader.** The `role`, `lifecycle`, and `stage` facets let one source feed different articles for an administrator during setup, a specialist in daily work, and an implementer at go-live.
 
 **Gaps became visible.** Because every source carries the same facets, I could ask questions that were impossible before, like "which workflows have troubleshooting sources but no how-to sources?"
-
-## What it would have cost without this design
-
-| Without it | What would have happened |
-| --- | --- |
-| Free-form tags | Synonym drift ("DEA," "dea-registration," "DEA verify") and relevant sources silently missed |
-| No compact index | Every article re-reads large parts of the library, costing more and running out of context |
-| Full ticket exports | About 42 fields and boilerplate in every ticket, with sentiment and priority adding noise |
-| Support fields ignored | Agents' classification lost, and codes like `S&E` misread |
-| Tickets read as fixes only | How-to steps, explanations, warnings, and best practices never reach the right articles |
-| No required facets | Uneven coverage and no reliable way to find gaps |
-
-## What this project shows
-
-- **I design knowledge systems, not just documents.** I chose a faceted model because the content was many-sided, and I stated exactly where it stops short of an ontology.
-- **I make AI cheaper and more reliable.** Moving the reading to one cataloging step and letting later steps scan tags cut costs sharply and kept long runs within context limits.
-- **I build on work that already exists.** The crosswalk turned support agents' everyday classification into content metadata, with no extra work for them.
-- **I write rules that machines follow.** Controlled terms, required facets, and an honest "undetermined" value kept AI tagging consistent across thousands of sources.
-- **I find content others miss.** Checking every ticket for every article type surfaced procedures, explanations, and warnings that had lived only in support conversations.

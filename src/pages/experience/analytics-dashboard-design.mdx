@@ -37,16 +37,7 @@ The help center had plenty of data. It was just spread across tools that each an
 
 **GA4 knew behavior but not outcomes.** GA4 could show paths through the site, bounce rates, returning readers, and activity by organization, and it could filter out admin traffic. But it had no idea a ticket existed. By default it also keeps user-level exploration data for only two months, which is too short to see trends across a customer's onboarding.
 
-**Nobody had defined a "user."** Account counts from Salesforce looked like the obvious denominator for "what share of a customer's users read the docs?" They weren't. Some customers share logins, and provisioned accounts aren't the same as people. A coverage metric built on raw account counts would be wrong in ways nobody would notice.
-
-## My approach
-
-I worked from four principles:
-
-1. **Start from the decision, not the data.** Every dashboard begins with a question someone will act on. Each question names who acts on it: customer success, support, or the documentation team. Metrics that don't inform a decision don't make the cut.
-2. **One source of truth per question.** When two tools report the same metric differently, pick the tool whose definition matches the question and document why.
-3. **Define terms before counting them.** "User," "view," and "deflection" each get a written definition before they appear on a chart.
-4. **Make the data act like the reader.** Filter out internal and admin activity by default, benchmark against a known-good baseline, and account for how long content has existed.
+**Nobody had defined a *user*.** Account counts from Salesforce looked like the obvious denominator for "what share of a customer's users read the docs?" They weren't. Some customers share logins, and provisioned accounts aren't the same as people. A coverage metric built on raw account counts would be wrong in ways nobody would notice.
 
 ## Step 1: Audit every source
 
@@ -157,12 +148,3 @@ The data model was built to grow. Next on the roadmap:
 - **A helpfulness score** that combines bounce rate and reader rating, so articles can be ranked on a single scale and the worst ones improved or retired.
 - **Content freshness:** time since each article or category was last updated, surfaced alongside traffic so heavily read, outdated content gets reviewed first.
 - **Review readiness** as part of a full content lifecycle view: articles under review, approved, and assigned.
-
-## What this project shows
-
-- **I find value where systems meet.** The most useful insight here wasn't in either tool. It was in a shared user ID that made two partial datasets into one complete one.
-- **I think about data quality before visualization.** Admin noise, an undefined denominator, a two-month retention window, and article age would each have made the dashboards confidently wrong. I designed around all four before drawing a chart.
-- **I design dashboards for decisions.** Every view names its question, its owner, and the action it should trigger, so it gets used rather than admired.
-- **I plan for the long term.** An automated extraction script, incremental exports, and extended retention mean the dashboards stay current without monthly manual work.
-
-This analytics work grew out of the [help site relaunch](/experience/help-site-relaunch), where I first tied the help site's measurement to the support team's goals.
