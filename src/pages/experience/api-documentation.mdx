@@ -12,6 +12,10 @@ import {
 
 # API documentation: two kinds of reference, generated from source
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 I built and ran the API documentation for a healthcare data platform: REST API reference for 13 web services, and .NET API reference for the SDK developers used to extend the platform's processing engine. Both were generated from the source of truth, the service specs and the C# code, so they changed when the product changed instead of drifting out of date. I recognized early that these were two different products for two different audiences, with different sources, toolchains, and failure modes, and I built a separate pipeline for each. Where the tools fell short, I wrote the missing pieces: spec conversion, scripts that generate tags and landing pages, and runbooks that let other writers and engineers update the API docs without waiting on me.
 
 The company's details are left out. Names, paths, and examples on this page are generalized from my original work.

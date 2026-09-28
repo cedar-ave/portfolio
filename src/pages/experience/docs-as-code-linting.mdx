@@ -7,6 +7,10 @@ import { LintCheckpoints, ValeFlow, StyleCuration } from '@site/src/components/D
 
 # Linting in Vale
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), I used the Vale linting tool to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Linting with custom scripts](/experience/docs-as-code-linting-scripts). The same rules ran in the writer's editor and on the command line, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas.
 
 The company's details are left out. Rule files and configs on this page are excerpts from my original work, with company-specific terms removed.

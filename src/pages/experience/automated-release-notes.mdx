@@ -11,7 +11,11 @@ import {
 
 # Automated release notes
 
-![release notes query](/img/release-notes-query.png)
+:::caution[Draft]
+This article is a draft.
+:::
+
+![release notes query](/img/release-notes-bravo.png)
 
 I replaced the usual release notes routine (chasing engineers, drafting by hand, emailing drafts around, pasting fixes into a web page) with a pipeline that generates release notes from the engineering team's own work items and publishes them to the customer portal by script. Engineers and product managers write each note once, in four fields on the work item they're already closing. At every release, a tool compares the new release with the last one, pulls in every change that shipped, applies publishing rules, sorts the notes by product, and commits them to a Git repo as Markdown. I edit once, PMs review once in a pull request, and scripts assemble, style, and post the page. The same four fields also drive known issues and critical bug reports that refresh themselves every day without anyone touching them. Nobody chases engineers for what changed, nobody copies text between tools, and every published line traces back to the work item behind it.
 
@@ -19,11 +23,11 @@ The company's details are left out. Product names, examples, and IDs on this pag
 
 :::tip[At a glance]
 
-- **Written once, at the source:** 4 fields on each engineering work item are the only input.
-- **Rules instead of judgment calls:** 5 publishing rules decide whether a work item becomes a new feature, a fixed bug, a known issue, or a critical bug entry.
-- **3 publications from 1 set of fields:** release notes, known issues, and critical and high bug reports.
-- **1 review round:** PMs review a Markdown diff in a pull request, usually within 24 hours, instead of trading comments in email threads.
-- **0 copy-paste:** scripts turn Markdown into styled HTML and post it through the portal's REST API.
+- **Written once, at the source:** Four fields on each engineering work item are the only input.
+- **Rules instead of judgment calls:** Five publishing rules decide whether a work item becomes a new feature, a fixed bug, a known issue, or a critical bug entry.
+- **Three publications from one set of fields:** release notes, known issues, and critical and high bug reports.
+- **One review round:** PMs review a Markdown diff in a pull request, usually within 24 hours, instead of trading comments in email threads.
+- **Zero copy-paste:** scripts turn Markdown into styled HTML and post it through the portal's REST API.
 - **Hands-off reports:** known issues and critical bug pages rebuild on a daily schedule. Changing one means editing a work item field.
 - **Built-in safety net:** every shipped work item that *didn't* get a note is listed for reviewers, so missing notes get caught before customers notice.
 

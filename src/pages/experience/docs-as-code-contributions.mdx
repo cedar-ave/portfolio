@@ -13,6 +13,10 @@ import {
 
 # Scaling contributions
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 A docs platform only scales if people outside the docs team can use it, so I built the system that let them. After I built a company's [docs-as-code platform](/experience/docs-as-code-standing-it-up), I wrote a contributor guide of more than 100 articles, published on the same platform, that took engineers, product managers, and support staff from "which repo is this page in?" to a merged change. It gives each audience only the depth it needs: an **Edit this page** link and a browser editor for a quick fix, a six-step path with local builds and editor linters for product teams, and more than 50 admin articles so the platform never depended on one person. I paired it with processes that keep writers from becoming a bottleneck: product teams document features in the same sprint and publish without waiting, writers follow behind with editorial edits, and engineers write release notes in the work items they already use. The result was a help site that grew with the product teams instead of waiting on a docs queue.
 
 The company's details are left out. Examples on this page are adapted from the original guide, with names, URLs, and product details replaced.
@@ -57,25 +61,7 @@ For product team contributors, I broke the process into six steps and gave each 
 
 <ContributorPath />
 
-Every step page opens with a **You are here** box that lists the whole path and marks the current step, so a reader who lands on a page from search knows where they are and what comes next. It's plain DocFX Markdown:
-
-```md title="check-the-docs.md"
-> [!NOTE]
-> #### You are here
-> @find-the-docs.md
->
-> [Clone the docs](clone-repo.md)
->
-> @docs.md
->
-> **<i class="fa fa-check"></i> Check the docs**
->
-> @build-the-docs.md
->
-> @publish-the-docs.md
-```
-
-The `@` references are DocFX cross-references by page ID, so the box stays correct even if a page is renamed or moved.
+Every step page opens with a **You are here** box that lists the whole path and marks the current step, so a reader who lands on a page from search knows where they are and what comes next.
 
 ## Two on-ramps, one review path
 
@@ -177,7 +163,7 @@ I wanted mistakes caught by tools, early and automatically, not by a writer at t
 
 - **While typing:** markdownlint and Vale extensions in VS Code underline formatting, style, and spelling problems as the contributor writes. See [Linting in Vale](/experience/docs-as-code-linting).
 - **While building:** a local build lists broken links and missing anchors in its output. Two pages with the same ID fail the build, so a copied-and-pasted page can't silently replace another.
-- **At the pull request:** a validation build, including automated linting, has to pass before the change can merge.
+- **At the pull request:** a validation build has to pass before the change can merge.
 - **Before going live:** anyone can publish a branch to a preview site to show stakeholders.
 
 The guide also turns error-prone tasks into checklists. Renaming an article, for example, means changing four things: the file name, the ID in its metadata header, cross-references in other articles, and every table of contents that lists it. Removing one adds deleting its unused images.

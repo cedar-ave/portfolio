@@ -1,6 +1,6 @@
 ---
 title: Standing it up
-description: How I built a company's docs-as-code platform from scratch with DocFX, from installing the toolchain to a shared theme, generated .NET and REST API reference, automated quality checks, and per-site pipelines that deploy to production.
+description: How I built a company's docs-as-code platform from scratch with DocFX, from installing the toolchain to a shared theme, generated .NET and REST API reference, linting and quality-check scripts, and per-site pipelines that deploy to production.
 ---
 
 import {
@@ -13,9 +13,13 @@ import {
 
 # A docs-as-code platform built from scratch
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 ![docs site home page](/img/dos-docs-home-page.png)
 
-I designed and built a company's docs-as-code platform, starting from an empty repo and taking it through to automated production deployments. The work covered selecting the toolchain, writing the build scripts, and creating a shared theme that every docs site installs as an npm package. It also covered setting up generation of .NET and REST API reference directly from source code and API specs, adding automated quality checks, and writing the CI/CD pipelines that publish each site to cloud storage on merge. DocFX won out over other static site generators specifically because it supported .NET API documentation, which the project required.
+I designed and built a company's docs-as-code platform, starting from an empty repo and taking it through to automated production deployments. The work covered selecting the toolchain, writing the build scripts, and creating a shared theme that every docs site installs as an npm package. It also covered setting up generation of .NET and REST API reference directly from source code and API specs, adding linting and quality-check scripts, and writing the CI/CD pipelines that publish each site to cloud storage on merge. DocFX won out over other static site generators specifically because it supported .NET API documentation, which the project required.
 
 The result was a customer-facing help site for a suite of healthcare data applications, pulling content from multiple repos and several product versions into one site. Writers and engineers could contribute using standard Git and Markdown workflows, and the platform ran with minimal ongoing maintenance.
 
@@ -29,7 +33,7 @@ The company's details are left out. Code samples on this page are simplified fro
 - **One theme everywhere:** a custom DocFX theme published as an npm package; a fix to the theme reaches every site on its next build.
 - **Reference docs generated from source:** .NET API docs from C# projects, and REST API docs from 13 REST API specs, split into navigable pages by scripts I wrote.
 - **Automated deployments:** one reusable pipeline file publishes any site to production or a preview environment.
-- **Quality checks built in:** linting with markdownlint and a custom Vale style guide runs in the pipeline, plus scripts for broken links, missing alt text, and more. See [Linting in Vale](/experience/docs-as-code-linting) and [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
+- **Quality checks built in:** linting with markdownlint and a custom Vale style guide in the editor and on the command line, plus scripts for broken links, missing alt text, and more. See [Linting in Vale](/experience/docs-as-code-linting) and [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 - **Web and PDF from one source:** the same Markdown produces the site and downloadable PDF guides.
 
 :::
@@ -320,8 +324,6 @@ steps:
     DestinationObject: 'wwwroot/$(SitePrefix)'
 ```
 
-Pull requests also run automated linting before they can merge, so every change is checked for formatting, style, and spelling before it reaches this pipeline. See [Linting in Vale](/experience/docs-as-code-linting).
-
 Because each site deploys to its own folder in shared blob storage, many repos combine into one docs domain, and each team ships on its own schedule without waiting on anyone else. Older product versions build from their release branches into their own paths, which is what the version switcher links between.
 
 ## Step 8: Produce PDFs from the same source
@@ -343,5 +345,5 @@ A docs platform only works if people outside the docs team can use it. I also wr
 - **A complete docs-as-code platform, built from scratch,** that served a suite of healthcare data applications, their APIs, and several product versions from one domain.
 - **Low overhead.** New sites start from a template, the theme updates itself, and publishing is a merge.
 - **Accurate API reference** for the .NET plugin API and 13 REST API specs, generated from the code and specs so it stays current.
-- **Consistent quality** from automated linting in the editor and the pipeline instead of line edits in review.
+- **Consistent quality** from linting in the editor and on the command line instead of line edits in review.
 - **Contributions from across the company**, because the tools matched how engineers already worked.

@@ -349,6 +349,13 @@ article h3 {
   border: .5px solid var(--ifm-toc-border-color);
 }
 
+/* Let long TOCs grow with the page instead of scrolling internally. */
+.col--2 > .thin-scrollbar,
+.theme-doc-toc-desktop .thin-scrollbar {
+  max-height: none;
+  overflow-y: visible;
+}
+
 .navbar__link,
 .navbar__title {
   font-weight: 400;
@@ -422,4 +429,12 @@ table td:first-child {
 table th:last-child,
 table td:last-child {
   padding-right: 10px;
+}
+
+/* docusaurus-theme-zoom-image dims the image gray on hover via a
+   brightness filter; keep the image unchanged on hover. The package's
+   own stylesheet loads after this one, so this needs !important to win. */
+.zoomImage__wrap:hover .zoomImage,
+img.zoomImage:hover {
+  filter: none !important;
 }

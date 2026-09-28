@@ -13,17 +13,21 @@ import {
 
 # Analytics dashboard design
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 Our help center and our support queue were measured by two tools that had never met. Google Analytics 4 (GA4) knew what readers did on the site. Zendesk knew who opened tickets. Neither could say whether the documentation was actually reducing support load. I saw that joining the two at the level of an individual user would answer questions neither tool could answer alone: *Which customer organizations don't know the help site exists? Which articles are people reading just before they give up and file a ticket, and what do those tickets say?* I audited six data sources, designed the data model that connects them, and designed three dashboards. Each one is built around a single business question, a headline number, and the filters needed to act on it.
 
 The company's details are left out. The dashboard mockups on this page are recreated from my original designs and use illustrative data.
 
 :::tip[At a glance]
 
-- **6 data sources audited** across Zendesk Guide, Zendesk Support, GA4, and Salesforce, each mapped to what it can and can't answer.
+- **Six data sources audited** across Zendesk Guide, Zendesk Support, GA4, and Salesforce, each mapped to what it can and can't answer.
 - **40+ metrics compared** between GA4 and Zendesk to decide which tool is the source of truth for each question.
-- **3 join keys** (Zendesk user ID, article ID, and customer organization) that turn page views, people, content, tickets, and accounts into one dataset.
-- **1 custom GA4 event**, fired through Tag Manager, to capture the moment a reader leaves an article to open a ticket.
-- **3 decision-focused dashboards**: site awareness, ticket deflection, and article performance.
+- **Three join keys** (Zendesk user ID, article ID, and customer organization) that turn page views, people, content, tickets, and accounts into one dataset.
+- **One custom GA4 event**, fired through Tag Manager, to capture the moment a reader leaves an article to open a ticket.
+- **Three decision-focused dashboards**: site awareness, ticket deflection, and article performance.
 
 :::
 

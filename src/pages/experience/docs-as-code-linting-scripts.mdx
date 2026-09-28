@@ -1,20 +1,24 @@
 ---
 title: 'Linting with custom scripts'
-description: How I wrote Bash and Python scripts that caught what off-the-shelf linters can't, such as broken links, orphaned images, and mismatched titles, and fixed old content in bulk so strict lint rules could be enforced in the pipeline.
+description: How I wrote Bash and Python scripts that caught what off-the-shelf linters can't, such as broken links, orphaned images, and mismatched titles, and fixed old content in bulk so every page passed strict lint rules.
 ---
 
-import { ScriptRoles, CheckStages } from '@site/src/components/DocsAsCodeDiagrams';
+import { ScriptRoles } from '@site/src/components/DocsAsCodeDiagrams';
 
 # Linting with custom scripts
 
-When the off-the-shelf linters stopped short, I wrote the checks myself, and I wrote scripts that fix problems, not just report them, so the team could turn on strict rules in the pipeline without breaking every pull request. On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), [Vale and markdownlint](/experience/docs-as-code-linting) checked every pull request. But a linter reads one file at a time, and some of the most damaging problems on a docs site live between files: a link to a page that moved, an image no page uses anymore, a search result title that doesn't match the page it opens. And on a site with hundreds of existing pages, turning on a new lint rule floods the build with errors that nobody in the current pull request wrote. I wrote a set of Bash and Python scripts to close both gaps. Two of them repaired every violation of a markdownlint rule across the whole content set in one run, which let those rules be enforced from then on. The rest audited the site for broken links, orphaned images, spelling, and mismatched titles, and wrote reports a writer could work through in order instead of hunting page by page.
+:::caution[Draft]
+This article is a draft.
+:::
+
+When the off-the-shelf linters stopped short, I wrote the checks myself, and I wrote scripts that fix problems, not just report them, so the team could hold every page to strict rules without drowning in old errors. On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), [Vale and markdownlint](/experience/docs-as-code-linting) checked style and formatting as writers worked. But a linter reads one file at a time, and some of the most damaging problems on a docs site live between files: a link to a page that moved, an image no page uses anymore, a search result title that doesn't match the page it opens. And on a site with hundreds of existing pages, turning on a new lint rule buries writers in errors they didn't create. I wrote a set of Bash and Python scripts to close both gaps. Two of them repaired every violation of a markdownlint rule across the whole content set in one run, so from then on the linter flagged only new problems. The rest audited the site for broken links, orphaned images, spelling, and mismatched titles, and wrote reports a writer could work through in order instead of hunting page by page.
 
 This is the companion to [Linting in Vale](/experience/docs-as-code-linting). The company's details are left out. Scripts on this page are simplified excerpts from my original work, with product names and paths replaced.
 
 :::tip[At a glance]
 
 - **Checks that span files:** broken links, unused images, spelling across the whole site, and page titles that don't match their headings.
-- **Fixers that make gates possible:** two scripts brought every existing page into line with a markdownlint rule in one run, so the rule could fail the build without blocking everyone's next pull request.
+- **Fixers that make strict rules practical:** two scripts brought every existing page into line with a markdownlint rule in one run, so writers saw only the problems in their own changes.
 - **Reports built for action:** each audit writes one file with a consistent marker, so a writer can search it and fix problems in order.
 - **Low noise by design:** each script skips the folders and page types that would cause false alarms, such as generated API pages, cover pages, and shared snippets.
 - **Pre-build scripts that keep generated content valid:** scripts repair API specs and generate missing pages before DocFX runs, so the build never publishes an empty page.
@@ -22,16 +26,16 @@ This is the companion to [Linting in Vale](/experience/docs-as-code-linting). Th
 
 :::
 
-## Why linting belongs in the pipeline, and why linters aren't enough
+## Why linting matters, and why linters aren't enough
 
-Automated linting turns quality from something a reviewer has to remember into something the system guarantees. A check in the pipeline runs on every change, from every contributor, the same way every time. It catches a problem minutes after it's written, when it's cheapest to fix, instead of after a customer finds it. And it frees reviewers to judge what only a person can: accuracy, clarity, and whether the page answers the reader's question.
+Automated linting turns quality from something a reviewer has to remember into something the tools check. A linter checks every page, from every contributor, the same way every time. It catches a problem minutes after it's written, when it's cheapest to fix, instead of after a customer finds it. And it frees reviewers to judge what only a person can: accuracy, clarity, and whether the page answers the reader's question.
 
 Two things make that harder than it sounds:
 
 1. **Linters see one file at a time.** markdownlint and Vale check what's inside a page. They can't tell you that a link points to a page that was renamed last month, or that dozens of screenshots in the repo aren't used by any page.
-2. **A new gate fails on old content.** Turn a rule on at the error level in a repo with years of content, and every pull request fails on problems its author didn't create. Teams respond by turning the rule off. A gate only survives if the existing content passes it on the day it's turned on.
+2. **A new rule fails on old content.** Turn a rule on in a repo with years of content, and writers see hundreds of errors they didn't create. Real problems get lost in the noise, and teams respond by turning the rule off. A rule only survives if the existing content passes it on the day it's turned on.
 
-My scripts addressed both. Fixers brought existing content up to the rules so the pipeline could enforce them. Audits covered the cross-file checks that no single-file linter can do.
+My scripts addressed both. Fixers brought existing content up to the rules, so the linters flagged only new problems. Audits covered the cross-file checks that no single-file linter can do.
 
 <ScriptRoles />
 
@@ -46,11 +50,11 @@ My scripts addressed both. Fixers brought existing content up to the rules so th
 | Unused images | Audit | Images that no page references | A log that becomes a `git rm` list |
 | Spell check | Audit | Misspellings across all content, with a project dictionary | A report in the terminal |
 
-## Fixers: making a rule enforceable
+## Fixers: clearing the backlog
 
 ### Alternate text
 
-An image without alt text is an accessibility failure: a screen reader skips it or reads out the file name. markdownlint catches this with rule MD045. But the site had many older screenshots with empty alt text, so enforcing MD045 in the pipeline would have failed almost any pull request that touched an older page.
+An image without alt text is an accessibility failure: a screen reader skips it or reads out the file name. markdownlint catches this with rule MD045. But the site had many older screenshots with empty alt text, so turning on MD045 would have flagged almost every older page a writer opened.
 
 I wrote a script that finds every image reference with empty alt text and fills it in from the image's file name. The team already gave screenshots descriptive, dash-separated names, so the name made a reasonable first description:
 
@@ -81,7 +85,7 @@ A few details kept it safe to run on the whole site:
 - **It skips pages it can't handle.** A few pages placed images inside HTML instead of Markdown. The script excludes them by name, instead of guessing and corrupting them.
 - **It escapes before it replaces.** Image paths contain slashes and brackets, which have special meaning to `sed`. The script escapes them first, so a path never breaks the replacement.
 
-One run fixed every image on the site. Writers then improved the generated text wherever a richer description mattered, and from then on, MD045 caught new cases in the editor and in the pipeline.
+One run fixed every image on the site. Writers then improved the generated text wherever a richer description mattered, and from then on, MD045 caught new cases in the editor.
 
 ### Blank line endings
 
@@ -164,7 +168,7 @@ done
 
 ### Spell check
 
-Vale checked spelling on every pull request, but only in the files each change touched. This script sweeps the whole site at once. This script runs [spellchecker-cli](https://www.npmjs.com/package/spellchecker-cli) across the articles, the REST API pages, and the home page:
+Vale checked spelling in each file as writers worked on it. This script sweeps the whole site at once, running [spellchecker-cli](https://www.npmjs.com/package/spellchecker-cli) across the articles, the REST API pages, and the home page:
 
 ```bash title="script_SpellCheck.sh"
 spellchecker --files 'articles/**/*.md' 'restapi/*.md' 'index.md' \
@@ -182,31 +186,9 @@ Some content isn't written but generated, and a generator's input can be incompl
 - **Dated PDF file names.** After `docfx pdf` runs, a script adds the product version and the build date to each PDF's file name, such as `v4.2_install-guide_14Mar2023.pdf`, so a customer always knows which release a PDF covers.
 - **A user-only PDF.** A customer asked for a user guide without admin tasks. A script builds a copy of the table of contents without the admin articles and fixes its relative paths, so the same Markdown produces both guides. See [Customizations](/experience/docs-as-code-customizations#pdfs-that-look-finished).
 
-## Where each check belongs in a pipeline
-
-Each script runs from the repo with no prompts, uses only standard tools, skips known false alarms, and writes one report. That's the shape of a pipeline step. But not every check belongs at the same stage, and putting a check in the wrong place does real harm: a slow or unreliable check that blocks merges teaches people to rerun the build until it passes.
-
-<CheckStages />
-
-| Check | Stage | Why |
-| --- | --- | --- |
-| Alt text, line endings | Once, as fixers, then the markdownlint rule on every pull request | Fix the backlog once; the linter stops it from coming back |
-| markdownlint, Vale, title mismatch, spelling | Every pull request | Fast, per page, and the same result every time |
-| API tags, landing pages | Before the build | The build depends on their output |
-| External links, unused images | On a schedule | Outside sites change without a commit, and the image check needs a full build |
-
-Turning an audit into a gate takes one change: fail the step when the report isn't empty.
-
-```yaml title="An audit as a pipeline step (sketch)"
-- script: |
-    ./scripts/script_MatchYamlTitleAndH1.sh > title-report.txt
-    if [ -s title-report.txt ]; then cat title-report.txt; exit 1; fi
-  displayName: 'Check that page titles match their H1s'
-```
-
 ## Results
 
-- **Rules that could be enforced.** The fixers brought every existing page into line with MD045 and MD047 in one run each, so the pipeline could hold every new change to those rules.
-- **Accessibility at scale.** Every Markdown image on the site got alt text in one pass, and markdownlint caught new images without it before they merged.
+- **Rules the team could keep on.** The fixers brought every existing page into line with MD045 and MD047 in one run each, so from then on the linter flagged only new problems.
+- **Accessibility at scale.** Every Markdown image on the site got alt text in one pass, and markdownlint flagged new images without it as writers added them.
 - **Site-wide audits became routine.** Checking every link, image, title, and word on the site by hand isn't realistic. The scripts turned each into one command and a clear list of fixes.
 - **A leaner repo.** Unused images were removed in a single reviewable pull request, not left to pile up.

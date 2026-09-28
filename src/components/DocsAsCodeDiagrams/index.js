@@ -781,7 +781,7 @@ export function ScriptRoles() {
     {
       y: 140,
       mid: { kind: 'node', l: [{ t: 'markdownlint + Vale' }, { t: 'one file at a time', c: 'sub' }] },
-      out: { kind: 'hub', l: [{ t: 'Pull request gate', c: 'hubTitle' }, { t: 'errors block the merge', c: 'hubSub' }] },
+      out: { kind: 'hub', l: [{ t: 'Clean lint results', c: 'hubTitle' }, { t: 'only new problems show', c: 'hubSub' }] },
     },
     {
       y: 240,
@@ -794,9 +794,9 @@ export function ScriptRoles() {
     <Figure
       titleId="dac-script-roles"
       title="How custom scripts work alongside the linters"
-      desc="The content repo feeds three kinds of checks. Fixer scripts repair every existing page, such as adding missing alt text and final newlines, so old content passes the markdownlint rules. That makes the pull request gate adoptable: markdownlint and Vale check each file, and errors block the merge. Audit scripts check across files for broken links, title and heading mismatches, unused images, and spelling, and each writes one report a writer can work through."
+      desc="The content repo feeds three kinds of checks. Fixer scripts repair every existing page, such as adding missing alt text and final newlines, so old content passes the markdownlint rules. That clears the backlog, so when markdownlint and Vale check each file, only new problems show. Audit scripts check across files for broken links, title and heading mismatches, unused images, and spelling, and each writes one report a writer can work through."
       viewBox="0 0 930 330"
-      caption="Fixers make a strict gate possible, the linters enforce it on every pull request, and audits cover what no single-file linter can see.">
+      caption="Fixers clear the backlog, the linters catch new problems in each file, and audits cover what no single-file linter can see.">
       <defs>
         <ArrowMarker id="sr-arrow" />
       </defs>
@@ -816,9 +816,9 @@ export function ScriptRoles() {
         <path key={`out-${ln.y}`} d={`M550,${ln.y + h / 2} L678,${ln.y + h / 2}`} className={styles.edge} markerEnd="url(#sr-arrow)" />
       ))}
 
-      {/* fixers make the gate adoptable */}
+      {/* fixers clear the backlog */}
       <path d={`M790,${40 + h + 2} L790,${140 - 3}`} className={styles.edgeDashed} markerEnd="url(#sr-arrow)" />
-      <text x={780} y={126} textAnchor="end" className={styles.label}>makes the gate adoptable</text>
+      <text x={780} y={126} textAnchor="end" className={styles.label}>clears the backlog</text>
 
       <Box
         x={src.x}
@@ -834,46 +834,6 @@ export function ScriptRoles() {
       {lanes.map((ln) => (
         <Box key={`o-${ln.y}`} x={680} y={ln.y} w={220} h={h} kind={ln.out.kind} rx={ln.out.kind === 'hub' ? 10 : 8} lines={ln.out.l} />
       ))}
-    </Figure>
-  );
-}
-
-/* ---------- 15. Matching each check to the right stage ---------- */
-
-export function CheckStages() {
-  const w = 200;
-  const gap = 30;
-  const y = 50;
-  const h = 96;
-  const stages = [
-    { kind: 'source', head: 'Once', l: [{ t: 'Before a rule is enforced' }, { t: 'fixers clear the backlog', c: 'sub' }, { t: 'alt text, line endings', c: 'sub' }] },
-    { kind: 'hub', head: 'Every pull request', l: [{ t: 'Fast and deterministic', c: 'hubTitle' }, { t: 'markdownlint, Vale,', c: 'hubSub' }, { t: 'titles, spelling', c: 'hubSub' }] },
-    { kind: 'platform', head: 'Before the build', l: [{ t: 'Generated content' }, { t: 'API tags and', c: 'sub' }, { t: 'landing pages', c: 'sub' }] },
-    { kind: 'deploy', head: 'On a schedule', l: [{ t: 'Slow or network-bound' }, { t: 'external links,', c: 'sub' }, { t: 'unused images', c: 'sub' }] },
-  ];
-
-  return (
-    <Figure
-      titleId="dac-check-stages"
-      title="Matching each check to the right pipeline stage"
-      desc="Four stages from left to right. Once, before a rule is enforced, fixer scripts clear the backlog of missing alt text and final newlines. On every pull request, fast and deterministic checks run: markdownlint, Vale, title checks, and spelling. Before the build, scripts generate API tags and landing pages that DocFX needs. On a schedule, slow or network-bound checks run: external links and unused images."
-      viewBox="0 0 930 170"
-      caption="Fast checks that are always right belong on every pull request. Slow or network-bound checks belong on a schedule, so an outside website going down never blocks a merge.">
-      <defs>
-        <ArrowMarker id="cs-arrow" />
-      </defs>
-      {stages.map((s, i) => {
-        const x = 20 + i * (w + gap);
-        return (
-          <g key={s.head}>
-            <text x={x + w / 2} y={30} textAnchor="middle" className={styles.heading}>{s.head}</text>
-            {i < stages.length - 1 && (
-              <path d={`M${x + w},${y + h / 2} L${x + w + gap - 2},${y + h / 2}`} className={styles.edge} markerEnd="url(#cs-arrow)" />
-            )}
-            <Box x={x} y={y} w={w} h={h} kind={s.kind} rx={s.kind === 'hub' ? 10 : 8} lines={s.l} />
-          </g>
-        );
-      })}
     </Figure>
   );
 }

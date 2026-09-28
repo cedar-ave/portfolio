@@ -5,6 +5,10 @@ description: How I designed and built a single-source content library in Paligo,
 
 # Structured authoring in Paligo
 
+:::caution[Draft]
+This article is a draft.
+:::
+
 I'm an expert Paligo user and a specialist in single-sourcing and structured authoring. As the only technical writer at a software company, I designed and built the company's Paligo content library from scratch in about three months: more than 300 DocBook XML topics and about 20,000 words, published as six guides for two product lines into the company's help center. I designed reuse at four levels, from whole topics down to single words. One caution I wrote once appears in 35 topics. Product names and interface icons are variables. Cross-references resolve by ID, so links stay correct when titles change. The result is a library where one change, published once, updates every guide that uses it. That's how a team of one produced and maintained documentation at the scale of a team.
 
 The company's platform is proprietary, so this page gives an overview and leaves out the company's details. The diagrams are my own illustrations, based on the structure of the real content.
@@ -12,7 +16,7 @@ The company's platform is proprietary, so this page gives an overview and leaves
 :::tip[At a glance]
 
 - **The platform:** Paligo, a component content management system (CCMS) that stores content as reusable XML components and publishes it to a help center, a website, or PDF.
-- **What I built:** 6 publications, more than 300 topics, about 2,000 reusable text segments, 15 reusable admonitions, and 4 variable sets.
+- **What I built:** Six publications, more than 300 topics, about 2,000 reusable text segments, 15 reusable admonitions, and four variable sets.
 - **How much reuse:** 188 forks, 144 embedded topics, 99 placements of reusable admonitions, 116 placements of variables, and 106 cross-references that resolve by ID.
 - **Where it published:** Straight into the help center, where each publication became a help center category with sections and articles.
 - **Why it matters:** Customers get the same accurate instruction everywhere it appears, and the company gets documentation that scales with its products instead of with its headcount.
