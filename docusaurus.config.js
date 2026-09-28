@@ -96,8 +96,8 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      // Social card shown when links to this site are shared (LinkedIn, Twitter, etc.)
+      image: 'img/social-card.jpg',
       colorMode: {
         respectPrefersColorScheme: true,
       },
