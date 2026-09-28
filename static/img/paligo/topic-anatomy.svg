@@ -14,14 +14,14 @@
   <rect x="40" y="60" width="480" height="470" rx="12" fill="#202b49"/>
   <g font-family="'Roboto Mono', Consolas, 'Courier New', monospace" font-size="12.5" fill="#e6edf5">
     <text x="60" y="92"><tspan fill="#93bcdf">&lt;section&gt;</tspan></text>
-    <text x="76" y="114"><tspan fill="#93bcdf">&lt;title&gt;</tspan>Turn on monitoring<tspan fill="#93bcdf">&lt;/title&gt;</tspan></text>
+    <text x="76" y="114"><tspan fill="#93bcdf">&lt;title&gt;</tspan>Turn on sync<tspan fill="#93bcdf">&lt;/title&gt;</tspan></text>
     <text x="76" y="136"><tspan fill="#93bcdf">&lt;procedure&gt;</tspan></text>
     <text x="92" y="158"><tspan fill="#93bcdf">&lt;step&gt;</tspan></text>
     <text x="108" y="180"><tspan fill="#93bcdf">&lt;para&gt;</tspan>Go to the</text>
-    <text x="108" y="200"><tspan fill="#93bcdf">&lt;guilabel&gt;</tspan>Credentials<tspan fill="#93bcdf">&lt;/guilabel&gt;</tspan> tab.<tspan fill="#93bcdf">&lt;/para&gt;</tspan></text>
+    <text x="108" y="200"><tspan fill="#93bcdf">&lt;guilabel&gt;</tspan>Access<tspan fill="#93bcdf">&lt;/guilabel&gt;</tspan> tab.<tspan fill="#93bcdf">&lt;/para&gt;</tspan></text>
     <rect x="100" y="210" width="400" height="44" rx="6" fill="#f1b753" fill-opacity="0.18" stroke="#f1b753"/>
     <text x="108" y="229"><tspan fill="#f1b753">&lt;xi:include</tspan> <tspan fill="#73d3c3">href</tspan>=<tspan fill="#f1b753">"UUID-…"</tspan></text>
-    <text x="120" y="247"><tspan fill="#bed4e6">&lt;!-- Credentials tab name caution --&gt;</tspan><tspan fill="#f1b753">/&gt;</tspan></text>
+    <text x="120" y="247"><tspan fill="#bed4e6">&lt;!-- Access tab name caution --&gt;</tspan><tspan fill="#f1b753">/&gt;</tspan></text>
     <text x="92" y="276"><tspan fill="#93bcdf">&lt;/step&gt;</tspan></text>
     <text x="92" y="298"><tspan fill="#93bcdf">&lt;step&gt;</tspan></text>
     <text x="108" y="320"><tspan fill="#93bcdf">&lt;para&gt;</tspan>Click the heartbeat icon (</text>
@@ -39,24 +39,24 @@
 
   <!-- Rendered panel -->
   <rect x="560" y="60" width="400" height="470" rx="12" fill="#ffffff" stroke="#bed4e6" stroke-width="1.5"/>
-  <text x="584" y="102" font-size="22" font-weight="600" fill="#202b49">Turn on monitoring</text>
+  <text x="584" y="102" font-size="22" font-weight="600" fill="#202b49">Turn on sync</text>
   <g font-size="14" fill="#202124">
-    <text x="584" y="140"><tspan font-weight="600">1.</tspan> Go to the <tspan font-weight="600">Credentials</tspan> tab.</text>
+    <text x="584" y="140"><tspan font-weight="600">1.</tspan> Go to the <tspan font-weight="600">Access</tspan> tab.</text>
     <rect x="604" y="154" width="336" height="66" rx="6" fill="#fff7e8" stroke="#f1b753"/>
     <rect x="604" y="154" width="5" height="66" fill="#f1b753"/>
     <text x="620" y="176" font-size="12.5" font-weight="700" fill="#8a6414">NOTE</text>
-    <text x="620" y="196" font-size="13">The name of the Credentials tab may be</text>
+    <text x="620" y="196" font-size="13">The name of the Access tab may be</text>
     <text x="620" y="212" font-size="13">customized for your organization.</text>
 
     <text x="584" y="256"><tspan font-weight="600">2.</tspan> Click the heartbeat icon (</text>
     <rect x="759" y="241" width="20" height="20" rx="4" fill="#5f93c7"/>
     <polyline points="762,252 766,252 768,246 771,258 773,251 776,251" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
     <text x="781" y="256">) to turn</text>
-    <text x="602" y="276">on monitoring for a credential.</text>
+    <text x="602" y="276">on sync for an account.</text>
 
     <rect x="584" y="300" width="356" height="52" rx="6" fill="#f4f8fc" stroke="#bed4e6"/>
     <text x="600" y="322" font-size="13"><tspan font-weight="700" fill="#5e7893">NOTE</tspan>  See</text>
-    <text x="600" y="342" font-size="13" fill="#5f93c7" text-decoration="underline">Change monitoring frequency</text>
+    <text x="600" y="342" font-size="13" fill="#5f93c7" text-decoration="underline">Change sync frequency</text>
   </g>
 
   <!-- Legend -->

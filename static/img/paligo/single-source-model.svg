@@ -46,21 +46,21 @@
   <rect x="380" y="88" width="260" height="378" rx="12" fill="#f4f8fc" stroke="#bed4e6" stroke-width="1.5"/>
   <g font-size="14" fill="#202b49">
     <rect x="398" y="104" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
-    <text x="412" y="130">Salesforce app user guide</text>
+    <text x="412" y="130">CRM app user guide</text>
     <text x="608" y="130" text-anchor="end" font-size="12" fill="#5e7893">111</text>
     <rect x="398" y="154" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
-    <text x="412" y="180">Roster generation guide</text>
+    <text x="412" y="180">Record generation guide</text>
     <text x="608" y="180" text-anchor="end" font-size="12" fill="#5e7893">28</text>
     <rect x="398" y="204" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
-    <text x="412" y="230">Databank monitoring guide</text>
+    <text x="412" y="230">Data monitoring guide</text>
     <text x="608" y="230" text-anchor="end" font-size="12" fill="#5e7893">26</text>
     <rect x="398" y="254" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
-    <text x="412" y="280">Clearinghouse guide</text>
+    <text x="412" y="280">Integration guide</text>
     <text x="608" y="280" text-anchor="end" font-size="12" fill="#5e7893">16</text>
     <rect x="398" y="304" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
     <text x="412" y="330">Data sources catalog</text>
     <rect x="398" y="354" width="224" height="42" rx="8" fill="#ffffff" stroke="#93bcdf"/>
-    <text x="412" y="380">Source fees reference</text>
+    <text x="412" y="380">Vendor fees reference</text>
   </g>
   <text x="510" y="424" font-size="12.5" fill="#5e7893" text-anchor="middle">Numbers = topics linked by forks.</text>
   <text x="510" y="442" font-size="12.5" fill="#5e7893" text-anchor="middle">Topics are linked, never copied.</text>
@@ -86,7 +86,7 @@
     <path d="M830 344 L 830 372" fill="none" stroke="#5e7893" stroke-width="2" marker-end="url(#arr)"/>
 
     <rect x="700" y="378" width="260" height="88" rx="12" fill="#202b49"/>
-    <text x="830" y="410" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">Zendesk help center</text>
+    <text x="830" y="410" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">Help center</text>
     <text x="830" y="432" font-size="13" fill="#bed4e6" text-anchor="middle">Publication → category → section</text>
     <text x="830" y="450" font-size="13" fill="#bed4e6" text-anchor="middle">→ article, in one publish step</text>
   </g>

@@ -267,7 +267,7 @@ export function ReleaseNoteFilter() {
     <Figure
       titleId="skill-relnotes"
       title="How release notes drafter turns an engineering changelog into customer release notes"
-      desc="A GitHub release, commits, and Jira tickets go in. Every ticket is read in full, then an exclusion filter drops internal work such as CI/CD, refactors, monitoring, and dependency upgrades, listing each with a reason. Kept items are rewritten as customer value for one audience per run. Example: 'Added retry logic to sync job' becomes 'Provider data stays current even when sources are temporarily down.'"
+      desc="A GitHub release, commits, and Jira tickets go in. Every ticket is read in full, then an exclusion filter drops internal work such as CI/CD, refactors, monitoring, and dependency upgrades, listing each with a reason. Kept items are rewritten as customer value for one audience per run. Example: 'Added retry logic to sync job' becomes 'Data stays current even when data sources are temporarily down.'"
       viewBox="0 0 800 306"
       caption="Nothing is dropped silently: every excluded item is listed with a reason, so reviewers can check the call. What remains is written as what the customer gains.">
       <defs>
@@ -319,8 +319,8 @@ export function ReleaseNoteFilter() {
         lh={16}
         lines={[
           { t: 'Customer release note', c: 'sub' },
-          { t: '“Provider data stays current even when', c: 'quote' },
-          { t: 'sources are temporarily down.”', c: 'quote' },
+          { t: 'Data stays current even when', c: 'quote' },
+          { t: 'data sources are temporarily down.”', c: 'quote' },
         ]}
       />
     </Figure>

@@ -129,12 +129,12 @@ const fmt = (n) => n.toLocaleString('en-US');
 
 export function SourceMap() {
   const sources = [
-    { t: 'Zendesk Guide analytics', s: 'votes, search, linked articles', k: 'zendesk' },
-    { t: 'Zendesk Help Center API', s: 'articles, sections, user IDs', k: 'zendesk' },
-    { t: 'Google Analytics 4', s: 'paths, orgs, Tag Manager events', k: 'ga' },
-    { t: 'Zendesk Support analytics', s: 'ticket tags, created dates', k: 'zendesk' },
-    { t: 'Zendesk Ticketing API', s: 'incremental ticket exports', k: 'zendesk' },
-    { t: 'Salesforce', s: 'onboarding phase, customer type', k: 'sf' },
+    { t: 'Help center analytics', s: 'votes, search, linked articles', k: 'support' },
+    { t: 'Help center API', s: 'articles, sections, user IDs', k: 'support' },
+    { t: 'Web analytics platform', s: 'paths, orgs, tag manager events', k: 'analytics' },
+    { t: 'Support ticket analytics', s: 'ticket tags, created dates', k: 'support' },
+    { t: 'Support ticketing API', s: 'incremental ticket exports', k: 'support' },
+    { t: 'CRM platform', s: 'onboarding phase, customer type', k: 'crm' },
   ];
   const cys = [60, 120, 180, 240, 300, 360];
   const hub = { x: 330, y: 150, w: 210, h: 120 };
@@ -144,16 +144,16 @@ export function SourceMap() {
     { t: 'Article performance', s: 'What to promote, fix, or retire', cy: 305 },
   ];
   const legend = [
-    { k: 'zendesk', t: 'Zendesk' },
-    { k: 'ga', t: 'Google Analytics 4' },
-    { k: 'sf', t: 'Salesforce' },
+    { k: 'support', t: 'Support platform' },
+    { k: 'analytics', t: 'Web analytics platform' },
+    { k: 'crm', t: 'CRM platform' },
   ];
 
   return (
     <Figure
       titleId="an-sources"
       title="Six data sources joined into one model that feeds three dashboards"
-      desc="Six sources (Zendesk Guide analytics, the Zendesk Help Center API, Google Analytics 4, Zendesk Support analytics, the Zendesk Ticketing API, and Salesforce) feed a joined data model keyed on Zendesk user ID, article ID, and organization. The joined model feeds three dashboards: site awareness, ticket deflection, and article performance."
+      desc="Six sources (help center analytics, the help center API, a web analytics platform, support ticket analytics, the support ticketing API, and a CRM platform) feed a joined data model keyed on user ID, article ID, and organization. The joined model feeds three dashboards: site awareness, ticket deflection, and article performance."
       viewBox="0 0 830 430"
       caption="No single source could answer the business questions. Joined on three keys, they could.">
       <defs>
@@ -209,7 +209,7 @@ export function SourceMap() {
         lh={19}
         lines={[
           { t: 'Joined data model', c: 'hubTitle' },
-          { t: 'Zendesk user ID', c: 'hubSub' },
+          { t: 'User ID', c: 'hubSub' },
           { t: 'Article ID', c: 'hubSub' },
           { t: 'Customer organization', c: 'hubSub' },
         ]}
@@ -275,23 +275,23 @@ export function JoinModel() {
   const rowY = (top, i) => top + 30 + i * 24 + 12;
   const top1 = 40;
   const top2 = 225;
-  const cGA = 40;
+  const cEvents = 40;
   const cUsers = 320;
-  const cSF = 600;
+  const cCrm = 600;
   const w = 230;
 
   return (
     <Figure
       titleId="an-join"
       title="Join model connecting analytics events, users, articles, tickets, and customer accounts"
-      desc="GA4 events join to Zendesk users on user ID and to help center articles on article ID, which is parsed from the page path. Tickets join to Zendesk users on requester ID. Zendesk users join to Salesforce accounts on organization. A custom GA4 event fired by Tag Manager marks the moment a reader leaves an article to submit a request."
+      desc="Web analytics events join to support platform users on user ID and to help center articles on article ID, which is parsed from the page path. Tickets join to support platform users on requester ID. Support platform users join to CRM accounts on organization. A custom analytics event fired by the tag manager marks the moment a reader leaves an article to submit a request."
       viewBox="0 0 850 370"
       caption="Key fields are highlighted. The user ID is the linchpin: it lets a page view, a person, their organization, and the ticket they opened be read as one story.">
       <Table
-        x={cGA}
+        x={cEvents}
         y={top1}
-        kind="ga"
-        title="GA4 events"
+        kind="analytics"
+        title="Web analytics events"
         fields={[
           { n: 'user_id', key: true },
           { n: 'article_id', key: true, note: 'from page path' },
@@ -302,8 +302,8 @@ export function JoinModel() {
       <Table
         x={cUsers}
         y={top1}
-        kind="zendesk"
-        title="Zendesk users"
+        kind="support"
+        title="Support platform users"
         fields={[
           { n: 'id', key: true },
           { n: 'organization', key: true },
@@ -312,10 +312,10 @@ export function JoinModel() {
         ]}
       />
       <Table
-        x={cSF}
+        x={cCrm}
         y={top1}
-        kind="sf"
-        title="Salesforce accounts"
+        kind="crm"
+        title="CRM accounts"
         fields={[
           { n: 'organization', key: true },
           { n: 'onboarding_phase' },
@@ -324,9 +324,9 @@ export function JoinModel() {
         ]}
       />
       <Table
-        x={cGA}
+        x={cEvents}
         y={top2}
-        kind="zendesk"
+        kind="support"
         title="Help center articles"
         fields={[
           { n: 'id', key: true },
@@ -338,7 +338,7 @@ export function JoinModel() {
       <Table
         x={cUsers}
         y={top2}
-        kind="zendesk"
+        kind="support"
         title="Tickets"
         fields={[
           { n: 'id' },
@@ -348,9 +348,9 @@ export function JoinModel() {
         ]}
       />
 
-      {/* GA.user_id -> users.id */}
-      <path d={`M${cGA + w} ${rowY(top1, 0)} L${cUsers} ${rowY(top1, 0)}`} className={styles.edgeKey} />
-      <text x={(cGA + w + cUsers) / 2} y={rowY(top1, 0) - 6} textAnchor="middle" className={styles.edgeLabel}>
+      {/* events.user_id -> users.id */}
+      <path d={`M${cEvents + w} ${rowY(top1, 0)} L${cUsers} ${rowY(top1, 0)}`} className={styles.edgeKey} />
+      <text x={(cEvents + w + cUsers) / 2} y={rowY(top1, 0) - 6} textAnchor="middle" className={styles.edgeLabel}>
         user ID
       </text>
 
@@ -367,37 +367,37 @@ export function JoinModel() {
         requester = user ID
       </text>
 
-      {/* users.organization -> SF.organization */}
+      {/* users.organization -> crm.organization */}
       <path
-        d={`M${cUsers + w} ${rowY(top1, 1)} L${cUsers + w + 25} ${rowY(top1, 1)} L${cUsers + w + 25} ${rowY(top1, 0)} L${cSF} ${rowY(top1, 0)}`}
+        d={`M${cUsers + w} ${rowY(top1, 1)} L${cUsers + w + 25} ${rowY(top1, 1)} L${cUsers + w + 25} ${rowY(top1, 0)} L${cCrm} ${rowY(top1, 0)}`}
         className={styles.edgeKey}
       />
       <text x={cUsers + w + 25} y={rowY(top1, 0) - 6} textAnchor="middle" className={styles.edgeLabel}>
         org
       </text>
 
-      {/* GA.article_id -> articles.id */}
+      {/* events.article_id -> articles.id */}
       <path
-        d={`M${cGA} ${rowY(top1, 1)} L${cGA - 18} ${rowY(top1, 1)} L${cGA - 18} ${rowY(top2, 0)} L${cGA} ${rowY(top2, 0)}`}
+        d={`M${cEvents} ${rowY(top1, 1)} L${cEvents - 18} ${rowY(top1, 1)} L${cEvents - 18} ${rowY(top2, 0)} L${cEvents} ${rowY(top2, 0)}`}
         className={styles.edgeKey}
       />
       <text
-        transform={`translate(${cGA - 24} ${(rowY(top1, 1) + rowY(top2, 0)) / 2}) rotate(-90)`}
+        transform={`translate(${cEvents - 24} ${(rowY(top1, 1) + rowY(top2, 0)) / 2}) rotate(-90)`}
         textAnchor="middle"
         className={styles.edgeLabel}>
         article ID
       </text>
 
       <Box
-        x={cSF}
+        x={cCrm}
         y={top2}
         w={w}
         h={126}
         kind="node"
         lh={17}
         lines={[
-          { t: 'Custom GA4 event' },
-          { t: 'Tag Manager fires when a reader', c: 'sub' },
+          { t: 'Custom analytics event' },
+          { t: 'The tag manager fires when a reader', c: 'sub' },
           { t: 'leaves an article to submit a', c: 'sub' },
           { t: 'request, linking the article', c: 'sub' },
           { t: 'view to the ticket that follows.', c: 'sub' },
@@ -605,25 +605,25 @@ export function AwarenessDashboard() {
    4. Dashboard mockup: ticket deflection
    ===================================================================== */
 
-const TAGS = ['Verification', 'Monitoring', 'Facilities', 'Sources', 'Credentialing', 'Packets'];
-const CATEGORIES = ['Salesforce app', 'Web app', 'Rosters', 'Facilities', 'Primary sources'];
+const TAGS = ['Verification', 'Monitoring', 'Locations', 'Data sources', 'Approvals', 'Attachments'];
+const CATEGORIES = ['App X', 'App Y', 'Records', 'Locations', 'Data sources'];
 
 // tickets: count of tickets opened right after viewing the article, split by ticket tag.
 const DEFLECTION = [
-  { a: 'Provider data management', c: 'Salesforce app', views: 600, tickets: { Credentialing: 40, Sources: 35, Verification: 25 } },
-  { a: 'Credentialing and monitoring objects', c: 'Salesforce app', views: 410, tickets: { Monitoring: 50, Credentialing: 46 } },
-  { a: 'Credentialing policies and procedures', c: 'Salesforce app', views: 520, tickets: { Credentialing: 70, Packets: 23 } },
-  { a: 'Clean up data and monitor health', c: 'Web app', views: 350, tickets: { Monitoring: 52, Sources: 37 } },
-  { a: 'Configure a profile or permission set', c: 'Salesforce app', views: 700, tickets: { Credentialing: 49, Facilities: 40 } },
-  { a: 'See details about a medical association record', c: 'Primary sources', views: 300, tickets: { Sources: 61, Verification: 25 } },
-  { a: 'Resolve failed sanctions and exclusions verifications', c: 'Web app', views: 290, tickets: { Monitoring: 45, Verification: 36 } },
-  { a: 'Enable sanctions and exclusions monitoring', c: 'Web app', views: 380, tickets: { Monitoring: 76 } },
-  { a: 'American Registry of Radiologic Technologists', c: 'Primary sources', views: 200, tickets: { Sources: 48, Verification: 25 } },
-  { a: 'Nurse practitioner certification board', c: 'Primary sources', views: 190, tickets: { Sources: 40, Verification: 30 } },
-  { a: 'Add a file to a credentialing event', c: 'Salesforce app', views: 450, tickets: { Credentialing: 40, Packets: 25 } },
-  { a: 'See credentials a sub-facility shares with a parent', c: 'Facilities', views: 160, tickets: { Facilities: 57 } },
-  { a: "Change data in the columns of a credential's row", c: 'Rosters', views: 330, tickets: { Credentialing: 30, Packets: 22 } },
-  { a: 'Open the credentialing application', c: 'Web app', views: 900, tickets: { Credentialing: 28, Verification: 20 } },
+  { a: 'Manage account data', c: 'App X', views: 600, tickets: { Approvals: 40, 'Data sources': 35, Verification: 25 } },
+  { a: 'Approval and monitoring records', c: 'App X', views: 410, tickets: { Monitoring: 50, Approvals: 46 } },
+  { a: 'Approval policies and procedures', c: 'App X', views: 520, tickets: { Approvals: 70, Attachments: 23 } },
+  { a: 'Clean up data and monitor health', c: 'App Y', views: 350, tickets: { Monitoring: 52, 'Data sources': 37 } },
+  { a: 'Configure a user role or permission group', c: 'App X', views: 700, tickets: { Approvals: 49, Locations: 40 } },
+  { a: 'See details about a partner record', c: 'Data sources', views: 300, tickets: { 'Data sources': 61, Verification: 25 } },
+  { a: 'Resolve failed compliance verifications', c: 'App Y', views: 290, tickets: { Monitoring: 45, Verification: 36 } },
+  { a: 'Enable compliance monitoring', c: 'App Y', views: 380, tickets: { Monitoring: 76 } },
+  { a: 'External data source A', c: 'Data sources', views: 200, tickets: { 'Data sources': 48, Verification: 25 } },
+  { a: 'External data source B', c: 'Data sources', views: 190, tickets: { 'Data sources': 40, Verification: 30 } },
+  { a: 'Add a file to an approval event', c: 'App X', views: 450, tickets: { Approvals: 40, Attachments: 25 } },
+  { a: 'See records shared with a parent', c: 'Shared data', views: 160, tickets: { Locations: 57 } },
+  { a: "Change data in the columns of a record's row", c: 'Records', views: 330, tickets: { Approvals: 30, Attachments: 22 } },
+  { a: 'Open the approval application', c: 'App Y', views: 900, tickets: { Approvals: 28, Verification: 20 } },
 ];
 
 export function DeflectionDashboard() {
@@ -745,12 +745,12 @@ export function DeflectionDashboard() {
    ===================================================================== */
 
 const ARTICLE_AGE = [
-  { a: 'Enable monitoring for a provider', views: 2400, days: 720 },
-  { a: 'Provider data management', views: 2100, days: 540 },
-  { a: 'Add a file to a credentialing event', views: 1500, days: 600 },
+  { a: 'Enable monitoring for an account', views: 2400, days: 720 },
+  { a: 'Manage account data', views: 2100, days: 540 },
+  { a: 'Add a file to an approval event', views: 1500, days: 600 },
   { a: 'Legacy import guide', views: 1300, days: 1400 },
   { a: 'Resolve failed verifications', views: 1200, days: 300 },
-  { a: 'Set up roster auto-sync', views: 90, days: 9, isNew: true },
+  { a: 'Set up record auto-sync', views: 90, days: 9, isNew: true },
 ];
 
 function RankedMultiple({ title, sub, rows, value, format }) {

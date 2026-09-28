@@ -11,10 +11,10 @@
 
   <!-- Parent -->
   <rect x="40" y="92" width="920" height="120" rx="12" fill="#202b49"/>
-  <text x="64" y="124" font-size="17" font-weight="600" fill="#ffffff">Parent topic: Evaluate a databank report</text>
+  <text x="64" y="124" font-size="17" font-weight="600" fill="#ffffff">Parent topic: Evaluate a compliance report</text>
   <rect x="64" y="140" width="420" height="52" rx="8" fill="#5e7893"/>
   <text x="80" y="162" font-size="13" font-weight="700" fill="#ffffff">NOTE · shared</text>
-  <text x="80" y="181" font-size="13" fill="#eef4fa">Evaluate reports case by case, with the provider's disclosures.</text>
+  <text x="80" y="181" font-size="13" fill="#eef4fa">Evaluate reports case by case, with the vendor's disclosures.</text>
   <rect x="500" y="140" width="436" height="52" rx="8" fill="#d06e6a"/>
   <text x="516" y="162" font-size="13" font-weight="700" fill="#ffffff">IMPORTANT · shared</text>
   <text x="516" y="181" font-size="13" fill="#ffffff">Report data is confidential. Share only with a valid use case.</text>
@@ -26,14 +26,14 @@
 
   <!-- Children -->
   <rect x="40" y="258" width="470" height="130" rx="12" fill="#f4f8fc" stroke="#93bcdf" stroke-width="2"/>
-  <text x="64" y="290" font-size="16" font-weight="600" fill="#202b49">Child: If your organization credentials</text>
-  <text x="64" y="310" font-size="16" font-weight="600" fill="#202b49">its own providers</text>
-  <text x="64" y="338" font-size="13.5" fill="#5e7893">Steps your credentialing staff take to review</text>
+  <text x="64" y="290" font-size="16" font-weight="600" fill="#202b49">Child: If your organization verifies</text>
+  <text x="64" y="310" font-size="16" font-weight="600" fill="#202b49">its own accounts</text>
+  <text x="64" y="338" font-size="13.5" fill="#5e7893">Steps your verification staff take to review</text>
   <text x="64" y="357" font-size="13.5" fill="#5e7893">the report and decide next steps.</text>
 
   <rect x="530" y="258" width="430" height="130" rx="12" fill="#f4f8fc" stroke="#73d3c3" stroke-width="2"/>
   <text x="554" y="290" font-size="16" font-weight="600" fill="#202b49">Child: If a verification team</text>
-  <text x="554" y="310" font-size="16" font-weight="600" fill="#202b49">credentials providers for you</text>
+  <text x="554" y="310" font-size="16" font-weight="600" fill="#202b49">verifies accounts for you</text>
   <text x="554" y="338" font-size="13.5" fill="#5e7893">What the outsourced team does, and what</text>
   <text x="554" y="357" font-size="13.5" fill="#5e7893">your organization still needs to do.</text>
 </svg>

@@ -4,7 +4,7 @@ title: Help center theme engineering
 
 # Help center theme engineering
 
-I took a commercial Zendesk help center theme and made it into a documentation platform driven by configuration files. The company sells healthcare credentialing software in two versions, a Salesforce app and a standalone web app, along with APIs and dozens of data-source integrations. Its help center had outgrown what an off-the-shelf theme could do.
+I took a commercial Zendesk help center theme and made it into a documentation platform driven by configuration files. The company sells software in two versions, App X and App Y, along with APIs and dozens of data-source integrations. Its help center had outgrown what an off-the-shelf theme could do.
 
 This theme was the technical foundation of a larger relaunch of the help site. For the research and decisions behind that relaunch, see [Help site relaunch](/experience/help-site-relaunch).
 
@@ -22,17 +22,17 @@ The theme is proprietary, so this page gives an overview and leaves out the comp
 
 ## The problems
 
-**One help center, two products, and readers who didn't know which product they used.** An article called *How to run a verification* for the Salesforce app is different from an article with the same title for the web app. Readers kept landing on the wrong one, and nothing on the page told them which product an article covered.
+**One help center, two products, and readers who didn't know which product they used.** An article called *How to run a verification* for App X is different from an article with the same title for App Y. Readers kept landing on the wrong one, and nothing on the page told them which product an article covered.
 
-**The navigation mirrored Zendesk's data structure, not how readers think.** The stock side navigation showed one long tree of every category. Readers want to start from their product ("I use the web app") and then drill into a task. Changing the tree meant restructuring content in Zendesk itself.
+**The navigation mirrored Zendesk's data structure, not how readers think.** The stock side navigation showed one long tree of every category. Readers want to start from their product ("I use App Y") and then drill into a task. Changing the tree meant restructuring content in Zendesk itself.
 
-**Search couldn't filter by product.** Zendesk's search page has no built-in way to pick a content tag, and its backend accepts only one tag at a time. We needed readers to filter by product *and* by credentialing type (provider or facility) at once. The stock pagination also showed only First/Previous/Next/Last. On a query with 39 pages of results, that's painful.
+**Search couldn't filter by product.** Zendesk's search page has no built-in way to pick a content tag, and its backend accepts only one tag at a time. We needed readers to filter by product *and* by which of two feature types at once. The stock pagination also showed only First/Previous/Next/Last. On a query with 39 pages of results, that's painful.
 
 **Every small change needed a developer.** Category IDs, menu links, and section titles were hardcoded in templates. Adding a link to a menu meant editing Handlebars and republishing the theme.
 
 **Content published from our XML component content management system (CCMS) didn't fit the theme.** The CCMS writes some headings as styled paragraphs, emits hidden labels that show up as blank lines, and nests ordered lists in a way the theme's CSS didn't expect. The vendor's table of contents skipped those headings entirely.
 
-**We had no data on how content was used.** Nobody could answer "which articles do Salesforce app admins read?"
+**We had no data on how content was used.** Nobody could answer, *Which articles do App X admins read?*
 
 ## The approach
 
@@ -47,7 +47,7 @@ I followed four principles throughout:
 
 ### 1. Tabbed side navigation, driven by configuration
 
-This is the centerpiece. `<sidenav-tabs>` is a custom HTML element (a Web Component) that splits the article-page navigation into product tabs: *Getting started*, *Release notes*, *Salesforce app*, *Web app*, *Source integrations*, and *APIs*. Inside each tab, it reuses the vendor's own navigation component to render only the categories assigned to that tab.
+This is the centerpiece. `<sidenav-tabs>` is a custom HTML element (a Web Component) that splits the article-page navigation into product tabs: *Getting started*, *Release notes*, *App X*, *App Y*, *Data integrations*, and *APIs*. Inside each tab, it reuses the vendor's own navigation component to render only the categories assigned to that tab.
 
 A single JSON file controls the whole thing. For any category or section, an editor can:
 
@@ -59,27 +59,27 @@ A single JSON file controls the whole thing. For any category or section, an edi
 - **reorder** it with a single `position` value,
 - **pin** extra links above or below its contents,
 - **group articles by year** (for long-running release notes), and
-- **shorten titles** in the tree only (for example, *"Salesforce app - November 2025 (v1.97)"* becomes *"November 2025 (v1.97)"*).
+- **shorten titles** in the tree only (for example, *App X - November 2025 (v2.97)"* becomes *"November 2025 (v2.97)"*).
 
 All of these can be combined. The configuration file documents itself: it starts with a `_readme` key that explains every option in plain language.
 
 ```json
 {
-  "id": "salesforce",
-  "label": "Salesforce app",
+  "id": "crm",
+  "label": "CRM app",
   "categories": [
-    { "id": 1001, "name": "Provider Credentialing Guide", "display_name": "Provider credentialing" },
+    { "id": 1001, "name": "Account Verification Guide", "display_name": "Account verification" },
     {
-      "label": "Roster management",
+      "label": "Records management",
       "categories": [
-        { "id": 1002, "name": "Roster Generation Guide", "display_name": "Roster generation" },
-        { "id": 1003, "name": "Roster Ingestion Guide", "display_name": "Roster ingestion" }
+        { "id": 1002, "name": "Record Generation Guide", "display_name": "Record generation" },
+        { "id": 1003, "name": "Record Ingestion Guide", "display_name": "Record ingestion" }
       ]
     },
     { "id": 1004, "name": "Admin Guide", "display_name": "Admins" }
   ],
   "pinned_links": [
-    { "name": "FAQ and troubleshooting", "url": "/hc/en-us/p/salesforce-app-help", "position": "bottom" }
+    { "name": "FAQ and troubleshooting", "url": "/hc/en-us/p/crm-app-help", "position": "bottom" }
   ]
 }
 ```
@@ -96,7 +96,7 @@ All of these can be combined. The configuration file documents itself: it starts
 
 ### 2. Filtering search results by more than one tag
 
-I rebuilt the search page's filtering on top of Zendesk's native, server-rendered results. Readers can now choose one tag per filter group (*Filter by app*, *Filter by credentialing type*) and combine them. Every result shows color-coded product badges.
+I rebuilt the search page's filtering on top of Zendesk's native, server-rendered results. Readers can now choose one tag per filter group (*Filter by app*, *Filter by feature type*) and combine them. Every result shows color-coded product badges.
 
 Zendesk's backend accepts only one content tag, so I designed a two-tier filter:
 
@@ -134,17 +134,17 @@ Other problems I solved on this page:
 
 ### 3. One source for product labeling across the site
 
-One configuration file defines every product and credentialing-type badge: its name, content tag, colors, icon, and hover-help text (*"Are you working in Salesforce? Yes, you're using the Salesforce app. No, you're using the web app."*). The same definitions drive badges in search results, the search filter sidebar, home page cards, the content tags on each article, and the info icons on the navigation tabs.
+One configuration file defines every product and app-type badge: its name, content tag, colors, icon, and hover-help text (*Are you working in Platform X? Yes, you're using the App Y. No, you're using App Z.*). The same definitions drive badges in search results, the search filter sidebar, home page cards, the content tags on each article, and the info icons on the navigation tabs.
 
 A single badge definition looks like this. `sidebarGroup` decides which search filter it appears under, and `style` sets its colors:
 
 ```json
 {
-  "name": "Salesforce app",
+  "name": "CRM app",
   "tagId": "<content-tag-id>",
   "icon": "info.svg",
   "infoIcon": true,
-  "infoIconText": "<span class=\"hover-help-subhead\">Are you working in Salesforce?</span><br><span class=\"hover-help-body\">Yes — You're using the Salesforce app.<br>No — You're using the Web app.</span>",
+  "infoIconText": "<span class=\"hover-help-subhead\">Are you working in Platform X?</span><br><span class=\"hover-help-body\">Yes — You're using App X.<br>No — You're using App Y.</span>",
   "showInSearchResultsSidebar": true,
   "showInfoIconInSearchResultsSidebar": true,
   "sidebarGroup": "app",
@@ -168,7 +168,7 @@ Here's part of the configuration for the source integrations help page. Each sec
   {
     "title": "Frequently asked questions",
     "subSections": [
-      { "heading": "Salesforce app", "labels": ["FAQ"], "mandatorySubLabel": "Salesforce_app" },
+      { "heading": "CRM app", "labels": ["FAQ"], "mandatorySubLabel": "CRM_app" },
       { "heading": "Web app", "labels": ["FAQ"], "mandatorySubLabel": "Web_app" }
     ],
     "bottomLine": true
@@ -177,10 +177,10 @@ Here's part of the configuration for the source integrations help page. Each sec
     "title": "Troubleshooting",
     "subSections": [
       {
-        "heading": "Salesforce app",
+        "heading": "CRM app",
         "labels": ["Help"],
         "subsectionLabelsExclude": ["FAQ", "Reference", "Error"],
-        "mandatorySubLabel": "Salesforce_app"
+        "mandatorySubLabel": "CRM_app"
       },
       {
         "heading": "Web app",

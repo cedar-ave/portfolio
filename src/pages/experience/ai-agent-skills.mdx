@@ -44,12 +44,12 @@ Every skill follows the same principles:
 
 **What it is**: An analysis skill that compares a set of cataloged Tango guides covering the same workflow. It produces two files: a step alignment document that maps every step in every guide to a canonical workflow phase, and a deviation register (CSV) that records every UI label variant and structural difference, with how often it appears and which guide it came from.
 
-**Why I built it**: When customers configure the product differently, their step-by-step guides describe the same workflow with different button labels, extra steps, or missing phases. Before I write one authoritative article, I need to know exactly where the guides agree and where they differ. The skill flags unusual guides before reading them in depth, proposes a phase map (for example, 18 phases for standard credentialing) and waits for my approval, and writes alignment notes to disk after each guide so a long analysis can pick up where it left off. It records every variant, even ones that appear in a single guide, so the final article can document every label a customer might see.
+**Why I built it**: When customers configure the product differently, their step-by-step guides describe the same workflow with different button labels, extra steps, or missing phases. Before I write one authoritative article, I need to know exactly where the guides agree and where they differ. The skill flags unusual guides before reading them in depth, proposes a phase map (for example, 18 phases for Feature X) and waits for my approval, and writes alignment notes to disk after each guide so a long analysis can pick up where it left off. It records every variant, even ones that appear in a single guide, so the final article can document every label a customer might see.
 
 #### Example prompts
 
-- *Analyze these 2026 standard credentialing guides and build a step alignment.*
-- *Run source analyzer on the CVO credentialing guides with the slug cvo-credentialing-2026.*
+- *Analyze these 2026 Feature X guides and build a step alignment.*
+- *Run source analyzer on the Feature Y guides with the slug feature-y-2026.*
 - *Find variants across these Tango guides.*
 
 ## Content generation AI agent skills
@@ -64,9 +64,9 @@ Every skill follows the same principles:
 
 #### Example prompts
 
-- *Draft a how-to guide and a troubleshooting article on CAQH import.*
-- *Write a concept article about continuous monitoring.*
-- *Draft how-to, concept, and reference articles for provider roster enrollment.*
+- *Draft a how-to guide and a troubleshooting article on Feature X.*
+- *Write a concept article about Feature Y.*
+- *Draft how-to, concept, and reference articles for Feature Z.*
 
 ### `/release-docs-drafter`
 
@@ -76,23 +76,23 @@ Every skill follows the same principles:
 
 #### Example prompts
 
-- *Draft a how-to guide and a concept article for the caqh-import feature using the input folder.*
-- *Draft release docs for provider-roster-enrollment from the input folder, this Jira epic, and this Notion spec.*
-- *Use this slide deck and Google Doc to draft a reference article for the new monitoring settings.*
+- *Draft a how-to guide and a concept article for Feature X using the input folder.*
+- *Draft release docs for Feature Y from the input folder, this Jira epic, and this Notion spec.*
+- *Use this slide deck and Google Doc to draft a reference article for the new Feature Z.*
 
 ### `/release-notes-drafter`
 
-**What it is**: A skill that drafts customer-facing release notes for one audience per run (Salesforce app, web app, or API) from a GitHub release, pasted commits, and Jira tickets. It writes a single Markdown file.
+**What it is**: A skill that drafts customer-facing release notes for one audience per run from a GitHub release, pasted commits, and Jira tickets. It writes a single Markdown file.
 
-**Why I built it**: Engineering changelogs describe what was built, but customers want to know what they gain. The skill reads every Jira ticket in full and applies a clear exclusion filter that drops internal work such as CI/CD changes, refactors, monitoring, and dependency upgrades. It lists every dropped item with a reason, so reviewers can check the call. It rewrites engineering headings as customer value; for example, "Added retry logic to sync job" becomes "Provider data stays current even when sources are temporarily down." It also adjusts tone and formatting for each audience, groups changes that apply only to CVO customers, and replaces internal jargon with customer-facing terms.
+**Why I built it**: Engineering changelogs describe what was built, but customers want to know what they gain. The skill reads every Jira ticket in full and applies a clear exclusion filter that drops internal work such as CI/CD changes, refactors, monitoring, and dependency upgrades. It lists every dropped item with a reason, so reviewers can check the call. It rewrites engineering headings as customer value; for example, "Added retry logic to sync job" becomes "Data stays current even when data sources are temporarily down." It also adjusts tone and formatting for each audience, groups changes that apply only to CVO customers, and replaces internal jargon with customer-facing terms.
 
 <ReleaseNoteFilter />
 
 #### Example prompts
 
-- *Draft web app release notes for 1.99 from this GitHub release.*
+- *Draft release notes for App X version 2.99 from this GitHub release.*
 - *Write API release notes for March 2026 from these Jira keys.*
-- *Draft Salesforce app release notes from this list of commits.*
+- *Draft release notes for App Y from this list of commits.*
 
 ### `/release-notes-jira-gdoc`
 
@@ -104,9 +104,9 @@ Every skill follows the same principles:
 
 #### Example prompts
 
-- *Create release notes for fix version 1.98.*
+- *Create release notes for fix version 2.98.*
 - *Show me all fix versions so I can choose which ones to include.*
-- *Draft release notes for 1.98.1 and vApril, and use this product brief and slide deck for context.*
+- *Draft release notes for 2.98.1 and vApril, and use this product brief and slide deck for context.*
 
 ## Content management automation AI agent skills
 
@@ -121,7 +121,7 @@ Every skill follows the same principles:
 #### Example prompts
 
 - *Convert this Google Doc to Paligo XML.*
-- *Convert this Google Doc and upload it to the Topics folder for the credentialing guide.*
+- *Convert this Google Doc and upload it to the Topics folder for the Feature X guide.*
 - *Add the new topic to the publication and start a production.*
 - *Export this document for translation into Spanish and French.*
 
@@ -137,7 +137,7 @@ Every skill follows the same principles:
 
 - *We're working in sandbox today.*
 - *Find all untagged articles in the onboarding section and apply the getting-started content tag.*
-- *Create a 301 redirect from the old CAQH import article to the new one.*
+- *Create a 301 redirect from the old Article X to the new one.*
 - *Launch a preview of the theme.*
 - *Deploy the local theme to production.*
 
@@ -161,12 +161,12 @@ Every skill follows the same principles:
 
 **What it is**: An audit skill that checks a Google Doc, Markdown file, text file, or Word document against an organization's custom controlled vocabulary. It flags every non-preferred term and gives the preferred term, the style guide's reasoning, and a suggested rewrite.
 
-**Why I built it**: Inconsistent terminology confuses readers and hurts search and retrieval. The skill handles details a simple find-and-replace can't: case-sensitive terms, hyphenation, acronyms that must be spelled out on first use, plurals and possessives, exceptions for terms shown literally in the product UI, and look-alike terms that mean different things. For example, it knows that continuous query (an NPDB feature) and continuous monitoring (the product feature built on it) aren't the same thing. When the context is ambiguous, it flags both readings instead of picking one silently.
+**Why I built it**: Inconsistent terminology confuses readers and hurts search and retrieval. The skill handles details a simple find-and-replace can't: case-sensitive terms, hyphenation, acronyms that must be spelled out on first use, plurals and possessives, exceptions for terms shown literally in the product UI, and look-alike terms that mean different things. When the context is ambiguous, it flags both readings instead of picking one silently.
 
 #### Example prompts
 
 - *Check this Google Doc against our vocabulary.*
-- *Run vocabulary pal on draft-about-primary-source-verification.md.*
+- *Run vocabulary pal on draft-about-data-verification.md.*
 - *Flag non-preferred terms in these release notes.*
 
 ### `/style-pal`
@@ -178,7 +178,7 @@ Every skill follows the same principles:
 #### Example prompts
 
 - *Run a style check on this Google Doc.*
-- *Review release-notes-1.99.md for style issues.*
+- *Review release-notes-2.99.md for style issues.*
 - *Fix 2, 4, and 7, and skip the rest.*
 
 

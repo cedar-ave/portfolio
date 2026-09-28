@@ -11,40 +11,40 @@ I wanted generative AI to take over, but requiring AI to re-ingest each piece of
 
 I designed an approach that did not require generative AI to re-ingest each piece of source material each time and allowed it to rapidly focus in on the content most relevant to the topic I provided. I built a faceted taxonomy of 16 categories and about 400 controlled terms. Each piece of source material (after being turned into Markdown) was read **once**, tagged, summarized, and given a note about which types of new content it could support.
 
-Following is a redacted example:
+Following is a redacted and genericized example:
 
 ```yaml
 ---
-title: "Credentialing"
+title: "Account verification"
 source_type: "implementation_guide"
 source_url: "https://..."
 created_at: "2026-06-19"
 summary: >
-  Lightweight baseline credentialing how-to in the Salesforce app: <redacted steps>.
+  Lightweight baseline verification how-to in the CRM app: <redacted steps>.
 drafting_guidance: >
-  Source for a short how-to article on <redacted objectives> in the Verifiable Salesforce app. Useful as a baseline reference compared to the more elaborate customer-specific guides for <redacted customer organization names> that include <redacted features>. Contains a specific best-practice / warning callout: <redacted errors>. Contains a conceptual note on <reacted feature actions>. Includes <redacted customer-specific field> — flag as customer-specific if drafting generic content. Pair with broader customer credentialing guides for the full lifecycle.
+  Source for a short how-to article on <redacted objectives> in the CRM app. Useful as a baseline reference compared to the more elaborate customer-specific guides for <redacted customer organization names> that include <redacted features>. Contains a specific best-practice / warning callout: <redacted errors>. Contains a conceptual note on <reacted feature actions>. Includes <redacted customer-specific field> — flag as customer-specific if drafting generic content. Pair with broader customer verification guides for the full lifecycle.
 platform:
-  - salesforce-app
+  - crm-app
 section:
-  - provider-credentialing
+  - record-verification
   - getting-started
 module:
-  - provider-credentialing
-  - provider-application
-  - credentialing-workflow
+  - record-verification
+  - record-application
+  - verification-workflow
 feature:
-  - create-provider
+  - create-record
 workflow:
-  - provider-onboarding
-  - credentialing-review
+  - record-onboarding
+  - verification-review
 stage:
   - create
   - submission
   - review
 object:
-  - provider
+  - record
 role:
-  - credentialing-specialist
+  - verification-specialist
   - customer-admin
 intent:
   - task-oriented
@@ -69,23 +69,23 @@ The company's name and product details are left out. Tag values and examples on 
 
 ## The problem: the knowledge existed, but no one could find it
 
-At a healthcare credentialing software company, the most accurate product knowledge wasn't in the help center. It was spread across thousands of support tickets, recorded customer calls, engineering repos, internal docs, and customer-made step-by-step guides. I was building [AI agent skills](/experience/ai-agent-skills) to draft help articles from that material, and I saw two problems right away.
+At a software company with a complex, workflow-heavy product, the most accurate product knowledge wasn't in the help center. It was spread across thousands of support tickets, recorded customer calls, engineering repos, internal docs, and customer-made step-by-step guides. I was building [AI agent skills](/experience/ai-agent-skills) to draft help articles from that material, and I saw two problems right away.
 
 1. **Cost.** A model that re-reads the whole library for every article is slow and expensive, and it runs out of context before it finishes.
-2. **Recall.** Keyword search misses sources that use different words for the same thing. A ticket about "DEA," one about "DEA registration," and a transcript about "controlled substance numbers" are all about the same workflow. Without shared vocabulary, the model wouldn't know that.
+2. **Recall.** Keyword search misses sources that use different words for the same thing. A ticket about "acct ID," one about "account identifier," and a transcript about "customer number" are all about the same workflow. Without shared vocabulary, the model wouldn't know that.
 
 The answer wasn't a better prompt. It was a better way to organize the knowledge before the model ever saw it.
 
 ## A faceted taxonomy, not a folder tree
 
-I chose a **faceted** taxonomy over a traditional hierarchy. A folder tree forces every source into one place, but a support ticket about a failed license check belongs in many places at once. It's about a feature, a workflow, an object, an error, and a user role. With facets, each of those becomes its own independent tag.
+I chose a **faceted** taxonomy over a traditional hierarchy. A folder tree forces every source into one place, but a support ticket about a failed verification check belongs in many places at once. It's about a feature, a workflow, an object, an error, and a user role. With facets, each of those becomes its own independent tag.
 
 | Facet | What it answers | Example terms |
 | --- | --- | --- |
-| `module` / `feature` | Which part of the product? | `ongoing-monitoring`, `verify-license` |
-| `workflow` / `stage` | Which process, and at what point? | `license-verification`, `review` |
-| `object` | Which record or data type? | `provider`, `credentialing-event` |
-| `role` | Who is doing this? | `credentialing-specialist`, `customer-admin` |
+| `module` / `feature` | Which part of the product? | `usage-monitoring`, `verify-record` |
+| `workflow` / `stage` | Which process, and at what point? | `record-verification`, `review` |
+| `object` | Which record or data type? | `record`, `verification-event` |
+| `role` | Who is doing this? | `verification-specialist`, `customer-admin` |
 | `intent` | What kind of article can this feed? | `task-oriented`, `conceptual`, `troubleshooting` |
 | `lifecycle` | When in the customer's journey? | `onboarding`, `renewal`, `go-live` |
 | `issue` / `technical` | What broke, and where? | `sync-failure`, `event-driven` |
@@ -112,24 +112,24 @@ The design moves the expensive reading to one step that happens once, and makes 
 3. **Find sources by tags.** Each source becomes one line in a compact index, like this example:
 
    ```plaintext
-   [zendesk_ticket] salesforce-app licenses verify-license license-verification
-   task-oriented troubleshooting verification-failure · [License shows as not found](zendesk_ticket/zd-ticket-12345.md)
+   [support_ticket] crm-app records verify-record record-verification
+   task-oriented troubleshooting verification-failure · [Record shows as not found](support_ticket/ticket-12345.md)
    ```
 
    A drafting run scans hundreds of these lines to find candidates, reads a short summary for each match, and opens full files only for sources that are confirmed relevant. Compared with opening every candidate, that cuts reading by 70 to 80 percent.
 4. **Split by workflow.** Per-workflow index files hold full summaries and a short "Use when" note. When the topic is known, the drafter skips the master index and goes straight to the right file.
 
-Because the vocabulary is controlled, matching is exact. `workflow: license-verification` either matches or it doesn't, with no fuzzy search and no second pass to catch synonyms.
+Because the vocabulary is controlled, matching is exact. `workflow: record-verification` either matches or it doesn't, with no fuzzy search and no second pass to catch synonyms.
 
 ## How the taxonomy drew out better content
 
 Saving tokens mattered, but the bigger win was what the model found.
 
-**Tickets stopped being troubleshooting-only.** The `intent` facet can hold many values, and the rules require every ticket to be checked against every article type. One ticket can be a troubleshooting source, a how-to step, a conceptual explanation, a warning, a best practice, and an FAQ entry all at once. For example, a ticket about a failed recredentialing run might also contain:
+**Tickets stopped being troubleshooting-only.** The `intent` facet can hold many values, and the rules require every ticket to be checked against every article type. One ticket can be a troubleshooting source, a how-to step, a conceptual explanation, a warning, a best practice, and an FAQ entry all at once. For example, a ticket about a failed action might also contain:
 
 - The steps the agent walked the customer through (**how-to**)
-- Why the roster must be locked first (**concept**)
-- What happens to in-progress events if it isn't (**warning**)
+- Why the file must be locked first (**concept**)
+- What happens to in-progress files if it isn't (**warning**)
 
 **The "why" got captured.** Drafting guidance tells the model to call out explanations of why a step matters. As I noted in the skill, a support conversation is often the only place that reasoning is written down.
 

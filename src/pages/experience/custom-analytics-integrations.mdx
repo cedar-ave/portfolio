@@ -92,7 +92,7 @@ The email domain works as a backup company identifier, and admin status let us f
 
 On article pages, the template pushes a `zendesk_article_view` event with 16 attributes from the page's template objects: article ID, title, URL, author name and ID, created/updated/edited dates, internal and promoted flags, vote and comment counts, and section name and ID.
 
-Content tags took extra work. Our content tags mark which product and credentialing type an article covers, which made them one of the most useful things to report on. But the template objects don't include them, and the Help Center API returns them only as opaque IDs. So the script makes two API calls: one to the Guide content tags endpoint to build an ID-to-name lookup, and one to the article endpoint to get the article's tag IDs. Then it converts the IDs to readable names:
+Content tags took extra work. Our content tags mark which product and app type an article covers, which made them one of the most useful things to report on. But the template objects don't include them, and the Help Center API returns them only as opaque IDs. So the script makes two API calls: one to the Guide content tags endpoint to build an ID-to-name lookup, and one to the article endpoint to get the article's tag IDs. Then it converts the IDs to readable names:
 
 ```js
 async function getArticleContentTagNamesLookup() {
@@ -160,7 +160,7 @@ This turns "this person read something and, at some point, opened a ticket" into
 
 **Seeing which roles read what.** Reports by role could show whether administrators and end users were finding the content written for them.
 
-**Measuring content by product.** Because content tags arrived as readable names, we could compare Salesforce app content with web app content, and provider credentialing with facility credentialing, without matching IDs by hand.
+**Measuring content by product.** Because content tags arrived as readable names, we could compare content from App X with content from App Y, and Feature X with Feature Y, without matching IDs by hand.
 
 **Finding where the documentation fails.** Contact support clicks, combined with the reader's organization and the page they left from, showed exactly which articles and landing pages weren't answering people's questions. That gives the documentation team a prioritized list of pages to fix.
 

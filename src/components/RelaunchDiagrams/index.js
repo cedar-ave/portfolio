@@ -164,9 +164,9 @@ export function HomeBeforeAfter() {
 
   const entries = [
     { t: 'Getting started', s: 'New here? Start here' },
-    { t: 'Salesforce app', s: 'Guides and help' },
+    { t: 'CRM app', s: 'Guides and help' },
     { t: 'Web app', s: 'Guides and help' },
-    { t: 'Source integrations', s: 'Connect your data' },
+    { t: 'Source data', s: 'Connect your data' },
     { t: 'APIs', s: 'Build on the platform' },
   ];
   const ax = 500;
@@ -176,7 +176,7 @@ export function HomeBeforeAfter() {
     <Figure
       titleId="home"
       title="Help site home page before and after the relaunch"
-      desc="Before: a grid of 17 tiles with overlapping titles such as Guides, User Guides, Help, and Resources, and no search bar. After: a large search bar at the top, a row of promoted search terms, and five entry points by product and topic: Getting started, Salesforce app, Web app, Source integrations, and APIs, followed by popular articles and a contact support link."
+      desc="Before: a grid of 17 tiles with overlapping titles such as Guides, User Guides, Help, and Resources, and no search bar. After: a large search bar at the top, a row of promoted search terms, and five entry points by product and topic: Getting started, CRM app, Web app, Source integrations, and APIs, followed by popular articles and a contact support link."
       viewBox="0 0 970 460"
       caption="Illustrative wireframes. Tile titles are examples of the overlap readers faced, not the original labels.">
       <text x={bx} y={40} className={styles.heading}>Before</text>
@@ -198,7 +198,7 @@ export function HomeBeforeAfter() {
       <text x={ax + 52} y={by + 31} className={styles.searchText}>How can we help?</text>
 
       <text x={ax} y={by + 80} className={styles.sub}>Popular searches:</text>
-      {['Add a provider', 'Run a verification', 'Reset password'].map((p, i) => (
+      {['Add an account', 'Run a verification', 'Reset password'].map((p, i) => (
         <g key={p}>
           <rect x={ax + 110 + i * 112} y={by + 66} width={104} height={22} rx={11} className={styles.chip} />
           <text x={ax + 110 + i * 112 + 52} y={by + 81} textAnchor="middle" className={styles.chipText}>{p}</text>
