@@ -32,3 +32,8 @@ AI agent skills:
   label: AI agent skills
   permalink: /ai-agent-skills
   description: tbd
+
+Custom MCPs:
+  label: Custom MCPs
+  permalink: /custom-mcps
+  description: Building custom Model Context Protocol servers that wrap internal APIs so an AI assistant can read and act on the systems I work in directly

@@ -68,6 +68,10 @@ const config = {
         },
         blog: {
           showReadingTime: false,
+          // Show every post in the sidebar (default caps it at the 5 most
+          // recent), so year groups and series stay complete instead of
+          // truncating older posts as new ones are published.
+          blogSidebarCount: 'ALL',
           remarkPlugins: [remarkImageSize],
           feedOptions: {
             type: ['rss', 'atom'],
@@ -122,6 +126,12 @@ const config = {
             to: '/resume',
             label: 'Resume',
             position: 'left',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'tutorialSidebar',
+            position: 'left',
+            label: 'How I built this site',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
           {

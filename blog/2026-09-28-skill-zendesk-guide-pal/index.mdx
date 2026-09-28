@@ -1,0 +1,26 @@
+---
+slug: skill-zendesk-guide-pal
+title: /zendesk-guide-pal
+authors: marla
+tags: [AI agent skills]
+---
+
+import { SafeWrites } from '@site/src/components/SkillDiagrams';
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation.
+
+{/* truncate */}
+
+**What it is**: A skill for Zendesk Help Center operations: article metadata, content tags, labels, redirect rules, and theme management. A custom MCP server with more than 40 tools powers it, and it works in both a production and a sandbox environment.
+
+**Why I built it**: Tagging hundreds of articles, cleaning up labels, and deploying theme changes through the Zendesk UI is slow and risky. I designed the skill to play it safe. It reads from production by default, so I see real data, and writes to sandbox by default, so mistakes can be undone. Writing to production requires my explicit confirmation. The skill adds new tags alongside existing ones instead of replacing them, limits the rate of bulk writes and backs off automatically when Zendesk pushes back, and won't delete a tag or label from the whole Help Center until I confirm its name and ID. For themes, it handles the full cycle of export, edit, preview, package, import, and publish. It checks Zendesk's 10-theme limit before importing and never deletes the original base theme. It can also find the Zendesk article that was published from a given Paligo topic, which connects the two systems.
+
+<SafeWrites />
+
+**Example prompts**:
+
+- *We're working in sandbox today.*
+- *Find all untagged articles in the onboarding section and apply the getting-started content tag.*
+- *Create a 301 redirect from the old Article X to the new one.*
+- *Launch a preview of the theme.*
+- *Deploy the local theme to production.*

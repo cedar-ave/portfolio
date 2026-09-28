@@ -22,28 +22,28 @@ Following is a redacted and genericized example:
 
 ```yaml
 ---
-title: "Account verification"
+title: "Account analysis"
 source_type: "implementation_guide"
 source_url: "https://..."
 created_at: "2026-06-19"
 summary: >
-  Lightweight baseline verification how-to in the CRM app: <redacted steps>.
+  Lightweight baseline analysis how-to in the CRM app: <redacted steps>.
 drafting_guidance: >
-  Source for a short how-to article on <redacted objectives> in the CRM app. Useful as a baseline reference compared to the more elaborate customer-specific guides for <redacted customer organization names> that include <redacted features>. Contains a specific best-practice / warning callout: <redacted errors>. Contains a conceptual note on <reacted feature actions>. Includes <redacted customer-specific field> — flag as customer-specific if drafting generic content. Pair with broader customer verification guides for the full lifecycle.
+  Source for a short how-to article on <redacted objectives> in the CRM app. Useful as a baseline reference compared to the more elaborate customer-specific guides for <redacted customer organization names> that include <redacted features>. Contains a specific best-practice / warning callout: <redacted errors>. Contains a conceptual note on <reacted feature actions>. Includes <redacted customer-specific field> — flag as customer-specific if drafting generic content. Pair with broader customer analysis guides for the full lifecycle.
 platform:
   - crm-app
 section:
-  - record-verification
+  - record-analysis
   - getting-started
 module:
-  - record-verification
+  - record-analysis
   - record-application
-  - verification-workflow
+  - analysis-workflow
 feature:
   - create-record
 workflow:
   - record-onboarding
-  - verification-review
+  - analysis-review
 stage:
   - create
   - submission
@@ -51,7 +51,7 @@ stage:
 object:
   - record
 role:
-  - verification-specialist
+  - analysis-specialist
   - customer-admin
 intent:
   - task-oriented
@@ -85,14 +85,14 @@ The answer wasn't a better prompt. It was a better way to organize the knowledge
 
 ## A faceted taxonomy, not a folder tree
 
-I chose a **faceted** taxonomy over a traditional hierarchy. A folder tree forces every source into one place, but a support ticket about a failed verification check belongs in many places at once. It's about a feature, a workflow, an object, an error, and a user role. With facets, each of those becomes its own independent tag.
+I chose a **faceted** taxonomy over a traditional hierarchy. A folder tree forces every source into one place, but a support ticket about a failed analysis check belongs in many places at once. It's about a feature, a workflow, an object, an error, and a user role. With facets, each of those becomes its own independent tag.
 
 | Facet | What it answers | Example terms |
 | --- | --- | --- |
 | `module` / `feature` | Which part of the product? | `usage-monitoring`, `verify-record` |
-| `workflow` / `stage` | Which process, and at what point? | `record-verification`, `review` |
-| `object` | Which record or data type? | `record`, `verification-event` |
-| `role` | Who is doing this? | `verification-specialist`, `customer-admin` |
+| `workflow` / `stage` | Which process, and at what point? | `record-analysis`, `review` |
+| `object` | Which record or data type? | `record`, `analysis-event` |
+| `role` | Who is doing this? | `analysis-specialist`, `customer-admin` |
 | `intent` | What kind of article can this feed? | `task-oriented`, `conceptual`, `troubleshooting` |
 | `lifecycle` | When in the customer's journey? | `onboarding`, `renewal`, `go-live` |
 | `issue` / `technical` | What broke, and where? | `sync-failure`, `event-driven` |
@@ -119,14 +119,14 @@ The design moves the expensive reading to one step that happens once, and makes 
 3. **Find sources by tags.** Each source becomes one line in a compact index, like this example:
 
    ```plaintext
-   [support_ticket] crm-app records verify-record record-verification
-   task-oriented troubleshooting verification-failure · [Record shows as not found](support_ticket/ticket-12345.md)
+   [support_ticket] crm-app records verify-record record-analysis
+   task-oriented troubleshooting analysis-failure · [Record shows as not found](support_ticket/ticket-12345.md)
    ```
 
    A drafting run scans hundreds of these lines to find candidates, reads a short summary for each match, and opens full files only for sources that are confirmed relevant. Compared with opening every candidate, that cuts reading by 70 to 80 percent.
 4. **Split by workflow.** Per-workflow index files hold full summaries and a short "Use when" note. When the topic is known, the drafter skips the master index and goes straight to the right file.
 
-Because the vocabulary is controlled, matching is exact. `workflow: record-verification` either matches or it doesn't, with no fuzzy search and no second pass to catch synonyms.
+Because the vocabulary is controlled, matching is exact. `workflow: record-analysis` either matches or it doesn't, with no fuzzy search and no second pass to catch synonyms.
 
 ## How the taxonomy drew out better content
 

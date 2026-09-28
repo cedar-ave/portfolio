@@ -1,0 +1,24 @@
+---
+slug: skill-diataxis-drafter
+title: /diataxis-drafter
+authors: marla
+tags: [AI agent skills]
+---
+
+import { TieredReading } from '@site/src/components/SkillDiagrams';
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation.
+
+{/* truncate */}
+
+**What it is**: A drafting skill that writes customer-facing Help Center articles in any Diátaxis type (how-to guide, tutorial, concept, troubleshooting, or reference), using the knowledge base built by source librarian. It reads in three cost-saving tiers: index files first, then metadata headers only, and finally full reads of just the files I've confirmed are relevant.
+
+**Why I built it**: I wanted drafts that are complete, traceable, and easy to review, without paying to read every source file. The tiered approach cuts reading by roughly 70 to 80 percent compared to opening every candidate. A required check across source types makes sure call transcripts and support tickets contribute alongside official guides. The skill copies UI labels word for word, keeps both branches of conditional steps, documents labels that vary by customer environment, and flags gaps and contradictions for review instead of guessing. The articles also work well for AI agents: every checkpoint uses the same "Expected result:" prefix, error messages appear bolded and word for word, troubleshooting articles include symptom-to-cause maps, and concept articles map synonyms to canonical terms. All article templates live in one shared reference file, so every article type has a predictable structure.
+
+<TieredReading />
+
+**Example prompts**:
+
+- *Draft a how-to guide and a troubleshooting article on Feature X.*
+- *Write a concept article about Feature Y.*
+- *Draft how-to, concept, and reference articles for Feature Z.*

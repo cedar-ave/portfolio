@@ -51,9 +51,18 @@
   font-weight: 500;
 }
 
-/* The first year heading should align with the top of the first
+/* The first group heading should align with the top of the first
    article box in the main column, not inherit the spacing used
-   between year groups further down the list. */
-.sidebar > div:first-child > .yearGroupHeading {
+   between groups further down the list. */
+.sidebar > div:first-child > .yearGroupHeading,
+.sidebar > details:first-child > .yearGroupHeading {
   margin-top: 0;
+}
+
+.sidebar summary {
+  cursor: pointer;
+}
+
+.sidebar summary::marker {
+  font-size: 0.8em;
 }

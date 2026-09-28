@@ -1,0 +1,24 @@
+---
+slug: skill-release-notes-drafter
+title: /release-notes-drafter
+authors: marla
+tags: [AI agent skills]
+---
+
+import { ReleaseNoteFilter } from '@site/src/components/SkillDiagrams';
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation.
+
+{/* truncate */}
+
+**What it is**: A skill that drafts customer-facing release notes for one audience per run from a GitHub release, pasted commits, and Jira tickets. It writes a single Markdown file.
+
+**Why I built it**: Engineering changelogs describe what was built, but customers want to know what they gain. The skill reads every Jira ticket in full and applies a clear exclusion filter that drops internal work such as CI/CD changes, refactors, monitoring, and dependency upgrades. It lists every dropped item with a reason, so reviewers can check the call. It rewrites engineering headings as customer value; for example, "Added retry logic to sync job" becomes "Data stays current even when data sources are temporarily down." It also adjusts tone and formatting for each audience, groups changes that apply only to CVO customers, and replaces internal jargon with customer-facing terms.
+
+<ReleaseNoteFilter />
+
+**Example prompts**:
+
+- *Draft release notes for App X version 2.99 from this GitHub release.*
+- *Write API release notes for March 2026 from these Jira keys.*
+- *Draft release notes for App Y from this list of commits.*

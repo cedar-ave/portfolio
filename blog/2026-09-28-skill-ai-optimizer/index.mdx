@@ -1,0 +1,24 @@
+---
+slug: skill-ai-optimizer
+title: /ai-optimizer
+authors: marla
+tags: [AI agent skills]
+---
+
+import { ReviewStack } from '@site/src/components/SkillDiagrams';
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation. This post is the first of three about the content quality optimization skills — `/ai-optimizer`, `/vocabulary-pal`, and `/style-pal` — three independent review skills that each run on a document and feed the same approval step.
+
+{/* truncate */}
+
+<ReviewStack />
+
+**What it is**: A review skill that checks a drafted Help Center article against 25 research-backed criteria for how well AI agents can use it, whether they retrieve it through RAG, web fetch, or MCP tool calling. It returns a report ranked by priority (critical, high, and medium), with a readiness rating for each access pattern. It doesn't edit the article unless I ask it to.
+
+**Why I built it**: AI agents now read help content as often as people do, and they fail in ways people don't. RAG systems pull sections out of order, web fetch strips out images, and tool calling picks pages by title. The skill flags sections that can't stand on their own, acronyms that aren't defined in each section, inconsistent terms for the same thing, unclear pronouns, reworded error messages, screenshots without text equivalents, content hidden in tabs or accordions, generic headings, missing checkpoints, and missing failure modes. Every recommendation names the exact section and includes replacement text I can use as is. I limited it to AI optimization so it works alongside my style and vocabulary skills instead of duplicating them.
+
+**Example prompts**:
+
+- *Run AI optimizer on this troubleshooting article.*
+- *Check just the heading structure of this draft for AI readiness.*
+- *Review this Zendesk article for RAG and web fetch, then apply the critical fixes.*

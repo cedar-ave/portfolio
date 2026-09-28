@@ -1,0 +1,25 @@
+---
+slug: skill-paligo-pal
+title: /paligo-pal
+authors: marla
+tags: [AI agent skills]
+---
+
+import { DocToPaligo } from '@site/src/components/SkillDiagrams';
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation.
+
+{/* truncate */}
+
+**What it is**: A skill for managing content in Paligo, a component content management system, through its REST API. A custom Python MCP server connects Claude to the API. The skill covers documents, folders, forks, images, productions, imports, translation exports and imports, taxonomies, variables, users, and assignments. It also includes a Google Doc to Paligo pipeline that converts a doc into valid DocBook 5.1 XML, uploads its images, and turns Help Center links into Paligo cross-references.
+
+**Why I built it**: Copying approved drafts from Google Docs into Paligo by hand is slow and error-prone. The pipeline applies Paligo's structural rules automatically. It respects section limits (converting extra headings to styled paragraphs), tells procedures apart from ordinary lists, and handles admonitions, tables, and image placement. I documented every API field-name quirk I found in live testing, so the skill avoids known request errors. Safety rules make it fetch the latest XML just before every update, so it never overwrites edits made in the Paligo editor. It also never guesses a document title or folder location.
+
+<DocToPaligo />
+
+**Example prompts**:
+
+- *Convert this Google Doc to Paligo XML.*
+- *Convert this Google Doc and upload it to the Topics folder for the Feature X guide.*
+- *Add the new topic to the publication and start a production.*
+- *Export this document for translation into Spanish and French.*

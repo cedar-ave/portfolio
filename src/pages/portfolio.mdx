@@ -11,10 +11,10 @@ title: Portfolio
 
 | Custom MCP | Description | Details |
 | --- | --- | --- |
-| [Zendesk Guide](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_guide_mcp.py) | A wrapper around the Zendesk Help Center API, including both content management and theming, for performing actions through natural language instead of the UI | |
-| [Zendesk Tickets](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_tickets_mcp.py) | A wrapper around the Zendesk Ticketing API that reads ticket conversations, organization, labels, status, and custom fields for research and content generation | |
-| [Paligo XML CCMS](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/paligo_mcp.py) | A wrapper around the Paligo REST API for managing documents, folders, forks, images, productions, imports, translation exports and imports, taxonomies, variables, users, and assignments | |
-| [Google Drive](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/gdrive_mcp.py) | Primarily used to maximize Markdown conversions; also lists and reads Drive files, reads and writes Docs, Sheets, and Slides, and round-trips Docs through Markdown to avoid the formatting drift of a standard Google Drive connection | |
+| [Zendesk Guide](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_guide_mcp.py) | Wraps the Zendesk Help Center API for content and theming actions via natural language | |
+| [Zendesk Tickets](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_tickets_mcp.py) | Wraps the Zendesk Ticketing API to ingest ticket conversations for Generative AI | |
+| [Paligo XML CCMS](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/paligo_mcp.py) | Wraps the Paligo REST API to manage content structures via natural language | |
+| [Google Drive](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/gdrive_mcp.py) | Maximizes Markdown conversions and round-trips Docs, Sheets, and Slides without formatting drift | |
 
 </div>
 
@@ -24,14 +24,14 @@ title: Portfolio
 
 | Skill | Description | Details |
 | --- | --- | --- |
-| [/ai-optimizer](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/ai-optimizer/SKILL.md) | Reviews a drafted Help Center article against 25 research-backed criteria for how well AI agents can retrieve and use it through RAG, web fetch, or MCP tool calling | |
-| [/diataxis-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/diataxis-drafter/SKILL.md) | Drafts customer-facing Help Center articles in any Diátaxis type using a tiered reading approach that cuts source reading by roughly 70 to 80 percent | |
-| [/paligo-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/paligo-pal/SKILL.md) | Manages content in the Paligo CCMS through its REST API, including a Google Doc to Paligo pipeline that converts a doc into valid DocBook 5.1 XML | |
-| [/release-notes-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/release-notes-drafter/SKILL.md) | Drafts customer-facing release notes for one audience per run from a GitHub release, pasted commits, and Jira tickets | |
-| [/source-librarian](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/source-librarian/SKILL.md) | Catalogs raw knowledge artifacts from any source into tagged, indexed markdown files, maintaining a compact top-level index and per-workflow shard indexes for AI-assisted drafting at scale | |
-| [/style-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/style-pal/SKILL.md) | Audits a document against an organization's custom Technical Style Guide, with the Microsoft Style Guide as a fallback, and applies fixes one at a time on approval | |
-| [/vocabulary-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/vocabulary-pal/SKILL.md) | Audits a document against an organization's custom controlled vocabulary and flags every non-preferred term with a suggested rewrite | |
-| [/zendesk-guide-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/zendesk-guide-pal/SKILL.md) | Manages Zendesk Help Center article metadata, tags, redirects, and theme deployments, reading from production and writing to sandbox by default | |
+| [/ai-optimizer](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/ai-optimizer/SKILL.md) | Reviews a Help Center article against 25 criteria for AI retrieval via RAG, web fetch, or MCP | |
+| [/diataxis-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/diataxis-drafter/SKILL.md) | Drafts Help Center articles in any Diátaxis type, drawing on material ingested by [/source-librarian](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/source-librarian/SKILL.md) | |
+| [/paligo-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/paligo-pal/SKILL.md) | Manages Paligo CCMS content via its REST API, including a Google Doc to DocBook 5.1 pipeline | |
+| [/release-notes-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/release-notes-drafter/SKILL.md) | Drafts release notes for one audience per run from a GitHub release, commits, and Jira tickets | |
+| [/source-librarian](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/source-librarian/SKILL.md) | Catalogs raw knowledge into tagged markdown files for ingestion by Generative AI | [More](/blog/knowledge-ingestion-generative-ai) |
+| [/style-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/style-pal/SKILL.md) | Audits a document against a custom Style Guide, falling back to Microsoft's, and fixes it | |
+| [/vocabulary-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/vocabulary-pal/SKILL.md) | Audits a document against a controlled vocabulary and flags non-preferred terms | |
+| [/zendesk-guide-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/zendesk-guide-pal/SKILL.md) | Manages Zendesk Help Center guides, articles, metadata, tags, redirects, and theme | |
 
 </div>
 

@@ -1,0 +1,22 @@
+---
+slug: mcp-zendesk-ticketing
+title: Zendesk Ticketing MCP
+authors: marla
+tags: [Custom MCPs]
+---
+
+import { TicketPipeline } from '@site/src/components/McpDiagrams';
+
+This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in. The code is proprietary to the company I built it for, so I can't share it here — this covers what it enabled me to do and the results.
+
+{/* truncate */}
+
+**What it is**: This MCP is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). It reads ticket contents, including the user's question and any conversation following. It also reads fields like a users's organization, ticket labels, ticket status, and custom fields like a user's product platform.
+
+**Why I built it**: This is excellent for research and generating help content from ticket conversations. For example:
+
+- *Find tickets closed in the past 3 months where the `Reason` field contains `training issue` and group the tickets into...*
+
+**Roadmap**: A ticket with a **Closed** status doesn't mean the answer provided by the agent was correct. Neither does a user's satisfaction score. That's why help content generated from a ticket can't be trusted as accurate.
+
+<TicketPipeline />

@@ -1,0 +1,20 @@
+---
+slug: skill-vocabulary-pal
+title: /vocabulary-pal
+authors: marla
+tags: [AI agent skills]
+---
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation. It's the second of three content quality optimization skills, alongside [`/ai-optimizer`](/blog/skill-ai-optimizer) and `/style-pal`.
+
+{/* truncate */}
+
+**What it is**: An audit skill that checks a Google Doc, Markdown file, text file, or Word document against an organization's custom controlled vocabulary. It flags every non-preferred term and gives the preferred term, the style guide's reasoning, and a suggested rewrite.
+
+**Why I built it**: Inconsistent terminology confuses readers and hurts search and retrieval. The skill handles details a simple find-and-replace can't: case-sensitive terms, hyphenation, acronyms that must be spelled out on first use, plurals and possessives, exceptions for terms shown literally in the product UI, and look-alike terms that mean different things. When the context is ambiguous, it flags both readings instead of picking one silently.
+
+**Example prompts**:
+
+- *Check this Google Doc against our vocabulary.*
+- *Run vocabulary pal on draft-about-data-verification.md.*
+- *Flag non-preferred terms in these release notes.*

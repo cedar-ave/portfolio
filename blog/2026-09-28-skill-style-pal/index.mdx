@@ -1,0 +1,20 @@
+---
+slug: skill-style-pal
+title: /style-pal
+authors: marla
+tags: [AI agent skills]
+---
+
+This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation. It's the last of three content quality optimization skills, alongside [`/ai-optimizer`](/blog/skill-ai-optimizer) and `/vocabulary-pal`.
+
+{/* truncate */}
+
+**What it is**: An audit skill that checks a document against an organization's custom Technical Style Guide, with the Microsoft Style Guide as a fallback. It returns a numbered list of violations with a suggested fix for each, and I approve fixes one at a time.
+
+**Why I built it**: Consistent style is hard to maintain across many writers, and even harder across AI-generated drafts. The skill checks for ampersands, title case and gerunds in headings, missing serial commas, "click on," quotation marks used for emphasis, split infinitives, third-person instructions, unbolded UI elements and file names, passive voice, and more. The company style guide wins whenever the two guides conflict. Because the report is numbered, I can reply "fix 1, 3, 5" or "fix all," so I stay in control of every change.
+
+**Example prompts**:
+
+- *Run a style check on this Google Doc.*
+- *Review release-notes-2.99.md for style issues.*
+- *Fix 2, 4, and 7, and skip the rest.*
