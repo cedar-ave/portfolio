@@ -100,7 +100,12 @@ These checks affect **all access patterns** and also improve human readability.
 
 15. **Section heading specificity** — Flag generic headings like "Overview," "Details," "Introduction," "More information," or "Additional notes." These give agents no signal about what to retrieve. Each heading should describe its specific content.
 
-16. **Consistent heading patterns** — For same-type articles (e.g., all how-to guides), heading patterns should be consistent and predictable across the content set. If this article deviates from standard patterns for its type, flag the deviation and suggest alignment.
+16. **Consistent heading patterns** — For same-type articles (e.g., all how-to guides), heading patterns should be consistent and predictable across the content set. If this article deviates from the standard pattern for its type, flag the deviation and suggest alignment. Use this as the baseline standard pattern per type (prefer the `diataxis-drafter` skill's `references/templates.md` instead, if it's available in this environment, since that is the authoritative source the articles were drafted against):
+    - **How-to guide:** Prerequisites → numbered steps (one action per step) → verification/expected result → related links
+    - **Tutorial:** Overview of what you'll build → prerequisites → steps → summary of what you learned
+    - **Concept/explanation:** Definition → why it matters → how it works → related concepts → (optional) "X vs. Y" or "This is NOT X"
+    - **Troubleshooting:** Symptom → cause → fix (repeated per issue) → symptom-to-cause map
+    - **Reference:** Scope statement (what it covers / does not cover) → definitions or parameters table → examples → related reference
 
 17. **TL;DR or summary block** — Long pages (more than ~5 sections) benefit from a 2–4 sentence summary at the top. Agents doing a quick scan can extract the gist without processing the full page. Flag long articles missing a summary block.
 
@@ -118,13 +123,13 @@ These checks address information gaps that human readers can fill from context b
 
 **Checks:**
 
-21. **Implicit prerequisites** — Flag any instruction that assumes prior setup without stating it. Phrases like "Configure your endpoint URL…" or "With your credentials ready…" signal an implicit assumption. An agent cannot infer unstated information and will hallucinate or fail silently.
+21. **Implicit prerequisites** — Flag any instruction that assumes prior setup without stating it. Phrases like "Configure your endpoint URL…" or "With your data points ready…" signal an implicit assumption. An agent cannot infer unstated information and will hallucinate or fail silently.
 
 22. **Missing failure modes and error recovery** — Does the article include what to do when things go wrong? Structured error information (symptom, cause, fix) helps agents significantly. Flag procedures that end without a "Common issues" or troubleshooting section.
 
-23. **Missing verification checkpoints** — After key steps in a procedure, readers (and agents) need confirmation signals: "Expected result: The status changes to Active." Flag procedural sections that complete major actions without stating what success looks like.
+23. **Missing verification checkpoints** — After key steps in a procedure, readers (and agents) need confirmation signals: "Expected result: The status changes to Enabled." Flag procedural sections that complete major actions without stating what success looks like.
 
-24. **Code examples — presence and quality** — Removing code examples from technical docs drops LLM pass rates by 30–60%. Flag any technical section that describes an API call, integration, or configurable value without a code example. Also flag code examples that lack inline comments explaining intent.
+24. **Code examples — presence and quality** — Code examples materially improve an agent's ability to correctly reproduce an API call, integration, or configuration, compared to prose description alone. Flag any technical section that describes an API call, integration, or configurable value without a code example. Also flag code examples that lack inline comments explaining intent.
 
 25. **Concept page structure** — For concept/explanation articles: the definition, rationale, and operational implications should be in distinct sections. One concept per page. The article should open with a single-sentence definition using the exact product term. An "X vs. Y" or "This is NOT X" section should be present when confusion with a similar concept is likely. Flag any of these that are missing.
 
@@ -195,22 +200,35 @@ List any checks skipped because they don't apply to this article type or content
 
 #### Quick diagnostic summary
 
+Covers all 25 checks. Use `N/A` in Result for any check listed under "Checks not applicable" above.
+
 | Check | Result | Priority |
 |---|---|---|
-| Self-contained sections (no forward refs) | [Pass / Issue found] | [—/ Critical / High / Medium] |
-| Product name in section bodies | [Pass / Issue found] | |
-| Navigation paths spelled out | [Pass / Issue found] | |
-| Consistent terminology (no synonym cycling) | [Pass / Issue found] | |
-| Acronyms defined per-section | [Pass / Issue found] | |
-| Ambiguous pronouns | [Pass / Issue found] | |
-| Error messages quoted verbatim | [Pass / Issue found] | |
-| Screenshots have text equivalents | [Pass / Issue found] | |
-| Diagrams have text equivalents | [Pass / Issue found] | |
-| Page title is task/question format | [Pass / Issue found] | |
-| Section headings are specific | [Pass / Issue found] | |
-| Implicit prerequisites flagged | [Pass / Issue found] | |
-| Failure modes documented | [Pass / Issue found] | |
-| Verification checkpoints present | [Pass / Issue found] | |
+| [1] No forward/backward references | [Pass / Issue found / N/A] | [—/ Critical / High / Medium] |
+| [2] Prerequisites stated per section | [Pass / Issue found / N/A] | |
+| [3] Product/feature name in section bodies | [Pass / Issue found / N/A] | |
+| [4] Navigation paths spelled out | [Pass / Issue found / N/A] | |
+| [5] Sections front-loaded with scope | [Pass / Issue found / N/A] | |
+| [6] Consistent terminology (no synonym cycling) | [Pass / Issue found / N/A] | |
+| [7] Acronyms defined per-section | [Pass / Issue found / N/A] | |
+| [8] No ambiguous pronouns | [Pass / Issue found / N/A] | |
+| [9] Error messages quoted verbatim | [Pass / Issue found / N/A] | |
+| [10] Screenshots have text equivalents | [Pass / Issue found / N/A] | |
+| [11] Diagrams have text equivalents | [Pass / Issue found / N/A] | |
+| [12] No layout-dependent meaning | [Pass / Issue found / N/A] | |
+| [13] Dynamically loaded content flagged | [Pass / Issue found / N/A] | |
+| [14] Page title is task/question format | [Pass / Issue found / N/A] | |
+| [15] Section headings are specific | [Pass / Issue found / N/A] | |
+| [16] Consistent heading pattern for type | [Pass / Issue found / N/A] | |
+| [17] TL;DR/summary block present (if needed) | [Pass / Issue found / N/A] | |
+| [18] "When to use / not use" block present (if needed) | [Pass / Issue found / N/A] | |
+| [19] Page length matches task complexity | [Pass / Issue found / N/A] | |
+| [20] No unresolved multi-path branching | [Pass / Issue found / N/A] | |
+| [21] Implicit prerequisites flagged | [Pass / Issue found / N/A] | |
+| [22] Failure modes documented | [Pass / Issue found / N/A] | |
+| [23] Verification checkpoints present | [Pass / Issue found / N/A] | |
+| [24] Code examples present and commented (if applicable) | [Pass / Issue found / N/A] | |
+| [25] Concept page structure followed (if applicable) | [Pass / Issue found / N/A] | |
 
 ---
 

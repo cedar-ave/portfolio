@@ -49,9 +49,13 @@ knowledge-stacks/
 
 Each content type offers a different lens on the topic. A thorough evaluation draws from all types, not just the most obvious ones.
 
-**Note on Zendesk tickets:** Tickets are **not** inline in workflow shards. The workflow shards list non-ticket sources only. To discover ticket candidates for a topic, read `_index_tickets.md` after each relevant workflow shard and filter for lines whose space-separated tag list contains the shard's workflow tag word (e.g., for `_index_workflow_monitoring.md`, filter for ticket lines containing `monitoring` as a tag). Treat ticket candidates as first-class — tickets often contain callouts, expected-behavior explanations, error messages, and edge cases not found in implementation guides or GitHub files.
+**Note on `pdf_document` and `release_notes`:** These are two physical directories but **one evaluation content type**. `pdf_document/` holds PDF-format release notes and other internal documents; `release_notes/` holds release notes in other formats. Treat candidates from either directory under the same relevance guidance (see the cross-type table in Step 4) and count them together as a single content type everywhere this document tallies content types by count.
 
-**Note on shard ordering:** Entries inside each shard are sorted primarily by source type (github_file → implementation_guide → help_center → product_assistant → call_transcript → release_notes → wiki_page → other), then by date (newest first). The order is the only ranking signal — there is no Priority Sources table. Older sources sort to the bottom of their type bucket but are not excluded; evaluate them in full just like the recent ones.
+This gives **nine** distinct content types for evaluation purposes: `wiki_page`, `github_file`, `call_transcript`, `help_center`, `pdf_document`/`release_notes` (combined), `product_assistant`, `support_playbook`, `implementation_guide`, `zendesk_ticket`.
+
+**Note on Zendesk tickets:** Tickets are **not** inline in workflow shards; they're catalogued separately in `_index_tickets.md` and discovered via the tag-filtering procedure in Step 3b. Treat ticket candidates as first-class — tickets often contain callouts, expected-behavior explanations, error messages, and edge cases not found in implementation guides or GitHub files.
+
+**Note on shard ordering:** Entries inside each shard are sorted primarily by source type (github_file → implementation_guide → help_center → product_assistant → call_transcript → release_notes → wiki_page → other), then by date (newest first). The order is the only ranking signal — there is no Priority Sources table. Older sources sort to the bottom of their type bucket but are not excluded; evaluate them in full just like the recent ones. This is the canonical sort order referenced elsewhere in this document.
 
 ---
 
@@ -82,10 +86,10 @@ A draft full of flags is a good draft. A draft full of confident-sounding guesse
 
 ## Cost optimization strategy — three-tier reading
 
-This skill handles knowledge stacks that contain thousands of files across seven content types. To minimize token usage, reading happens in three tiers. **Never skip ahead to a higher tier without completing the lower tiers first.**
+This skill handles knowledge stacks that contain thousands of files across nine content types (see "Note on `pdf_document` and `release_notes`" above). To minimize token usage, reading happens in three tiers. **Never skip ahead to a higher tier without completing the lower tiers first.**
 
 - **Tier 1 — Index files only** (very cheap): Read `_index.md` in full (for broad/ambiguous topics), then read every relevant `_index_workflow_<name>.md` shard in full, then read `_index_tickets.md` once and filter its lines by the workflow tag of each shard you read. These files map topics and tags to source file paths with summaries. Do not open any source files at this stage.
-- **Tier 2 — Metadata headers only** (cheap): For each candidate file identified from the indexes, read only the metadata front matter — the block between the opening `---` and closing `---` at the top of the file. Stop reading when the closing delimiter is found. This gives tags, summary, and drafting guidance without reading the actual source content (typically 600+ lines per file). Evaluate candidates across all seven content types.
+- **Tier 2 — Metadata headers only** (cheap): For each candidate file identified from the indexes, read only the metadata front matter — the block between the opening `---` and closing `---` at the top of the file. Stop reading when the closing delimiter is found. This gives tags, summary, and drafting guidance without reading the actual source content (typically 600+ lines per file). Evaluate candidates across all nine content types.
 - **Tier 3 — Full reads, targeted** (necessary, scoped): Only after confirming relevance from the metadata, read the full content of high-relevance files — completely, line by line, to the last line. Do not skim, truncate, or stop early.
 
 Tiers 1 and 2 together typically reduce total reading by 70–80% compared to opening every source file.
@@ -103,7 +107,7 @@ Ask the user for the following. Do not proceed until all required items are prov
 **Optional:**
 3. **Additional context**: Any background about the topic, audience, or scope that will help filter sources.
 
-**The relative location of the knowledge stacks within the repo is fixed at `content-dev/knowledge-stacks/` — do not ask the user to confirm the relative path.** If `STACKS_DIR` (the absolute path for the current environment) has not already been resolved per the session-start instructions above, resolve it now before proceeding. The metadata delimiter is always standard YAML front matter (`---` … `---`).
+**The relative location of the knowledge stacks within the repo is fixed at `content-dev/knowledge-stacks/` — do not ask the user to confirm the relative path.** If `STACKS_DIR` (the absolute path for the current environment) has not already been resolved per the session-start instructions above, resolve it now before proceeding.
 
 Print this confirmation before proceeding:
 
@@ -131,11 +135,11 @@ The knowledge stacks use a two-level index system. Work through both levels comp
 
 ### 3a — Choose a starting point
 
-Before reading the master index, check whether the topic maps to one or more known workflow shard names.
+Before reading the master index, get the actual list of workflow shards: list the files in `<STACKS_DIR>` matching `_index_workflow_*.md` (e.g. with the `Glob` tool). **Never assume a shard name exists from memory or a guess** — a shard filename not present in this listing does not exist, and reading it as if it does is a fabrication under the Safety rules above.
 
 **Workflow shard names** follow the pattern `_index_workflow_<name>.md`.
 
-**If the topic clearly maps to one or more workflow names:** skip reading `_index.md` and go directly to step 3b. Record:
+**If the topic clearly maps to one or more of the listed workflow shard names:** skip reading `_index.md` and go directly to step 3b. Record:
 ```
 MASTER INDEX SKIPPED — topic maps directly to workflow shard(s): [list]
 ```
@@ -163,7 +167,7 @@ From the master index scan, identify which workflow shard(s) are relevant to the
 - Its name matches or overlaps with the topic (e.g., topic "data monitoring" → `_index_workflow_data_monitoring.md`)
 - The master index showed files from that workflow with matching tags
 
-**For each relevant shard, read it in full using the `Read` tool.** Shards are sorted by source type (github_file → implementation_guide → help_center → product_assistant → call_transcript → sf_release_notes → wiki_page → other) then by date (newest first). Older entries are not excluded — they sort to the bottom of their type bucket. Read top-to-bottom and do not skim or stop early.
+**For each relevant shard, read it in full using the `Read` tool.** Shards follow the sort order described in "Note on shard ordering" above. Read top-to-bottom and do not skim or stop early.
 
 **After reading the relevant shard(s), read `_index_tickets.md` once.** This file is sorted newest-ticket-first and contains every cataloged Zendesk ticket as a one-line compact entry. For each shard you read in this session, filter the ticket index for lines that contain that shard's workflow tag — those are the ticket candidates for that workflow. Tickets often map to multiple workflows, so the same ticket can be a candidate for several shards in the same drafting session. Add every matching ticket file path to the candidate list.
 
@@ -192,7 +196,9 @@ Content types represented in candidates:
 - wiki_page: [count] files
 - github_file: [count] files
 - call_transcript: [count] files
-- pdf_document: [count] files
+- help_center: [count] files
+- pdf_document / release_notes (combined): [count] files
+- product_assistant: [count] files
 - support_playbook: [count] files
 - implementation_guide: [count] files
 - zendesk_ticket: [count] files
@@ -204,11 +210,9 @@ If a content type has zero candidates, state explicitly why (e.g., "No zendesk_t
 
 ## Step 4 — Tier 2: Metadata-only scan and cross-type evaluation
 
-For each candidate file from Step 3, read **only the metadata header** — the block between the opening `---` and the closing `---` at the top of the file. Use the `Read` tool with `limit: 100` to fetch just the top of each file.
+For each candidate file from Step 3, read **only the metadata header** — the block between the opening `---` and the closing `---` at the top of the file (see "Metadata header format" in the Appendix). Use the `Read` tool with `limit: 100` to fetch just the top of each file.
 
 **Stop reading each file at the closing `---` delimiter.** Do not read the content body.
-
-The metadata delimiter is standard YAML front matter: a line containing only `---` opens the block and another line containing only `---` closes it.
 
 For each file, record:
 - Full path (from `knowledge-stacks/` root)
@@ -227,7 +231,8 @@ Before finalizing relevance ratings, evaluate the candidates against each conten
 | `wiki_page` | Conceptual definitions, reference data, admin configuration specs | When the topic needs authoritative "what is this" or "how is this configured" content |
 | `github_file` | Technical implementation details, API behavior, field-level specs | When the topic involves integration, field mapping, API calls, or technical setup |
 | `call_transcript` | Real customer workflows, spoken step-by-step procedures, common questions and pain points | When the topic involves a multi-step process customers perform — transcripts often contain undocumented steps |
-| `pdf_document` | Release notes, versioned feature behavior, historical context | When the topic involves a feature whose behavior may have changed across versions |
+| `help_center` | Previously published Help Center articles — existing phrasing, structure, and scope precedent | When an article on this or a closely related topic already exists and should inform tone, structure, or avoid duplicating/contradicting it |
+| `pdf_document` / `release_notes` (combined type) | Release notes, versioned feature behavior, historical context | When the topic involves a feature whose behavior may have changed across versions |
 | `product_assistant` | Curated product knowledge — what features are, how the system works, object/sync behavior, gotchas | When the topic needs authoritative product reference or conceptual grounding spanning the product |
 | `support_playbook` | Known failure modes, escalation paths, internal resolution steps | When the topic has a troubleshooting component or known edge cases |
 | `implementation_guide` | UI navigation with exact button/field labels at each step | When the topic involves a procedural workflow — implementation guides are the most reliable source for verbatim UI labels |
@@ -251,7 +256,11 @@ HIGH: [path] — ...
 HIGH: [path] — ...
 (etc.)
 
-── pdf_document ──
+── help_center ──
+HIGH: [path] — ...
+(etc.)
+
+── pdf_document / release_notes ──
 HIGH: [path] — ...
 (etc.)
 
@@ -439,20 +448,12 @@ Rules for variants:
 ```
 
 **Handling missing information:**
-When a template section requires information that is not present in any source file, write the section heading and insert:
-
-```
-⚠️ REVIEW NEEDED: [Describe specifically what information is missing — e.g., "No source file describes the expected result after clicking Save on the account screen."]
-```
+When a template section requires information that is not present in any source file, write the section heading and insert the ⚠️ REVIEW NEEDED flag (format defined in "Safety rules" above), describing specifically what's missing — e.g., "No source file describes the expected result after clicking Save on the account screen."
 
 Then continue to the next section. Do not stop the draft.
 
 **Handling conflicting information:**
-When two source files provide contradictory information, include both and flag:
-
-```
-⚡ CONFLICT: [Source A path] states: "[exact quote or paraphrase]". [Source B path] states: "[exact quote or paraphrase]". A human reviewer must resolve this before publishing.
-```
+When two source files provide contradictory information, include both and insert the ⚡ CONFLICT flag (format defined in "Safety rules" above), quoting or paraphrasing what each source states.
 
 Do not pick one version. Do not average them. Present both.
 
@@ -584,4 +585,4 @@ One line per ticket, same shape as `_index.md`:
 Sorted by date (newest first). Filter by workflow tag to discover ticket candidates for a workflow.
 
 **`_index_workflow_<name>.md` format:**
-Full entries for non-ticket sources associated with the workflow: file path, source type, ID, created date, status, tags, summary, and "Use when" guidance (capped at 3 sentences). Sorted by source type (github_file → implementation_guide → help_center → product_assistant → call_transcript → sf_release_notes → wiki_page → other), then by date (newest first). Read each relevant shard in full — do not skip sections. Discover ticket candidates separately via `_index_tickets.md`.
+Full entries for non-ticket sources associated with the workflow: file path, source type, ID, created date, status, tags, summary, and "Use when" guidance (capped at 3 sentences). Sorted using the same source-type-then-date order described in "Note on shard ordering" above. Read each relevant shard in full — do not skip sections. Discover ticket candidates separately via `_index_tickets.md`.

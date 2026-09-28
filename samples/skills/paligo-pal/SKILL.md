@@ -86,7 +86,7 @@ Paligo uses HTTP Basic Auth. Credentials are loaded automatically from `plugins/
 |---|---|
 | `list_documents(folder_id?, include_xml?)` | List documents, optionally filtered by folder |
 | `get_document(doc_id)` | Get document properties and XML content |
-| `create_document(name, folder_id, xml_content?)` | Create a document shell (use `subtype=component`; add XML in a separate `update_document` call) |
+| `create_document(name, folder_id, subtype, xml_content?)` | Create a document shell. `subtype` is required — use `"component"`. Add XML in a separate `update_document` call |
 | `update_document(doc_id, name?, xml_content?)` | Update a document's name or XML content |
 | `delete_document(doc_id)` | Delete a document |
 
@@ -114,7 +114,7 @@ Forks define the table of contents structure of a publication. Each fork links a
 
 | Tool | Description |
 |---|---|
-| `search(query)` | Search content using Paligo search operators (JSON string) |
+| `search(query)` | **Broken — returns 422 for all tested query formats on this instance. Do not use.** Use `get_folder(folder_id)` instead to enumerate a folder's children. |
 
 ### Productions
 
@@ -329,7 +329,7 @@ For every hyperlink in the source document, check whether it points to a Help Ce
      d. Call `get_document(UUID)` — the Paligo API accepts UUIDs as path parameters and returns the numeric `id` directly.
   3. If resolved by either method: replace the hyperlink with `<xref xlink:href="urn:resource:component:{id}"/>`. The link text is dropped — Paligo renders the target topic's title at publish time.
   4. If the lookup fails at every step: keep as `<link xlink:href="...">link text</link>` and flag for review.
-  - **Never use `search()`** — returns 422 for all tested query formats. See `references/paligo-api-gotchas.md`.
+  - **Never use `search()`** — see **Available tools → Search** above.
 - **Any other URL** → `<link xlink:href="URL">link text</link>` (external link, no lookup needed).
 
 When a link is replaced by `<xref>`, the link text from the source doc is dropped — Paligo generates the anchor text from the target topic's title at publish time.
@@ -428,7 +428,7 @@ If the Drive HTML export fails (access error), insert a placeholder and note the
 
 Use the full XML wrapper from `references/docbook-spec.md`. For the root `<section>` attributes:
 
-- **Uploading to an existing Paligo document:** call `get_document(paligo_doc_id)` first to retrieve the UUID and resource ID, then use those values.
+- **Uploading to an existing Paligo document:** call `get_document(paligo_doc_id)` first to retrieve the UUID and resource ID, then use those values (see the fresh-fetch rule in **Safety rules**).
 - **Creating a new Paligo document (Step 7):** use placeholder values `xinfo:resource="UUID-placeholder"` and `xinfo:resource-id="0"` for the file output. The real values will be substituted in Step 7 after `create_document` returns them.
 - **Convert-only (no upload planned):** use placeholder values — note them clearly in a comment at the top of the file.
 
@@ -436,7 +436,7 @@ Use the full XML wrapper from `references/docbook-spec.md`. For the root `<secti
 
 Derive a filename from the document title: lowercase, spaces replaced with hyphens, date-suffixed.
 
-Example: a doc titled "Off-cycle credentialing" → `off-cycle-credentialing-2026-08-04.xml`
+Example: a doc titled "Add account" → `add-account-2026-08-04.xml`
 
 Write the complete XML to:
 ```
@@ -449,10 +449,10 @@ Create the `outputs/` directory if it does not exist. After writing, report the 
 
 ### Step 7 — Upload to Paligo (on request)
 
-**Google Doc conversions always create a new document.** Every folder contains a blank placeholder article with the same name as the folder — do not ask the user whether to use it. Skip that article and create a new one. Only ask "updating or creating?" when the user explicitly says they want to update an existing Paligo document (not a Google Doc conversion).
+**Google Doc conversions always create a new document** — never the folder's blank placeholder article (see **Blank placeholder article in every folder** above). Only ask "updating or creating?" when the user explicitly says they want to update an existing Paligo document (not a Google Doc conversion).
 
 **Updating an existing document:**
-1. Call `get_document(paligo_doc_id)` immediately before updating — even if you fetched it earlier in the session — to get the latest XML and avoid overwriting manual edits made in Paligo between steps. Use the UUID and resource ID from this fresh fetch.
+1. Call `get_document(paligo_doc_id)` immediately before updating, per the fresh-fetch rule in **Safety rules** — even if you fetched it earlier in the session. Use the UUID and resource ID from this fresh fetch.
 2. Substitute the real UUID and resource ID into the converted XML (replacing any placeholders).
 3. Confirm the change with the user, then call `update_document(paligo_doc_id, xml_content=<full XML>)`.
 4. Update the output file with the final XML (real IDs substituted).
