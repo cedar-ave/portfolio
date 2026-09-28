@@ -140,15 +140,6 @@ const config = {
         style: 'light',
         links: [
           {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Tutorial',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
             title: 'Links',
             items: [
               {
@@ -156,24 +147,15 @@ const config = {
                 href: 'https://github.com/cedar-ave',
               },
               {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/in/marlasowards',
+              },
+              {
                 label: 'Stack Overflow',
                 href: 'https://stackoverflow.com/users/7848350/hcdocs',
               }
             ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/cedar-ave',
-              },
-            ],
-          },
+          }
         ],
         copyright: `Copyright © ${new Date().getFullYear()} Marla Sowards`,
       },
