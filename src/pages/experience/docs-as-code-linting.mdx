@@ -1,34 +1,26 @@
 ---
 title: 'Linting in Vale'
-description: How I built automated linting for a docs-as-code platform, with a custom Vale house style of 96 rules and a tuned markdownlint config, enforced in the pull request pipeline so every change was checked before it published.
+description: How I built automated linting for a docs-as-code platform, with a custom Vale house style of 96 rules and a tuned markdownlint config, so every change could be checked against the same standard before it published.
 ---
 
 import { LintCheckpoints, ValeFlow, StyleCuration } from '@site/src/components/DocsAsCodeDiagrams';
 
 # Linting in Vale
 
-**I turned a company's style guide into code and made the build pipeline enforce it.** On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), every pull request ran through automated linting before it could merge. I chose Vale to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Linting with custom scripts](/experience/docs-as-code-linting-scripts). The same rules ran in the writer's editor, on the command line, and in the pipeline, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas. With engineers, product managers, and support staff all writing docs, linting in the pipeline is what kept the site consistent.
+On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), I used the Vale linting tool to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Linting with custom scripts](/experience/docs-as-code-linting-scripts). The same rules ran in the writer's editor and on the command line, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas.
 
 The company's details are left out. Rule files and configs on this page are excerpts from my original work, with company-specific terms removed.
 
 :::tip[At a glance]
 
-- **Linting is part of the automated pipeline:** every pull request is linted, and errors block the merge.
-- **One rule set, three checkpoints:** the editor, the command line, and the pipeline all use the same config files from one repo.
-- **Vale house style:** 96 rules for word choice, voice, headings, numbers, punctuation, inclusive language, and docs-as-code problems like leftover merge conflict markers.
+- **Custom style rules enforced by Vale:** 96 rules for word choice, voice, headings, numbers, punctuation, inclusive language, and docs-as-code problems like leftover merge conflict markers.
 - **A spelling list of about 300 product and technical terms**, so real mistakes stand out instead of getting lost in false alarms.
 - **markdownlint tuned for DocFX:** consistent headings and lists, only the HTML the site needs, and no conflict between DocFX page titles and H1s.
 - **Custom scripts** for broken links, missing alt text, unused images, and title mismatches. See [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 
 :::
 
-## Why lint docs at all
-
-The platform had many contributors: writers, engineers, product managers, and support staff, working across many repos. Without automation, consistency depended on an editor catching everything in review. That doesn't scale, and it turns review into a list of nitpicks that makes contributors less willing to help.
-
-Linting moves the mechanical checks out of review and into the tools. The linter flags *utilize* and suggests *use*. The pipeline stops a page with a leftover merge conflict marker before customers see it. People review what only people can check: is it accurate, is it clear, is it what the reader needs.
-
-## One rule set, three checkpoints
+## One rule set, two checkpoints
 
 I kept every linting config in one shared rules repo and used the same files everywhere linting runs.
 
@@ -42,34 +34,7 @@ I kept every linting config in one shared rules repo and used the same files eve
    vale --config vale.ini articles
    ```
 
-3. **In the pipeline.** Every pull request runs the linters automatically. Errors fail the validation build and block the merge. Warnings appear in the pipeline log for the author and reviewers.
-
-Because all three use the same files, a contributor who fixes what the editor underlines already knows the pipeline will pass.
-
-## Linting in the automated pipeline
-
-The pipeline is what turns a style guide from a suggestion into a standard. Linting runs as steps in the pull request validation build, before DocFX builds the site:
-
-```yaml title="Pull request validation (simplified)"
-- script: npx markdownlint-cli 'articles/**/*.md' --config .markdownlint.jsonc
-  displayName: 'Lint Markdown formatting'
-
-- script: vale --config vale.ini --minAlertLevel error articles
-  displayName: 'Lint style, grammar, and spelling'
-
-- powershell: npx gulp
-  displayName: 'Build with DocFX (fails on broken references and duplicate page IDs)'
-```
-
-Each check guards something different:
-
-| Stage | Tool | Fails the build when |
-| --- | --- | --- |
-| Formatting | markdownlint | Headings, lists, or HTML break the shared rules |
-| Style and spelling | Vale | A rule set to `error` finds a problem, such as a merge conflict marker |
-| Site build | DocFX | A cross-reference is broken or two pages share an ID |
-
-Only changes that pass every stage can merge, and merging triggers the publish pipeline. Nothing reaches customers without being linted.
+Because both use the same files, a contributor who fixes what the editor underlines gets the same clean result when anyone lints the whole folder.
 
 ## Why I chose Vale
 
@@ -78,8 +43,8 @@ For style, grammar, and spelling, I chose [Vale](https://vale.sh/), an open-sour
 - **The style guide becomes code.** Vale rules are small YAML files. They live in Git, change through pull requests, and have a history, like the docs they check.
 - **It understands Markdown.** Vale parses the structure of a page, so it skips code blocks and URLs and can apply a rule only to headings, or only to sentences. A code sample never triggers a prose rule, and heading rules check only headings.
 - **It runs anywhere, offline.** Vale is a single program with no runtime to install, and it runs on Windows, macOS, and Linux. Nothing is sent to an outside service, which mattered for unreleased product docs at a healthcare company.
-- **It's fast enough for every pull request.** Vale's own benchmark lints GitLab's docs, 2,827 Markdown pages with 82 rules, in under 20 seconds.
-- **It works in the editor and in the pipeline.** Vale has a VS Code extension and a command-line tool that runs in any build pipeline, so both use the same rules.
+- **It's fast.** Vale's own benchmark lints GitLab's docs, 2,827 Markdown pages with 82 rules, in under 20 seconds.
+- **It works in the editor and on the command line.** Vale has a VS Code extension and a command-line tool, and both read the same rules.
 - **It starts from proven style guides.** Microsoft, Google, and others publish Vale styles, and Vale lists teams at AWS, Microsoft, GitLab, and Docker among its users. I didn't have to write every rule from scratch.
 
 <ValeFlow />
@@ -160,7 +125,7 @@ swap:
   '^\w*ing.*': 'Troubleshooting'
 ```
 
-**Error-level rules** fail the pipeline. A merge conflict marker in a published page is never acceptable, so this rule checks the raw file and stops the build:
+**Error-level rules** flag what must never publish. A merge conflict marker in a published page is never acceptable, so this rule checks the raw file and reports it as an error:
 
 ```yaml title="MergeConflictMarkers.yml"
 extends: existence
@@ -213,10 +178,10 @@ Each rule has a level, which decides where it shows up:
 | Level | Examples | Where it shows up |
 | --- | --- | --- |
 | Suggestion | Sentence length, gerund headings, contractions | In the editor, if the writer lowers the minimum level to see them |
-| Warning | Word choice, future tense, default branch names | In the editor and the pipeline log |
-| Error | Merge conflict markers | Everywhere, and it fails the build |
+| Warning | Word choice, future tense, default branch names | In the editor and on the command line |
+| Error | Merge conflict markers | Everywhere, flagged as a must-fix |
 
-Setting levels was a judgment call for each rule. A rule at `error` must never be wrong, because it blocks a release. A style preference that has good exceptions belongs at `warning` or `suggestion`, where it informs without blocking.
+Setting levels was a judgment call for each rule. A rule at `error` must never be wrong, because writers treat every error as a must-fix. A style preference that has good exceptions belongs at `warning` or `suggestion`, where it informs without blocking.
 
 ## markdownlint, tuned for DocFX
 
@@ -242,7 +207,7 @@ A few of these settings came from how the platform worked:
 
 ## Beyond Vale and markdownlint
 
-Vale and markdownlint check what's inside one file. Some problems live between files, such as a link to a page that moved or an image no page uses, and some need a fix rather than a warning. For those, I wrote custom scripts: fixers that brought existing content up to the markdownlint rules so the pipeline could enforce them, and audits for broken links, unused images, title mismatches, and spelling. They're covered in the companion article, [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
+Vale and markdownlint check what's inside one file. Some problems live between files, such as a link to a page that moved or an image no page uses, and some need a fix rather than a warning. For those, I wrote custom scripts: fixers that brought existing content up to the markdownlint rules in one run, and audits for broken links, unused images, title mismatches, and spelling. They're covered in the companion article, [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
 
 I also used DocFx Companion Tools to check links and catch malformed tables, which break silently in Markdown:
 

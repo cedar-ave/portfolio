@@ -15,7 +15,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Scalable content development',
+    title: 'Scalable content development pipelines',
     link: '/portfolio',
     Svg: require('@site/static/img/code_icon.svg').default,
     description: (

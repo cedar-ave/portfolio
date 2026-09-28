@@ -11,11 +11,13 @@ import {
   PublishPipeline,
 } from '@site/src/components/DocsAsCodeDiagrams';
 
-# A DocFX platform built from scratch
+# A docs-as-code platform built from scratch
 
 ![docs site home page](/img/dos-docs-home-page.png)
 
-**I designed and built a company's entire docs-as-code platform from scratch, from the first `npm install` to automated deployments in production.** I chose the tools, wrote the build scripts, engineered a shared theme that every docs site installs as an npm package, generated .NET and REST API reference directly from source code and API specs, wired in automated quality checks, and wrote the pipelines that publish every site to cloud storage on merge. I chose DocFX because it was one of the only static site generators that supported .NET API documentation, which the company needed. The result was a customer help site for a suite of healthcare data applications, assembled from many repos and several product versions, that any writer or engineer could contribute to with Git and Markdown and that ran with very little overhead.
+I designed and built a company's docs-as-code platform, starting from an empty repo and taking it through to automated production deployments. The work covered selecting the toolchain, writing the build scripts, and creating a shared theme that every docs site installs as an npm package. It also covered setting up generation of .NET and REST API reference directly from source code and API specs, adding automated quality checks, and writing the CI/CD pipelines that publish each site to cloud storage on merge. DocFX won out over other static site generators specifically because it supported .NET API documentation, which the project required.
+
+The result was a customer-facing help site for a suite of healthcare data applications, pulling content from multiple repos and several product versions into one site. Writers and engineers could contribute using standard Git and Markdown workflows, and the platform ran with minimal ongoing maintenance.
 
 The company's details are left out. Code samples on this page are simplified from my original work, and names, URLs, and storage accounts are replaced with placeholders.
 

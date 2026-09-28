@@ -606,22 +606,21 @@ export function ReleaseNotesFlow() {
 
 export function LintCheckpoints() {
   const stages = [
-    { x: 20, kind: 'platform', l: [{ t: 'In the editor' }, { t: 'VS Code extensions', c: 'sub' }, { t: 'underline as you type', c: 'sub' }] },
-    { x: 270, kind: 'platform', l: [{ t: 'On the command line' }, { t: 'lint a whole folder', c: 'sub' }, { t: 'before you push', c: 'sub' }] },
-    { x: 520, kind: 'hub', l: [{ t: 'In the pipeline', c: 'hubTitle' }, { t: 'every pull request,', c: 'hubSub' }, { t: 'errors block the merge', c: 'hubSub' }] },
+    { x: 90, kind: 'platform', l: [{ t: 'In the editor' }, { t: 'VS Code extensions', c: 'sub' }, { t: 'underline as you type', c: 'sub' }] },
+    { x: 400, kind: 'hub', l: [{ t: 'On the command line', c: 'hubTitle' }, { t: 'lint a whole folder', c: 'hubSub' }, { t: 'at once', c: 'hubSub' }] },
   ];
-  const w = 210;
+  const w = 230;
   const y = 170;
   const h = 80;
-  const src = { x: 245, y: 40, w: 260, h: 70 };
+  const src = { x: 260, y: 40, w: 260, h: 70 };
 
   return (
     <Figure
       titleId="dac-lint-checkpoints"
-      title="One shared rule set enforced at three checkpoints"
-      desc="A central rules repo holds the markdownlint config, the Vale config, 96 house style rules, and a spelling ignore list. The same rules run in three places: in the VS Code editor as the writer types, on the command line against a whole folder before pushing, and in the pull request pipeline, where errors block the merge. Changes that pass are merged and published."
+      title="One shared rule set used at two checkpoints"
+      desc="A central rules repo holds the markdownlint config, the Vale config, 96 house style rules, and a spelling ignore list. The same rules run in two places: in the VS Code editor as the writer types, and on the command line against a whole folder at once. Clean content is then merged and published."
       viewBox="0 0 900 290"
-      caption="Writers see the same results in their editor that the pipeline enforces, so nothing in the pipeline comes as a surprise.">
+      caption="Writers see the same results in their editor as a full-folder lint, so every check uses one standard.">
       <defs>
         <ArrowMarker id="lc-arrow" />
       </defs>
@@ -633,9 +632,8 @@ export function LintCheckpoints() {
           markerEnd="url(#lc-arrow)"
         />
       ))}
-      <path d={`M230,${y + h / 2} L268,${y + h / 2}`} className={styles.edge} markerEnd="url(#lc-arrow)" />
-      <path d={`M480,${y + h / 2} L518,${y + h / 2}`} className={styles.edge} markerEnd="url(#lc-arrow)" />
-      <path d={`M730,${y + h / 2} L768,${y + h / 2}`} className={styles.edge} markerEnd="url(#lc-arrow)" />
+      <path d={`M${90 + w},${y + h / 2} L398,${y + h / 2}`} className={styles.edge} markerEnd="url(#lc-arrow)" />
+      <path d={`M${400 + w},${y + h / 2} L708,${y + h / 2}`} className={styles.edge} markerEnd="url(#lc-arrow)" />
 
       <Box
         x={src.x}
@@ -646,9 +644,9 @@ export function LintCheckpoints() {
         lines={[{ t: 'Shared rules repo' }, { t: '.markdownlint.jsonc, vale.ini,', c: 'sub' }, { t: '96 rules, spelling list', c: 'sub' }]}
       />
       {stages.map((s) => (
-        <Box key={s.x} x={s.x} y={y} w={w} h={h} kind={s.kind} lines={s.l} />
+        <Box key={s.x} x={s.x} y={y} w={w} h={h} kind={s.kind} rx={s.kind === 'hub' ? 10 : 8} lines={s.l} />
       ))}
-      <Box x={770} y={y} w={110} h={h} kind="deploy" lines={[{ t: 'Merge' }, { t: '+ publish', c: 'sub' }]} />
+      <Box x={710} y={y} w={140} h={h} kind="deploy" lines={[{ t: 'Merge' }, { t: '+ publish', c: 'sub' }]} />
     </Figure>
   );
 }
@@ -668,14 +666,14 @@ export function ValeFlow() {
   const gap = 40;
   const outs = [
     { y: 20, t: 'Editor underline', s: 'fix while writing' },
-    { y: 110, t: 'Pipeline log', s: 'errors fail the build' },
+    { y: 110, t: 'Command-line report', s: 'lint a whole folder' },
   ];
 
   return (
     <Figure
       titleId="dac-vale-flow"
       title="How Vale checks a page"
-      desc="Vale reads a Markdown page, parses its markup so it can skip code blocks and URLs, applies each rule only to its scope, such as headings, sentences, paragraphs, or raw text, and produces alerts at the suggestion, warning, or error level. Alerts appear as underlines in the editor and as entries in the pipeline log, where errors fail the build."
+      desc="Vale reads a Markdown page, parses its markup so it can skip code blocks and URLs, applies each rule only to its scope, such as headings, sentences, paragraphs, or raw text, and produces alerts at the suggestion, warning, or error level. Alerts appear as underlines in the editor and as entries in the command-line report."
       viewBox="0 0 960 210"
       caption="Because Vale understands Markdown, a rule about headings checks only headings, and code samples never trigger prose rules.">
       <defs>
@@ -759,7 +757,7 @@ export function StyleCuration() {
         lines={[{ t: 'Linting style', c: 'hubTitle' }, { t: '96 rules', c: 'hubSub' }, { t: '+ spelling list', c: 'hubSub' }]}
       />
       <Box x={650} y={70} w={230} h={58} kind="platform" lines={[{ t: 'vale.ini' }, { t: 'BasedOnStyles = Linting', c: 'mono' }]} />
-      <Box x={650} y={162} w={230} h={58} kind="deploy" lines={[{ t: 'Editor, CLI, pipeline' }, { t: 'same results everywhere', c: 'sub' }]} />
+      <Box x={650} y={162} w={230} h={58} kind="deploy" lines={[{ t: 'Editor and command line' }, { t: 'same results everywhere', c: 'sub' }]} />
     </Figure>
   );
 }
