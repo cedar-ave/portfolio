@@ -426,6 +426,11 @@ table td:first-child {
   padding-left: 10px;
 }
 
+.nowrap-col1 table th:first-child,
+.nowrap-col1 table td:first-child {
+  white-space: nowrap;
+}
+
 table th:last-child,
 table td:last-child {
   padding-right: 10px;

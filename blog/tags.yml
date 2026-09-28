@@ -17,3 +17,18 @@ Governance:
   label: Governance
   permalink: /governance
   description: Ensuring content follows processes around creating and retiring content
+
+Generative AI:
+  label: Geneartive AI
+  permalink: /generative-ai
+  description: tbd
+
+Knowledge classification:
+  label: Knowledge classification
+  permalink: /knowledge-classification
+  description: tbd
+
+AI agent skills:
+  label: AI agent skills
+  permalink: /ai-agent-skills
+  description: tbd

@@ -5,7 +5,7 @@ Covers: articles, sections, categories, content tags, labels, article search, re
 
 Supports two environments:
   - prod    ({instance}.zendesk.com) — write tools require target="prod" explicitly
-  - sandbox ({instance-12345}.zendesk.com) — write tools default here for safety
+  - sandbox ({instance}-sandbox.zendesk.com) — write tools default here for safety
 """
 
 import base64
