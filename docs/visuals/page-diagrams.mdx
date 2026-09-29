@@ -1,0 +1,45 @@
+---
+sidebar_position: 4
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Page diagrams
+
+<QuickReference>
+
+- To change a figure used on an experience page: edit the matching `*Diagrams` folder under `src/components`, not the `.mdx` page (the page only imports and places the figure).
+- To change shared visual style within a folder (spacing, colors, frame look): edit that folder's `styles.module.css` and its shared helpers (`Figure`, `Box`, `DashFrame`, `Segmented`, etc.) in that folder's `index.js`.
+- To add a new figure: export a new component from the relevant folder's `index.js`, then import and place it in the target `.mdx` page.
+- Dashboard mockup data (for example in `AwarenessDashboard`, `DeflectionDashboard`, `WorkItemSimulator`) is illustrative, not real company data. Check the constants near the top of each file before assuming otherwise.
+
+</QuickReference>
+
+## What these are
+
+Each `*Diagrams` folder under `src/components` is a set of bespoke inline-SVG figures and small interactive dashboard mockups written for one experience page, not shared, reusable components. They are not registered in `src/theme/MDXComponents.js`. Each experience `.mdx` page imports the named exports it needs directly:
+
+```mdx
+import { SourceMap, JoinModel, AwarenessDashboard } from '@site/src/components/AnalyticsDiagrams';
+
+<SourceMap />
+```
+
+They take no props. Each exported component is a self-contained figure with its data baked in. A shared set of internal helpers (`Figure`, `Box`, `DashFrame`, `Segmented`, etc.) in each folder's `index.js` keeps the figures in a folder visually consistent, styled by that folder's `styles.module.css`.
+
+## Folder to page map
+
+| Component folder | Used by | Exports |
+| --- | --- | --- |
+| `AnalyticsDiagrams` | `src/pages/experience/analytics-dashboard-design.mdx` | `SourceMap`, `JoinModel`, `AwarenessDashboard`, `DeflectionDashboard`, `ArticleAgeComparison` |
+| `ApiDocsDiagrams` | `src/pages/experience/api-documentation.mdx` | `TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources` |
+| `DocsAsCodeDiagrams` | `src/pages/experience/docs-as-code.mdx`, `docs-as-code-contributions.mdx`, `docs-as-code-customizations.mdx`, `docs-as-code-linting.mdx` | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop` |
+| `IntakeDiagrams` | `src/pages/experience/content-intake.mdx` | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
+| `McpDiagrams` | `src/pages/experience/custom-mcps.mdx` | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
+| `RelaunchDiagrams` | `src/pages/experience/help-site-relaunch.mdx` | `EvidenceToDecisions`, `HomeBeforeAfter` |
+| `ReleaseNotesDiagrams` | `src/pages/experience/automated-release-notes.mdx` | `TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator` |
+| `SkillDiagrams` | `src/pages/experience/ai-agent-skills.mdx` | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
+
+## Source
+
+`src/components` (folders ending in `Diagrams`)

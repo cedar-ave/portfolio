@@ -1,0 +1,87 @@
+---
+sidebar_position: 13
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Blog post cards and tags
+
+The blog list page, individual post pages, and the tag archive/overview pages all use swizzled (overridden) copies of Docusaurus's default blog theme components, plus matching CSS in `src/css/custom.css`. None of this exists in the classic template, which uses the stock theme components unmodified. This page is the map of what was changed and why, so a future theme upgrade (`npm run swizzle`) that touches these files doesn't silently drop the customizations.
+
+<QuickReference>
+
+- Whole-card click target on the blog list page: `src/theme/BlogPostItem/index.js` + `.stretchedLink` in its `styles.module.css`.
+- Card background/hover/spacing (the gray rounded "card" look): `.blogPostCard` rules in `src/css/custom.css`.
+- "Tags:" label removed from the inline tag list: `src/theme/TagsListInline/index.js`.
+- Tag archive page headline (`12 posts tagged with docs-as-code` with the tag name in code font instead of quotes): `src/theme/BlogTagsPostsPage/index.js`.
+- Tags overview page (`/blog/tags`) letter-block styling and tag pill recoloring: the `.blog-tags-list-page` block in `src/css/custom.css`.
+- Author avatar sizing per context (h1 on a post page vs. h2 in a list): `src/theme/Blog/Components/Author/styles.module.css`.
+- Blog post title sizing in list view vs. post view: `src/theme/BlogPostItem/Header/Title/styles.module.css`.
+- To see a LinkedIn preview, test in the [Post Inspector](https://www.linkedin.com/post-inspector/inspect/https:%2F%2Fwww.marlasowards.com).
+
+</QuickReference>
+
+## Swizzled components, and what each one actually changes
+
+All of these live under `src/theme/` and shadow a `@theme/...` component of the same name from `@docusaurus/theme-classic`. Most of the file is copied from upstream unchanged (required, since swizzling replaces the whole component) — the list below is only the part that differs from stock.
+
+### `BlogPostItem/index.js` — whole-card click target
+
+In list view (the blog index and tag archive pages), an invisible `<Link>` is stretched over the entire card via `position: absolute; inset: 0` (`.stretchedLink` in `styles.module.css`), so clicking anywhere on the card opens the post — not just the title. It sits below the title and tag links in paint order (they come later in the DOM, so they receive clicks first), which is what keeps those still independently clickable/hoverable on top of the stretched link.
+
+```css title="src/theme/BlogPostItem/styles.module.css"
+.stretchedLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+```
+
+### `BlogPostItem/Container/index.js` — the `blogPostCard` class hook
+
+```js title="src/theme/BlogPostItem/Container/index.js"
+<article className={clsx('blogPostCard', className)}>{children}</article>
+```
+
+Stock theme-classic doesn't add a class here at all. `blogPostCard` exists purely so `custom.css` has a stable selector to hang the card styling on (see [Global CSS overrides](../site-config/global-css)) without fighting Infima's own `article` defaults.
+
+### `TagsListInline/index.js` — "Tags:" label removed
+
+Stock renders a translated "Tags:" label before the tag pills. This override drops that label entirely and renders just the `<ul>` of tag pills — a copy of upstream with the label paragraph deleted.
+
+### `BlogTagsPostsPage/index.js` — tag name in code font
+
+Stock renders the tag archive page headline as a plain translated string, e.g. `12 posts tagged with "docs-as-code"`, with the tag name in quotes as part of the string. This override regex-matches the trailing `"tagName"` out of that translated string and re-renders it as `<code>tagName</code>` instead of quoted plain text, keeping the rest of the (translatable, pluralized) string intact:
+
+```js title="src/theme/BlogTagsPostsPage/index.js"
+const match = title.match(/^(.*)"(.*)"$/);
+// ...
+<Heading as="h1">{prefix}<code>{tagName}</code></Heading>
+```
+
+If the upstream translated string format ever changes shape (e.g. tag name no longer wrapped in `"..."`), this regex silently falls through to the plain heading (the `if (!match)` branch) rather than breaking — worth knowing if the code styling stops appearing after a Docusaurus upgrade.
+
+### `Blog/Components/Author/styles.module.css` — avatar sizing per usage
+
+Stock theme-classic already supports an `as="h1" | "h2"` prop that changes avatar size contextually (post page vs. list), but this site's copy tunes the actual pixel values (`--ifm-avatar-photo-size`: 7rem for `h1`, 5.4rem for `h2`, 3.6rem default) and the name/title font sizes per mode. If author avatars look wrong after a swizzle refresh, this is the file to re-check.
+
+### `BlogPostItem/Header/Title/styles.module.css` — list vs. post title size
+
+```css title="src/theme/BlogPostItem/Header/Title/styles.module.css"
+.titleInList {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -.3px;
+  line-height: 1.2;
+}
+```
+
+Only applies when `isBlogPostPage === false` (i.e., the title is rendered as a link inside a list card, not the post's own `<h1>`) — the individual post page's title uses Infima's default `h1` styling instead, tuned separately by the global `h1` rule in `custom.css`.
+
+## Related CSS in `custom.css`
+
+The card look (gray rounded background, hover lift, tag/count pill recoloring on the tags overview page) is plain global CSS, not part of any swizzled component — see [Global CSS overrides](../site-config/global-css) for the full `.blogPostCard` / `.blog-tags-list-page` rule set, since it applies to blog list, tag archive, and tags overview pages together and is easier to read as one block.
+
+## If you re-swizzle any of these
+
+Running `npm run swizzle` regenerates a component from the *current* installed Docusaurus version's stock source, overwriting the customization described here. Before re-swizzling `BlogPostItem`, `TagsListInline`, `BlogTagsPostsPage`, `Blog/Components/Author`, or anything under `BlogSidebar` (see [Blog post series](../blog-post-series) for that one), diff the regenerated file against git history for the customization described on this page, and reapply it.

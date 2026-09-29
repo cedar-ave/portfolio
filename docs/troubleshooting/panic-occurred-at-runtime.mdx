@@ -1,0 +1,35 @@
+---
+sidebar_position: 6
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Troubleshooting
+
+<QuickReference>
+
+- Seeing "Panic occurred at runtime. react-router-config.js not found"? Clear the Docusaurus cache, wipe dependencies and lockfiles, then reinstall (commands below).
+
+</QuickReference>
+
+## Panic occurred at runtime. react-router-config.js not found
+
+```bash
+# Clear Docusaurus cache
+npm run clear # or yarn clear / pnpm clear
+
+# Remove dependencies and lockfiles
+rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml
+
+# Reinstall cleanly
+npm install # or yarn install / pnpm install
+```
+
+## Open items
+
+These are not customizations, just outstanding cleanup tracked here so they are not lost:
+
+- Remove unused gfonts
+- SEO
+- Accessibility
+- Link checker in pipeline

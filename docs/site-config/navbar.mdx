@@ -1,0 +1,65 @@
+---
+sidebar_position: 7
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Navbar
+
+<QuickReference>
+
+- Edit items in `docusaurus.config.js` under `themeConfig.navbar.items`.
+- Every item is a flat link to a standalone page in `src/pages/` (About/Portfolio/Resume) except "How I built this site", which uses `type: 'docSidebar'` to link straight to the first doc in `tutorialSidebar` — it follows `sidebars.js` automatically if that changes.
+- Logo/title spacing (`.navbar__logo`, `.navbar__brand`) and nav link font weight are set in `src/css/custom.css` — see [Global CSS overrides](global-css).
+- There's CSS in `custom.css` for a multi-level dropdown nav item, but the navbar currently has no nested dropdowns — see the dormant-dropdown note on [Global CSS overrides](global-css).
+
+</QuickReference>
+
+## Configuration
+
+```js title="docusaurus.config.js"
+navbar: {
+  title: 'Home',
+  logo: { alt: 'site logo', src: 'img/json.svg' },
+  items: [
+    { to: '/about', label: 'About', position: 'left' },
+    { to: '/portfolio', label: 'Portfolio', position: 'left' },
+    { to: '/resume', label: 'Resume', position: 'left' },
+    { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'How I built this site' },
+    { to: '/blog', label: 'Blog', position: 'left' },
+    { href: 'https://www.linkedin.com/in/marlasowards', label: 'LinkedIn', position: 'right' },
+    { href: 'https://github.com/cedar-ave', label: 'GitHub', position: 'right' },
+  ],
+},
+```
+
+The classic template's navbar instead links `to: '/docs/intro'` and `to: '/blog'` with a single GitHub icon link on the right. This site replaced the docs link with `docSidebar`, added About/Portfolio/Resume, and swapped the single GitHub icon for labeled LinkedIn + GitHub links.
+
+## The `docSidebar` item
+
+```js
+{ type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'How I built this site' },
+```
+
+Instead of hardcoding `to: '/docs/intro'` (or whatever the first doc happens to be), this item type resolves at build time to whatever the first document in the named sidebar (`tutorialSidebar`, defined in `sidebars.js`) currently is. If you reorder or rename docs in `sidebars.js`, this nav link updates on its own — no `docusaurus.config.js` edit needed.
+
+## Logo and title
+
+```js
+title: 'Home',
+logo: { alt: 'site logo', src: 'img/json.svg' },
+```
+
+`title: 'Home'` is the text shown next to the logo in the navbar (distinct from the site's actual `<title>`/`title` field used for `<head>` metadata, set separately — see [Site metadata](site-metadata)). The logo file itself (`static/img/json.svg`) is unrelated to the favicon or social card image; those are documented on [Site metadata](site-metadata).
+
+## Styling
+
+Spacing and font weight for the navbar live in `src/css/custom.css`, not in `docusaurus.config.js`:
+
+```css title="src/css/custom.css"
+.navbar__logo { margin-right: 1.5rem; }
+.navbar__brand { margin-right: .7rem; }
+.navbar__link, .navbar__title { font-weight: 400; }
+```
+
+The font-weight override thins Infima's default bolder nav link weight back down to match the Roboto body weight used elsewhere on the site. See [Global CSS overrides](global-css) for the rest of the sitewide CSS these live alongside.

@@ -1,0 +1,61 @@
+---
+sidebar_position: 8
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Footer
+
+<QuickReference>
+
+- Edit links in `docusaurus.config.js` under `themeConfig.footer.links`.
+- `style: 'light'` — the classic template ships `'dark'`.
+- Actual colors (background, text, link, title) are overridden separately in `src/css/custom.css`, layered on top of whichever `style` is set here.
+- Copyright text is a template literal in `docusaurus.config.js`, so the year updates itself every build — no annual edit needed.
+
+</QuickReference>
+
+## Configuration
+
+```js title="docusaurus.config.js"
+footer: {
+  style: 'light',
+  links: [
+    { title: 'Links', items: [
+      { label: 'GitHub', href: 'https://github.com/cedar-ave' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/marlasowards' },
+      { label: 'Stack Overflow', href: 'https://stackoverflow.com/users/7848350/hcdocs' },
+    ]},
+  ],
+  copyright: `Copyright © ${new Date().getFullYear()} Marla Sowards`,
+},
+```
+
+The classic template ships a three-column Docs/Community/More layout pointing at Docusaurus's own docs, Discord, and GitHub. This site replaces it with a single "Links" column of the author's own profile links, and switches `style` from `'dark'` to `'light'`.
+
+## Adding a link
+
+Add another `{ label, href }` object to the `items` array, or add a whole new `{ title, items }` object to `links` for a second column. Docusaurus lays out up to a few columns responsively; no CSS changes needed for a new column.
+
+## Color overrides
+
+`style: 'light'` only picks Infima's built-in light-footer variable defaults. This site overrides those specific variables again in `src/css/custom.css` with its own light-gray/navy scheme:
+
+```css title="src/css/custom.css"
+.footer {
+  --ifm-footer-background-color: #E6EDF5;
+  --ifm-footer-color: #202124;
+  --ifm-footer-link-color: #333333;
+  --ifm-footer-title-color: var(--palette-navy);
+  background-color: #E6EDF5;
+  padding-top: 2.5rem;
+}
+
+.footer__copyright {
+  font-size: 14px;
+  margin-top: 2rem;
+  text-align: left;
+}
+```
+
+`--ifm-footer-title-color` reuses the shared `--palette-navy` custom property (see [Colors](../styling/colors)) rather than hard-coding the hex again. `.footer__copyright` is left-aligned here — Infima centers it by default. See [Global CSS overrides](global-css) for the rest of the sitewide CSS this lives alongside.

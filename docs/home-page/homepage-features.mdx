@@ -1,0 +1,35 @@
+---
+sidebar_position: 3
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Homepage features
+
+<QuickReference>
+
+- To change the three "what I do" cards (title, link, icon, description): edit the `FeatureList` array directly in `src/components/HomepageFeatures/index.js`.
+- To change where the row appears: edit `src/pages/index.js`.
+- Not registered globally, so it is not available as an MDX tag in docs or blog posts.
+
+</QuickReference>
+
+## What it does
+
+Renders the three-column "what I do" feature row on the homepage (`src/pages/index.js`).
+
+## Usage
+
+```jsx
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
+
+<HomepageFeatures />
+```
+
+## Editing content
+
+Content (title, link, icon, description) lives in the `FeatureList` array inside the component itself. Edit `src/components/HomepageFeatures/index.js` directly rather than passing props.
+
+## Source
+
+`src/components/HomepageFeatures`

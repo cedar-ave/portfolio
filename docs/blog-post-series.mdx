@@ -1,0 +1,71 @@
+---
+sidebar_position: 2
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Blog post series in the sidebar
+
+The blog sidebar (the "recent posts" nav shown on every blog page) can group related posts into a named series — like **Series: Custom MCPs** or **Series: AI Agent Skills** — instead of listing every post under its year. This page documents how that works and why it's built this way, so future changes don't have to be re-discovered from scratch.
+
+<QuickReference>
+
+To add a post to a series:
+
+1. Open [`src/data/blogSeries.ts`](https://github.com/cedar-ave/portfolio/blob/main/src/data/blogSeries.ts).
+2. Add the post's slug (the part of its URL after `/blog/`) to the right series' `slugs` array.
+
+```ts title="src/data/blogSeries.ts"
+{
+  id: 'custom-mcps',
+  title: 'Series: Custom MCPs',
+  slugs: [
+    'mcp-zendesk-guide',
+    'mcp-zendesk-ticketing',
+    // add a new post's slug here
+  ],
+},
+```
+
+To create a whole new series, add another object to the `blogSeries` array with a unique `id`, a `title` (this is the heading shown in the sidebar), and a `slugs` array. No other file needs to change.
+
+A post in a series is automatically removed from the plain year list — it only shows once, under its series.
+
+**Things worth knowing before you touch this again:**
+
+- Series sections render above the year groups (2026, 2025, ...), and each one is a closed-by-default dropdown (`<details>`/`<summary>`). A visitor has to click a series to expand it. Year groups are not collapsible.
+- The blog plugin's sidebar defaults to showing only the **5 most recent posts**. That default was overridden to show every post ([`blogSidebarCount: 'ALL'`](#why-every-post-has-to-be-in-the-sidebar-data) in `docusaurus.config.js`) — don't remove it, or newer posts will silently push older ones out of both the year list and the series (see below).
+- After editing `docusaurus.config.js`, restart the dev server (`npm start`) — config changes aren't picked up by hot reload.
+- A post can belong to more than one series by adding its slug to more than one array.
+- Draft posts (`draft: true` in frontmatter) still show in `npm start` but are excluded from `npm run build`, same as any other Docusaurus blog post.
+
+</QuickReference>
+
+## Why this exists
+
+The blog's default Docusaurus sidebar only groups posts by year. When a batch of posts belongs to a multi-part series — like the MCP write-ups or the AI agent skill write-ups, each originally one long draft article split into one post per topic — a flat year list buries the connection between them and makes the series hard to read in order. This feature adds series grouping on top of the year list without changing how posts are authored (still plain frontmatter, no new content type).
+
+## How it works
+
+### The data file
+
+[`src/data/blogSeries.ts`](https://github.com/cedar-ave/portfolio/blob/main/src/data/blogSeries.ts) is a plain list of `{ id, title, slugs }` objects — no plugin, no frontmatter convention, just an array to edit by hand. Series membership lives here instead of in each post's frontmatter because the sidebar itself only has access to `title`, `permalink`, `unlisted`, and `date` for each post ([`BlogSidebarItem`](https://github.com/facebook/docusaurus/blob/main/packages/docusaurus-plugin-content-blog/src/plugin-content-blog.d.ts) doesn't carry frontmatter), so there was no clean way to read a custom frontmatter field from inside the sidebar component anyway.
+
+### The swizzled sidebar component
+
+[`src/theme/BlogSidebar/Content/index.tsx`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogSidebar/Content/index.tsx) is a swizzled override of Docusaurus's default `BlogSidebar/Content` theme component. On top of the stock year-grouping logic, it:
+
+1. Matches each sidebar item's permalink against `blogSeries` slugs to split `items` into series buckets and "everything else."
+2. Renders each non-empty series as a `<details>`/`<summary>` group (closed by default).
+3. Runs the original year-grouping logic on the remaining ("everything else") items.
+4. Renders series sections first, then the year groups.
+
+[`src/theme/BlogSidebar/Desktop/styles.module.css`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogSidebar/Desktop/styles.module.css) has matching CSS: cursor styling for the `<summary>`, and an updated "no top margin on the first group" rule that now also matches when a series (`<details>`) is the first item instead of a year (`<div>`).
+
+### Why every post has to be in the sidebar data
+
+Docusaurus's blog plugin has a `blogSidebarCount` option that defaults to **5** — it silently trims the sidebar's `items` prop down to the 5 most recent posts *before* that prop ever reaches `BlogSidebar/Content`. The series-grouping logic above has no visibility into posts that never arrive.
+
+This surfaced as a real bug during development: adding 4 same-day MCP posts pushed an older, unrelated post (`how-to-choose-open-source-ssgs`) out of the 5-post cap entirely, so it silently disappeared from the sidebar — not because of anything wrong with the series-matching code, but because it never made it into `items` in the first place. Clearing caches and rebuilding didn't help, because the missing post wasn't a caching problem — the sidebar data itself was capped.
+
+The fix was `blogSidebarCount: 'ALL'` in the blog plugin options in `docusaurus.config.js`, so every post is always passed through, and the series/year split has the full picture. The trade-off: a year with many posts is no longer trimmed automatically, but the sidebar's `<nav>` already has `max-height` + `overflow-y: auto`, so it scrolls internally instead of breaking the page layout.

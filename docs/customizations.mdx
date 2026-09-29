@@ -1,0 +1,36 @@
+---
+sidebar_position: 1
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Overview
+
+This section documents everything that has been customized beyond a stock Docusaurus install: custom components, deployment settings, and known issues. It is meant as a reference for future you, not for site visitors.
+
+<QuickReference>
+
+| Customization | Where to change it | Details |
+| --- | --- | --- |
+| Gallery component | `src/components/Gallery` | [Gallery](visuals/gallery) |
+| Homepage features row | `src/components/HomepageFeatures/index.js` | [Homepage features](home-page/homepage-features) |
+| Page diagrams (per-experience-page SVG figures) | `src/components/*Diagrams` folders | [Page diagrams](visuals/page-diagrams) |
+| Deployment | `npm run deploy`, env vars `USE_SSH` / `GIT_USER` | [Deployment](build-deploy/deployment) |
+| Known build issues | n/a | [Troubleshooting](troubleshooting/panic-occurred-at-runtime) |
+| Navbar items | `docusaurus.config.js` | [Navbar](site-config/navbar) |
+| Footer links and color | `docusaurus.config.js`, `src/css/custom.css` | [Footer](site-config/footer) |
+| Title, tagline, favicon, social card, analytics | `docusaurus.config.js` | [Site metadata](site-config/site-metadata) |
+| Blog RSS/Atom feeds, authoring warnings | `docusaurus.config.js` | [Blog feeds and authoring checks](blog/blog-feeds-and-authoring) |
+| Broken-link checking, future flags, "Edit this page" links | `docusaurus.config.js` | [Build flags and edit links](build-deploy/build-flags-and-edit-links) |
+| Image sizing syntax + click-to-zoom | `plugins/remark-image-size.mjs`, `docusaurus-theme-zoom-image` | [Image handling](visuals/image-handling) |
+| Blog card look, tag styling, swizzled blog components | `src/theme/BlogPostItem/*`, `src/theme/TagsListInline`, `src/theme/BlogTagsPostsPage` | [Blog post cards and tags](blog/blog-post-cards) |
+| Global layout/spacing/table CSS not covered above | `src/css/custom.css` | [Global CSS overrides](site-config/global-css) |
+| Blog post series grouping in the sidebar | `src/data/blogSeries.ts`, `src/theme/BlogSidebar/*` | [Blog post series](blog-post-series) |
+| Palette | `src/css/custom.css` | [Colors](styling/colors) |
+| Typeface | `docusaurus.config.js`, `src/css/custom.css` | [Fonts](styling/fonts) |
+
+</QuickReference>
+
+## Source of truth
+
+The canonical source for these notes is `README.md` at the repo root. These pages restate and expand on it so the same information is browsable on the built site. If you change a component, update both.

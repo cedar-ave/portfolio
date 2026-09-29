@@ -140,7 +140,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/cedar-ave/portfolio',
+            href: 'https://github.com/cedar-ave',
             label: 'GitHub',
             position: 'right',
           }

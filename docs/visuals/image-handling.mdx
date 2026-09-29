@@ -1,0 +1,76 @@
+---
+sidebar_position: 12
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Image handling
+
+Two customizations, neither present in the classic template, control how images behave across docs, blog posts, and pages: a remark plugin that lets you size an image inline in Markdown, and a site-wide theme that adds click-to-zoom to every image.
+
+<QuickReference>
+
+- To make an image a specific size: append `{width=300}` (or `{width="300px" height="200px"}`) right after the Markdown image, no blank line in between — see [`docs/mdm.mdx`](https://github.com/cedar-ave/portfolio/blob/main/docs/mdm.mdx) for a real example.
+- The plugin that parses that syntax is [`plugins/remark-image-size.mjs`](https://github.com/cedar-ave/portfolio/blob/main/plugins/remark-image-size.mjs), registered as a `remarkPlugins` entry for both `docs` and `blog` in `docusaurus.config.js`.
+- Every image on the site is click-to-zoom by default via the `docusaurus-theme-zoom-image` theme — no per-image setup needed.
+- To change zoom behavior/styling: see the `.zoomImage__wrap` / `img.zoomImage` override in `src/css/custom.css`, documented below.
+- `docusaurus-plugin-image-zoom` is listed in `package.json` dependencies but is **not** registered anywhere in `docusaurus.config.js` — it's dead weight from an earlier iteration of this feature. Safe to remove from `package.json` unless you're mid-migration back to it.
+
+</QuickReference>
+
+## Sizing images: `remark-image-size.mjs`
+
+Plain Markdown/MDX has no syntax for image dimensions — `![alt](src)` always renders at the image's natural size. This plugin adds a curly-brace attribute list right after an image:
+
+```md
+![alt text](./img.png){width=300}
+![alt text](./img.png){width=300 height=200}
+![alt text](./img.png){width="300px"}
+```
+
+### Why it has to exist
+
+MDX parses `{...}` itself as a JS expression (`mdxTextExpression`), so `{width=300}` left alone fails at render time with `ReferenceError: width is not defined` — MDX thinks it's JavaScript, not an attribute list. The plugin intercepts that node during the remark pass, reads its raw text as `key=value` pairs instead, applies them as attributes to the image immediately before it, and removes the now-consumed expression node from the tree.
+
+It must run **after** Docusaurus's own image-to-`<img>` transform, which is why it's registered in the `remarkPlugins` array (the default plugin order) rather than earlier in the pipeline — by the time it runs, local images have already become `mdxJsxTextElement` `img` nodes rather than plain `image` nodes, and the plugin handles both that case and a plain remote-URL `image` node that Docusaurus didn't transform.
+
+### Registration
+
+```js title="docusaurus.config.js"
+import remarkImageSize from './plugins/remark-image-size.mjs';
+// ...
+presets: [['classic', {
+  docs: { remarkPlugins: [remarkImageSize], /* ... */ },
+  blog: { remarkPlugins: [remarkImageSize], /* ... */ },
+}]],
+```
+
+Registered separately for `docs` and `blog` — it does **not** automatically apply to `src/pages/*.mdx` (standalone pages aren't processed through either preset's remark pipeline the same way). If you need sized images on a page under `src/pages`, either size the image with plain HTML (`<img width="300" />`) or wire the plugin into that content type too.
+
+## Click-to-zoom: `docusaurus-theme-zoom-image`
+
+```js title="docusaurus.config.js"
+themes: ['docusaurus-theme-zoom-image'],
+```
+
+Registering this as a site theme (not a plugin) wraps every rendered `<img>` in a zoom-on-click lightbox automatically, with no per-image markup. The [Gallery](gallery) component relies on this instead of shipping its own lightbox logic.
+
+### The hover-dim override
+
+The package's own stylesheet dims an image gray on hover (a brightness filter) as a visual "this is clickable" cue. This site turns that off:
+
+```css title="src/css/custom.css"
+/* docusaurus-theme-zoom-image dims the image gray on hover via a
+   brightness filter; keep the image unchanged on hover. The package's
+   own stylesheet loads after this one, so this needs !important to win. */
+.zoomImage__wrap:hover .zoomImage,
+img.zoomImage:hover {
+  filter: none !important;
+}
+```
+
+The comment explains the `!important`: the theme's stylesheet is injected after `custom.css` in the build, so normal specificity alone won't override it.
+
+### The unused sibling package
+
+`docusaurus-plugin-image-zoom` (a different package, plugin-style rather than theme-style) is still in `package.json` but never imported or registered in `docusaurus.config.js`. It appears to be a leftover from before the site settled on `docusaurus-theme-zoom-image`. It has no effect as things stand — remove it from `package.json`/`package-lock.json` when convenient, or, if you'd rather use it instead (it takes more granular per-image config options than the theme does), register it as a `plugins` entry and drop the theme.

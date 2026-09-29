@@ -1,0 +1,121 @@
+---
+sidebar_position: 14
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Global CSS overrides
+
+`src/css/custom.css` is the classic template's own customization entry point (it ships as a near-empty file with a couple of Infima variable examples). This site's copy is ~450 lines. [Colors](../styling/colors) and [Fonts](../styling/fonts) cover the palette/typography variables at the top of the file; this page covers everything else in it — the layout, spacing, and per-page-type overrides that don't fit either of those pages. [Blog post cards and tags](../blog/blog-post-cards) covers the blog-card-specific rules in more depth; they're only summarized here.
+
+<QuickReference>
+
+- Hero banner (navy background, white text): `.hero--primary` block.
+- Footer color (light gray, not Infima's default dark): `.footer` block — layered under the `style: 'light'` footer setting in `docusaurus.config.js` (see [Footer](footer)).
+- Multi-level navbar dropdown flyout fix: the `.dropdown__menu .dropdown > ...` rules — currently **dormant**, see note below.
+- Table styling (colored header row, striped rows, no outer border): the `table` / `thead` / `table th` / `table td` block.
+- Table of contents no longer scrolls independently once long — grows with the page instead: `.col--2 > .thin-scrollbar, .theme-doc-toc-desktop .thin-scrollbar`.
+- Page-type top margin (blog/docs/mdx pages pushed down from under a presumably-fixed navbar): `.blog-post-page .main-wrapper, ...`.
+- Zoom-on-hover dimming disabled: see [Image handling](../visuals/image-handling).
+
+</QuickReference>
+
+## Hero banner
+
+```css title="src/css/custom.css"
+.hero--primary {
+  --ifm-hero-background-color: var(--palette-navy);
+  --ifm-hero-text-color: #ffffff;
+  background-color: var(--palette-navy);
+  color: #ffffff;
+}
+```
+
+Infima's default `.hero--primary` derives its background from `--ifm-color-primary`. This site instead pins it to the navy palette color regardless of what the primary color is (which itself changes between light/dark mode — see [Colors](../styling/colors)), so the homepage hero stays a consistent navy in both themes. Used only by `src/pages/index.js`.
+
+## Footer
+
+```css title="src/css/custom.css"
+.footer {
+  --ifm-footer-background-color: #E6EDF5;
+  --ifm-footer-color: #202124;
+  --ifm-footer-link-color: #333333;
+  --ifm-footer-title-color: var(--palette-navy);
+  background-color: #E6EDF5;
+  padding-top: 2.5rem;
+}
+
+.footer__copyright {
+  font-size: 14px;
+  margin-top: 2rem;
+  text-align: left;
+}
+```
+
+`docusaurus.config.js` sets `footer.style: 'light'`, which picks Infima's light footer variable defaults; this block then overrides those specific variables with the site's own light-gray/navy scheme instead of Infima's stock light-mode footer colors. `.footer__copyright` is left-aligned here — Infima centers it by default.
+
+## Table styling
+
+Infima's default tables are minimal (thin borders, no header fill). This site's tables have a solid slate-blue header row, alternating row stripes, and no outer border:
+
+```css title="src/css/custom.css"
+table { border: none; }
+thead { background: #5e7893; }
+table tbody tr:nth-child(2n) { background-color: #f0f5f9; }
+table th { color: #fff; font-weight: 500; }
+```
+
+There's also a `.nowrap-col1` opt-in class (`table th:first-child, table td:first-child { white-space: nowrap; }`) — add `class="nowrap-col1"` around a Markdown table when its first column shouldn't wrap (e.g. a short label column next to long description text). Not used anywhere automatically; it's applied per-table in Markdown when needed.
+
+## Table of contents: no internal scrollbar
+
+```css title="src/css/custom.css"
+.col--2 > .thin-scrollbar,
+.theme-doc-toc-desktop .thin-scrollbar {
+  max-height: none;
+  overflow-y: visible;
+}
+```
+
+Docusaurus's default right-hand TOC caps its own height and scrolls internally once it's taller than the viewport. This removes that cap, so a long TOC just keeps growing down the page instead of scrolling in its own little box. Trade-off: on a very long page with a very long TOC, the TOC can now extend past the visible content — acceptable here since most pages' TOCs are short.
+
+## Page top margin
+
+```css title="src/css/custom.css"
+.blog-post-page .main-wrapper,
+.blog-list-page .main-wrapper,
+.docs-doc-page .main-wrapper,
+.mdx-page .main-wrapper {
+  margin-top: 5rem;
+}
+```
+
+Pushes the main content area down on every page type. This compensates for the navbar's stacking/height in this theme; if you change navbar height or its position (sticky/fixed vs. static) in `docusaurus.config.js`, re-check whether this margin still looks right.
+
+## Multi-level navbar dropdown flyout (currently dormant)
+
+```css title="src/css/custom.css"
+/* Infima shows .dropdown__menu on ANY descendant hover of .dropdown--hoverable
+   (a plain descendant selector), so hovering the outer "Experience" item was
+   revealing every nested sub-menu at once. Force nested sub-menus closed by
+   default, and open only when their own parent item is hovered/focused. */
+.dropdown__menu .dropdown > .dropdown__menu { opacity: 0; visibility: hidden; pointer-events: none; }
+.dropdown__menu .dropdown:hover > .dropdown__menu,
+.dropdown__menu .dropdown.dropdown--show > .dropdown__menu { opacity: 1; visibility: visible; pointer-events: all; }
+```
+
+This fixes a real Infima bug: a nested dropdown (a dropdown item that itself contains another dropdown, e.g. a would-be "Experience" nav item with sub-items) shows *every* nested submenu at once on hover, because Infima's CSS selector for revealing `.dropdown__menu` matches any descendant hover, not just the immediate one.
+
+**As of this writing, the navbar (`docusaurus.config.js`) has no nested dropdown items** — every navbar entry is a flat link (see [Navbar](navbar)). This CSS currently has nothing to act on. It's left in place from an earlier navbar iteration (the comment's mention of an "Experience" item matches the `src/pages/experience/*` content, which suggests a dropdown nav item was planned or previously existed there). If you reintroduce a nested dropdown navbar item, this fix is why it'll behave correctly instead of popping open every sibling submenu — keep it. If you're confident no nested dropdown is coming back, it's safe to delete.
+
+## Blog and tags page styling (summary)
+
+The `.blogPostCard`, `.blog-tags-post-list-page`, and `.blog-tags-list-page` rules in this file style the blog list cards, the tag archive page, and the `/blog/tags` overview page respectively (card background, hover lift, tag pill recoloring in both light/dark mode). These are documented in full on [Blog post cards and tags](../blog/blog-post-cards) since they pair directly with the swizzled blog theme components there.
+
+## Misc small overrides
+
+- `a { text-decoration: none; }` — no underline on links anywhere (relies on the primary color + hover color for the "this is a link" cue instead).
+- `.navbar__logo { margin-right: 1.5rem; }` / `.navbar__brand { margin-right: .7rem; }` — extra breathing room between the logo, site title, and first nav item.
+- `.navbar__link, .navbar__title { font-weight: 400; }` — Infima's default nav font weight is bolder; this thins it back down to match the Roboto body weight.
+- `.container img { border: .5px solid var(--ifm-toc-border-color); }` — a hairline border on every content image, reusing the TOC's border color token rather than introducing a new one.
+- `.headshot { width: 200px; height: auto; margin-bottom: 2rem; }` — utility class for the headshot image on `src/pages/about.mdx`.

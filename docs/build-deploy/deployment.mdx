@@ -1,0 +1,32 @@
+---
+sidebar_position: 5
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Deployment
+
+<QuickReference>
+
+- Build the static site: `npm run build`, output goes to the `build` directory.
+- Deploy over SSH: `USE_SSH=true npm run deploy`.
+- Deploy without SSH: `GIT_USER=<your GitHub username> npm run deploy`.
+- Deploying is only relevant if you are using GitHub Pages for hosting; it builds the site and pushes to the `gh-pages` branch.
+
+</QuickReference>
+
+## Local development
+
+```bash
+npm run start
+```
+
+Starts a local development server and opens a browser window. Most changes are reflected live without restarting the server.
+
+## Build
+
+```bash
+npm run build
+```
+
+Generates static content into the `build` directory. It can be served using any static content hosting service, not just GitHub Pages.

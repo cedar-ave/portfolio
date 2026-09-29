@@ -1,0 +1,50 @@
+---
+sidebar_position: 2
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Gallery
+
+<QuickReference>
+
+- To use it: wrap a set of images in `<Gallery>` inside any `.md`/`.mdx` file. No import needed.
+- To change the default column count: edit the `columns` default in `src/components/Gallery`.
+- To change grid styling (gaps, zoom behavior, mobile breakpoint): edit `src/components/Gallery`'s CSS module.
+- To register or unregister it globally: edit `src/theme/MDXComponents.js`.
+
+</QuickReference>
+
+## What it does
+
+Displays a responsive grid of images. It is registered globally via `src/theme/MDXComponents.js`, so it is available in any `.md`/`.mdx` file (docs, blog posts, and pages) with no import needed.
+
+## Usage
+
+```mdx
+<Gallery>
+
+![alt text](./photo-a.jpg)
+![alt text](./photo-b.jpg)
+![alt text](./photo-c.jpg)
+
+</Gallery>
+```
+
+Keep a blank line before and after the group, and between each image. That is what makes MDX treat each one as its own paragraph, which the gallery's CSS then unwraps into a grid.
+
+## Columns
+
+Defaults to 3 columns (2 on mobile). Override with `columns`:
+
+```mdx
+<Gallery columns={4}>
+```
+
+## Zoom
+
+Each image still gets click-to-zoom for free from the site-wide `docusaurus-theme-zoom-image` theme. No extra setup needed per image.
+
+## Source
+
+`src/components/Gallery`

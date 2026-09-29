@@ -1,0 +1,60 @@
+---
+sidebar_position: 11
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Build flags and edit links
+
+<QuickReference>
+
+- `onBrokenLinks: 'throw'` — a broken internal link fails the build instead of just warning. Keep this; it's what catches renamed/moved pages before deploy.
+- `future.v4: true` — opts into v4-compatible behaviors ahead of the actual v4 upgrade, so that upgrade is smaller when it happens.
+- `editUrl` (set separately for `docs` and `blog`) still points at `facebook/docusaurus`'s own template repo — this is a **leftover default from the template, not fixed for this site**. See below.
+
+</QuickReference>
+
+## Broken link checking
+
+```js title="docusaurus.config.js"
+const config = {
+  onBrokenLinks: 'throw',
+```
+
+The classic template also ships `'throw'` by default, so this isn't a deviation — it's called out here because it's load-bearing for this site's own internal doc cross-links (including the ones on these customization pages) and worth knowing about before ever considering loosening it to `'warn'` or `'ignore'`.
+
+## Future flags
+
+```js title="docusaurus.config.js"
+future: {
+  v4: true, // Improve compatibility with the upcoming Docusaurus v4
+},
+```
+
+Not set in the template. Enables the subset of Docusaurus v4's behavior changes that 3.x already supports opting into, so that whenever this site is upgraded to v4 proper, fewer things change at once.
+
+## `editUrl` — needs fixing
+
+```js title="docusaurus.config.js"
+presets: [['classic', {
+  docs: {
+    editUrl:
+      'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+  },
+  blog: {
+    editUrl:
+      'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+  },
+}]],
+```
+
+This is copied verbatim from the classic template and was never updated. As configured, every "Edit this page" link on the site (bottom of docs pages and blog posts) points into the Docusaurus project's own template repo, not this site's repo — clicking one takes a visitor to an unrelated file in `facebook/docusaurus`.
+
+Two ways to fix it:
+
+```js
+// Point at this site's own repo:
+editUrl: 'https://github.com/cedar-ave/portfolio/tree/main/',
+```
+
+or delete the `editUrl` line under `docs` and `blog` entirely to remove the "Edit this page" links altogether — there's no public contribution workflow for this site, so removing them may be the more honest fix rather than linking to a private/uninteresting repo.

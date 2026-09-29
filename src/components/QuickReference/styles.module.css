@@ -1,0 +1,36 @@
+/* A pale panel styled like a hybrid of an admonition and a code block: a
+   solid fill with no border, instead of an accent-colored left rule.
+   Colors are fixed (not theme-swapped) so the panel reads the same in
+   light and dark mode. */
+
+.quickReference {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  border: none;
+  background: #f0f5f7;
+  color: var(--palette-navy);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.quickReferenceHeading {
+  margin-top: 0;
+}
+
+.quickReference :global(ul),
+.quickReference :global(ol) {
+  margin-bottom: 0;
+}
+
+.quickReference :global(li:last-child) {
+  margin-bottom: 0;
+}
+
+.quickReference :global(a) {
+  color: var(--palette-slate-blue);
+  text-decoration: underline;
+}
+
+.quickReference :global(code) {
+  background: rgba(32, 43, 73, 0.08);
+}

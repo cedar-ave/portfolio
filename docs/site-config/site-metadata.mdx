@@ -1,0 +1,73 @@
+---
+sidebar_position: 9
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Site metadata, favicon, and social card
+
+<QuickReference>
+
+- Title/tagline/URL/org/project are plain top-level fields in `docusaurus.config.js`, filled in with this site's own values instead of the template's Docusaurus placeholders.
+- `organizationName`/`projectName` only matter for `npm run deploy` (GitHub Pages) — see [Deployment](../build-deploy/deployment).
+- Social share image: `themeConfig.image: 'img/social-card.jpg'`. The template's own `docusaurus-social-card.jpg` is still sitting unused in `static/img/`.
+- Favicon: `favicon: 'img/favicon.ico'`.
+- `colorMode.respectPrefersColorScheme: true` — defaults to the visitor's OS/browser light-dark preference instead of always starting in light mode (the template's default).
+- Analytics: `gtag.trackingID: 'G-8S1BSK4F9Q'`, `anonymizeIP: true` — not present at all in the template.
+
+</QuickReference>
+
+## Core fields
+
+```js title="docusaurus.config.js"
+title: 'Marla Sowards',
+tagline: 'AI-fluent content engineer • Technical writer and editor • ...',
+url: 'https://www.marlasowards.com',
+baseUrl: '/',
+organizationName: 'cedar-ave',
+projectName: 'portfolio',
+```
+
+`title` here is the site's actual `<title>`/metadata title (as opposed to the navbar's separate display `title: 'Home'` — see [Navbar](navbar)). `organizationName` and `projectName` are the GitHub owner/repo `npm run deploy` pushes to; they don't affect anything else about the build.
+
+## Social card
+
+```js title="docusaurus.config.js"
+themeConfig: {
+  image: 'img/social-card.jpg',
+```
+
+This is the default Open Graph / Twitter card image used when a page or blog post doesn't set its own `image` frontmatter — the preview shown when a link to the site is shared on LinkedIn, X, Slack, etc. The classic template ships `img/docusaurus-social-card.jpg`; that file is still present under `static/img/` but unreferenced. To update the card image, replace `static/img/social-card.jpg` (or point `image` at a new file) — recommended size is 1200×630.
+
+## Favicon
+
+```js
+favicon: 'img/favicon.ico',
+```
+
+Resolves to `static/img/favicon.ico`. Swap that file to change it; no other config needed.
+
+## Color mode
+
+```js title="docusaurus.config.js"
+themeConfig: {
+  colorMode: {
+    respectPrefersColorScheme: true,
+  },
+```
+
+Not set at all in the classic template, which means visitors always land in light mode until they manually toggle dark mode (and Docusaurus remembers that per-visitor choice afterward via local storage). With this on, first-time visitors instead get whichever mode their OS/browser is already set to.
+
+## Analytics
+
+```js title="docusaurus.config.js"
+presets: [['classic', {
+  // ...
+  gtag: {
+    trackingID: 'G-8S1BSK4F9Q',
+    anonymizeIP: true,
+  },
+}]],
+```
+
+Google Analytics (gtag.js), not present in the template at all. `anonymizeIP: true` strips the last octet of visitor IPs before they reach Analytics. To point this at a different property, swap `trackingID`; to remove analytics entirely, delete the `gtag` block.
