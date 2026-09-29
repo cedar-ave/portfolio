@@ -1,16 +1,15 @@
-/* A pale panel styled like a hybrid of an admonition and a code block: a
-   solid fill with no border, instead of an accent-colored left rule.
-   Colors are fixed (not theme-swapped) so the panel reads the same in
-   light and dark mode. */
+/* Styled like Docusaurus's own doc cards (DocCard/DocCardList): the
+   theme-aware card surface, radius, border and shadow, so this panel reads
+   as a native part of the theme in both light and dark mode instead of a
+   fixed-color callout. */
 
 .quickReference {
   margin: 1.5rem 0;
-  border-radius: 8px;
-  border: none;
-  background: #f0f5f7;
-  color: var(--palette-navy);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--ifm-global-shadow-lw);
+  background-color: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+  padding: 1.5rem;
 }
 
 .quickReferenceHeading {
@@ -26,11 +25,6 @@
   margin-bottom: 0;
 }
 
-.quickReference :global(a) {
-  color: var(--palette-slate-blue);
-  text-decoration: underline;
-}
-
 .quickReference :global(code) {
-  background: rgba(32, 43, 73, 0.08);
+  background: var(--ifm-code-background);
 }

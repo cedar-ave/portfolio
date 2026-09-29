@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import styles from './styles.module.css';
 
-// Wraps a doc's "Quick reference" content in a pale panel that borrows the
-// solid-fill look of a code block (see docs/styling/colors.mdx for the
-// palette) but reads as prose, not code. The heading lives inside the
-// panel itself, so the doc doesn't also need a "## Quick reference"
-// markdown heading above it:
+// Wraps a doc's "Quick reference" content in a panel styled like
+// Docusaurus's own doc cards (see @theme/DocCard), so it reads as a
+// native part of the theme rather than a custom callout. The heading
+// lives inside the panel itself, so the doc doesn't also need a
+// "## Quick reference" markdown heading above it:
 //
 //   <QuickReference>
 //
