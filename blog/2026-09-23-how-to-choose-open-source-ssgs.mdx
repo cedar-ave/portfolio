@@ -1,11 +1,12 @@
 ---
+draft: true
 slug: how-to-choose-open-source-ssgs
 title: How to choose an open-source static-site generator
 authors: marla
 tags: [Docs-as-code]
 ---
 
-Here are six hard-won considerations to take into account when choosing an open-source static-site generator.
+If you're launching a docs-as-code platform based primarily on open-source tools, it can be overwhelming to choose a static-site generator. There are a lot out there: some have been around a long time, some are new and exciting, and they're not all built with the same programming languages. It's tempting to look at which one has the most stars in GitHub and go from there. I've been there, and I've learned a few things the hard way! Here are some considerations that might help you with your decision.
 
 {/* truncate */}
 
@@ -19,15 +20,42 @@ I learned this question from a tech writer I met at a [Write the Docs](https://w
 "Don't get locked into a flash-in-the-pan," he said. He was right. After the conference, I never heard the tool mentioned again. (Kudos to those who built the tool, though: for being talented enough to build something new and brave enough to share it.)
 
 ## 2. Who owns the project?
-If a large, established company has built their entire docs ecosystem on an open-source tool (like Docusaurus with Meta) there's a strong motivation for owners to maintain and enhance it.
+
+Sometimes a static-site generator is built and maintained by a group of enthusiastic creators and users. The owners may even be documentation engineers themselves. The "built by docs people writers for docs people" angle is attractive, but locking into that kind of project can be a risk. Over time interest in maintaining the project may wane, so new features to keep the tool aligned with advancing technology may never be added and bugs may never be fixed (unless you have the chops to fix them yourself).
+
+Instead, consider looking at static-source generators used by larger companies, especially in a dog-food approach. It's easy to trust that these projects will be maintained and advanced because those companies have a stake in keeping them healthy. For example:
+
+* [Stripe docs](https://docs.stripe.com) and [Markdoc](https://markdoc.dev/docs/overview)
+* [Astro docs](https://docs.astro.build/en/getting-started) and [Starlight](https://starlight.astro.build)
+* [Vercel docs](https://vercel.com/docs) and [Next.js](https://nextjs.org)
+
+Same thing goes for companies that may not own the tool but still have invested in them heavily, like:
+
+* [Kubernetes docs](https://kubernetes.io/docs/home) and [Docker docs](https://docs.docker.com) and [Hugo](https://gohugo.io)
+* [Electron docs](https://www.electron.build/docs) and [Docusaurus](https://docusaurus.io)
+* [Tauri docs](https://v2.tauri.app/start) and [Starlight](https://starlight.astro.build)
+* and [Gatsby]
 
 ## 3. How much is it used?
+
 The more companies and people who use it, the more you're going to see templates, add-ons, extensions, and more shared. The number of stars in a tool's Github repo can be one clue.
 
+For example, few major companies still run their documentation sites on Jekyll, even though it was a popular choice a few years ago.
+
 ## 4. How often is it updated?
-A tool that's updated infrequently is probably less likely to support new requirements that emerge over time. A Github repo's code frequency graph can show you if contributions are waning.
+
+A tool that's updated infrequently or only with minor changes is probably less likely to support new requirements that emerge over time. A Github repo's code frequency graph can show you if contributions are waning.
+
+Examples are Gatsby and MkDocs, which were popular a few years ago but are now in low-activity maintenance.
 
 ## 5. What are your content requirements?
+
+This is hugely important to nail down. I once worked in a Microsoft shop and needed a tool that produced .NET API documentation. I could only find two tools at the time that supported this requirement, one of which was DocFx. DocFx fit the bill because it not only supported that key need but it also was owned by Microsoft and used for Microsoft's own docs sites.
+
+Another critical consideration is whether the docs will live inside an app with a certain framework, like Next.js. 
+
+
+
 It doesn't matter much for a simple portfolio site like mine, but if you're choosing a tool to support an entire body of content, you may or may not need features like:
 
 * Content reuse  
@@ -36,4 +64,8 @@ It doesn't matter much for a simple portfolio site like mine, but if you're choo
 * The ability to (easily) add custom features that may not be offered by the tool (like paragraph anchors, feedback forms at the bottom of articles, integrated chatbots, etc.)
 
 ## 6. Who can help you when things break?
-If you're not an engineer, this is huge. Seasoned tech writers who've built sites know it's not a good idea to implement any tool or technology that often requires asking an engineer to help you solve a problem (they have their own stuff to do). But once in a blue moon, you may run into an issue so far above your head that you do need to beg for engineering help. That's why in one role, I chose a tool that was built in the same programming language the engineering team used. That put as little friction as possible around diagnosis and resolution.
+
+If you're not an engineer, this is huge. Seasoned tech writers who've built sites know it's not a good idea to implement any tool or technology that often requires asking an engineer to help you solve a problem (they have their own stuff to do, and it's better to save any time with them ). But once in a blue moon, you may run into an issue so far above your head that you do need to beg for engineering help. For example, you may not want to choose a Python-based tool if the engineering department spends most of their days programming in another language.
+
+## 7. Who can tell you things you can't see for yourself?
+
