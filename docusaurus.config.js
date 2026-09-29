@@ -6,6 +6,7 @@
 
 import { themes as prismThemes } from 'prism-react-renderer';
 import remarkImageSize from './plugins/remark-image-size.mjs';
+import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -34,6 +35,8 @@ const config = {
   onBrokenLinks: 'throw',
 
   themes: ['docusaurus-theme-zoom-image'],
+
+  plugins: [blogSeriesPlugin],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -72,6 +75,15 @@ const config = {
           // recent), so year groups and series stay complete instead of
           // truncating older posts as new ones are published.
           blogSidebarCount: 'ALL',
+          // Every non-hidden post's content lives on a single generated
+          // /blog route instead of being split across /blog, /blog/page/2,
+          // etc. at build time. src/theme/BlogListPage then does its own
+          // pagination over the *filtered* (hide_from_index-excluded) list
+          // at render time — something it can't do if Docusaurus has
+          // already split posts across separate static routes, since a
+          // swizzled component only ever receives its own route's slice.
+          // See docs/blog/blog-index-list-filtering.mdx.
+          postsPerPage: 'ALL',
           remarkPlugins: [remarkImageSize],
           feedOptions: {
             type: ['rss', 'atom'],

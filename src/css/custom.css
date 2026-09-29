@@ -167,11 +167,25 @@ h1 {
   font-size: 0.85rem;
 }
 
+/* Extra breathing room above the page heading, desktop only. On mobile
+   the navbar collapses to a single row and this much margin left a huge
+   gap above the heading, so mobile gets a much smaller bump instead. The
+   996px breakpoint matches Infima/Docusaurus's own desktop/mobile navbar
+   switch (see BlogSidebar/Desktop/styles.module.css). */
 .blog-post-page .main-wrapper,
 .blog-list-page .main-wrapper,
 .docs-doc-page .main-wrapper,
 .mdx-page .main-wrapper {
-  margin-top: 5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 997px) {
+  .blog-post-page .main-wrapper,
+  .blog-list-page .main-wrapper,
+  .docs-doc-page .main-wrapper,
+  .mdx-page .main-wrapper {
+    margin-top: 5rem;
+  }
 }
 
 #__blog-post-container {
@@ -442,4 +456,20 @@ table td:last-child {
 .zoomImage__wrap:hover .zoomImage,
 img.zoomImage:hover {
   filter: none !important;
+}
+
+/* Docs site */
+
+.theme-doc-sidebar-item-category-level-1 {
+  font-weight: 400;
+  font-size: .95rem;
+}
+
+.theme-doc-sidebar-item-category {
+  font-weight: 400;
+  font-size: .95rem;
+}
+
+.theme-doc-sidebar-container {
+  border: none;
 }

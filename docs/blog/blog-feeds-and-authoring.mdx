@@ -11,6 +11,7 @@ import QuickReference from '@site/src/components/QuickReference';
 - RSS + Atom feeds are generated (`feedOptions`), with `xslt: true` so opening the raw feed URL in a browser shows a formatted page instead of raw XML.
 - `onInlineTags` / `onInlineAuthors` / `onUntruncatedBlogPosts` are all set to `'warn'` — none are set at all in the template (they default to off).
 - `blogSidebarCount: 'ALL'` is required by the [blog post series](blog-post-series) sidebar feature — don't remove it.
+- `postsPerPage: 'ALL'` is required by [blog index list filtering](blog-index-list-filtering) — don't remove it. The actual per-page post count shown to visitors now lives in `src/theme/BlogListPage/index.js` (`POSTS_PER_PAGE`), not here.
 
 </QuickReference>
 

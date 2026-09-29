@@ -8,36 +8,39 @@ import QuickReference from '@site/src/components/QuickReference';
 
 The blog sidebar (the "recent posts" nav shown on every blog page) can group related posts into a named series — like **Series: Custom MCPs** or **Series: AI Agent Skills** — instead of listing every post under its year. This page documents how that works and why it's built this way, so future changes don't have to be re-discovered from scratch.
 
+Whether a post also shows in the paginated post list on the blog index page is a separate, independent decision — see [Blog index list filtering](blog-index-list-filtering) for that. The two aren't linked in code; a series post can show in the index list, and a non-series post can be hidden from it. In practice, the 12 posts in this site's two series also happen to set `hide_from_index: true`, but that's an editorial choice made per post, not something series membership implies.
+
 <QuickReference>
 
-To add a post to a series:
+To add a post to a series, add three fields to its front matter:
 
-1. Open [`src/data/blogSeries.ts`](https://github.com/cedar-ave/portfolio/blob/main/src/data/blogSeries.ts).
-2. Add the post's slug (the part of its URL after `/blog/`) to the right series' `slugs` array.
-
-```ts title="src/data/blogSeries.ts"
-{
-  id: 'custom-mcps',
-  title: 'Series: Custom MCPs',
-  slugs: [
-    'mcp-zendesk-guide',
-    'mcp-zendesk-ticketing',
-    // add a new post's slug here
-  ],
-},
+```md title="blog/2026-09-28-my-post/index.mdx"
+---
+slug: my-post
+title: My Post
+authors: marla
+tags: [Custom MCPs]
+series_id: custom-mcps
+series_title: "Series: Custom MCPs"
+series_order: 5
+---
 ```
 
-To create a whole new series, add another object to the `blogSeries` array with a unique `id`, a `title` (this is the heading shown in the sidebar), and a `slugs` array. No other file needs to change.
+- `series_id` — groups posts together; must match exactly across every post in the series.
+- `series_title` — the heading shown in the sidebar. Only needs to be set correctly on one post per series (the first one a build-time scan encounters wins), but it's clearer to repeat it on every post in that series.
+- `series_order` — the post's position within the series list. Posts without it sort last, in file order.
 
-A post in a series is automatically removed from the plain year list — it only shows once, under its series.
+To create a whole new series, just pick a new `series_id` and give it a `series_title` — there's no separate registry file to also update.
+
+A post in a series is automatically removed from the plain year list — it only shows once, under its series. Whether it's also removed from the blog index's paginated post list is a separate front matter field, `hide_from_index` — see [Blog index list filtering](blog-index-list-filtering).
 
 **Things worth knowing before you touch this again:**
 
 - Series sections render above the year groups (2026, 2025, ...), and each one is a closed-by-default dropdown (`<details>`/`<summary>`). A visitor has to click a series to expand it. Year groups are not collapsible.
 - The blog plugin's sidebar defaults to showing only the **5 most recent posts**. That default was overridden to show every post ([`blogSidebarCount: 'ALL'`](#why-every-post-has-to-be-in-the-sidebar-data) in `docusaurus.config.js`) — don't remove it, or newer posts will silently push older ones out of both the year list and the series (see below).
-- After editing `docusaurus.config.js`, restart the dev server (`npm start`) — config changes aren't picked up by hot reload.
-- A post can belong to more than one series by adding its slug to more than one array.
-- Draft posts (`draft: true` in frontmatter) still show in `npm start` but are excluded from `npm run build`, same as any other Docusaurus blog post.
+- After editing `plugins/blog-series-plugin.mjs` or `docusaurus.config.js`, restart the dev server (`npm start`) — plugin/config changes aren't picked up by hot reload.
+- A post can only belong to **one** series today, since `series_id` is a single value, not an array (the old `src/data/blogSeries.ts` array let a slug appear in more than one series' `slugs` list — that's no longer possible). If a post needs to appear in two series, the plugin and its consumers would need to accept an array of ids here; nothing currently does.
+- Draft posts (`draft: true` in frontmatter) still show in `npm start` but are excluded from `npm run build`, same as any other Docusaurus blog post. The series plugin scans the file directly regardless of `draft`, so a draft post with a `series_id` will show up in the sidebar's series group in dev but not in a production build (since the post itself isn't built).
 
 </QuickReference>
 
@@ -47,18 +50,40 @@ The blog's default Docusaurus sidebar only groups posts by year. When a batch of
 
 ## How it works
 
-### The data file
+### The build-time plugin
 
-[`src/data/blogSeries.ts`](https://github.com/cedar-ave/portfolio/blob/main/src/data/blogSeries.ts) is a plain list of `{ id, title, slugs }` objects — no plugin, no frontmatter convention, just an array to edit by hand. Series membership lives here instead of in each post's frontmatter because the sidebar itself only has access to `title`, `permalink`, `unlisted`, and `date` for each post ([`BlogSidebarItem`](https://github.com/facebook/docusaurus/blob/main/packages/docusaurus-plugin-content-blog/src/plugin-content-blog.d.ts) doesn't carry frontmatter), so there was no clean way to read a custom frontmatter field from inside the sidebar component anyway.
+[`plugins/blog-series-plugin.mjs`](https://github.com/cedar-ave/portfolio/blob/main/plugins/blog-series-plugin.mjs) is a small [Docusaurus content plugin](https://docusaurus.io/docs/api/plugin-methods) registered in `docusaurus.config.js`'s `plugins` array. During `loadContent()`, it:
+
+1. Reads every file under `blog/` directly off disk (each post's `index.md`/`index.mdx`, or a loose `.md`/`.mdx` file).
+2. Extracts front matter with a small hand-rolled parser — flat `key: value` lines only, no nested YAML, no third-party front-matter/YAML package as a dependency. This is enough for the fields this feature needs (`series_id`, `series_title`, `series_order`, `slug`) without pulling in a parser that has to handle arbitrary YAML.
+3. Groups posts by `series_id`, sorts each group by `series_order`, and returns `{ series: [{ id, title, slugs }, ...] }`.
+4. Exposes that result as plugin data via `actions.setGlobalData(content)` in `contentLoaded()`.
+
+This runs once at build/dev-server start, not per-request, so it costs nothing at runtime beyond a `usePluginData()` lookup.
+
+### Why this isn't just read from frontmatter directly, everywhere
+
+The plugin exists because of a hard constraint in the Docusaurus blog plugin: the sidebar's `items` prop is a stripped-down [`BlogSidebarItem`](https://github.com/facebook/docusaurus/blob/main/packages/docusaurus-plugin-content-blog/src/plugin-content-blog.d.ts) — just `{ title, permalink, unlisted, date }`. Custom front matter fields like `series_id` never reach the sidebar component through that prop, no matter what's in the post's own front matter.
+
+The blog index list (`BlogListPage`), by contrast, receives full post objects with `content.metadata.frontMatter` intact — so filtering *that* page by a per-post flag (`hide_from_index`) needs no plugin at all; it just reads the field straight off each post. See [Blog index list filtering](blog-index-list-filtering).
+
+So: anything that only needs to know about *the post it's currently rendering* reads `series_id` directly from that post's own front matter. Anything that needs to know about *all posts in a series at once* — which is what building a sidebar group requires — goes through the plugin, because that's the only thing in this stack that ever reads every post's front matter into one place.
 
 ### The swizzled sidebar component
 
 [`src/theme/BlogSidebar/Content/index.tsx`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogSidebar/Content/index.tsx) is a swizzled override of Docusaurus's default `BlogSidebar/Content` theme component. On top of the stock year-grouping logic, it:
 
-1. Matches each sidebar item's permalink against `blogSeries` slugs to split `items` into series buckets and "everything else."
-2. Renders each non-empty series as a `<details>`/`<summary>` group (closed by default).
-3. Runs the original year-grouping logic on the remaining ("everything else") items.
-4. Renders series sections first, then the year groups.
+1. Calls `usePluginData('blog-series-plugin')` to get the `{ series }` array described above.
+2. Matches each sidebar item's permalink against each series' `slugs` to split `items` into series buckets and "everything else."
+3. Renders each non-empty series as a `<details>`/`<summary>` group (closed by default).
+4. Runs the original year-grouping logic on the remaining ("everything else") items.
+5. Renders series sections first, then the year groups.
+
+```tsx title="src/theme/BlogSidebar/Content/index.tsx"
+const {series: blogSeries} = usePluginData('blog-series-plugin') as {
+  series: BlogSeries[];
+};
+```
 
 [`src/theme/BlogSidebar/Desktop/styles.module.css`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogSidebar/Desktop/styles.module.css) has matching CSS: cursor styling for the `<summary>`, and an updated "no top margin on the first group" rule that now also matches when a series (`<details>`) is the first item instead of a year (`<div>`).
 
@@ -69,3 +94,9 @@ Docusaurus's blog plugin has a `blogSidebarCount` option that defaults to **5** 
 This surfaced as a real bug during development: adding 4 same-day MCP posts pushed an older, unrelated post (`how-to-choose-open-source-ssgs`) out of the 5-post cap entirely, so it silently disappeared from the sidebar — not because of anything wrong with the series-matching code, but because it never made it into `items` in the first place. Clearing caches and rebuilding didn't help, because the missing post wasn't a caching problem — the sidebar data itself was capped.
 
 The fix was `blogSidebarCount: 'ALL'` in the blog plugin options in `docusaurus.config.js`, so every post is always passed through, and the series/year split has the full picture. The trade-off: a year with many posts is no longer trimmed automatically, but the sidebar's `<nav>` already has `max-height` + `overflow-y: auto`, so it scrolls internally instead of breaking the page layout.
+
+## History: why this isn't a hand-maintained data file anymore
+
+Series membership originally lived in a plain `src/data/blogSeries.ts` array — a hand-maintained `{ id, title, slugs }` list edited whenever a post joined or left a series, entirely separate from the post's own front matter. That file has been deleted.
+
+The front matter–driven version above replaced it because keeping series membership in the post's own file (self-contained, alongside `slug`/`title`/`tags`) is easier to keep correct than a second file that has to be remembered and kept in sync by hand — the same reason Docusaurus's own `unlisted: true` front matter flag works the way it does, just with a different field name and narrower scope (`unlisted` also affects tag pages, the archive, and RSS, none of which this feature touches).

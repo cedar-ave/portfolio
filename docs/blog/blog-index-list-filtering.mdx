@@ -1,0 +1,100 @@
+---
+sidebar_position: 3
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Blog index list filtering
+
+The blog index page (`/blog`) has three areas: the sidebar on the left, the paginated post list in the middle, and page navigation at the bottom. This page documents how a post gets excluded from that middle-column list specifically — as opposed to being excluded from the site entirely, or from the sidebar — and how that list is paginated once some posts are excluded.
+
+This is independent of [series membership](blog-post-series) — a post decides for itself, via its own front matter, whether it shows in the index list, whether or not it's also in a series. The two features happen to use the same 12 posts today, but that's a per-post editorial choice, not a rule the code enforces.
+
+<QuickReference>
+
+- A post is dropped from the blog index's paginated list whenever its front matter sets `hide_from_index: true`. Removing that field (or setting it to `false`) puts it back in the list.
+
+```md title="blog/2026-09-28-my-post/index.mdx"
+---
+slug: my-post
+title: My Post
+authors: marla
+tags: [Custom MCPs]
+hide_from_index: true
+---
+```
+
+- This is completely independent of `series_id` — a post can be in a series and still show in the index list, or hidden from the index list without being in any series. Set whichever fields apply; neither implies the other.
+- This is implemented in [`src/theme/BlogListPage/index.js`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogListPage/index.js), a swizzled override of Docusaurus's default `BlogListPage` theme component.
+- The post is **not** hidden from the site — its own permalink page still builds and is reachable, it's still in the [sidebar's series group](blog-post-series) if it has one, it still gets its own RSS/Atom feed entry, and it's still listed in the page's `BlogPosting` JSON-LD structured data (schema.org). Only the middle-column list is filtered.
+- Pagination is now computed from the **filtered** list, so each page shows a real page of visible posts, not a pageful of raw posts minus however many turn out hidden. This requires `postsPerPage: 'ALL'` in the blog plugin options — don't remove it (see [How it works](#how-it-works) for why) — and there's a URL/no-JS trade-off that comes with it; see [Why pagination had to move client-side](#why-pagination-had-to-move-client-side).
+- There's no more `/blog/page/2` route. Later pages are `/blog?page=2`, `/blog?page=3`, etc. — a query string on the same route, not a separate static page.
+
+To change how many posts show per page, edit the `POSTS_PER_PAGE` constant near the top of [`src/theme/BlogListPage/index.js`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogListPage/index.js):
+
+```js title="src/theme/BlogListPage/index.js"
+const POSTS_PER_PAGE = 10;
+```
+
+This is the **only** place the blog index's page size is set — `docusaurus.config.js`'s `blog.postsPerPage` is `'ALL'` and must stay that way (see [Why pagination had to move client-side](#why-pagination-had-to-move-client-side)), so changing it there won't do anything to the visible page size anymore. No dev/build restart trick needed beyond the usual: `npm start` picks up a saved theme file change via fast refresh; `npm run build` just needs a rerun.
+
+</QuickReference>
+
+## Why this exists
+
+The MCP and AI agent skills series posts (12 same-day posts, each a short chapter of what were originally two long draft articles) were flooding the blog index's main list — a visitor landing on `/blog` saw a wall of same-day series entries before reaching anything else. Docusaurus has no built-in "hide from the index list but keep everywhere else" option that fits this: its `unlisted: true` front matter flag comes closest, but it also hides the post from the sidebar (except on the post's own page), which would have broken the series grouping described in [Blog post series](blog-post-series). So this page's filtering is custom, and deliberately narrower in scope than `unlisted`.
+
+This started out reusing `series_id` itself as the exclusion signal (any post in a series was hidden from the index, automatically, with no separate flag to set). That was simpler for the one case it was built for, but it tied two things together that don't actually have to be related: "this post belongs to a series" and "this post shouldn't repeat in the flat list" are two different editorial calls. `hide_from_index` was split out as its own field so either can be set without the other — a series post that *should* still show in the index list, or a one-off post that should be hidden without joining a series, are both just a matter of which field is set.
+
+## How it works
+
+### The filter
+
+[`src/theme/BlogListPage/index.js`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogListPage/index.js) is a full copy of Docusaurus's default `BlogListPage` theme component (required — swizzling replaces the whole file). The filter itself is a one-liner:
+
+```js title="src/theme/BlogListPage/index.js"
+const listedItems = items.filter(
+  ({content}) => !content.metadata.frontMatter.hide_from_index,
+);
+```
+
+Each `item.content.metadata.frontMatter` is the post's front matter as-is (Docusaurus exposes the full object here, unlike the sidebar's stripped-down `BlogSidebarItem` — see [why the sidebar needs a plugin](blog-post-series#why-this-isnt-just-read-from-frontmatter-directly-everywhere) for that contrast), so this needs no plugin, no cross-post lookup, and no separate data file — it's a filter on a field already sitting on the post being rendered.
+
+### Why pagination had to move client-side
+
+The filter above is simple, but it exposed a real constraint: **pagination normally happens before this component ever runs.** Docusaurus's blog plugin decides, at build time, exactly which posts go on `/blog`, which go on `/blog/page/2`, and so on — each is a separate static route, and a swizzled `BlogListPage` only ever receives the slice of posts its own route was built with. If `/blog`'s unfiltered slice happens to be mostly `hide_from_index` posts, filtering inside that route can only ever shrink what it shows — it can never reach into `/blog/page/2`'s build output and pull a visible post forward to fill the gap. That post's rendered content simply isn't available to this route at all.
+
+This wasn't a hypothetical: it happened on this exact site. On the day all 12 series posts were dated, they filled the first 10-post page almost entirely, pushing the only other post down onto a nearly-empty page 2 (page 1 rendered as just a pagination link, no cards at all).
+
+There's no way to fix this by changing what a swizzled `BlogListPage` does with the props it's given — the fix has to change how many routes exist and what's on each one. So:
+
+1. **`docusaurus.config.js`'s blog options now set `postsPerPage: 'ALL'`.** This collapses Docusaurus's own pagination down to a single page — instead of `/blog`, `/blog/page/2`, etc., there is now only `/blog`, and its `items` prop contains every non-`unlisted`/non-`draft` post's full content, unfiltered. (`draft` and `unlisted` are still fully excluded upstream by the blog plugin itself, same as always — this only removes the *extra* build-time split by page.)
+2. **`BlogListPage` now paginates itself**, entirely in the render layer, over the *filtered* list:
+   - `POSTS_PER_PAGE` (currently `10`) is a plain constant in the component — this is now the one place that controls the blog index's page size, not `docusaurus.config.js`.
+   - The current page number is read from a `?page=N` query string (`parsePageNumber`), not a path segment — there's no per-page static route left to put a path segment on.
+   - `BlogListPaginator` (unmodified) still renders the Prev/Next nav — it only ever needed `previousPage`/`nextPage` permalink strings, so it's handed synthetic ones (`/blog?page=2`, etc.) built from the filtered count instead of the ones Docusaurus would have computed from the raw count.
+
+```js title="src/theme/BlogListPage/index.js"
+const totalPages = Math.max(1, Math.ceil(listedItems.length / POSTS_PER_PAGE));
+const page = parsePageNumber(location.search, totalPages);
+const pageItems = listedItems.slice(
+  (page - 1) * POSTS_PER_PAGE,
+  page * POSTS_PER_PAGE,
+);
+```
+
+Because `/blog?page=2` is a query string on the *same* route as `/blog`, not a separate route, clicking "Older entries" doesn't reload the page — Docusaurus's client-side router just re-renders `BlogListPage` with the new `location.search`, and the re-slice happens instantly against content that was already loaded. This only works *because* of step 1 — with the old per-page routes, page 2's post content wouldn't have been present in page 1's route at all to re-slice.
+
+**The trade-off:** the statically-generated `build/blog/index.html` only ever reflects page 1 (`location.search` is empty during the build's server-side render). A crawler or no-JS visitor opening `/blog?page=2` directly gets page 1's HTML and only sees page 2's actual posts once client-side JavaScript hydrates and re-renders. This is acceptable here because every individual post still has its own fully server-rendered permalink page — RSS, sitemap, and post pages are unaffected either way, and pagination pages were never meaningful content in their own right (no one links to "page 2 of a blog list"). If that trade-off ever stops being acceptable, the fix would be a dedicated plugin that generates real `/blog/page/N` routes from the pre-filtered post list, rather than filtering post-hoc inside a single collapsed route — a bigger change than this site's traffic and post count currently justify.
+
+One side effect worth knowing: collapsing to a single `/blog` route also means the sitemap and any crawler no longer see near-duplicate `/blog`, `/blog/page/2`, `/blog/page/3` thin-content pages — arguably a small SEO improvement, not just a trade-off.
+
+### What's deliberately *not* filtered
+
+Three other places also list posts, and none of them go through `BlogListPage`, so none of them were touched:
+
+- **Tag archive pages** (`/blog/tags/<tag>`) — handled by `BlogTagsPostsPage` (see [Blog post cards and tags](blog-post-cards)), a separate swizzled component. A post tagged e.g. `Custom MCPs` still appears on that tag's archive page even with `hide_from_index: true`.
+- **RSS/Atom feeds** — generated straight from the blog plugin's post list, independent of any theme component.
+- **JSON-LD structured data** — `BlogListPage/StructuredData` (not overridden) still lists every post, hidden or not, in the `BlogPosting` array embedded in the index page's `<head>`. This is search-engine-facing metadata, not something a visitor sees, and was left out of scope for this change.
+
+If any of these should someday also respect `hide_from_index`, each needs its own filter — filtering `BlogListPage` doesn't touch them.

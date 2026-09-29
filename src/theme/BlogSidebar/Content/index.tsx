@@ -7,9 +7,19 @@
 import React, {memo, type ReactNode} from 'react';
 import {useThemeConfig} from '@docusaurus/theme-common';
 import {groupBlogSidebarItemsByYear} from '@docusaurus/plugin-content-blog/client';
+import {usePluginData} from '@docusaurus/useGlobalData';
 import Heading from '@theme/Heading';
 import type {Props} from '@theme/BlogSidebar/Content';
-import {blogSeries} from '@site/src/data/blogSeries';
+
+type BlogSeries = {
+  id: string;
+  title: string;
+  slugs: string[];
+};
+
+function slugFromPermalink(permalink: string): string {
+  return permalink.replace(/\/+$/, '').split('/').pop() ?? '';
+}
 
 function BlogSidebarGroup({
   heading,
@@ -49,16 +59,15 @@ function BlogSidebarSeriesGroup({
   );
 }
 
-function slugFromPermalink(permalink: string): string {
-  return permalink.replace(/\/+$/, '').split('/').pop() ?? '';
-}
-
 function BlogSidebarContent({
   items,
   yearGroupHeadingClassName,
   ListComponent,
 }: Props): ReactNode {
   const themeConfig = useThemeConfig();
+  const {series: blogSeries} = usePluginData('blog-series-plugin') as {
+    series: BlogSeries[];
+  };
 
   const seriesGroups = blogSeries
     .map((series) => ({
