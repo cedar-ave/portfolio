@@ -11,7 +11,7 @@ This article is a draft.
 
 Zendesk's standard analytics could tell us *how many* people viewed an article. It couldn't tell us *who* they were, *which customer* they worked for, or *where on the site* they gave up and asked support for help. I built a Google Tag Manager integration into our help center theme. It captures the reader's organization, role, and identity, along with detailed information about each article, and sends it to Google Analytics 4 (GA4). That gave customer success, support, and the documentation team data that Zendesk's own reports couldn't provide.
 
-This work fed the data model behind my [analytics dashboard design](/experience/analytics-dashboard-design). The company's details are left out.
+This work fed the data model behind my [analytics dashboard design](/portfolio/analytics-dashboard-design). The company's details are left out.
 
 :::tip[At a glance]
 
@@ -90,7 +90,7 @@ dataLayer.push({
 });
 ```
 
-The email domain works as a backup company identifier, and admin status let us filter our own staff out of the reports. The Zendesk user identifier became the key that later let us [join GA4 activity to Zendesk tickets](/experience/analytics-dashboard-design).
+The email domain works as a backup company identifier, and admin status let us filter our own staff out of the reports. The Zendesk user identifier became the key that later let us [join GA4 activity to Zendesk tickets](/portfolio/analytics-dashboard-design).
 
 ### 3. A detailed article-view event
 

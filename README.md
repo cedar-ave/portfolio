@@ -82,14 +82,14 @@ They take no props; each exported component is a self-contained figure with its 
 
 | Component folder | Used by | Exports |
 | --- | --- | --- |
-| [AnalyticsDiagrams](src/components/AnalyticsDiagrams) | [analytics-dashboard-design.mdx](src/pages/experience/analytics-dashboard-design.mdx) | `SourceMap`, `JoinModel`, `AwarenessDashboard`, `DeflectionDashboard`, `ArticleAgeComparison` |
-| [ApiDocsDiagrams](src/components/ApiDocsDiagrams) | [api-documentation.mdx](src/pages/experience/api-documentation.mdx) | `TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources` |
-| [DocsAsCodeDiagrams](src/components/DocsAsCodeDiagrams) | [docs-as-code.mdx](src/pages/experience/docs-as-code.mdx), [docs-as-code-contributions.mdx](src/pages/experience/docs-as-code-contributions.mdx), [docs-as-code-customizations.mdx](src/pages/experience/docs-as-code-customizations.mdx), [docs-as-code-linting.mdx](src/pages/experience/docs-as-code-linting.mdx) | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop` |
-| [IntakeDiagrams](src/components/IntakeDiagrams) | [content-intake.mdx](src/pages/experience/content-intake.mdx) | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
-| [McpDiagrams](src/components/McpDiagrams) | [custom-mcps.mdx](src/pages/experience/custom-mcps.mdx) | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
-| [RelaunchDiagrams](src/components/RelaunchDiagrams) | [help-site-relaunch.mdx](src/pages/experience/help-site-relaunch.mdx) | `EvidenceToDecisions`, `HomeBeforeAfter` |
-| [ReleaseNotesDiagrams](src/components/ReleaseNotesDiagrams) | [automated-release-notes.mdx](src/pages/experience/automated-release-notes.mdx) | `TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator` |
-| [SkillDiagrams](src/components/SkillDiagrams) | [ai-agent-skills.mdx](src/pages/experience/ai-agent-skills.mdx) | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
+| [AnalyticsDiagrams](src/components/AnalyticsDiagrams) | [analytics-dashboard-design.mdx](src/pages/portfolio/analytics-dashboard-design.mdx) | `SourceMap`, `JoinModel`, `AwarenessDashboard`, `DeflectionDashboard`, `ArticleAgeComparison` |
+| [ApiDocsDiagrams](src/components/ApiDocsDiagrams) | [api-documentation.mdx](src/pages/portfolio/api-documentation.mdx) | `TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources` |
+| [DocsAsCodeDiagrams](src/components/DocsAsCodeDiagrams) | [docs-as-code.mdx](src/pages/portfolio/docs-as-code.mdx), [docs-as-code-contributions.mdx](src/pages/portfolio/docs-as-code-contributions.mdx), [docs-as-code-customizations.mdx](src/pages/portfolio/docs-as-code-customizations.mdx), [docs-as-code-linting.mdx](src/pages/portfolio/docs-as-code-linting.mdx) | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop` |
+| [IntakeDiagrams](src/components/IntakeDiagrams) | [content-intake.mdx](src/pages/portfolio/content-intake.mdx) | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
+| [McpDiagrams](src/components/McpDiagrams) | [custom-mcps.mdx](src/pages/portfolio/custom-mcps.mdx) | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
+| [RelaunchDiagrams](src/components/RelaunchDiagrams) | [help-site-relaunch.mdx](src/pages/portfolio/help-site-relaunch.mdx) | `EvidenceToDecisions`, `HomeBeforeAfter` |
+| [ReleaseNotesDiagrams](src/components/ReleaseNotesDiagrams) | [automated-release-notes.mdx](src/pages/portfolio/automated-release-notes.mdx) | `TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator` |
+| [SkillDiagrams](src/components/SkillDiagrams) | [ai-agent-skills.mdx](src/pages/portfolio/ai-agent-skills.mdx) | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
 
 Data used in dashboard mockups (e.g. `AwarenessDashboard`, `DeflectionDashboard`, `WorkItemSimulator`) is illustrative, not real company data — see the constants near the top of each file.
 

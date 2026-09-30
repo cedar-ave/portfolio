@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-/* Diagrams for /experience/docs-as-code-standing-it-up and /experience/docs-as-code-contributions.
+/* Diagrams for /portfolio/docs-as-code-standing-it-up and /portfolio/docs-as-code-contributions.
    Names and details are generalized. */
 
 /* ---------- shared pieces ---------- */
@@ -349,7 +349,7 @@ export function PublishPipeline() {
 }
 
 /* =====================================================================
-   Diagrams for /experience/docs-as-code-contributions
+   Diagrams for /portfolio/docs-as-code-contributions
    ===================================================================== */
 
 /* ---------- 6. Contributor path with support at each step ---------- */
@@ -599,7 +599,7 @@ export function ReleaseNotesFlow() {
 }
 
 /* =====================================================================
-   Diagrams for /experience/docs-as-code-linting
+   Diagrams for /portfolio/docs-as-code-linting
    ===================================================================== */
 
 /* ---------- 11. One rule set, three checkpoints ---------- */
@@ -763,7 +763,7 @@ export function StyleCuration() {
 }
 
 /* =====================================================================
-   Diagrams for /experience/docs-as-code-linting-scripts
+   Diagrams for /portfolio/docs-as-code-linting-scripts
    ===================================================================== */
 
 /* ---------- 14. Fixers, linters, and audits ---------- */
@@ -838,7 +838,7 @@ export function ScriptRoles() {
   );
 }
 
-/* ---------- Customizations page (/experience/docs-as-code-customizations) ---------- */
+/* ---------- Customizations page (/portfolio/docs-as-code-customizations) ---------- */
 
 function Marker({ x, y, n }) {
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-/* Diagrams for /experience/help-site-relaunch. Content is illustrative. */
+/* Diagrams for /portfolio/help-site-relaunch. Content is illustrative. */
 
 function Box({ x, y, w, h, kind = 'node', lines = [], rx = 8, lh = 17 }) {
   const cx = x + w / 2;

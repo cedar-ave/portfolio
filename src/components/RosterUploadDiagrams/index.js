@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './styles.module.css';
 
-/* Screen mockups for /experience/ux-writing-data-upload. All content is
+/* Screen mockups for /portfolio/ux-writing-data-upload. All content is
    illustrative, not a screenshot of the actual product (see IMPORTANT note
    on the page). Built as SVG so the wording stays easy to edit and the
    colors follow the site's light/dark theme.

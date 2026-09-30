@@ -31,7 +31,7 @@ Paligo breaks content down further than topics. It stores every paragraph, list 
 
 This model is powerful, but only if the content is designed for it. If you paste in documents and write them the old way, you get none of the benefits of a CCMS and still pay its cost. My job was to design a content model that made reuse natural, safe, and easy to maintain.
 
-I chose Paligo after a structured evaluation of four documentation architectures. To see how I made that decision, read [Choosing a CCMS](/experience/ccms-evaluation). This page covers what I built once I'd chosen it.
+I chose Paligo after a structured evaluation of four documentation architectures. To see how I made that decision, read [Choosing a CCMS](/portfolio/ccms-evaluation). This page covers what I built once I'd chosen it.
 
 ![Diagram of the single-source model: four kinds of reusable components (topics, reusable admonitions, text fragments, and variables) feed six publications built from forks. At publish time, variables, image variables, forks, and cross-references are resolved, and the result is published to the help center as categories, sections, and articles.](/img/paligo/single-source-model.svg)
 
@@ -131,7 +131,7 @@ A CCMS is only as good as its output. I learned how the Paligo-to-help-center in
 - **Paligo doesn't delete articles from the help center.** So every restructure included a check of the help center for articles left behind by the old structure, so customers wouldn't find outdated duplicates.
 - **Titles and file names can affect URLs.** I treated a title change on a published topic as a change to a public URL and raised redirects as a requirement, so customers wouldn't hit 404 errors.
 - **Edits made directly in the help center are overwritten at the next publish.** The rule was simple: Paligo-published articles are edited in Paligo. Support articles written directly in the help center lived alongside them without conflict.
-- **The output needed help center support.** Paligo's HTML has patterns a stock theme doesn't expect, such as headings styled as paragraphs and deeply nested ordered lists. I later handled those in the help center theme itself. See [Help center theme engineering](/experience/help-center-theme-engineering).
+- **The output needed help center support.** Paligo's HTML has patterns a stock theme doesn't expect, such as headings styled as paragraphs and deeply nested ordered lists. I later handled those in the help center theme itself. See [Help center theme engineering](/portfolio/help-center-theme-engineering).
 
 ## Why this matters
 
@@ -143,7 +143,7 @@ A CCMS is only as good as its output. I learned how the Paligo-to-help-center in
 
 - **It's ready for translation.** Paligo stores each paragraph as a segment with translation memory, so a new language would reuse translations wherever the same text appears.
 - **It's ready for AI.** Small, self-contained, semantically tagged topics are exactly what retrieval systems and AI assistants need to find and cite accurate answers. Well-structured content is the foundation for trustworthy AI help.
-- **It's ready for automation.** Because the content is XML with consistent rules, it can be generated and published programmatically. I later built an AI agent skill and a custom MCP server that convert approved Google Docs into valid DocBook, upload images, create cross-references, and publish through Paligo's REST API. See [AI agent skills](/experience/ai-agent-skills) and [Custom MCPs](/experience/custom-mcps).
+- **It's ready for automation.** Because the content is XML with consistent rules, it can be generated and published programmatically. I later built an AI agent skill and a custom MCP server that convert approved Google Docs into valid DocBook, upload images, create cross-references, and publish through Paligo's REST API. See [AI agent skills](/portfolio/ai-agent-skills) and [Custom MCPs](/portfolio/custom-mcps).
 
 ## Skills demonstrated
 

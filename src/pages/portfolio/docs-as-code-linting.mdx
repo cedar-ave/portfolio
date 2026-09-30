@@ -11,7 +11,7 @@ import { LintCheckpoints, ValeFlow, StyleCuration } from '@site/src/components/D
 This article is a draft.
 :::
 
-On the [docs-as-code platform I built](/experience/docs-as-code-standing-it-up), I used the Vale linting tool to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Linting with custom scripts](/experience/docs-as-code-linting-scripts). The same rules ran in the writer's editor and on the command line, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas.
+On the [docs-as-code platform I built](/portfolio/docs-as-code-standing-it-up), I used the Vale linting tool to check style, grammar, and spelling, and built a house style of 96 rules drawn from Microsoft, GitLab, and other public style guides, then edited to fit the company's voice. markdownlint, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote custom scripts, covered in the companion article [Linting with custom scripts](/portfolio/docs-as-code-linting-scripts). The same rules ran in the writer's editor and on the command line, so contributors fixed problems as they typed and reviewers spent their time on accuracy instead of commas.
 
 The company's details are left out. Rule files and configs on this page are excerpts from my original work, with company-specific terms removed.
 
@@ -20,7 +20,7 @@ The company's details are left out. Rule files and configs on this page are exce
 - **Custom style rules enforced by Vale:** 96 rules for word choice, voice, headings, numbers, punctuation, inclusive language, and docs-as-code problems like leftover merge conflict markers.
 - **A spelling list of about 300 product and technical terms**, so real mistakes stand out instead of getting lost in false alarms.
 - **markdownlint tuned for DocFX:** consistent headings and lists, only the HTML the site needs, and no conflict between DocFX page titles and H1s.
-- **Custom scripts** for broken links, missing alt text, unused images, and title mismatches. See [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
+- **Custom scripts** for broken links, missing alt text, unused images, and title mismatches. See [Linting with custom scripts](/portfolio/docs-as-code-linting-scripts).
 
 :::
 
@@ -211,7 +211,7 @@ A few of these settings came from how the platform worked:
 
 ## Beyond Vale and markdownlint
 
-Vale and markdownlint check what's inside one file. Some problems live between files, such as a link to a page that moved or an image no page uses, and some need a fix rather than a warning. For those, I wrote custom scripts: fixers that brought existing content up to the markdownlint rules in one run, and audits for broken links, unused images, title mismatches, and spelling. They're covered in the companion article, [Linting with custom scripts](/experience/docs-as-code-linting-scripts).
+Vale and markdownlint check what's inside one file. Some problems live between files, such as a link to a page that moved or an image no page uses, and some need a fix rather than a warning. For those, I wrote custom scripts: fixers that brought existing content up to the markdownlint rules in one run, and audits for broken links, unused images, title mismatches, and spelling. They're covered in the companion article, [Linting with custom scripts](/portfolio/docs-as-code-linting-scripts).
 
 I also used DocFx Companion Tools to check links and catch malformed tables, which break silently in Markdown:
 

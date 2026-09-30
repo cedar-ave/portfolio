@@ -76,7 +76,7 @@ The company's name and product details are left out. Tag values and examples on 
 
 ## The problem: the knowledge existed, but no one could find it
 
-At a software company with a complex, workflow-heavy product, the most accurate product knowledge wasn't in the help center. It was spread across thousands of support tickets, recorded customer calls, engineering repos, internal docs, and customer-made step-by-step guides. I was building [AI agent skills](/experience/ai-agent-skills) to draft help articles from that material, and I saw two problems right away.
+At a software company with a complex, workflow-heavy product, the most accurate product knowledge wasn't in the help center. It was spread across thousands of support tickets, recorded customer calls, engineering repos, internal docs, and customer-made step-by-step guides. I was building [AI agent skills](/portfolio/ai-agent-skills) to draft help articles from that material, and I saw two problems right away.
 
 1. **Cost.** A model that re-reads the whole library for every article is slow and expensive, and it runs out of context before it finishes.
 2. **Recall.** Keyword search misses sources that use different words for the same thing. A ticket about "acct ID," one about "account identifier," and a transcript about "customer number" are all about the same workflow. Without shared vocabulary, the model wouldn't know that.

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-/* Diagrams for /experience/api-documentation. Names and details are generalized. */
+/* Diagrams for /portfolio/api-documentation. Names and details are generalized. */
 
 /* ---------- shared pieces ---------- */
 
