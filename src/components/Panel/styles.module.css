@@ -1,0 +1,31 @@
+/* Styled like Docusaurus's own doc cards (DocCard/DocCardList) and this
+   site's QuickReference panel: the theme-aware card surface, radius,
+   border and shadow, so this reads as a native part of the theme in both
+   light and dark mode instead of a fixed-color callout. */
+
+.panel {
+  margin: 1.5rem 0;
+  background-color: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+  padding: 1.5rem;
+}
+
+.panel > :first-child {
+  margin-top: 0;
+}
+
+.panel > :last-child {
+  margin-bottom: 0;
+}
+
+.panelLabel {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}

@@ -1,0 +1,56 @@
+---
+sidebar_position: 3
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Panel
+
+<QuickReference>
+
+- To use it: wrap a run of content in `<Panel>` inside any `.md`/`.mdx` file. No import needed.
+- To add a caption: pass `label`, e.g. `<Panel label="Sample outline">`.
+- To change styling (radius, border, shadow, padding): edit `src/components/Panel`'s CSS module.
+- To register or unregister it globally: edit `src/theme/MDXComponents.js`.
+
+</QuickReference>
+
+## What it does
+
+Wraps a run of MDX content in a soft, rounded panel with a slight shadow, so it reads as a distinct block without the fixed color of an admonition (`:::note`, `:::important`, etc.). It is registered globally via `src/theme/MDXComponents.js`, so it is available in any `.md`/`.mdx` file (docs, blog posts, and pages) with no import needed.
+
+It's styled to match Docusaurus's own doc cards and this site's `QuickReference` panel (the box above this paragraph), so it reads as a native part of the theme in both light and dark mode rather than a custom callout color.
+
+## Usage
+
+```mdx
+<Panel>
+
+Any MDX content goes here — paragraphs, lists, images, even other components.
+
+</Panel>
+```
+
+Keep a blank line after the opening tag and before the closing tag. That is what makes MDX parse the content as normal markdown instead of trying to read it as a single inline child.
+
+## Label
+
+Panels are unlabeled by default. Add a small uppercase caption with `label`:
+
+```mdx
+<Panel label="Sample outline">
+
+1. First step.
+2. Second step.
+
+</Panel>
+```
+
+## When to use it vs. an admonition
+
+- Use an admonition (`:::note`, `:::tip`, `:::important`, etc.) when the content is a warning, tip, or aside that should stand out with color.
+- Use `<Panel>` when you just want to set a block apart visually — a worked example, a sample outline, a quoted excerpt — without implying a note or warning.
+
+## Source
+
+`src/components/Panel`
