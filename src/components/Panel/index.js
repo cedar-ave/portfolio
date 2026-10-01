@@ -16,9 +16,14 @@ import styles from './styles.module.css';
 // `label` is optional; omit it for an unlabeled panel. Styled like
 // QuickReference/DocCard so it matches the rest of the theme in both
 // light and dark mode.
-export default function Panel({ children, label }) {
+//
+// `id` is normally left for the remark-panel-toc plugin to inject (see
+// plugins/remark-panel-toc.mjs) on pages that opt into
+// `toc_source: panels`, so the right-rail TOC can scroll to this panel. You
+// can also pass it by hand for a stable anchor link outside of that flow.
+export default function Panel({ children, label, id }) {
   return (
-    <div className={clsx(styles.panel)}>
+    <div id={id} className={clsx(styles.panel)}>
       {label && <p className={styles.panelLabel}>{label}</p>}
       {children}
     </div>

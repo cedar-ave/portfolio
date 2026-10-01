@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Panel-based table of contents
+
+<QuickReference>
+
+- To use it: add `toc_source: panels` to a page's frontmatter.
+- It swaps the right-rail TOC from markdown headings to `<Panel label="...">` captions on that page only.
+- Unlabeled panels, and pages that don't set the flag, are unaffected.
+- Source: `plugins/remark-panel-toc.mjs`, `src/components/Panel`.
+
+</QuickReference>
+
+## What it does
+
+By default, Docusaurus builds a page's right-rail table of contents from its markdown headings (`##`, `###`, …). That's a problem for a page that wraps several unrelated write-ups in [`<Panel label="...">`](panel) blocks - the TOC ends up listing every write-up's internal headings instead of the panels that actually separate the content.
+
+Setting `toc_source: panels` in a page's frontmatter switches that page's TOC to list each `<Panel label="...">` caption instead, one entry per labeled panel, linking straight to that panel.
+
+```mdx title="example"
+---
+title: Example page
+toc_source: panels
+---
+```
+
+Every other page keeps the normal heading-based TOC - this is opt-in per page, not a site-wide change.
+
+:::important
+No page currently opts into this. It was built for `release-notes.mdx`, which wrapped three unrelated samples in `<Panel>` blocks; that page was later split into three standalone pages ([Sprint-aligned release notes](/portfolio/release-notes-sprint-aligned), [Customer-facing release notes](/portfolio/release-notes-customer-facing), [API release notes](/portfolio/release-notes-api)), each with its own normal heading-based TOC. The plugin and `<Panel>` component are left in place as available infrastructure for a future page that needs this pattern.
+:::
+
+## How it works
+
+Docusaurus's MDX pipeline auto-generates `export const toc = [...]` for every page from its headings, but it explicitly leaves that export alone if the page already defines its own `toc` export (an existing Docusaurus feature meant for manually-authored TOCs). `plugins/remark-panel-toc.mjs` is a remark plugin, registered on the `pages` preset in `docusaurus.config.js`, that does this automatically instead of requiring anyone to hand-write the array:
+
+1. It no-ops unless the page's frontmatter has `toc_source: panels`.
+2. It walks the page for `<Panel label="...">` elements.
+3. For each one, it generates a slug from the label and stamps it onto the `<Panel>` as an `id` attribute (unless the panel already has one), so the TOC link has something to scroll to.
+4. It replaces the page's (already-generated) `toc` export with one entry per labeled panel.
+
+Because the plugin runs after Docusaurus's own heading-based `toc` export already exists for the page, it only has to overwrite that export - it doesn't need to re-implement heading extraction itself.
+
+`src/components/Panel` accepts the resulting `id` prop and renders it on its wrapping `<div>` so the anchor link resolves. You can also pass `id` by hand on a `<Panel>` for a stable anchor outside of this flow.
+
+## Notes
+
+- Unlabeled panels (no `label` prop) never appear in the TOC, with or without this flag - there's nothing to show.
+- Headings inside a panel still render normally in the page body; they just stop contributing their own TOC entries once `toc_source: panels` is set.
+- If two panels on the same page share a label, the plugin appends `-2`, `-3`, etc. to keep anchor ids unique.
+
+## Source
+
+`plugins/remark-panel-toc.mjs`, `src/components/Panel`, the `pages.remarkPlugins` option in `docusaurus.config.js`.
