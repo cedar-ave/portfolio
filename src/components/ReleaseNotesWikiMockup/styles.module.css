@@ -1,0 +1,456 @@
+/* Mockup of a community-wiki release-notes page for /portfolio/release-notes.
+   Colors follow the site palette in src/css/custom.css and switch with the
+   light/dark theme, matching the tokens used in SanctionsMatchMockup and
+   ReleaseNotesDiagrams. */
+
+.figure {
+  --mk-surface: #ffffff;
+  --mk-panel: #f6f8fb;
+  --mk-border: #d5dde6;
+  --mk-ink: #1c1e21;
+  --mk-ink-2: #4a5663;
+  --mk-ink-3: #6b7885;
+  --mk-accent: #1a5fb4;
+  --mk-accent-bg: #eaf3fc;
+  --mk-shadow: rgba(28, 30, 33, 0.1);
+
+  --mk-topbar: #16324f;
+  --mk-topbar-ink: #eaf1f8;
+  --mk-banner-1: #1f4e79;
+  --mk-banner-2: #2f6fa8;
+  --mk-banner-ink: #ffffff;
+
+  --mk-dot-a: #2fb2c4;
+  --mk-dot-b: #f2a33e;
+  --mk-dot-c: #3a8f4b;
+  --mk-dot-d: #d1495b;
+
+  margin: 2rem 0 2.5rem;
+}
+
+:global([data-theme='dark']) .figure {
+  --mk-surface: #242526;
+  --mk-panel: #1d1e20;
+  --mk-border: #3d4148;
+  --mk-ink: #e3e3e3;
+  --mk-ink-2: #b8c0c9;
+  --mk-ink-3: #8e98a3;
+  --mk-accent: #6aa6e0;
+  --mk-accent-bg: #1d2c3d;
+  --mk-shadow: rgba(0, 0, 0, 0.4);
+
+  --mk-topbar: #0e1f33;
+  --mk-topbar-ink: #dfe8f0;
+  --mk-banner-1: #16324f;
+  --mk-banner-2: #1f4e79;
+  --mk-banner-ink: #f2f6fa;
+}
+
+.page {
+  border: 1px solid var(--mk-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--mk-surface);
+  box-shadow: 0 8px 24px var(--mk-shadow);
+  font-family: var(--ifm-font-family-base);
+  color: var(--mk-ink);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--mk-ink-3);
+  text-align: center;
+}
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--mk-topbar);
+  color: var(--mk-topbar-ink);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoDotA { fill: var(--mk-dot-a); }
+.logoDotB { fill: var(--mk-dot-b); }
+.logoDotC { fill: var(--mk-dot-c); }
+.logoDotD { fill: var(--mk-dot-d); }
+
+.logoWordmark {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--mk-topbar-ink);
+}
+
+.logoDivider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.logoCommunity {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.topbarIcons {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--mk-accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ---------- Banner ---------- */
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(90deg, var(--mk-banner-1), var(--mk-banner-2));
+  color: var(--mk-banner-ink);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.crumbBold {
+  font-weight: 700;
+}
+
+.crumbSep {
+  opacity: 0.6;
+}
+
+.crumbMenu {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.newButton {
+  background: #ffffff;
+  color: var(--mk-banner-1);
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: default;
+}
+
+/* ---------- Layout ---------- */
+
+.body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 250px;
+  flex: 0 0 250px;
+  border-right: 1px solid var(--mk-border);
+  padding: 0.9rem 0;
+  background: var(--mk-panel);
+}
+
+.main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 1.5rem 1.75rem 2rem;
+}
+
+/* ---------- Sidebar nav tree ---------- */
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding-top: 0.32rem;
+  padding-bottom: 0.32rem;
+  padding-right: 0.75rem;
+  font-size: 0.82rem;
+  cursor: default;
+}
+
+/* Wraps the caret + label so the active highlight starts at the same x as
+   every other row's text, instead of bleeding left to the row's own edge
+   (which sits before the depth-based indent on .navItem). */
+.navRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--mk-accent);
+}
+
+.navRowActive {
+  background: var(--mk-accent-bg);
+  color: var(--mk-ink);
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem 0.15rem 0.15rem;
+  margin-left: -0.15rem;
+}
+
+.navCaret {
+  font-size: 0.78rem;
+  color: var(--mk-ink-3);
+  width: 0.8rem;
+  display: inline-block;
+}
+
+.sideButton {
+  display: block;
+  width: calc(100% - 1.6rem);
+  margin: 0.6rem 0.8rem 0;
+  background: var(--mk-accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+.linksPanel {
+  margin: 1rem 0.8rem 0;
+  border: 1px solid var(--mk-border);
+  border-radius: 6px;
+  background: var(--mk-surface);
+  padding: 0.75rem;
+}
+
+.linksPanelTitle {
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-bottom: 0.6rem;
+}
+
+.linkRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.linkRow:last-child {
+  margin-bottom: 0;
+}
+
+.linkIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--mk-accent-bg);
+  color: var(--mk-accent);
+  font-size: 0.75rem;
+}
+
+.linkTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mk-accent);
+}
+
+.linkDesc {
+  font-size: 0.72rem;
+  color: var(--mk-ink-3);
+  line-height: 1.35;
+}
+
+/* ---------- Main content: landing view ---------- */
+
+.pageTitle {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+}
+
+.pageHint {
+  font-style: italic;
+  color: var(--mk-ink-3);
+  margin: 0 0 1.25rem;
+  font-size: 0.85rem;
+}
+
+.dateIndex {
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin: 0;
+}
+
+.dateIndex li {
+  margin-bottom: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.dateLink {
+  color: var(--mk-accent);
+  text-decoration: none;
+  cursor: default;
+}
+
+.sectionRule {
+  border: none;
+  border-top: 1px dashed var(--mk-border);
+  margin: 1.75rem 0;
+}
+
+/* ---------- Main content: detail view ---------- */
+
+.detailDate {
+  margin: 0 0 0.3rem;
+  font-size: 1.2rem;
+}
+
+.sprint {
+  font-style: italic;
+  color: var(--mk-ink-2);
+  margin: 0 0 0.6rem;
+  font-size: 0.88rem;
+}
+
+.versionList {
+  margin: 0 0 0.7rem;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+
+.versionList li {
+  margin-bottom: 0.2rem;
+}
+
+.compatNote {
+  font-size: 0.82rem;
+  color: var(--mk-ink-3);
+  margin: 0 0 1.5rem;
+}
+
+.linkText {
+  color: var(--mk-accent);
+  font-weight: 600;
+}
+
+.productSection {
+  margin-bottom: 1.75rem;
+}
+
+.productHeading {
+  font-size: 1.05rem;
+  /* border-bottom: 2px solid var(--mk-border); */
+  padding-bottom: 0.3rem;
+  margin: 0 0 0.9rem;
+}
+
+.statusGroup {
+  margin-bottom: 1rem;
+}
+
+.statusHeading {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--mk-accent);
+  background: var(--mk-accent-bg);
+  border-radius: 4px;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table th {
+  text-align: left;
+  color: white;
+  font-weight: 700;
+  border-bottom: 1px solid var(--mk-border);
+  padding: 0.4rem 0.6rem;
+}
+
+.table td {
+  border-bottom: 1px solid var(--mk-border);
+  padding: 0.55rem 0.6rem;
+  vertical-align: top;
+  color: var(--mk-ink-2);
+}
+
+.thId, .tdId { width: 64px; white-space: nowrap; }
+.thNote, .tdNote { width: auto; }
+
+.tdNote strong {
+  color: var(--mk-ink);
+}
+
+.detail {
+  color: var(--mk-ink);
+}
+
+.patchTag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--mk-ink-3);
+  background: var(--mk-panel);
+  border: 1px solid var(--mk-border);
+  border-radius: 3px;
+  padding: 0.05rem 0.3rem;
+  margin: 0 0.25rem;
+  vertical-align: middle;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-basis: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--mk-border);
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

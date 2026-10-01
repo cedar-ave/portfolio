@@ -473,3 +473,7 @@ img.zoomImage:hover {
 .theme-doc-sidebar-container {
   border: none;
 }
+
+li > p {
+  margin-bottom: .8rem;
+}

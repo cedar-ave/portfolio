@@ -4,20 +4,27 @@ description: Examples of work on release notes
 ---
 
 import { SanctionsReviewMockup } from '@site/src/components/SanctionsMatchMockup';
+import { ReleaseNotesWikiMockup } from '@site/src/components/ReleaseNotesWikiMockup';
 
 # Release notes
 
-## Sample from major release notes
+:::important
+Release notes in samples are slightly changed to mask proprietary data. Images are mockups of publications created by Claude.
+:::
+
+<Panel label="Sprint-aligned release notes">
+
+<ReleaseNotesWikiMockup />
+
+</Panel>
+
+<Panel label="Customer-facing release notes for a major release">
 
 ### See at a glance which record matches are most relevant
 
-:::important
-The products are proprietary, so text is slightly modified. Images are mockups of products modified and constructed by Claude.
-:::
+Reviewing record matches just got faster in the MyData app. Every potential match in the **Needs Review** modal now shows a match relevancy score so you can tell instantly how likely a flagged record is to be your actual provider before you spend time digging in. Each match displays a simple strength gauge and a clear label:
 
-Reviewing record matches just got faster in the Agency app. Every potential match in the **Needs Review** modal now shows a match relevancy score, so you can instantly tell how likely a flagged record is to be your actual provider before you spend time digging in. Each match displays a simple strength gauge and a clear label:
-
-- **High relevance** means the there is high confidence that the record belongs to the employee, usually because a strong identifier like an ID or Social Security Number lined up.
+- **High relevance** means there is high confidence that the record belongs to the employee, usually because a strong identifier like an ID or Social Security Number lined up.
 
 - **Medium relevance** means it is a probable match worth a look.
 
@@ -29,8 +36,10 @@ The score appears on every result card across the **Needs Review**, **Accepted**
 
 #### Read more on the help site
 
-- [About assessing relevance of record matches in the Agency app]()
+- About assessing relevance of record matches in the Agency app
 
-- [Review the relevance of a record match in the Agency app]()
+- Review the relevance of a record match in the Agency app
 
-- [Configure relevancy levels of record matches in the Agency app]()
+- Configure relevancy levels of record matches in the Agency app
+
+</Panel>
