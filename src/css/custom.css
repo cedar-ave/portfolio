@@ -19,6 +19,7 @@
  */
 :root {
   --ifm-font-family-base: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'Roboto Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   --ifm-color-primary: #5e7893;
   --ifm-color-primary-dark: #546c84;
   --ifm-color-primary-darker: #4f667c;

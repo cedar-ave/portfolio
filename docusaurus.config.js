@@ -53,8 +53,9 @@ const config = {
   ],
 
   // Roboto: all weights (100-900), widths (75-100) and italics
+  // Roboto Mono: all weights (100-700), used for the site's monospace font
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap',
+    'https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
   ],
 
   presets: [
