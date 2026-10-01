@@ -1,0 +1,83 @@
+---
+title: Customer-facing release notes
+description: Example of high-level, customer-facing release notes for a major release
+toc_source: panels
+---
+
+import { SanctionsReviewMockup } from '@site/src/components/SanctionsMatchMockup';
+import { RecordHealthCheckMockup } from '@site/src/components/RecordHealthCheckMockup';
+import { DataHealthDashboardMockup } from '@site/src/components/DataHealthDashboardMockup';
+
+# Customer-facing release notes for a major release
+
+:::important
+Release notes in samples are slightly changed to mask proprietary data. Images are mockups of publications created by Claude.
+:::
+
+<Panel label="Excerpts from a help site">
+
+## See at a glance which record matches are most relevant
+
+Reviewing record matches just got faster in the MyData app. Every potential match in the **Needs Review** modal now shows a match relevancy score so you can tell instantly how likely a flagged record is to be your actual provider before you spend time digging in. Each match displays a simple strength gauge and a clear label:
+
+- **High relevance** means there is high confidence that the record belongs to the employee, usually because a strong identifier like an ID or Social Security Number lined up.
+
+- **Medium relevance** means it is a probable match worth a look.
+
+- **Low relevance** means it is likely a different employee who shares part of a name, so it is often a false positive.
+
+<SanctionsReviewMockup />
+
+The score appears on every result card across the **Needs Review**, **Accepted**, and **Rejected** tabs, and it works for both employee and applicant matches. Instead of opening every hit to figure out which ones count, now you can prioritize the strong matches first and clear the noise quickly, bringing your review experience in line with what you already get in the MyQuality app.
+
+### Read more on the help site
+
+- <span className="mockLinkText">Review the relevance of a record match</span>
+- <span className="mockLinkText">Configure relevancy levels of record matches</span>
+
+## Refresh a provider's verifications in one click
+
+With the new **Run** button on a provider's **Data Records** page, you can refresh several data records at once instead of triggering each one individually. Open the page, review the list of data records, choose the ones you want to refresh, and run them together in a single step. It's especially handy right before you finish reviewing records or any time you've corrected data and want to see the updated output.
+
+A few things that make it easy to use:
+
+- **Smart defaults:** Every eligible data record is pre-selected, so you can run them all in a couple of clicks. Items that carry an added cost or need your review are left unchecked so you can opt into those deliberately.
+
+- **Clear at a glance:** Each data record shows its last verified date and a short note if something needs attention, so you know exactly what you're re-running.
+
+- **Live updates:** Data updates automatically as each refresh finishes, so there's nothing extra to track.
+
+The result is less repetitive clicking and more confidence that records are current before you finalize record reviews.
+
+### Read more
+
+- <span className="mockLinkText">Re-run multiple verifications at once</span>
+
+## Catch and fix issues with data health checks
+
+Data problems like a missing Social Security Number, incorrect zip code, or mismatched ID used to stay hidden until a refresh failed, leaving your team to figure out what went wrong and why.
+
+With the new data health check, those issues are surfaced right on the data record's page so you can resolve them in seconds instead of filing a support ticket and waiting. When a data record has flagged fields, a **Health Check** banner shows how many items need attention. From there you can enter missing values or confirm existing ones, all without leaving the page.
+
+<RecordHealthCheckMockup />
+
+For admins, there's also a new **Data Health Check Dashboard** that gives you an organization-wide view of every data record with open issues. You can then fix the issues directly from the dashboard.
+
+<DataHealthDashboardMockup />
+
+The system scans all data records automatically each week and keeps data records current as your team works through them, so the list always reflects how things stand.
+
+:::important
+If your organization has a large number of data records, you may see the **Health Check** banner on many data records after upgrading. This means the system is surfacing issues that already existed.
+
+If your organization wants more time before the first scan runs after upgrading, you can disable the data health check before its first run. Before upgrading, an administrator can create a data record in **Custom Settings** to configure the install script to skip scheduler registration. The administrator can then re-enable the scan from the dashboard when ready.
+:::
+
+### Read more
+
+- <span className="mockLinkText">About data health checks</span>
+- <span className="mockLinkText">Check the health of data in a record and resolve issues</span>
+- <span className="mockLinkText">See all records with data issues in the Data Health Check Dashboard</span>
+- <span className="mockLinkText">Configure how often data health checks run</span>
+
+</Panel>

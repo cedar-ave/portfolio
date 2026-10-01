@@ -54,6 +54,20 @@
   margin-bottom: 2rem;
 }
 
+/* Mockup/sample text styled to look like a link (colored, semibold) without
+   being a real, clickable link - used for "Read more" / "See details"
+   references in release-notes samples. Matches the accent blue used for
+   "Compatibility matrix" in the sprint-aligned release notes mockup
+   (ReleaseNotesWikiMockup's --mk-accent), not the site's own link color. */
+.mockLinkText {
+  color: #1a5fb4;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .mockLinkText {
+  color: #6aa6e0;
+}
+
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
   --ifm-color-primary: #a6dcf7;

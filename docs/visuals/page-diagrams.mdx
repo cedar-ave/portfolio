@@ -32,13 +32,22 @@ They take no props. Each exported component is a self-contained figure with its 
 | Component folder | Used by | Exports |
 | --- | --- | --- |
 | `AnalyticsDiagrams` | `src/pages/portfolio/analytics-dashboard-design.mdx` | `SourceMap`, `JoinModel`, `AwarenessDashboard`, `DeflectionDashboard`, `ArticleAgeComparison` |
-| `ApiDocsDiagrams` | `src/pages/portfolio/api-documentation.mdx` | `TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources` |
-| `DocsAsCodeDiagrams` | `src/pages/portfolio/docs-as-code.mdx`, `docs-as-code-contributions.mdx`, `docs-as-code-customizations.mdx`, `docs-as-code-linting.mdx` | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop` |
-| `IntakeDiagrams` | `src/pages/portfolio/content-intake.mdx` | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
-| `McpDiagrams` | `src/pages/portfolio/custom-mcps.mdx` | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
+| `DocsAsCodeDiagrams` | `src/pages/portfolio/docs-as-code-standing-it-up.mdx`, `docs-as-code-contributions.mdx`, `docs-as-code-customizations.mdx`, `docs-as-code-linting.mdx`, `docs-as-code-linting-scripts.mdx` | `EcosystemMap`, `LocalDevLoop`, `ApiDocsFlow`, `TemplateLayers`, `PublishPipeline`, `ContributorPath`, `AudienceLayers`, `TwoOnRamps`, `ReviewModel`, `ReleaseNotesFlow`, `PageAnatomy`, `SingleSourceFlow`, `MetadataCascade`, `FeedbackLoop`, `LintCheckpoints`, `ValeFlow`, `StyleCuration`, `ScriptRoles` |
 | `RelaunchDiagrams` | `src/pages/portfolio/help-site-relaunch.mdx` | `EvidenceToDecisions`, `HomeBeforeAfter` |
-| `ReleaseNotesDiagrams` | `src/pages/portfolio/automated-release-notes.mdx` | `TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator` |
-| `SkillDiagrams` | `src/pages/portfolio/ai-agent-skills.mdx` | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
+| `RosterUploadDiagrams` | `src/pages/portfolio/ux-writing-data-upload.mdx` | `UploadScreenBefore`, `UploadScreenAfter` |
+
+Folders used only by archived pages (`src/pages/portfolio/_archive/`, excluded from the build by the leading underscore) aren't part of the live site, but are kept alongside their page in case that sample gets restored:
+
+| Component folder | Used by (archived) | Exports |
+| --- | --- | --- |
+| `IntakeDiagrams` | `_archive/content-intake.mdx` | `RequestToRootProblem`, `IntakeFlow`, `RequestFormMockup` |
+| `McpDiagrams` | `_archive/custom-mcps.mdx` | `McpHub`, `ManualVsPrompt`, `TicketPipeline` |
+| `SkillDiagrams` | `_archive/ai-agent-skills.mdx` | `SkillSuite`, `TieredReading`, `ReleaseNoteFilter`, `SubagentFanOut`, `DocToPaligo`, `SafeWrites`, `ReviewStack` |
+
+Two folders are currently orphaned — not imported by any page, live or archived — and are candidates for deletion or for pairing with a new page:
+
+- `ApiDocsDiagrams` (`TwoApiTypes`, `RestApiPipeline`, `EngineApiPipeline`, `EditionSources`) — `api-documentation.mdx` uses screenshots instead.
+- `ReleaseNotesDiagrams` (`TypicalVsAutomated`, `PipelineMap`, `WorkItemSimulator`) — written for an `automated-release-notes.mdx` page that was never created.
 
 ## Source
 

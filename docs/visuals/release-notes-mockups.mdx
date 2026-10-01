@@ -1,0 +1,101 @@
+---
+sidebar_position: 4.5
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Release notes page mockups
+
+<QuickReference>
+
+- To change any mockup's text or images: edit the matching component under `src/components`, not the page that imports it (each page only imports and places the one(s) it needs).
+- To edit the API changelog's dated entries: edit the `ENTRIES` array in `src/components/ApiReleaseNotesMockup/index.js`.
+- To add inline code or a link-styled reference inside a sentence, title, or bullet: turn that string into an array of parts and insert a `{ code: '...' }` or `{ link: '...' }` object — see [Writing mixed text](#writing-mixed-text-code-and-link-parts) below.
+- To add a new dated release: copy an entry object in `ENTRIES` and give it a unique `date`/`version`; the sidebar index is generated from this automatically.
+- Shared visual style (colors, spacing, light/dark tokens) lives in each folder's `styles.module.css`.
+
+</QuickReference>
+
+## What these are
+
+The "Release notes" portfolio sample used to be a single page (`release-notes.mdx`) that wrapped several unrelated write-ups in `<Panel>` blocks. It's now split into three standalone pages, one per sample, each built from its own standalone mockup component(s). Like the `*Diagrams` folders (see [Page diagrams](page-diagrams)), these are bespoke, one-page components, not shared or registered in `src/theme/MDXComponents.js`. Each page imports what it needs by name:
+
+```mdx
+import { ApiReleaseNotesMockup } from '@site/src/components/ApiReleaseNotesMockup';
+
+<ApiReleaseNotesMockup />
+```
+
+| Component folder | Used for | Page |
+| --- | --- | --- |
+| `ReleaseNotesWikiMockup` | Sprint-aligned release notes | `src/pages/portfolio/release-notes-sprint-aligned.mdx` |
+| `SanctionsMatchMockup` | Record-match relevancy | `src/pages/portfolio/release-notes-customer-facing.mdx` |
+| `RecordHealthCheckMockup` | Data health check banner | `src/pages/portfolio/release-notes-customer-facing.mdx` |
+| `DataHealthDashboardMockup` | Data Health Check Dashboard | `src/pages/portfolio/release-notes-customer-facing.mdx` |
+| `ApiReleaseNotesMockup` | API release notes for developers | `src/pages/portfolio/release-notes-api.mdx` |
+
+All sample text is fictionalized/genericized and none of it reflects real company data, proprietary terminology, or real third-party services.
+
+## Editing ApiReleaseNotesMockup
+
+This is the only mockup on the page driven by a data array rather than hand-written JSX, so it's worth knowing its shape before editing.
+
+`ENTRIES` is an array of dated releases:
+
+```js
+{
+  date: 'September 2, 2026',
+  version: '27.2.0',
+  groups: [
+    {
+      status: 'added', // or 'fixed'
+      items: [
+        {
+          title: 'New endpoint added for classification codes',
+          body: [ /* parts */ ],
+          bullets: [ /* array of parts-arrays, one per <li> */ ],
+          trailer: [ /* optional second paragraph, same parts format */ ],
+        },
+      ],
+    },
+  ],
+},
+```
+
+- `group.status` must be `'added'` or `'fixed'` — `STATUS_LABEL` in `index.js` maps these to the visible headings ("What's new" / "Bug fixes"). Add a new key there before using a new status value.
+- An `item` can have `body`, `trailer`, `trailer2` (paragraphs), `bullets`/`bullets2` (bullet lists), and `bulletsLabel` (a small heading shown above `bullets2`, e.g. "Affected endpoints"). Not every item needs every field — see existing entries for examples of each combination.
+- The left sidebar's release index is rendered directly from `ENTRIES`' `date`/`version` fields — there's no separate list to keep in sync.
+
+### Writing mixed text (code and link parts)
+
+`title`, `body`, `trailer`, `trailer2`, and each bullet are either a plain string or an array of "parts" rendered by the shared `Body` helper at the top of `index.js`. A parts array mixes plain strings with:
+
+- `{ code: '...' }` — renders as an inline `<code>` span. Use for endpoint paths, field names, enum values, status codes — anything that should look like code.
+- `{ link: '...' }` — renders as colored, semibold text via the global `.mockLinkText` CSS class (defined in `src/css/custom.css`, matching the "Compatibility matrix" treatment in `ReleaseNotesWikiMockup`). It is **not** a real, clickable link — used for doc cross-references like "See List ISCC classifications."
+
+To put a field name in code in the middle of a sentence, split the string around it:
+
+```js
+// Before: plain text, no code styling
+['Allows a classificationId field to be included']
+
+// After: classificationId renders as code
+[': Allows a ', { code: 'classificationId' }, ' field to be included']
+```
+
+`title` supports the same array format — most titles are plain strings, but any title that should show an endpoint path in code (e.g. "`GET /scans` returns results faster") needs to be an array:
+
+```js
+title: ['Improved response time for ', { code: 'GET /scans' }, ' with large record sets'],
+```
+
+## Source
+
+- `src/components/SanctionsMatchMockup`
+- `src/components/ReleaseNotesWikiMockup`
+- `src/components/RecordHealthCheckMockup`
+- `src/components/DataHealthDashboardMockup`
+- `src/components/ApiReleaseNotesMockup`
+- `src/pages/portfolio/release-notes-sprint-aligned.mdx`
+- `src/pages/portfolio/release-notes-customer-facing.mdx`
+- `src/pages/portfolio/release-notes-api.mdx`

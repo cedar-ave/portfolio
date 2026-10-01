@@ -9,8 +9,10 @@ This section documents everything that has been customized beyond a stock Docusa
 | Customization | Where to change it | Details |
 | --- | --- | --- |
 | Gallery component | `src/components/Gallery` | [Gallery](visuals/gallery) |
+| Panel component (soft-bordered content block) | `src/components/Panel` | [Panel](visuals/panel) |
 | Homepage features row | `src/components/HomepageFeatures/index.js` | [Homepage features](home-page/homepage-features) |
 | Page diagrams (per-experience-page SVG figures) | `src/components/*Diagrams` folders | [Page diagrams](visuals/page-diagrams) |
+| Release notes page mockups (text/content of each sample) | `src/components/*Mockup` folders used by the three `release-notes-*.mdx` pages | [Release notes page mockups](visuals/release-notes-mockups) |
 | Deployment | `npm run deploy`, env vars `USE_SSH` / `GIT_USER` | [Deployment](build-deploy/deployment) |
 | Known build issues | n/a | [Troubleshooting](troubleshooting/panic-occurred-at-runtime) |
 | Navbar items | `docusaurus.config.js` | [Navbar](site-config/navbar) |
@@ -23,6 +25,7 @@ This section documents everything that has been customized beyond a stock Docusa
 | Global layout/spacing/table CSS not covered above | `src/css/custom.css` | [Global CSS overrides](site-config/global-css) |
 | Blog post series grouping in the sidebar | `src/data/blogSeries.ts`, `src/theme/BlogSidebar/*` | [Blog post series](blog/blog-post-series) |
 | Palette | `src/css/custom.css` | [Colors](styling/colors) |
+| Per-page TOC built from panel captions instead of headings | `plugins/remark-panel-toc.mjs`, frontmatter `toc_source: panels` | [Panel-based table of contents](visuals/panel-toc) |
 | Typeface | `docusaurus.config.js`, `src/css/custom.css` | [Fonts](styling/fonts) |
 
 ## Source of truth

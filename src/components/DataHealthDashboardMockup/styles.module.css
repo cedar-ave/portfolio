@@ -1,0 +1,107 @@
+/* Mockup of an org-wide health check dashboard, for
+   /portfolio/release-notes. This is an illustrative, genericized UI - it is
+   not a reproduction of any real product screen. Colors follow the site
+   palette in src/css/custom.css and switch with the light/dark theme,
+   matching the tokens used in SanctionsMatchMockup and
+   RecordHealthCheckMockup. */
+
+.figure {
+  --mk-surface: #ffffff;
+  --mk-panel: #f6f8fb;
+  --mk-row-alt: #fafbfd;
+  --mk-border: #d5dde6;
+  --mk-ink: #1c1e21;
+  --mk-ink-2: #4a5663;
+  --mk-ink-3: #6b7885;
+  --mk-accent: #3a7fc4;
+  --mk-accent-bg: #e6eef9;
+  --mk-amber-bg: #fdf1e0;
+  --mk-amber-ink: #8a5a16;
+  --mk-red-bg: #fbeceb;
+  --mk-red-ink: #9b3b37;
+  --mk-green-bg: #e3f6ee;
+  --mk-green-ink: #1f6b4d;
+  --mk-shadow: rgba(28, 30, 33, 0.08);
+}
+
+:global([data-theme='dark']) .figure {
+  --mk-surface: #242526;
+  --mk-panel: #1d1e20;
+  --mk-row-alt: #2a2b2d;
+  --mk-border: #3d4148;
+  --mk-ink: #e3e3e3;
+  --mk-ink-2: #b8c0c9;
+  --mk-ink-3: #8e98a3;
+  --mk-accent: #6aa6e0;
+  --mk-accent-bg: #22324a;
+  --mk-amber-bg: #3c2f18;
+  --mk-amber-ink: #e3b066;
+  --mk-red-bg: #3b2524;
+  --mk-red-ink: #f0aaa6;
+  --mk-green-bg: #1f3b30;
+  --mk-green-ink: #8fdcb8;
+  --mk-shadow: rgba(0, 0, 0, 0.35);
+}
+
+.figure {
+  margin: 2rem 0 2.5rem;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 480px;
+  max-width: 640px;
+  margin: 0 auto;
+  height: auto;
+  font-family: var(--ifm-font-family-base);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--mk-ink-3);
+  text-align: center;
+}
+
+.card { fill: var(--mk-surface); stroke: var(--mk-border); filter: drop-shadow(0 6px 16px var(--mk-shadow)); }
+.divider { stroke: var(--mk-border); stroke-width: 1; }
+
+.headerIconBg { fill: var(--mk-accent); }
+.headerIconMark { fill: none; stroke: var(--mk-surface); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.title { fill: var(--mk-ink); font-size: 16px; font-weight: 700; }
+.subtitle { fill: var(--mk-ink-3); font-size: 12px; }
+
+.statChipBg { fill: var(--mk-panel); stroke: var(--mk-border); }
+.statChipBgAmber { fill: var(--mk-amber-bg); stroke: var(--mk-amber-bg); }
+.statChipBgAccent { fill: var(--mk-accent-bg); stroke: var(--mk-accent-bg); }
+.statChipText { fill: var(--mk-ink-2); font-size: 11.5px; font-weight: 600; }
+.statChipTextAmber { fill: var(--mk-amber-ink); font-size: 11.5px; font-weight: 600; }
+.statChipTextAccent { fill: var(--mk-accent); font-size: 11.5px; font-weight: 600; }
+
+.searchBg { fill: var(--mk-surface); stroke: var(--mk-border); }
+.searchIcon { fill: none; stroke: var(--mk-ink-3); stroke-width: 1.5; }
+.searchText { fill: var(--mk-ink-3); font-size: 12px; }
+
+.rowAlt { fill: var(--mk-row-alt); }
+
+.colHeader { fill: var(--mk-ink-3); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+
+.recordLink { fill: var(--mk-accent); font-size: 12.5px; font-weight: 600; }
+.cellText { fill: var(--mk-ink-2); font-size: 12px; }
+.cellTextMuted { fill: var(--mk-ink-3); font-size: 12px; }
+
+.issueChipLow { fill: var(--mk-amber-bg); }
+.issueChipLowText { fill: var(--mk-amber-ink); font-size: 11px; font-weight: 700; }
+.issueChipHigh { fill: var(--mk-red-bg); }
+.issueChipHighText { fill: var(--mk-red-ink); font-size: 11px; font-weight: 700; }
+
+.reviewBtnBg { fill: var(--mk-accent); }
+.reviewBtnText { fill: var(--mk-surface); font-size: 11px; font-weight: 600; }
+
+.footerText { fill: var(--mk-ink-3); font-size: 11.5px; }

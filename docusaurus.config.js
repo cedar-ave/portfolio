@@ -6,6 +6,7 @@
 
 import { themes as prismThemes } from 'prism-react-renderer';
 import remarkImageSize from './plugins/remark-image-size.mjs';
+import remarkPanelToc from './plugins/remark-panel-toc.mjs';
 import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
@@ -97,6 +98,12 @@ const config = {
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
+        },
+        pages: {
+          // See plugins/remark-panel-toc.mjs - lets a page set
+          // `toc_source: panels` in frontmatter to build its right-rail TOC
+          // from <Panel label="..."> captions instead of headings.
+          remarkPlugins: [remarkPanelToc],
         },
         theme: {
           customCss: './src/css/custom.css',

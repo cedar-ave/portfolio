@@ -434,7 +434,6 @@ export function ReleaseNotesWikiMockup() {
         </div>
       </div>
       <figcaption className={styles.caption}>
-        A community-wiki release page, merged from the release index and a single release's detail view into one fluid scroll.
       </figcaption>
     </figure>
   );

@@ -71,8 +71,8 @@ export function SanctionsReviewMockup() {
           aria-labelledby="srm-t srm-d">
           <title id="srm-t">Review Record modal, showing a medium-relevance match</title>
           <desc id="srm-d">
-            A mockup of the Review Record modal for Rosa Fernandez. The left panel shows the
-            provided information: name and ID. The right panel shows the Needs Review tab with one item, a source verified on 6/5/2026, a match record link, and a card for the matched record Rosa Fernandez with Reject and Accept buttons, a Medium Relevance gauge, matched First Name and Last Name fields with checkmarks, a Start Date, and a Reason. A Close button sits in the footer.
+            A mockup of the Review Record modal. The left panel shows the
+            provided information: name and ID. The right panel shows the Needs Review tab with one item, a source verified on 6/5/2026, a match record link, and a card for the matched record with Reject and Accept buttons, a Medium Relevance gauge, matched First Name and Last Name fields with checkmarks, a Start Date, and a Reason. A Close button sits in the footer.
           </desc>
 
           {/* Modal frame */}
@@ -80,7 +80,7 @@ export function SanctionsReviewMockup() {
 
           {/* ---------- Header ---------- */}
           <text x={320} y={38} textAnchor="middle" className={styles.title}>
-            Review Record - Rosa Fernandez
+            Review Record - Janice Perez
           </text>
           <text x={320} y={58} textAnchor="middle" className={styles.subtitle}>
             Some items do not match the provided information. Review and update this record.
@@ -98,7 +98,7 @@ export function SanctionsReviewMockup() {
             Name
           </text>
           <text x={28} y={150} className={styles.value}>
-            Rosa Fernandez
+            Janice Perez
           </text>
           <line x1={28} y1={164} x2={180} y2={164} className={styles.divider} />
 
@@ -146,7 +146,7 @@ export function SanctionsReviewMockup() {
           <rect x={216} y={188} width={416} height={348} rx={8} className={styles.card} />
 
           <text x={236} y={220} className={styles.valueStrong}>
-            Rosa Fernandez
+            Janice Perez
           </text>
 
           {/* Reject button */}
@@ -174,7 +174,7 @@ export function SanctionsReviewMockup() {
             First Name
           </text>
           <text x={236} y={298} className={styles.value}>
-            Rosa
+            Janice
           </text>
           <Check x={608} y={294} />
           <line x1={236} y1={310} x2={612} y2={310} className={styles.divider} />
@@ -184,7 +184,7 @@ export function SanctionsReviewMockup() {
             Last Name
           </text>
           <text x={236} y={352} className={styles.value}>
-            Fernandez
+            Perez
           </text>
           <Check x={608} y={348} />
           <line x1={236} y1={364} x2={612} y2={364} className={styles.divider} />
