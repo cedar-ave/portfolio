@@ -19,7 +19,7 @@ Governance:
   description: Ensuring content follows processes around creating and retiring content
 
 Generative AI:
-  label: Geneartive AI
+  label: Generative AI
   permalink: /generative-ai
   description: tbd
 
@@ -37,3 +37,8 @@ Custom MCPs:
   label: Custom MCPs
   permalink: /custom-mcps
   description: Building custom Model Context Protocol servers that wrap internal APIs so an AI assistant can read and act on the systems I work in directly
+
+Zendesk:
+  label: Zendesk
+  permalink: /zendesk
+  description: An enterprise support tool that supports ticket management and a help site
