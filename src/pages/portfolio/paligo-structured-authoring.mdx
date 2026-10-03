@@ -14,18 +14,16 @@ Proprietary content is genericized and Paligo's internal attributes are removed 
 
 :::
 
-This XML comes from a Paligo library of ~750 topics and reusable components behind ~20 guides.
-
-The sample topic below appears in two guides with different audiences. Six levels of structured reuse are in place:
+The following sample comes from a Paligo library of ~750 topics and reusable components behind ~20 guides. Six levels of structured reuse were in place:
 
 - Topics placed in more than one spot
 - Topics inside other topics
 - Reusable step sets
 - Reusable notes
 - Shared sentences and paragraphs
-- Variables
+- Variables like product names, users, and icons
 
-Certain content is tagged with `audience` attributes so each published guide includes only what its readers need.
+Following is a sample of one topic published in two guides. The topic in one guide is customized for one audience and the topic in the other guide is customized for another based on `audience` attributes.
 
 ## The shared topic
 
@@ -77,10 +75,9 @@ Certain content is tagged with `audience` attributes so each published guide inc
     <step>
       <para>
         On the <emphasis role="bold">Details</emphasis> tab in the modal at right, go to
-        the <emphasis role="bold">Summary</emphasis> section and click the pencil icon
-        (<inlinemediaobject>
-          <imageobject xinfo:variable="12" xinfo:varset="1556"><imagedata/></imageobject>
-        </inlinemediaobject>) next to <emphasis role="bold">Status</emphasis>.
+        the <emphasis role="bold">Summary</emphasis> section and click
+        <phrase xinfo:variable="133" xinfo:varset="320"/> next to <emphasis role="bold">Status</emphasis>.
+        <!-- "the pencil icon" + pencil image variable -->
       </para>
     </step>
     <step>
@@ -105,7 +102,7 @@ Certain content is tagged with `audience` attributes so each published guide inc
 </section>
 ```
 
-```xml title="Employee navigation (reused in 14 topics)"
+```xml title="Employee navigation"
 <procedure role="reuse-range">
   <step audience="Employee Compliance">
     <para>
@@ -118,12 +115,25 @@ Certain content is tagged with `audience` attributes so each published guide inc
 </procedure>
 ```
 
-```xml title="Site navigation (reused in 23 topics)"
+```xml title="Site navigation"
 <procedure audience="Site Compliance" role="reuse-range">
-  <!-- Site navigation steps, which nest Site list navigation steps -->
+  <!-- Site navigation steps -->
   <xi:include parse="xml" href="UUID-965ec566-a631-dda4-6047-f77be55549c0"/>
   <!-- Click review cycle -->
   <xi:include parse="xml" href="UUID-7845ab80-c2d9-ee67-b222-1c7fd4508057"/>
+</procedure>
+
+<!-- Site navigation steps (nested range) -->
+<procedure role="reuse-range">
+  <!-- Site list navigation steps -->
+  <xi:include parse="xml" href="UUID-95c84673-9826-55ce-4b04-14ae60b5c3c6"/>
+  <step>
+    <para>
+      Select a site. If you don't see the site's name in the table, click the
+      <emphasis role="bold">Recently Viewed</emphasis> dropdown at top left and select
+      <emphasis role="bold">All Sites</emphasis>.
+    </para>
+  </step>
 </procedure>
 
 <!-- Site list navigation steps (nested range) -->
@@ -132,6 +142,16 @@ Certain content is tagged with `audience` attributes so each published guide inc
     <para>
       In the dropdown menu next to <emphasis role="bold">Compliance</emphasis> at top
       left, select <emphasis role="bold">Sites</emphasis>.
+    </para>
+  </step>
+</procedure>
+
+<!-- Click review cycle (nested range) -->
+<procedure role="reuse-range">
+  <step>
+    <para>
+      In the <emphasis role="bold">Review Cycles</emphasis> modal, click the name of the
+      review cycle.
     </para>
   </step>
 </procedure>
@@ -144,6 +164,18 @@ Certain content is tagged with `audience` attributes so each published guide inc
     <para>Go to <phrase xinfo:variable="19" xinfo:varset="320"/>.</para>
   </step>
 </procedure>
+```
+
+```xml title="Variables"
+<varset id="320">
+  <!-- Product name -->
+  <var id="20" type="text" label="19" label-name="Product name">Clearpath</var>
+  <!-- Icon phrase: text plus an image variable from the icon set -->
+  <var id="176" type="text" label="133" label-name="Pencil icon">the pencil icon
+    (<inlinemediaobject>
+      <imageobject xinfo:variable="12" xinfo:varset="1556"><imagedata/></imageobject>
+    </inlinemediaobject>)</var>
+</varset>
 ```
 
 ```xml title="Reusable notes"
@@ -167,55 +199,67 @@ Certain content is tagged with `audience` attributes so each published guide inc
 .shared-block {
   margin: 0.75rem 0;
   padding: 0.75rem 1rem;
-  color: #2c8c7c;
+  color: #345f58;
   background-color: var(--ifm-card-background-color);
-  border: 1px solid var(--ifm-color-emphasis-200);
+  border: 1px dashed #345f58;
   border-radius: var(--ifm-card-border-radius);
   box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
 }
 .shared-block > :first-child { margin-top: 0; }
 .shared-block > :last-child { margin-bottom: 0; }
-.shared-text { color: #2c8c7c; }
+.shared-text { color: #345f58; }
+.shared-label {
+  display: inline-block;
+  padding: 0 0.3rem;
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  line-height: 1.35;
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+}
 html[data-theme="dark"] .shared-block,
-html[data-theme="dark"] .shared-text { color: #5fc9b5; }
+html[data-theme="dark"] .shared-text { color: #73d3c3; }
+html[data-theme="dark"] .shared-block { border-color: #73d3c3; }
 .reuse-var,
 .reuse-icon {
   display: inline-block;
   padding: 0 0.3rem;
-  border: 1.5px solid currentColor;
+  border: 1px dashed currentColor;
   border-radius: 4px;
   line-height: 1.35;
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
 }
-.reuse-var { color: #c2410c; }
-.reuse-icon { color: #7c3aed; vertical-align: -0.15em; }
+.reuse-var { color: #a9803a; }
+.reuse-icon { color: #202b49; vertical-align: -0.15em; }
 .reuse-icon svg { display: block; margin: 0.15rem 0; }
 .reuse-component {
   margin: 0.75rem 0;
   padding: 0.5rem 0.75rem;
-  color: #2563eb;
-  border: 1.5px solid currentColor;
+  color: #476e95;
+  border: 1px dashed currentColor;
   border-radius: 6px;
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
 }
 .reuse-component > :first-child { margin-top: 0; }
 .reuse-component > :last-child { margin-bottom: 0; }
 .reuse-component blockquote { color: inherit; border-left: none; padding-left: 0; margin: 0; }
-.reuse-label { display: inline-block; padding: 0 0.3rem; color: #2563eb; border: 1.5px solid currentColor; border-radius: 4px; line-height: 1.35; }
+.reuse-label { display: inline-block; padding: 0 0.3rem; color: #476e95; border: 1px dashed currentColor; border-radius: 4px; line-height: 1.35; box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%); }
 html[data-theme="dark"] .reuse-component,
-html[data-theme="dark"] .reuse-label { color: #93c5fd; }
+html[data-theme="dark"] .reuse-label { color: #a6dcf7; }
+html[data-theme="dark"] .reuse-var { color: #f1b753; }
+html[data-theme="dark"] .reuse-icon { color: #848a9a; }
 .reuse-global {
   margin: 0.75rem 0;
   padding: 0.5rem 0.75rem;
-  color: #db2777;
-  border: 1.5px solid currentColor;
+  color: #874845;
+  border: 1px dashed currentColor;
   border-radius: 6px;
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
 }
 .reuse-global > :first-child { margin-top: 0; }
 .reuse-global > :last-child { margin-bottom: 0; }
-.reuse-global-label { display: inline-block; padding: 0 0.3rem; color: #db2777; border: 1.5px solid currentColor; border-radius: 4px; line-height: 1.35; }
+.reuse-global-label { display: inline-block; padding: 0 0.3rem; color: #874845; border: 1px dashed currentColor; border-radius: 4px; line-height: 1.35; box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%); }
 html[data-theme="dark"] .reuse-global,
-html[data-theme="dark"] .reuse-global-label { color: #f9a8d4; }
-html[data-theme="dark"] .reuse-var { color: #fb923c; }
-html[data-theme="dark"] .reuse-icon { color: #c4b5fd; }
+html[data-theme="dark"] .reuse-global-label { color: #d06e6a; }
 .reader-tabs .tabs {
   overflow: visible;
   flex-wrap: nowrap;
@@ -258,9 +302,17 @@ pre code {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
+
+ol li:not(:last-child) {
+  padding-bottom: 10px;
+}
 `}</style>
 
-Outlined text in <span className="shared-text">green</span> is the same in both guides. Inside the outlines, <span className="reuse-var">orange</span> marks the product name, which comes from a variable, <span className="reuse-icon">purple</span> marks an icon that comes from an image variable, <span className="reuse-label">blue</span> marks a reusable note, and <span className="reuse-global-label">pink</span> marks a step that is reused across all guides.
+- <span className="shared-text shared-label">Green</span> outlined text is shared in both guides.
+- <span className="reuse-var">Orange</span> marks text that comes from a variable.
+- <span className="reuse-icon">Purple</span> marks an icon that comes from an image variable.
+- <span className="reuse-label">Blue</span> marks a reusable note.
+- <span className="reuse-global-label">Pink</span> marks a step that is reused across all guides.
 
 <div className="reader-tabs">
 
@@ -309,7 +361,7 @@ A common report approval process is that an organization sends a complete report
 
 <div className="shared-block">
 
-3. On the **Details** tab in the modal at right, go to the **Summary** section and click the pencil icon (<span className="reuse-icon" role="img" aria-label="pencil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>) next to **Status**.
+3. On the **Details** tab in the modal at right, go to the **Summary** section and click <span className="reuse-var">the pencil icon (<span className="reuse-icon" role="img" aria-label="pencil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>)</span> next to **Status**.
 4. In the **Status** field dropdown, select the next status in the compliance approval workflow. This likely is customized for your organization. If you're using default functionality, the next status is **Complete**.
 5. In the **Type** field dropdown, select **Initial** if this is the first compliance review. Select **Renewal** if it's not the first time.
 6. Click **Save** at the bottom of the screen.
@@ -328,6 +380,10 @@ A common report approval process is that an organization sends a complete report
 > **Note:** Names and locations of links may be customized for your organization.
 
 </div>
+
+</div>
+
+<div className="shared-block">
 
 <span className="reuse-var">Clearpath</span> supports customized workflows for sharing a compliance report with reviewers and tracking its progress. Customized workflows are designed through collaboration between <span className="reuse-var">Clearpath</span> and your organization to meet your organization's policies and procedures.
 
@@ -353,7 +409,7 @@ Reports typically fall into one of two categories: *complete* (no flags are rais
 
 <div className="shared-block">
 
-5. On the **Details** tab in the modal at right, go to the **Summary** section and click the pencil icon (<span className="reuse-icon" role="img" aria-label="pencil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>) next to **Status**.
+5. On the **Details** tab in the modal at right, go to the **Summary** section and click <span className="reuse-var">the pencil icon (<span className="reuse-icon" role="img" aria-label="pencil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>)</span> next to **Status**.
 6. In the **Status** field dropdown, select the next status in the compliance approval workflow. This likely is customized for your organization. If you're using default functionality, the next status is **Complete**.
 7. In the **Type** field dropdown, select **Initial** if this is the first compliance review. Select **Renewal** if it's not the first time.
 8. Click **Save** at the bottom of the screen.
