@@ -5,48 +5,26 @@ title: Portfolio
 # Portfolio
 
 ## AI content pipelines
-### Custom MCPs
 
-<div className="nowrap-col1">
-
-| Custom MCP | Description | Details |
-| --- | --- | --- |
-| [Zendesk Guide](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_guide_mcp.py) | Wraps the Zendesk Help Center API for content and theming actions via natural language | |
-| [Zendesk Tickets](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/zendesk_tickets_mcp.py) | Wraps the Zendesk Ticketing API to ingest ticket conversations for Generative AI | |
-| [Paligo XML CCMS](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/paligo_mcp.py) | Wraps the Paligo REST API to manage content structures via natural language | |
-| [Google Drive](https://github.com/cedar-ave/portfolio/blob/main/samples/mcps/gdrive_mcp.py) | Maximizes Markdown conversions and round-trips Docs, Sheets, and Slides without formatting drift | |
-
-</div>
-
-<div className="nowrap-col1">
-
-### AI agent skills
-
-| Skill | Description | Details |
-| --- | --- | --- |
-| [/ai-optimizer](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/ai-optimizer/SKILL.md) | Reviews a Help Center article against 25 criteria for AI retrieval via RAG, web fetch, or MCP | |
-| [/diataxis-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/diataxis-drafter/SKILL.md) | Drafts Help Center articles in any Diátaxis type, drawing on material ingested by [/source-librarian](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/source-librarian/SKILL.md) | |
-| [/paligo-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/paligo-pal/SKILL.md) | Manages Paligo CCMS content via its REST API, including a Google Doc to DocBook 5.1 pipeline | |
-| [/release-notes-drafter](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/release-notes-drafter/SKILL.md) | Drafts release notes for one audience per run from a GitHub release, commits, and Jira tickets | |
-| [/source-librarian](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/source-librarian/SKILL.md) | Catalogs raw knowledge into tagged markdown files for ingestion by Generative AI | [More](/blog/knowledge-ingestion-generative-ai) |
-| [/style-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/style-pal/SKILL.md) | Audits a document against a custom Style Guide, falling back to Microsoft's, and fixes it | |
-| [/vocabulary-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/vocabulary-pal/SKILL.md) | Audits a document against a controlled vocabulary and flags non-preferred terms | |
-| [/zendesk-guide-pal](https://github.com/cedar-ave/portfolio/tree/main/samples/skills/zendesk-guide-pal/SKILL.md) | Manages Zendesk Help Center guides, articles, metadata, tags, redirects, and theme | |
-
-</div>
+- [Custom MCPs](https://github.com/cedar-ave/ai-content-toolkit/tree/main/mcp)
+- [AI agent skills](https://github.com/cedar-ave/ai-content-toolkit/tree/main/skills)
 
 ## Content development
 
-- [API documentation](/portfolio/api-documentation)
-- [UX writing](/portfolio/ux-writing-data-upload)
-- [Guide rewrite](/portfolio/guide-rewrite)
-- [Coaching contributors](/portfolio/coaching-writers)
+### Help articles
 
-## Release notes
+
+### Release notes
 
 - [Sprint-aligned release notes](/portfolio/release-notes-sprint-aligned)
 - [Customer-facing release notes](/portfolio/release-notes-customer-facing)
 - [API release notes](/portfolio/release-notes-api)
+
+### More 
+- [Editing and rewriting](/portfolio/guide-rewrite)
+- [API documentation](/portfolio/api-documentation)
+- [UX writing](/portfolio/ux-writing-data-upload)
+- [Coaching contributors](/portfolio/coaching-writers)
 
 ## XML CCMS
 
@@ -55,7 +33,6 @@ title: Portfolio
 ## Docs-as-code
 
 - [Linting](https://github.com/cedar-ave/linting-sample) - Vale, markdownlint, custom scripts
-
 - [Scaling contributions](/portfolio/docs-as-code-contributions)
 - [Customizations](/portfolio/docs-as-code-customizations)
 
