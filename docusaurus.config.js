@@ -86,6 +86,9 @@ const config = {
           // swizzled component only ever receives its own route's slice.
           // See docs/blog/blog-index-list-filtering.mdx.
           postsPerPage: 'ALL',
+          // Drafts in progress live in blog/to-write/ and shouldn't be
+          // picked up as published posts.
+          exclude: ['**/to-write/**'],
           remarkPlugins: [remarkImageSize],
           feedOptions: {
             type: ['rss', 'atom'],
