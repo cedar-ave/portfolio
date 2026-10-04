@@ -1,14 +1,16 @@
-/* Document-page mockups for /portfolio/guide-rewrite. Built as SVG, same
-   approach as RosterUploadDiagrams, so wording stays easy to edit and
-   colors follow the site's light/dark theme. These mimic a printed/PDF
-   guide page and a plain Word draft page, not an app screen, so there's no
-   navbar/button chrome here — just page, type, and table styles. */
+/* Document/UI mockups for /portfolio/guide-rewrite. Built as SVG, same
+   approach as RosterUploadDiagrams and SanctionsMatchMockup, so wording
+   stays easy to edit and colors follow the site's light/dark theme.
+
+   GuideBefore mimics a plain, unstyled Word draft page (no chrome).
+   GuideAfter mimics a help-center article: navbar, sidebar nav, callouts,
+   and comparison cards — a different medium from the Word draft, not a
+   redesigned version of the same page. */
 
 .figure {
   --gr-backdrop: #eef1f5;
   --gr-page: #ffffff;
   --gr-page-shadow: rgba(0, 0, 0, 0.12);
-  --gr-gutter: #d7dbe2;
   --gr-accent: #2f6fb3;
   --gr-accent-tint: #dceaf6;
   --gr-border: #c7cdd6;
@@ -20,6 +22,22 @@
   --gr-bar-ink: #ffffff;
   --gr-wordmark: #2f6fb3;
 
+  --gr-navbar: #1b3a63;
+  --gr-navbar-ink: #ffffff;
+  --gr-navbar-muted: #aebcd9;
+  --gr-search-bg: rgba(255, 255, 255, 0.14);
+  --gr-search-stroke: rgba(255, 255, 255, 0.28);
+
+  --gr-good-bg: #ddf3e6;
+  --gr-good-ink: #1b7a4b;
+  --gr-good-stroke: #3fa592;
+  --gr-warn-bg: #fdf0d9;
+  --gr-warn-ink: #8a5a12;
+  --gr-warn-stroke: #d99a3d;
+  --gr-neutral-bg: #eef0f3;
+  --gr-neutral-ink: #6b7280;
+  --gr-neutral-stroke: #b7bfc9;
+
   margin: 2rem 0 2.5rem;
 }
 
@@ -27,7 +45,6 @@
   --gr-backdrop: #1a1b1d;
   --gr-page: #242526;
   --gr-page-shadow: rgba(0, 0, 0, 0.5);
-  --gr-gutter: #2e3033;
   --gr-accent: #7fb2e6;
   --gr-accent-tint: #223447;
   --gr-border: #3d4148;
@@ -38,6 +55,22 @@
   --gr-bar: #3a3c40;
   --gr-bar-ink: #f3f3f3;
   --gr-wordmark: #7fb2e6;
+
+  --gr-navbar: #162338;
+  --gr-navbar-ink: #f3f5f9;
+  --gr-navbar-muted: #8fa0c2;
+  --gr-search-bg: rgba(255, 255, 255, 0.08);
+  --gr-search-stroke: rgba(255, 255, 255, 0.18);
+
+  --gr-good-bg: #1f3b37;
+  --gr-good-ink: #9fe3d6;
+  --gr-good-stroke: #73d3c3;
+  --gr-warn-bg: #3a2f1a;
+  --gr-warn-ink: #e8c27a;
+  --gr-warn-stroke: #d9a84e;
+  --gr-neutral-bg: #2a2c30;
+  --gr-neutral-ink: #9aa3ae;
+  --gr-neutral-stroke: #4a4f58;
 }
 
 .scroll { overflow-x: auto; }
@@ -50,8 +83,8 @@
   height: auto;
   margin: 0 auto;
   /* Hardcoded, not the site's blog font: this is meant to read as a
-     document mockup, not as page typography, so it should look the same
-     regardless of the site's font choice. */
+     document/UI mockup, not as page typography, so it should look the
+     same regardless of the site's font choice. */
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
 }
 
@@ -63,73 +96,87 @@
 }
 
 .backdrop { fill: var(--gr-backdrop); }
-.gutter { fill: var(--gr-gutter); }
 .pageShadow { fill: var(--gr-page-shadow); filter: blur(5px); }
 .page { fill: var(--gr-page); stroke: var(--gr-border); stroke-width: 1; }
 
-.runningHead { fill: var(--gr-accent); font-size: 7.5px; letter-spacing: 0.2px; }
-.runningHeadLg { fill: var(--gr-accent); font-size: 11px; letter-spacing: 0.2px; }
-
-.h1 { fill: var(--gr-ink); font-size: 18px; font-weight: 700; }
-.h1Overview { fill: var(--gr-ink); font-size: 24px; font-weight: 700; }
-.h1Lg { fill: var(--gr-ink); font-size: 30px; font-weight: 700; }
-.tagline { fill: var(--gr-accent); font-size: 9px; font-weight: 700; }
-.body { fill: var(--gr-body); font-size: 8.5px; }
+.h1Lg { fill: var(--gr-ink); font-size: 28px; font-weight: 700; }
 .bodyLg { fill: var(--gr-body); font-size: 13.5px; }
-.bold { font-weight: 700; }
-.italic { font-style: italic; }
+.bodyLgBold { fill: var(--gr-ink); font-size: 13.5px; font-weight: 700; }
 
-.label { fill: var(--gr-ink); font-size: 9px; font-weight: 700; }
-.h2 { fill: var(--gr-ink); font-size: 10.5px; font-weight: 700; }
-.h2Accent { fill: var(--gr-accent); font-size: 10.5px; font-weight: 700; }
-.h3 { fill: var(--gr-ink); font-size: 9px; font-weight: 700; }
-.h2Lg { fill: var(--gr-ink); font-size: 15px; font-weight: 700; }
-
-.gridHeadCell { fill: var(--gr-accent); font-size: 8px; font-weight: 700; }
-.gridRule { stroke: var(--gr-rule); stroke-width: 1; }
-.gridCellActive { fill: var(--gr-accent-tint); }
-.gridBodyCell { fill: var(--gr-body); font-size: 7.3px; }
-.gridBodyCellBold { fill: var(--gr-ink); font-size: 7.3px; font-weight: 700; }
-.gridItalicCell { fill: var(--gr-body); font-size: 7.3px; font-style: italic; }
-.gridItalicCellBold { fill: var(--gr-ink); font-size: 7.3px; font-weight: 700; font-style: italic; }
-
-.tableTitleAccent { fill: var(--gr-accent); font-size: 8.3px; font-weight: 700; }
-.tableRuleAccent { stroke: var(--gr-accent); stroke-width: 1.25; }
-.tableRule { stroke: var(--gr-rule); stroke-width: 0.75; }
-.tableCell { fill: var(--gr-body); font-size: 8.3px; }
-.tableCellBold { fill: var(--gr-ink); font-size: 8.3px; font-weight: 700; }
-
+/* ---- GuideBefore: plain Word-draft table (unstyled, black header bar) ---- */
 .tableBar { fill: var(--gr-bar); }
 .tableBarText { fill: var(--gr-bar-ink); font-size: 11.5px; font-weight: 700; }
 .tableCellLg { fill: var(--gr-body); font-size: 12px; }
 .tableCellLgBold { fill: var(--gr-ink); font-size: 12px; font-weight: 700; }
 .tableRuleLg { stroke: var(--gr-rule); stroke-width: 0.75; }
-
-.wordmark { fill: var(--gr-wordmark); font-size: 7.5px; font-weight: 700; letter-spacing: 0.4px; }
-.wordmarkLg { fill: var(--gr-wordmark); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
-.footerMuted { fill: var(--gr-muted); font-size: 6.6px; }
-.footerMutedLg { fill: var(--gr-muted); font-size: 9.5px; }
 .footerNote { fill: var(--gr-muted); font-size: 9.5px; font-style: italic; }
 
-/* ---- Larger scale for the "After" stacked, full-width pages ---- */
-.pageAccentBar { fill: var(--gr-accent); }
-.h1Brand { fill: var(--gr-ink); font-size: 27px; font-weight: 700; }
-.taglineLg { fill: var(--gr-accent); font-size: 14px; font-weight: 700; }
-.labelLg { fill: var(--gr-ink); font-size: 14px; font-weight: 700; }
-.h2AccentLg { fill: var(--gr-accent); font-size: 16px; font-weight: 700; }
-.h3Lg { fill: var(--gr-ink); font-size: 14px; font-weight: 700; }
-.bodyLgBold { fill: var(--gr-ink); font-size: 13.5px; font-weight: 700; }
-.eyebrow { fill: var(--gr-muted); font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; }
+/* ---- GuideAfter: help-center article ---- */
 
-.gridHeadCellLg { fill: var(--gr-accent); font-size: 13px; font-weight: 700; }
-.gridBodyCellLg { fill: var(--gr-body); font-size: 12.5px; }
-.gridBodyCellBoldLg { fill: var(--gr-ink); font-size: 12.5px; font-weight: 700; }
-.gridItalicCellLg { fill: var(--gr-body); font-size: 12.5px; font-style: italic; }
-.gridItalicCellBoldLg { fill: var(--gr-ink); font-size: 12.5px; font-weight: 700; font-style: italic; }
-.gridCellActiveLg { fill: var(--gr-accent-tint); }
-.resolvePill { fill: var(--gr-accent); }
-.resolvePillText { fill: var(--gr-page); font-size: 11.5px; font-weight: 700; }
+/* Navbar */
+.navbar { fill: var(--gr-navbar); }
+.navLogoChip { fill: var(--gr-accent); }
+.navLogoMark { fill: var(--gr-navbar); font-size: 11px; font-weight: 700; }
+.navTitle { fill: var(--gr-navbar-ink); font-size: 13.5px; font-weight: 700; }
+.searchPill { fill: var(--gr-search-bg); stroke: var(--gr-search-stroke); stroke-width: 1; }
+.searchText { fill: var(--gr-navbar-muted); font-size: 12px; }
+.searchIcon { stroke: var(--gr-navbar-muted); stroke-width: 1.4; fill: none; }
+.navLink { fill: var(--gr-navbar-muted); font-size: 12.5px; }
+.navLinkActive { fill: var(--gr-navbar-ink); font-size: 12.5px; font-weight: 700; }
 
-.tableTitleAccentLg { fill: var(--gr-accent); font-size: 14px; font-weight: 700; }
-.tableCellAccentLg { fill: var(--gr-body); font-size: 13px; }
-.tableCellAccentBoldLg { fill: var(--gr-ink); font-size: 13px; font-weight: 700; }
+/* Breadcrumb */
+.crumb { fill: var(--gr-muted); font-size: 11.5px; }
+.crumbCurrent { fill: var(--gr-ink); font-size: 11.5px; font-weight: 700; }
+
+/* Sidebar */
+.sideEyebrow { fill: var(--gr-muted); font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; }
+.sideItem { fill: var(--gr-body); font-size: 12.5px; }
+.sideItemBold { fill: var(--gr-ink); font-size: 12.5px; font-weight: 700; }
+.sideSub { fill: var(--gr-muted); font-size: 12px; }
+.sideSubActive { fill: var(--gr-accent); font-size: 12px; font-weight: 700; }
+.sideActiveBg { fill: var(--gr-accent-tint); }
+.sideActiveBar { fill: var(--gr-accent); }
+.sideRule { stroke: var(--gr-rule); stroke-width: 1; }
+
+/* Meta row */
+.metaText { fill: var(--gr-muted); font-size: 11.5px; }
+.h2 { fill: var(--gr-ink); font-size: 16px; font-weight: 700; }
+
+/* Definition callout */
+.calloutBg { fill: var(--gr-accent-tint); }
+.calloutBar { fill: var(--gr-accent); }
+.calloutIconBg { fill: var(--gr-accent); }
+.calloutIconText { fill: var(--gr-page); font-size: 11px; font-weight: 700; }
+.calloutLabel { fill: var(--gr-accent); font-size: 12.5px; font-weight: 700; }
+.calloutBody { fill: var(--gr-ink); font-size: 13px; }
+
+/* Comparison cards */
+.cardBg { fill: var(--gr-page); stroke: var(--gr-border); stroke-width: 1; }
+.cardHeaderGood { fill: var(--gr-good-bg); }
+.cardHeaderWarn { fill: var(--gr-warn-bg); }
+.cardHeaderTitle { fill: var(--gr-ink); font-size: 13px; font-weight: 700; }
+.pillGoodBg { fill: var(--gr-page); stroke: var(--gr-good-stroke); stroke-width: 1; }
+.pillGoodText { fill: var(--gr-good-ink); font-size: 10.5px; font-weight: 700; }
+.pillWarnBg { fill: var(--gr-page); stroke: var(--gr-warn-stroke); stroke-width: 1; }
+.pillWarnText { fill: var(--gr-warn-ink); font-size: 10.5px; font-weight: 700; }
+.colHead { fill: var(--gr-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; }
+.fieldLabel { fill: var(--gr-muted); font-size: 10.5px; }
+.fieldValue { fill: var(--gr-ink); font-size: 12.5px; }
+.cardRule { stroke: var(--gr-rule); stroke-width: 0.75; }
+.cardFooterNote { fill: var(--gr-muted); font-size: 11.5px; font-style: italic; }
+
+/* Match-status icons */
+.iconGoodBg { fill: var(--gr-good-bg); }
+.iconGoodMark { stroke: var(--gr-good-stroke); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.iconWarnBg { fill: var(--gr-warn-bg); }
+.iconWarnMark { stroke: var(--gr-warn-stroke); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+.iconNeutralBg { fill: var(--gr-neutral-bg); }
+.iconNeutralMark { stroke: var(--gr-neutral-stroke); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+
+/* Footer: feedback + related links */
+.feedbackLabel { fill: var(--gr-ink); font-size: 12.5px; font-weight: 700; }
+.feedbackBtnBg { fill: var(--gr-page); stroke: var(--gr-border); stroke-width: 1; }
+.feedbackBtnText { fill: var(--gr-body); font-size: 11.5px; }
+.feedbackIcon { stroke: var(--gr-muted); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.relatedLabel { fill: var(--gr-muted); font-size: 11px; font-weight: 700; }
+.relatedLink { fill: var(--gr-accent); font-size: 11.5px; font-weight: 600; }

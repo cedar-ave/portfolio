@@ -53,308 +53,311 @@ function linesEnd(y, count, lineH, gap = 0) {
 }
 
 /* =====================================================================
-   After: the final guide, laid out and branded for publication. Stacked,
-   full-width pages (not a side-by-side spread) so type stays readable at
-   the figure's actual display size. Styling takes liberties with the
-   original's exact layout in favor of looking clean and professional.
+   After: not a redesigned version of the PDF or the Word draft — a
+   different medium entirely. This is what the same content looks like
+   published as a help-center article: navbar, breadcrumb, a sidebar nav
+   tree in place of the guide's "you are here" table, a definition
+   callout, and comparison cards (with match-status icons) in place of
+   plain tables. Content stays close to the original wording; structure
+   and presentation are invented for the medium.
    ===================================================================== */
 
-// An accent-styled, two-column comparison table (title + a colored rule,
-// then rows with a thin divider). Shared by both example tables on the
-// Overview pages.
-function AccentTable({ x, y, w, col2, title, rows, rowH = 23 }) {
-  const ruleY = y + 5;
-  const firstRowY = ruleY + 21;
+// Small circular status icon used in each comparison-card row.
+// 'exact' = solid match (green check), 'fuzzy'/'partial' = matched with a
+// caveat (amber wave), 'none' = didn't factor into the match (gray dash).
+function MatchIcon({ cx, cy, status }) {
+  if (status === 'exact') {
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={8} className={styles.iconGoodBg} />
+        <path d={`M${cx - 3.5} ${cy} l2.5 3 l5 -6`} className={styles.iconGoodMark} />
+      </g>
+    );
+  }
+  if (status === 'fuzzy' || status === 'partial') {
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={8} className={styles.iconWarnBg} />
+        <path d={`M${cx - 4} ${cy} q2 -3 4 0 q2 3 4 0`} className={styles.iconWarnMark} />
+      </g>
+    );
+  }
   return (
-    <>
-      <text x={x} y={y} className={styles.tableTitleAccentLg}>{title}</text>
-      <line x1={x} y1={ruleY} x2={x + w} y2={ruleY} className={styles.tableRuleAccent} />
+    <g>
+      <circle cx={cx} cy={cy} r={8} className={styles.iconNeutralBg} />
+      <line x1={cx - 3.5} y1={cy} x2={cx + 3.5} y2={cy} className={styles.iconNeutralMark} />
+    </g>
+  );
+}
+
+function Pill({ x, y, text, kind }) {
+  const w = text.length * 5.6 + 22;
+  return (
+    <g>
+      <rect x={x} y={y - 11} width={w} height={20} rx={10} className={kind === 'good' ? styles.pillGoodBg : styles.pillWarnBg} />
+      <text x={x + w / 2} y={y + 3} textAnchor="middle" className={kind === 'good' ? styles.pillGoodText : styles.pillWarnText}>{text}</text>
+    </g>
+  );
+}
+
+// A two-record comparison card: a tinted header with a status pill, then
+// one row per field with a match-status icon, a label, and each record's
+// value. Returns { el, bottom } so the caller can stack what follows.
+function ComparisonCard({ x, y, w, kind, badge, rows, note }) {
+  const clipId = `gr-card-${kind}-${y}`;
+  const headerH = 42;
+  const pad = 16;
+  const iconX = x + pad + 8;
+  const labelX = x + pad + 26;
+  const valueAX = x + pad + 130;
+  const valueBX = x + (w - pad) / 2 + 40;
+  const colHeadY = y + headerH + pad + 2;
+  const firstRowY = colHeadY + 20;
+  const rowH = 25;
+  const rowsBottom = firstRowY + rows.length * rowH - rowH + 8;
+  const noteLines = note;
+  const noteY = rowsBottom + 20;
+  const bottom = linesEnd(noteY, noteLines.length, 15, pad - 15 + 10);
+
+  const el = (
+    <g key={clipId}>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={x} y={y} width={w} height={bottom - y} rx={10} />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        <rect x={x} y={y} width={w} height={bottom - y} className={styles.cardBg} />
+        <rect x={x} y={y} width={w} height={headerH} className={kind === 'good' ? styles.cardHeaderGood : styles.cardHeaderWarn} />
+      </g>
+      <rect x={x} y={y} width={w} height={bottom - y} rx={10} className={styles.cardBg} style={{ fillOpacity: 0 }} />
+
+      <text x={x + pad} y={y + headerH / 2 + 5} className={styles.cardHeaderTitle}>Are these the same patient?</text>
+      <Pill x={x + w - pad - (badge.length * 5.6 + 22)} y={y + headerH / 2} text={badge} kind={kind} />
+
+      <text x={valueAX} y={colHeadY} className={styles.colHead}>RECORD A</text>
+      <text x={valueBX} y={colHeadY} className={styles.colHead}>RECORD B</text>
+
       {rows.map((row, i) => {
         const ry = firstRowY + i * rowH;
-        const cls = row.bold ? styles.tableCellAccentBoldLg : styles.tableCellAccentLg;
         return (
           <g key={i}>
-            <text x={x} y={ry} className={cls}>{row.left}</text>
-            <text x={col2} y={ry} className={cls}>{row.right}</text>
-            <line x1={x} y1={ry + 7} x2={x + w} y2={ry + 7} className={styles.tableRule} />
+            <MatchIcon cx={iconX} cy={ry - 4} status={row.match} />
+            <text x={labelX} y={ry} className={styles.fieldLabel}>{row.label}</text>
+            <text x={valueAX} y={ry} className={styles.fieldValue}>{row.a}</text>
+            <text x={valueBX} y={ry} className={styles.fieldValue}>{row.b}</text>
+            {i < rows.length - 1 && <line x1={x + pad} y1={ry + 8} x2={x + w - pad} y2={ry + 8} className={styles.cardRule} />}
           </g>
         );
       })}
-    </>
+
+      <line x1={x + pad} y1={rowsBottom + 2} x2={x + w - pad} y2={rowsBottom + 2} className={styles.cardRule} />
+      <Lines x={x + pad} y={noteY} lineH={15} lines={noteLines} className={styles.cardFooterNote} />
+    </g>
   );
-}
-function accentTableBottom(y, rowCount, rowH = 23) {
-  return y + 5 + 21 + rowCount * rowH;
+  return { el, bottom };
 }
 
-const PATIENT_ROWS_HIGH = [
-  { left: 'Dana Whitfield', right: 'Dana Whitfield', bold: true },
-  { left: '382 Some St', right: '382 Some St' },
-  { left: 'SomeCity, US 83921', right: 'SomeCity, US 83921-2521', bold: true },
-  { left: '555-12-1212', right: '555-12-1212' },
-  { left: '(111) 235-3523', right: '(111) 938-3982' },
-  { left: 'DOB: 2014-01-01', right: 'DOB: 2014-JAN-01' },
+const FIELD_ROWS_HIGH = [
+  { label: 'Name', a: 'Dana Whitfield', b: 'Dana Whitfield', match: 'exact' },
+  { label: 'Address', a: '382 Some St', b: '382 Some St', match: 'exact' },
+  { label: 'City/state/ZIP', a: 'SomeCity, US 83921', b: 'SomeCity, US 83921-2521', match: 'exact' },
+  { label: 'Phone', a: '555-12-1212', b: '555-12-1212', match: 'exact' },
+  { label: 'Alt. phone', a: '(111) 235-3523', b: '(111) 938-3982', match: 'none' },
+  { label: 'Date of birth', a: '2014-01-01', b: '2014-JAN-01', match: 'fuzzy' },
 ];
-const PATIENT_ROWS_LOW = [
-  { left: 'Dana Whitfield', right: 'Dana Whitfield', bold: true },
-  { left: '3534 Generic Ave', right: '382 Some St' },
-  { left: 'SomeCity, US 83921', right: 'SomeCity, US 39823', bold: true },
-  { left: '832-893-8323', right: '555-12-1212' },
-  { left: '(111) 235-3523', right: '(111) 938-3982' },
-  { left: 'DOB: 2014-12-31', right: 'DOB: 2014-01-01' },
+const FIELD_ROWS_LOW = [
+  { label: 'Name', a: 'Dana Whitfield', b: 'Dana Whitfield', match: 'exact' },
+  { label: 'Address', a: '3534 Generic Ave', b: '382 Some St', match: 'none' },
+  { label: 'City/state/ZIP', a: 'SomeCity, US 83921', b: 'SomeCity, US 39823', match: 'partial' },
+  { label: 'Phone', a: '832-893-8323', b: '555-12-1212', match: 'none' },
+  { label: 'Alt. phone', a: '(111) 235-3523', b: '(111) 938-3982', match: 'none' },
+  { label: 'Date of birth', a: '2014-12-31', b: '2014-01-01', match: 'none' },
 ];
 
 export function GuideAfter() {
   const PAGE_X = 16;
   const PAGE_W = 688;
-  const PAD = 32;
-  const CX = PAGE_X + PAD;
-  const CW = PAGE_W - PAD * 2;
-  const COL2 = CX + CW / 2 + 10;
-  const GAP = 34;
+  const BODY_PAD = 24;
+  const SIDEBAR_W = 150;
+  const GUTTER = 24;
+  const SIDEBAR_X = PAGE_X + BODY_PAD;
+  const CX = SIDEBAR_X + SIDEBAR_W + GUTTER;
+  const CW = PAGE_X + PAGE_W - BODY_PAD - CX;
 
-  function Footer({ pageNum }) {
-    return (
-      <>
-        <text x={CX} y={0} className={styles.wordmarkLg}>LUMEN HEALTH</text>
-        <text x={CX + CW} y={0} textAnchor="end" className={styles.footerMutedLg}>
-          Identity Resolution Services Concepts Guide | {pageNum}
-        </text>
-      </>
-    );
-  }
+  const NAVBAR_H = 48;
+  const CRUMB_H = 34;
+  const contentTop = NAVBAR_H + CRUMB_H + 30;
 
-  // ---------------------------------------------------------------
-  // Page 1: title page
-  // ---------------------------------------------------------------
-  const headY = 28;
-  const h1Y1 = headY + 42;
-  const h1Y2 = h1Y1 + 34;
-  const taglineLines = [
-    'The Lumen Analytics Platform (LAP) offers integration with Anchor Point',
-    "MultiMatch's comprehensive master data management (MDM) solution to",
-    'support patient and provider identity resolution in the EDW.',
-  ];
-  const taglineY = h1Y2 + 30;
+  // ---- sidebar: the guide family, in place of the PDF's roadmap table ----
+  const sideEyebrowY = contentTop;
+  let sy = sideEyebrowY + 2 * 11 + 20;
+  const sideInstallY = sy; sy += 24;
+  const sideTechRefY = sy; sy += 24;
+  const sideConceptsY = sy; sy += 26;
+  const sideOverviewY = sy; sy += 24;
+  const sideDefinitionY = sy; sy += 20;
+  const sideExamplesY = sy;
+
+  // ---- main content ----
+  const h1Y = contentTop + 6;
+  const metaY = h1Y + 24;
   const introLines = [
-    'This guide is one of three provided by Lumen Health to walk through the steps',
-    'of installing and configuring MultiMatch software and tools to automatically',
-    'match and merge entities (people, places, etc.) in the Lumen EDW.',
+    "Lumen Health's identity resolution offering enables",
+    'high-value and comparatively low-cost identity',
+    'resolution in the Lumen enterprise data warehouse',
+    '(EDW). Every organization with multiple sources of',
+    'overlapping patient and provider records stands to',
+    'benefit from merging identities.',
   ];
-  const introY = linesEnd(taglineY, taglineLines.length, 18, 24);
-  const hereLabelY = linesEnd(introY, introLines.length, 18, 28);
+  const introY = linesEnd(metaY, 1, 0, 28);
 
-  // "You are here" roadmap table
-  const tableY = hereLabelY + 20;
-  const labelColW = 64;
-  const dataColsX = CX + labelColW;
-  const dataColsW = CW - labelColW;
-  const colW = dataColsW / 4;
-  const col = (i) => dataColsX + i * colW;
-
-  const headRowY = tableY + 18;
-  const descRowY = headRowY + 22;
-  const descLineH = 15;
-  const descLines = [
-    ['Install MultiMatch', 'as part of the Lumen', 'Analytics Platform.'],
-    ['Configure MultiMatch', 'in the Lumen Analytics', 'Platform.'],
-    ['Perform ongoing', 'operations, maintenance,', 'and troubleshooting.'],
-    ['Follow best practices', 'to resolve duplicate', 'identities.'],
+  const calloutY = linesEnd(introY, introLines.length, 18, 26);
+  const calloutPad = 16;
+  const calloutBodyLines = [
+    'Identity resolution is the process of taking two',
+    'or more records for a person, patient, or provider',
+    'and probabilistically matching them, based on a',
+    'set of rules, to decide whether they describe the',
+    'same individual.',
   ];
-  const descRowH = 3 * descLineH + 16;
+  const calloutLabelY = calloutY + calloutPad + 11;
+  const calloutBodyY = calloutLabelY + 20;
+  const calloutBottomY = linesEnd(calloutBodyY, calloutBodyLines.length, 17, calloutPad - 9);
 
-  const guideRowLabelY = descRowY + descRowH + 16;
-  const guideLineH = 15;
-  const guideRowH = 2 * guideLineH + 16;
-
-  const versionRowLabelY = guideRowLabelY + guideRowH + 16;
-  const versionLineH = 15;
-  const versionRowH = 2 * versionLineH + 16;
-  const tableBottomY = versionRowLabelY + versionRowH;
-
-  const resolveX = col(3);
-
-  const supportY = tableBottomY + 34;
-  const supportBodyY = supportY + 20;
-  const supportLines = [
-    'Anchor Point provides thorough installation, configuration, and reference guides.',
-    "Lumen Health's Identity Resolution Services guides are not intended to replace",
-    'Anchor Point documentation. Rather, their scope is limited to installing Anchor',
-    'Point MultiMatch as part of the Lumen EDW platform, to use alongside it.',
-  ];
-  const supportEndY = linesEnd(supportBodyY, supportLines.length, 17, 0);
-
-  const page1Height = supportEndY + 48;
-
-  // ---------------------------------------------------------------
-  // Page 2: Overview, part 1
-  // ---------------------------------------------------------------
-  const rHeadY = 28;
-  const rH1Y = rHeadY + 42;
-  const rIntroLines = [
-    "Lumen Health's identity resolution offering enables high-value and",
-    'comparatively low-cost identity resolution in the Lumen enterprise',
-    'data warehouse (EDW).',
-  ];
-  const rIntroY = rH1Y + 32;
-  const rBenefitLines = [
-    'Every organization that has multiple sources containing overlapping',
-    'identifiers for patients and providers stands to benefit from merging',
-    'identities.',
-  ];
-  const rBenefitY = linesEnd(rIntroY, rIntroLines.length, 18, 22);
-
-  const defLabelY = linesEnd(rBenefitY, rBenefitLines.length, 18, 28);
-  const defLines = [
-    'Identity resolution as defined for the Lumen Analytics Platform is the',
-    'process of taking two or more entities (persons, patients, providers,',
-    'etc.) and probabilistically matching them based on a set of rules.',
-  ];
-  const defBodyY = defLabelY + 24;
-
-  const highLabelY = linesEnd(defBodyY, defLines.length, 18, 24);
+  const highLabelY = calloutBottomY + 34;
   const highIntroLines = [
-    'For example, two patients who share the same Social Security Number,',
-    'birthdate, address, first name, and last name achieve a high matching',
-    'score. They are identified as a match and merged for purposes of',
-    'analytic reporting:',
+    'Two records that agree closely enough are merged',
+    'automatically for reporting:',
   ];
-  const highIntroY = highLabelY + 24;
+  const highIntroY = highLabelY + 22;
+  const card1Y = linesEnd(highIntroY, highIntroLines.length, 18, 20);
+  const card1 = ComparisonCard({
+    x: CX,
+    y: card1Y,
+    w: CW,
+    kind: 'good',
+    badge: 'Likely match',
+    rows: FIELD_ROWS_HIGH,
+    note: ['Matched on name, address, and phone. The date-of-birth format differs but', 'still resolves to the same date, so it didn’t block the match.'],
+  });
 
-  const t1TitleY = linesEnd(highIntroY, highIntroLines.length, 18, 22);
-  const t1BottomY = accentTableBottom(t1TitleY, PATIENT_ROWS_HIGH.length);
-
-  const lowLabelY = t1BottomY + 32;
+  const lowLabelY = card1.bottom + 34;
   const lowIntroLines = [
-    'Another pair of patients who share only first name, last name, and a',
-    'partial address match would not reach the scoring threshold to be',
-    'merged. This pair of patients would match but would not merge:',
+    'A record that shares only a name, with everything',
+    'else different, is flagged instead:',
   ];
-  const lowIntroY = lowLabelY + 24;
-  const page2BottomY = linesEnd(lowIntroY, lowIntroLines.length, 18, 0);
-  const page2Height = page2BottomY + 48;
+  const lowIntroY = lowLabelY + 22;
+  const card2Y = linesEnd(lowIntroY, lowIntroLines.length, 18, 20);
+  const card2 = ComparisonCard({
+    x: CX,
+    y: card2Y,
+    w: CW,
+    kind: 'warn',
+    badge: 'Needs review',
+    rows: FIELD_ROWS_LOW,
+    note: ['Only the name and general location are close. That’s below the merge', 'threshold, so the records stay separate and are left for manual review.'],
+  });
 
-  // ---------------------------------------------------------------
-  // Page 3: Overview, continued — the comparison table page 2 only
-  // introduces
-  // ---------------------------------------------------------------
-  const contHeadY = 28;
-  const contLabelY = contHeadY + 36;
-  const t2TitleY = contLabelY + 26;
-  const t2BottomY = accentTableBottom(t2TitleY, PATIENT_ROWS_LOW.length);
-  const page3Height = t2BottomY + 48;
+  const feedbackY = card2.bottom + 36;
+  const relatedY = feedbackY + 34;
+  const bodyBottomY = relatedY + 22;
 
-  // ---------------------------------------------------------------
-  // Stack the three pages, each in its own local coordinate frame
-  // ---------------------------------------------------------------
-  const page1Top = 16;
-  const page2Top = page1Top + page1Height + GAP;
-  const page3Top = page2Top + page2Height + GAP;
-  const viewH = page3Top + page3Height + 16;
+  const sidebarBottomY = sideExamplesY + 16;
+  const contentBottomY = Math.max(bodyBottomY, sidebarBottomY);
+  const cardHeight = contentBottomY + BODY_PAD;
+
+  const pageTop = 16;
+  const viewH = pageTop + cardHeight + 16;
+  const clipId = 'gr-help-clip';
 
   return (
     <Figure
       titleId="gr-after"
-      title="Mockup of the final guide, laid out and branded for publication"
-      desc="Three stacked pages. Page one is a guide title page with a tagline describing the platform's integration with a third-party MDM tool, an intro paragraph, a 'you are here' roadmap table across four guide stages (Install, Configure, Maintain, Resolve), and a short section on the MDM vendor's own documentation. Page two is the start of an Overview page with a definition of identity resolution and a high-matching-score example with its comparison table, followed by the start of a low-matching-score example. Page three continues the Overview with that example's comparison table, showing a full pair of patient records that would match but would not merge."
+      title="Mockup of the content published as a help-center article"
+      desc="A help-center article page: a navbar with search, a breadcrumb trail, and a left sidebar showing the Identity Resolution Services guide family with Overview, Definition, and Examples as the current sub-sections. The main column has the article title, a definition callout, and two comparison cards. The first, labeled 'Likely match,' shows a pair of patient records with a status icon per field — matching on name, address, and phone, with a note that the date-of-birth format differs but still resolves to the same date. The second, labeled 'Needs review,' shows a pair that only matches on name, so it's left for manual review instead of merging automatically. A 'Was this article helpful?' prompt and related-article links close out the page."
       viewBox={`0 0 ${VIEW_W} ${viewH}`}
-      caption="After: the final guide, laid out and branded for publication, with the low-matching-score example's comparison table carried onto its own page.">
+      caption="">
       <rect width={VIEW_W} height={viewH} className={styles.backdrop} />
 
-      {/* ---- page 1: title page ---- */}
-      <rect x={PAGE_X} y={page1Top + 5} width={PAGE_W} height={page1Height} rx={8} className={styles.pageShadow} />
-      <rect x={PAGE_X} y={page1Top} width={PAGE_W} height={page1Height} rx={8} className={styles.page} />
-      <rect x={PAGE_X} y={page1Top} width={PAGE_W} height={5} rx={2.5} className={styles.pageAccentBar} />
+      <rect x={PAGE_X} y={pageTop + 5} width={PAGE_W} height={cardHeight} rx={10} className={styles.pageShadow} />
 
-      <g transform={`translate(0, ${page1Top})`}>
-        <text x={CX + CW / 2} y={headY} textAnchor="middle" className={styles.eyebrow}>
-          LUMEN HEALTH IDENTITY RESOLUTION SERVICES
-        </text>
-        <text x={CX} y={h1Y1} className={styles.h1Brand}>Lumen Health Identity</text>
-        <text x={CX} y={h1Y2} className={styles.h1Brand}>Resolution Services</text>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={PAGE_X} y={pageTop} width={PAGE_W} height={cardHeight} rx={10} />
+        </clipPath>
+      </defs>
 
-        <Lines x={CX} y={taglineY} lineH={18} lines={taglineLines} className={styles.taglineLg} />
-        <Lines x={CX} y={introY} lineH={18} lines={introLines} className={styles.bodyLg} />
+      <g clipPath={`url(#${clipId})`}>
+        <rect x={PAGE_X} y={pageTop} width={PAGE_W} height={cardHeight} className={styles.page} />
 
-        <text x={CX} y={hereLabelY} className={styles.labelLg}>You are here</text>
+        <g transform={`translate(0, ${pageTop})`}>
+          {/* ---- navbar ---- */}
+          <rect x={PAGE_X} y={0} width={PAGE_W} height={NAVBAR_H} className={styles.navbar} />
+          <rect x={PAGE_X + 20} y={(NAVBAR_H - 24) / 2} width={24} height={24} rx={6} className={styles.navLogoChip} />
+          <text x={PAGE_X + 32} y={NAVBAR_H / 2 + 4} textAnchor="middle" className={styles.navLogoMark}>L</text>
+          <text x={PAGE_X + 56} y={NAVBAR_H / 2 + 5} className={styles.navTitle}>Lumen Help Center</text>
 
-        <rect x={resolveX - 6} y={tableY - 4} width={colW + 6} height={tableBottomY - tableY + 8} rx={8} className={styles.gridCellActiveLg} />
-        <line x1={CX} y1={tableY} x2={CX + CW} y2={tableY} className={styles.gridRule} />
+          <rect x={PAGE_X + 220} y={(NAVBAR_H - 28) / 2} width={200} height={28} rx={14} className={styles.searchPill} />
+          <circle cx={PAGE_X + 236} cy={NAVBAR_H / 2} r={4.5} className={styles.searchIcon} />
+          <line x1={PAGE_X + 239.5} y1={NAVBAR_H / 2 + 3.5} x2={PAGE_X + 243} y2={NAVBAR_H / 2 + 7} className={styles.searchIcon} />
+          <text x={PAGE_X + 250} y={NAVBAR_H / 2 + 4} className={styles.searchText}>Search articles&#8230;</text>
 
-        {['Install', 'Configure', 'Maintain'].map((h, i) => (
-          <text key={h} x={col(i)} y={headRowY} className={styles.gridHeadCellLg}>{h}</text>
-        ))}
-        <rect x={col(3) - 2} y={headRowY - 15} width={64} height={20} rx={10} className={styles.resolvePill} />
-        <text x={col(3) + 10} y={headRowY} className={styles.resolvePillText}>Resolve</text>
-        <line x1={CX} y1={headRowY + 8} x2={CX + CW} y2={headRowY + 8} className={styles.gridRule} />
+          <text x={PAGE_X + PAGE_W - 86} y={NAVBAR_H / 2 + 4} textAnchor="end" className={styles.navLinkActive}>Guides</text>
+          <text x={PAGE_X + PAGE_W - 20} y={NAVBAR_H / 2 + 4} textAnchor="end" className={styles.navLink}>Support</text>
 
-        {descLines.map((cellLines, i) => (
-          <Lines
-            key={i}
-            x={col(i)}
-            y={descRowY}
-            lineH={descLineH}
-            lines={cellLines}
-            className={i === 3 ? styles.gridBodyCellBoldLg : styles.gridBodyCellLg}
-          />
-        ))}
+          {/* ---- breadcrumb ---- */}
+          <text x={SIDEBAR_X} y={NAVBAR_H + CRUMB_H / 2 + 4} className={styles.crumb}>
+            Home<tspan dx="6" dy="0">&#8250;</tspan><tspan dx="6">Identity Resolution Services</tspan><tspan dx="6">&#8250;</tspan>
+          </text>
+          <text x={SIDEBAR_X + 218} y={NAVBAR_H + CRUMB_H / 2 + 4} className={styles.crumbCurrent}>Overview</text>
+          <line x1={PAGE_X} y1={NAVBAR_H + CRUMB_H} x2={PAGE_X + PAGE_W} y2={NAVBAR_H + CRUMB_H} className={styles.sideRule} />
 
-        <text x={CX} y={guideRowLabelY} className={styles.gridBodyCellLg}>Guide</text>
-        <Lines x={col(0)} y={guideRowLabelY} lineH={guideLineH} lines={['Identity Resolution', 'Services Install Guide']} className={styles.gridItalicCellLg} />
-        <Lines x={col(1)} y={guideRowLabelY} lineH={guideLineH} lines={['Identity Resolution Services', 'Technical Reference']} className={styles.gridItalicCellLg} />
-        <Lines x={col(3)} y={guideRowLabelY} lineH={guideLineH} lines={['Identity Resolution', 'Services Concepts Guide']} className={styles.gridItalicCellBoldLg} />
+          {/* ---- sidebar ---- */}
+          <Lines x={SIDEBAR_X} y={sideEyebrowY} lineH={11} lines={['IDENTITY RESOLUTION', 'SERVICES']} className={styles.sideEyebrow} />
+          <text x={SIDEBAR_X} y={sideInstallY} className={styles.sideItem}>Install Guide</text>
+          <text x={SIDEBAR_X} y={sideTechRefY} className={styles.sideItem}>Technical Reference</text>
+          <text x={SIDEBAR_X} y={sideConceptsY} className={styles.sideItemBold}>Concepts Guide</text>
 
-        <text x={CX} y={versionRowLabelY} className={styles.gridBodyCellLg}>Version</text>
-        <Lines x={col(0)} y={versionRowLabelY} lineH={versionLineH} lines={['LAP 2.6 or higher', 'MultiMatch 4.5']} className={styles.gridBodyCellLg} />
-        <Lines x={col(1)} y={versionRowLabelY} lineH={versionLineH} lines={['LAP 2.6', 'MultiMatch 4.5']} className={styles.gridBodyCellLg} />
-        <Lines x={col(3)} y={versionRowLabelY} lineH={versionLineH} lines={['LAP 2.6 or higher', 'MultiMatch 4.5']} className={styles.gridBodyCellLg} />
+          <rect x={SIDEBAR_X} y={sideOverviewY - 14} width={SIDEBAR_W} height={22} rx={5} className={styles.sideActiveBg} />
+          <rect x={SIDEBAR_X} y={sideOverviewY - 14} width={3} height={22} className={styles.sideActiveBar} />
+          <text x={SIDEBAR_X + 14} y={sideOverviewY} className={styles.sideSubActive}>Overview</text>
+          <text x={SIDEBAR_X + 14} y={sideDefinitionY} className={styles.sideSub}>Definition</text>
+          <text x={SIDEBAR_X + 14} y={sideExamplesY} className={styles.sideSub}>Examples</text>
 
-        <line x1={CX} y1={tableBottomY} x2={CX + CW} y2={tableBottomY} className={styles.gridRule} />
+          {/* ---- main content ---- */}
+          <text x={CX} y={h1Y} className={styles.h1Lg}>Overview</text>
+          <text x={CX} y={metaY} className={styles.metaText}>Updated October 2026 &middot; 4 min read</text>
 
-        <text x={CX} y={supportY} className={styles.labelLg}>Anchor Point support</text>
-        <Lines x={CX} y={supportBodyY} lineH={17} lines={supportLines} className={styles.bodyLg} />
+          <Lines x={CX} y={introY} lineH={18} lines={introLines} className={styles.bodyLg} />
 
-        <g transform={`translate(0, ${page1Height - 20})`}><Footer pageNum={5} /></g>
-      </g>
+          <rect x={CX} y={calloutY} width={CW} height={calloutBottomY - calloutY} rx={10} className={styles.calloutBg} />
+          <rect x={CX} y={calloutY} width={4} height={calloutBottomY - calloutY} className={styles.calloutBar} />
+          <circle cx={CX + calloutPad + 9} cy={calloutLabelY - 4} r={9} className={styles.calloutIconBg} />
+          <text x={CX + calloutPad + 9} y={calloutLabelY} textAnchor="middle" className={styles.calloutIconText}>i</text>
+          <text x={CX + calloutPad + 26} y={calloutLabelY} className={styles.calloutLabel}>Definition</text>
+          <Lines x={CX + calloutPad} y={calloutBodyY} lineH={17} lines={calloutBodyLines} className={styles.calloutBody} />
 
-      {/* ---- page 2: Overview, part 1 ---- */}
-      <rect x={PAGE_X} y={page2Top + 5} width={PAGE_W} height={page2Height} rx={8} className={styles.pageShadow} />
-      <rect x={PAGE_X} y={page2Top} width={PAGE_W} height={page2Height} rx={8} className={styles.page} />
-      <rect x={PAGE_X} y={page2Top} width={PAGE_W} height={5} rx={2.5} className={styles.pageAccentBar} />
+          <text x={CX} y={highLabelY} className={styles.h2}>Example: a high matching score</text>
+          <Lines x={CX} y={highIntroY} lineH={18} lines={highIntroLines} className={styles.bodyLg} />
+          {card1.el}
 
-      <g transform={`translate(0, ${page2Top})`}>
-        <text x={CX + CW} y={rHeadY} textAnchor="end" className={styles.eyebrow}>OVERVIEW</text>
-        <text x={CX} y={rH1Y} className={styles.h1Lg}>Overview</text>
+          <text x={CX} y={lowLabelY} className={styles.h2}>Example: a low matching score</text>
+          <Lines x={CX} y={lowIntroY} lineH={18} lines={lowIntroLines} className={styles.bodyLg} />
+          {card2.el}
 
-        <Lines x={CX} y={rIntroY} lineH={18} lines={rIntroLines} className={styles.bodyLg} />
-        <Lines x={CX} y={rBenefitY} lineH={18} lines={rBenefitLines} className={styles.bodyLg} />
+          <line x1={CX} y1={feedbackY - 16} x2={CX + CW} y2={feedbackY - 16} className={styles.sideRule} />
+          <text x={CX} y={feedbackY} className={styles.feedbackLabel}>Was this article helpful?</text>
+          <rect x={CX + 190} y={feedbackY - 14} width={46} height={22} rx={11} className={styles.feedbackBtnBg} />
+          <text x={CX + 213} y={feedbackY + 1} textAnchor="middle" className={styles.feedbackBtnText}>Yes</text>
+          <rect x={CX + 242} y={feedbackY - 14} width={46} height={22} rx={11} className={styles.feedbackBtnBg} />
+          <text x={CX + 265} y={feedbackY + 1} textAnchor="middle" className={styles.feedbackBtnText}>No</text>
 
-        <text x={CX} y={defLabelY} className={styles.h2AccentLg}>Definition</text>
-        <Lines x={CX} y={defBodyY} lineH={18} lines={defLines} className={styles.bodyLg} />
-
-        <text x={CX} y={highLabelY} className={styles.h3Lg}>Example: High matching score</text>
-        <Lines x={CX} y={highIntroY} lineH={18} lines={highIntroLines} className={styles.bodyLg} />
-
-        <AccentTable x={CX} y={t1TitleY} w={CW} col2={COL2} title="A pair of patient records likely to merge" rows={PATIENT_ROWS_HIGH} />
-
-        <text x={CX} y={lowLabelY} className={styles.h3Lg}>Example: Low matching score</text>
-        <Lines x={CX} y={lowIntroY} lineH={18} lines={lowIntroLines} className={styles.bodyLg} />
-
-        <g transform={`translate(0, ${page2Height - 20})`}><Footer pageNum={6} /></g>
-      </g>
-
-      {/* ---- page 3: Overview, continued ---- */}
-      <rect x={PAGE_X} y={page3Top + 5} width={PAGE_W} height={page3Height} rx={8} className={styles.pageShadow} />
-      <rect x={PAGE_X} y={page3Top} width={PAGE_W} height={page3Height} rx={8} className={styles.page} />
-      <rect x={PAGE_X} y={page3Top} width={PAGE_W} height={5} rx={2.5} className={styles.pageAccentBar} />
-
-      <g transform={`translate(0, ${page3Top})`}>
-        <text x={CX + CW} y={contHeadY} textAnchor="end" className={styles.eyebrow}>OVERVIEW (CONTINUED)</text>
-        <text x={CX} y={contLabelY} className={styles.h3Lg}>Example: Low matching score, continued</text>
-
-        <AccentTable x={CX} y={t2TitleY} w={CW} col2={COL2} title="A pair of patients who will match but not merge" rows={PATIENT_ROWS_LOW} />
-
-        <g transform={`translate(0, ${page3Height - 20})`}><Footer pageNum={7} /></g>
+          <text x={CX} y={relatedY} className={styles.relatedLabel}>RELATED ARTICLES</text>
+          <text x={CX} y={relatedY + 18} className={styles.relatedLink}>
+            Install Guide<tspan dx="8" className={styles.metaText}>&middot;</tspan><tspan dx="8">Technical Reference</tspan>
+          </text>
+        </g>
       </g>
     </Figure>
   );
@@ -392,7 +395,7 @@ export function GuideBefore() {
   const exampleIntroLines = [
     'For example, two patients who share the same Social Security Number, birth date, address,',
     'and first/last name would achieve a high matching score and would be identified as a match',
-    'that would be merged',
+    'that would be merged together for purposes of analytic reporting.',
   ];
   const exampleIntroY = linesEnd(defY, defLines.length, 15, 18);
 
@@ -461,7 +464,7 @@ export function GuideBefore() {
       title="Mockup of my early draft, as a plain Word page not yet laid out"
       desc="A plain, unstyled Word page titled Overview, carrying the opening paragraphs and definition, generalized to a fictional company. Both the high-matching-score and low-matching-score examples are written out in full here, each with its own black-header comparison table, before any page design was applied."
       viewBox={`0 0 ${VIEW_W} ${viewH}`}
-      caption="Before: my early draft, still in Word. I worked out the explanation and wrote out both comparison-table examples in full before any layout pass.">
+      caption="">
       <rect width={VIEW_W} height={viewH} className={styles.backdrop} />
       <rect x={pageX} y={pageTop + 5} width={pageW} height={viewH - pageTop - 10} className={styles.pageShadow} />
       <rect x={pageX} y={pageTop} width={pageW} height={viewH - pageTop - 10} className={styles.page} />
@@ -474,7 +477,7 @@ export function GuideBefore() {
       <Lines x={X} y={exampleIntroY} lineH={15} lines={exampleIntroLines} className={styles.bodyLg} />
 
       <Table tableY={t1TableY} title="A Pair of Patient Records Likely to Merge" rows={t1Rows} />
-      <text x={X} y={mergedForY} className={styles.bodyLg}>together for purposes of analytic reporting.</text>
+      <text x={X} y={mergedForY} className={styles.bodyLg}></text>
 
       <Lines x={X} y={lowIntroY} lineH={15} lines={lowIntroLines} className={styles.bodyLg} />
 
