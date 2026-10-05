@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'AI-powered content engineering',
+    title: 'AI-powered documentation engineering',
     link: '/portfolio',
     Svg: require('@site/static/img/ai_brain_icon.svg').default,
     description: (

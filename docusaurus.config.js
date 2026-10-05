@@ -23,7 +23,7 @@ const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-fluent content engineer • Technical writer and editor • Docs-as-code and CCMS workflows • Zendesk master • AI conversation designer • AI-assisted pipelines',
+  tagline: 'AI-fluent documentation engineer • Technical writer and editor • Docs-as-code and CCMS workflows • Zendesk master • AI conversation designer • AI-assisted pipelines',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future

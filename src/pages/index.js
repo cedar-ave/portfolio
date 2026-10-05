@@ -32,7 +32,7 @@ export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      description="AI-fluent content engineer">
+      description="AI-fluent documentation engineer">
       <HomepageHeader />
       <main>
         <section className={styles.textSection}>
