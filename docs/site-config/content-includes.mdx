@@ -1,0 +1,94 @@
+---
+sidebar_position: 10
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Content includes across sections
+
+A remark plugin that lets any page pull in the content of another markdown/MDX file, so a shared fragment (a disclaimer, a callout, a reusable code sample) can live in one file and be reused in docs, blog posts, the `/samples` demo docs, and `src/pages` MDX pages alike.
+
+<QuickReference>
+
+- Syntax, on its own line: `{@include: path/to/file.md}`.
+- The path is relative to the file containing the directive, unless it starts with `/`, in which case it's relative to the site root (e.g. `{@include: /src/includes/disclaimer.md}` resolves the same way from anywhere).
+- Includes nest - an included file can itself contain `{@include: ...}` - and a circular chain is caught and rendered as an inline warning instead of hanging the build.
+- A missing include path also renders as an inline `⚠️` warning rather than failing the build.
+- Included fragments should be **plain content** - no Docusaurus frontmatter (`id`, `title`, etc.) - since they're spliced into the including page rather than rendered as a page of their own.
+- Source: [`plugins/remark-includes.mjs`](https://github.com/cedar-ave/portfolio/blob/main/plugins/remark-includes.mjs), registered as a `remarkPlugins` entry on every content type in `docusaurus.config.js`.
+
+</QuickReference>
+
+## Why it has to exist
+
+Docusaurus has no built-in way to splice one markdown file's content into another. MDX's own [transclusion via import](https://mdxjs.com/getting-started#documents) works for a `.mdx` file importing a JSX component, but not for pulling in a plain markdown fragment and having it appear as part of the surrounding page's own table of contents/headings - it would render as a nested component's output, not as part of the page.
+
+A third-party package, [`docusaurus-plugin-includes`](https://github.com/simologos/docusaurus-plugin-includes), does something similar, but it only works by finding the webpack rule belonging to the `@docusaurus/plugin-content-docs` package and patching *that one rule* - so it covers a single docs instance at best, not blog/pages/a second docs instance, and it pins Docusaurus 2 peer dependencies. Since this site needs includes everywhere (docs, `/samples`, blog, and `src/pages`), it has its own small remark plugin instead, following the same pattern as [`remark-image-size.mjs`](../visuals/image-handling) and [`remark-panel-toc.mjs`](../visuals/panel-toc).
+
+## Syntax
+
+```md
+Some normal paragraph.
+
+{@include: ./shared/callout.md}
+
+More content after the include.
+```
+
+The directive must be alone on its own line (its own paragraph) - it isn't recognized inline in the middle of a sentence.
+
+### Path resolution
+
+- A relative path (`./shared/callout.md`, `../includes/foo.md`) resolves relative to the directory of the file containing the directive.
+- A path starting with `/` resolves relative to the site root (the directory `docusaurus.config.js` lives in), regardless of which file or content type contains the directive. This is the form to use for a fragment meant to be shared across docs, blog, and pages, since "relative to the including file" would otherwise differ for each.
+
+There's no single required location for shared fragments; `src/includes/` is a reasonable convention for site-wide ones (nothing else currently reads that folder, so it won't collide with any content type's own routing).
+
+## How it works
+
+`plugins/remark-includes.mjs` is registered per content type's `remarkPlugins` array. For each page it processes:
+
+1. It walks the page looking for a paragraph containing nothing but `{@include: ...}` text.
+2. It resolves the path (see above) and reads the file.
+3. It parses the included file's contents with the **same unified processor settings** as the including page - reusing `this` inside the plugin's attacher function, which unified binds to the active processor - so an include can contain MDX components, GFM tables, etc. and they work exactly as they would if written directly in the including page.
+4. It recursively resolves that subtree's own `{@include: ...}` directives first (relative to the included file's own directory), before splicing the fully-resolved result into the including page in place of the directive paragraph.
+5. It tracks the chain of files already open along the current recursion path; if an include path reappears in that chain, it stops and renders `⚠️ circular include: a.md -> b.md -> a.md` instead of recursing forever.
+6. If the resolved path doesn't exist, it renders `⚠️ include not found: ...` inline instead of failing the build - so a typo'd path is visible on the rendered page without taking down `npm run build`.
+
+## Registration
+
+```js title="docusaurus.config.js"
+import remarkIncludesPlugin from './plugins/remark-includes.mjs';
+
+const siteDir = path.dirname(fileURLToPath(import.meta.url));
+const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
+
+presets: [['classic', {
+  docs: { remarkPlugins: [remarkImageSize, remarkIncludes] },
+  blog: { remarkPlugins: [remarkImageSize, remarkIncludes] },
+  pages: { remarkPlugins: [remarkPanelToc, remarkIncludes] }, // also covers src/pages/*.mdx
+}]],
+plugins: [
+  ['@docusaurus/plugin-content-docs', {
+    id: 'userGuide',
+    path: 'samples',
+    remarkPlugins: [remarkImageSize, remarkIncludes],
+  }],
+],
+```
+
+The `{ siteRoot: siteDir }` option is what makes a `/`-prefixed path resolve the same way regardless of which content type's pipeline is processing the page.
+
+### Adding it to a new content type
+
+If a future section is added as its own `plugin-content-docs` instance (the same pattern `/samples` already uses), add `remarkIncludes` to that instance's own `remarkPlugins` array the same way - there's nothing else to wire up per content type.
+
+## Notes
+
+- This is a block-level directive only - there's no inline `{@include: ...}` support in the middle of a paragraph.
+- Nothing currently uses `{@include: ...}` on this site; the plugin exists as available infrastructure for the next shared fragment that's needed, the same way [`remark-panel-toc.mjs`](../visuals/panel-toc) was built ahead of a page that ended up not needing it.
+- Unlike the `docusaurus-plugin-includes` package this was built to replace, there's no separate "copy shared folders into `docs/versioned_docs`" step - this site doesn't use docs versioning, so an included file just needs to exist somewhere on disk at build time, in or out of `docs/`.
+
+## Source
+
+`plugins/remark-includes.mjs`, the `remarkPlugins` option on the `docs`/`blog`/`pages` presets and the `userGuide` docs instance in `docusaurus.config.js`.

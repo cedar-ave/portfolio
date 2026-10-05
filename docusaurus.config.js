@@ -4,12 +4,21 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { themes as prismThemes } from 'prism-react-renderer';
 import remarkImageSize from './plugins/remark-image-size.mjs';
 import remarkPanelToc from './plugins/remark-panel-toc.mjs';
+import remarkIncludesPlugin from './plugins/remark-includes.mjs';
 import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
+const siteDir = path.dirname(fileURLToPath(import.meta.url));
+
+// {@include: ...} works the same (and "/"-rooted paths resolve the same
+// way) in every content type below - see plugins/remark-includes.mjs.
+const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -51,7 +60,7 @@ const config = {
         path: 'samples',
         routeBasePath: 'samples',
         sidebarPath: './src/js/sidebars-samples.js',
-        remarkPlugins: [remarkImageSize],
+        remarkPlugins: [remarkImageSize, remarkIncludes],
         editUrl: undefined,
         // The sample content's own cross-links use the raw numbered
         // filenames (e.g. "./02-about-delegated-authority"). Keep that
@@ -87,7 +96,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './src/js/sidebars-docs.js',
-          remarkPlugins: [remarkImageSize],
+          remarkPlugins: [remarkImageSize, remarkIncludes],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -111,7 +120,7 @@ const config = {
           // Drafts in progress live in blog/to-write/ and shouldn't be
           // picked up as published posts.
           exclude: ['**/to-write/**'],
-          remarkPlugins: [remarkImageSize],
+          remarkPlugins: [remarkImageSize, remarkIncludes],
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
@@ -129,7 +138,7 @@ const config = {
           // See plugins/remark-panel-toc.mjs - lets a page set
           // `toc_source: panels` in frontmatter to build its right-rail TOC
           // from <Panel label="..."> captions instead of headings.
-          remarkPlugins: [remarkPanelToc],
+          remarkPlugins: [remarkPanelToc, remarkIncludes],
         },
         theme: {
           customCss: './src/css/custom.css',

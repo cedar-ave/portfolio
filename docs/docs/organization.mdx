@@ -108,13 +108,13 @@ A couple of docs-wide behaviors are set in `docusaurus.config.js` rather than pe
 ```js title="docusaurus.config.js"
 docs: {
   sidebarPath: './src/js/sidebars-docs.js',
-  remarkPlugins: [remarkImageSize],
+  remarkPlugins: [remarkImageSize, remarkIncludes],
   editUrl: 'https://github.com/...',
 },
 ```
 
 - `sidebarPath` points at the `sidebars-docs.js` described above.
-- `remarkPlugins` adds markdown-processing plugins (e.g. `remarkImageSize`) that apply to every doc page.
+- `remarkPlugins` adds markdown-processing plugins (e.g. `remarkImageSize`, and `remarkIncludes` for [`{@include: ...}`](../site-config/content-includes)) that apply to every doc page.
 - `editUrl` controls the "Edit this page" link; see [Build flags and edit links](../build-deploy/build-flags-and-edit-links) for details.
 
 ## Adding a new doc page
