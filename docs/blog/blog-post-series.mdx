@@ -37,6 +37,7 @@ A post in a series is automatically removed from the plain year list — it only
 **Things worth knowing before you touch this again:**
 
 - Series sections render above the year groups (2026, 2025, ...), and each one is a closed-by-default dropdown (`<details>`/`<summary>`). A visitor has to click a series to expand it. Year groups are not collapsible.
+- The `<details>` is open by default (instead of closed) when the sidebar's current path falls inside that series — i.e. when you're viewing one of its posts. Without this, navigating from a series post back to the sidebar's series dropdown would re-render it closed, since each page load is a fresh React render with no memory of a prior click. The check is a plain `pathname.startsWith(permalink)` comparison against `useLocation()` in `src/theme/BlogSidebar/Content/index.tsx` — no extra state or persistence involved.
 - The blog plugin's sidebar defaults to showing only the **5 most recent posts**. That default was overridden to show every post ([`blogSidebarCount: 'ALL'`](#why-every-post-has-to-be-in-the-sidebar-data) in `docusaurus.config.js`) — don't remove it, or newer posts will silently push older ones out of both the year list and the series (see below).
 - After editing `plugins/blog-series-plugin.mjs` or `docusaurus.config.js`, restart the dev server (`npm start`) — plugin/config changes aren't picked up by hot reload.
 - A post can only belong to **one** series today, since `series_id` is a single value, not an array (the old `src/data/blogSeries.ts` array let a slug appear in more than one series' `slugs` list — that's no longer possible). If a post needs to appear in two series, the plugin and its consumers would need to accept an array of ids here; nothing currently does.
@@ -75,7 +76,7 @@ So: anything that only needs to know about *the post it's currently rendering* r
 
 1. Calls `usePluginData('blog-series-plugin')` to get the `{ series }` array described above.
 2. Matches each sidebar item's permalink against each series' `slugs` to split `items` into series buckets and "everything else."
-3. Renders each non-empty series as a `<details>`/`<summary>` group (closed by default).
+3. Renders each non-empty series as a `<details>`/`<summary>` group, open when `useLocation()`'s current path is one of that series' posts, closed otherwise.
 4. Runs the original year-grouping logic on the remaining ("everything else") items.
 5. Renders series sections first, then the year groups.
 
@@ -83,7 +84,13 @@ So: anything that only needs to know about *the post it's currently rendering* r
 const {series: blogSeries} = usePluginData('blog-series-plugin') as {
   series: BlogSeries[];
 };
+
+const isActive = series.items.some((item) =>
+  pathname.startsWith(item.permalink),
+);
 ```
+
+`useLocation()` (from `@docusaurus/router`) is used here rather than anything passed down through `Props`, because the stock `BlogSidebar/Content` props (`items`, `yearGroupHeadingClassName`, `ListComponent`) don't include the active permalink — individual sidebar links figure out their own active state internally (via `Link`'s `activeClassName`), not through a prop this component receives. Reading location directly is the only way for the *group* wrapping those links to know whether one of them is active.
 
 [`src/theme/BlogSidebar/Desktop/styles.module.css`](https://github.com/cedar-ave/portfolio/blob/main/src/theme/BlogSidebar/Desktop/styles.module.css) has matching CSS: cursor styling for the `<summary>`, and an updated "no top margin on the first group" rule that now also matches when a series (`<details>`) is the first item instead of a year (`<div>`).
 

@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React, {memo, type ReactNode} from 'react';
+import {useLocation} from '@docusaurus/router';
 import {useThemeConfig} from '@docusaurus/theme-common';
 import {groupBlogSidebarItemsByYear} from '@docusaurus/plugin-content-blog/client';
 import {usePluginData} from '@docusaurus/useGlobalData';
@@ -40,19 +41,24 @@ function BlogSidebarGroup({
   );
 }
 
-// Series groups render as a closed-by-default <details> disclosure instead
-// of a plain heading, so they don't dominate the sidebar above the year list.
+// Series groups render as a <details> disclosure instead of a plain heading,
+// so they don't dominate the sidebar above the year list. Closed by default,
+// but open when the series contains the post currently being viewed — so
+// clicking a post inside an expanded series doesn't collapse it again on
+// the post's own page.
 function BlogSidebarSeriesGroup({
   heading,
   yearGroupHeadingClassName,
+  active,
   children,
 }: {
   heading: string;
   yearGroupHeadingClassName?: string;
+  active: boolean;
   children: ReactNode;
 }) {
   return (
-    <details role="group">
+    <details role="group" open={active}>
       <summary className={yearGroupHeadingClassName}>{heading}</summary>
       {children}
     </details>
@@ -65,6 +71,7 @@ function BlogSidebarContent({
   ListComponent,
 }: Props): ReactNode {
   const themeConfig = useThemeConfig();
+  const {pathname} = useLocation();
   const {series: blogSeries} = usePluginData('blog-series-plugin') as {
     series: BlogSeries[];
   };
@@ -85,14 +92,20 @@ function BlogSidebarContent({
     (item) => !seriesSlugs.has(item.permalink),
   );
 
-  const seriesSections = seriesGroups.map((series) => (
-    <BlogSidebarSeriesGroup
-      key={series.id}
-      heading={series.title}
-      yearGroupHeadingClassName={yearGroupHeadingClassName}>
-      <ListComponent items={series.items} />
-    </BlogSidebarSeriesGroup>
-  ));
+  const seriesSections = seriesGroups.map((series) => {
+    const isActive = series.items.some((item) =>
+      pathname.startsWith(item.permalink),
+    );
+    return (
+      <BlogSidebarSeriesGroup
+        key={series.id}
+        heading={series.title}
+        yearGroupHeadingClassName={yearGroupHeadingClassName}
+        active={isActive}>
+        <ListComponent items={series.items} />
+      </BlogSidebarSeriesGroup>
+    );
+  });
 
   if (themeConfig.blog.sidebar.groupByYear) {
     const itemsByYear = groupBlogSidebarItemsByYear(remainingItems);
