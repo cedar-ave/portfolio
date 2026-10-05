@@ -37,7 +37,29 @@ const config = {
 
   themes: ['docusaurus-theme-zoom-image'],
 
-  plugins: [blogSeriesPlugin],
+  plugins: [
+    blogSeriesPlugin,
+    // A second, standalone docs instance for the "Product user guide" demo
+    // linked from /portfolio. It's deliberately not in the navbar - it's a
+    // sample guide, not a real section of this site. See
+    // sidebars-user-guide.js.
+    [
+      '@docusaurus/plugin-content-docs',
+      /** @type {import('@docusaurus/plugin-content-docs').Options} */
+      ({
+        id: 'userGuide',
+        path: 'samples',
+        routeBasePath: 'samples',
+        sidebarPath: './src/js/sidebars-samples.js',
+        remarkPlugins: [remarkImageSize],
+        editUrl: undefined,
+        // The sample content's own cross-links use the raw numbered
+        // filenames (e.g. "./02-about-delegated-authority"). Keep that
+        // prefix in doc ids/slugs instead of rewriting ~30 links.
+        numberPrefixParser: false,
+      }),
+    ],
+  ],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -64,7 +86,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: './sidebars.js',
+          sidebarPath: './src/js/sidebars-docs.js',
           remarkPlugins: [remarkImageSize],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
