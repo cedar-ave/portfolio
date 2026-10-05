@@ -1,0 +1,48 @@
+---
+title: "Access Management"
+section: "Platform Applications"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+
+# Access Management
+
+<Subtitle>Protect data responsibly while empowering your users.</Subtitle>
+
+Good data warehouse architecture delivers a single reporting platform and a single point of entry into an organized repository of the organization's data. That architecture allows privileged system users to control and monitor access to pieces of the data warehouse at the individual data mart level.
+
+## Best practices made simple
+
+Clearpath follows four guiding principles for security and access:
+
+- Partner data owners and data architects to design and implement the appropriate level of security.
+- Give as much read-only access as possible, but closely monitor the usage.
+- Use views to limit end-user exposure to sensitive columns, like Social Security numbers.
+- Manage access through data stewardship.
+
+## Data stewardship through knowledge experts
+
+System administrators can designate data stewards — knowledge experts in a particular data mart — as the data mart's primary owner. Their authority allows them to:
+
+- Approve, disapprove, or revoke access to a data mart or dashboard
+- Evaluate and improve data quality
+- Monitor how users navigate the data mart and generate reports
+
+## Privileges by group
+
+Data warehouse users typically fall under the following three levels of access. Privileges can be tied to Active Directory or other Windows authentication services.
+
+### Tier 1: Basic user
+
+Basic users can browse data mart information in Compass but cannot modify data marts or configurations.
+
+### Tier 2: Data steward
+
+Data stewards control which users can access which data marts.
+
+### Tier 3: System administrator
+
+According to local security policies, system administrators:
+
+- Have full access to data warehouse configuration tables
+- Manage user access to the data warehouse and its specific data marts

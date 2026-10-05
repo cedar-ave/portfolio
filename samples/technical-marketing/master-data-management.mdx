@@ -1,0 +1,36 @@
+---
+title: "Master Data Management"
+section: "Clearpath Analytics Platform"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+
+# Master Data Management
+
+<Subtitle>Link identifiers and medical vocabularies across multiple source systems into a single, consistent point of reference.</Subtitle>
+
+In many health organizations, each source system maintains its own definition of common data identifiers, like a patient or provider identifier.
+
+For data-aggregating systems like a data warehouse, those identifiers must be linked or mapped to one another across the enterprise to accurately qualify identifiers in multiple source systems. Just as critical is managing code sets in controlled medical vocabularies.
+
+## The value of master data management
+
+Master data management is, at its most basic, the process of linking identity data and reference data across multiple IT systems into a single, consistent point of reference. That single point of reference could be a patient ID, a procedure code, a controlled medical vocabulary, or any of a wide array of others.
+
+## Linking identifiers
+
+The Clearpath data warehouse uses master data management to map identifiers across source systems. Supported shared, cross-system data objects include:
+
+- Patient identifiers
+- Provider identifiers
+- Subsets of standard medical vocabularies
+
+## Managing common terminology
+
+Another type of master data is controlled medical vocabularies like ICD-9, ICD-10, LOINC, and CPT codes. Healthcare organizations often use these codes to exchange data between systems, for billing, and for external reporting purposes.
+
+Clearpath's applications use these codes and their mappings to build patient cohorts and metrics definitions. Because these code sets are critical for applications to function, Clearpath manages them in its master data management subsystem.
+
+:::note
+Clearpath's master data management subsystem is not a replacement for a full-featured enterprise master patient index (eMPI) or terminology management system.
+:::

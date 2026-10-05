@@ -95,7 +95,52 @@ const sidebars = {
       type: 'category',
       label: 'Technical marketing',
       collapsed: false,
-      items: ['technical-marketing/intake-mart-designer'],
+      items: [
+        {
+          type: 'category',
+          label: 'Adaptive-Binding Data Warehouse',
+          collapsed: false,
+          items: [
+            'technical-marketing/adaptive-data-warehouse',
+            'technical-marketing/adaptive-data-warehouse-technical-overview',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Clearpath Analytics Platform',
+          collapsed: false,
+          items: [
+            'technical-marketing/clearpath-analytics-platform',
+            'technical-marketing/metadata-driven-etl-engine',
+            'technical-marketing/agile-data-models',
+            'technical-marketing/linking-and-standardization',
+            'technical-marketing/master-data-management',
+            'technical-marketing/advanced-analytics',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Platform applications',
+          collapsed: false,
+          items: [
+            'technical-marketing/compass-metadata-management',
+            'technical-marketing/data-warehouse-console',
+            'technical-marketing/access-management',
+            'technical-marketing/auditing',
+            'technical-marketing/focus-mart-designer',
+            'technical-marketing/rapid-data-entry-application',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Data acquisition & storage',
+          collapsed: false,
+          items: [
+            'technical-marketing/intake-mart-designer',
+            'technical-marketing/intake-mart-library',
+          ],
+        },
+      ],
     },
   ],
 };

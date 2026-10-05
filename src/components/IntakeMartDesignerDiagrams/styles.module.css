@@ -87,7 +87,7 @@
 /* ---------- Flow diagram ---------- */
 
 .page {
-  /* fill: var(--im-page); */
+  fill: none;
 }
 
 .cardShadow {

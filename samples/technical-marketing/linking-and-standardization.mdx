@@ -1,0 +1,40 @@
+---
+title: "Linking and standardization"
+section: "Clearpath Analytics Platform"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+
+# Linking and standardization
+
+<Subtitle>Just-in-time binding gives healthcare providers the most meaningful, up-to-date data the moment they need it.</Subtitle>
+
+Traditional data warehouses try to model the perfect database from the outset, determining in advance every possible business rule and vocabulary set needed to bring together data for analysis.
+
+This practice, called early binding, is a time-consuming, expensive undertaking. In healthcare, business rules and vocabularies change rapidly — and so do the use cases that data linked across different source systems can serve.
+
+## The wisdom of late binding
+
+Clearpath's Adaptive-Binding Data Warehouse architecture avoids the consequences of linking data to volatile business rules or vocabularies too early. By waiting to bind data until it's time to solve an actual clinical or business problem, analysts:
+
+- Don't have to make lasting decisions about a data model up front, when they can't see what's coming down the road in two, three, or five years
+- Quickly adapt to new questions and use cases
+- Have the data they need to perform timely, relevant advanced analytics
+
+## ETL with a lowercase "t"
+
+When data is extracted from source systems and loaded into the data warehouse, it undergoes almost no transformation. Aside from some minimal data conformance — for example, making sure the "patient name" field in one intake mart is structured the same as the "patient name" field in another — the data is kept as raw as possible, in a source system's natural data model.
+
+Minimal transformation also helps analysts easily track and catalog data lineage through a single enterprise metadata dictionary.
+
+## Just-in-time answers
+
+When it's time to analyze a specific use case, intake mart data is bound more tightly in a Focus Mart. At this point, some transformation of the data happens, but only when necessary.
+
+## Essentials layer
+
+Some data elements are fundamental to almost all analytic use cases, like standard metrics for population, finance, and operations. Because these data elements don't change often, Clearpath binds to them early. More volatile rules and vocabularies are bound as late as possible.
+
+## The six binding points
+
+There are six points in a data warehouse at which data can be bound to rules and vocabularies — see [the technical overview](./adaptive-data-warehouse-technical-overview) for the full diagram.

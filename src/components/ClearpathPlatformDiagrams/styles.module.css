@@ -1,0 +1,782 @@
+/* Diagrams shared across several technical-marketing sample pages (Agile
+   data models, the Adaptive-Binding Data Warehouse technical overview, and
+   the Clearpath Analytics Platform overview). Same palette and card
+   conventions as IntakeMartDesignerDiagrams. */
+
+.figure {
+  --cp-page: #eef1f5;
+  --cp-card: #ffffff;
+  --cp-card-shadow: rgba(0, 0, 0, 0.12);
+  --cp-navy: #202b49;
+  --cp-border: #dde3ea;
+  --cp-muted: #6b7280;
+  --cp-ink: #1f293f;
+  --cp-body: #374151;
+
+  --cp-teal: #73d3c3;
+  --cp-teal-ink: #0f6b5c;
+  --cp-gold: #f1b753;
+  --cp-gold-ink: #8a5a06;
+  --cp-blue: #5f93c7;
+  --cp-sky: #a6dcf7;
+  --cp-pale: #bed4e6;
+  --cp-periwinkle: #93bcdf;
+  --cp-terracotta: #d06e6a;
+  --cp-slate: #5e7893;
+
+  margin: 2rem 0 2.5rem;
+}
+
+:global([data-theme='dark']) .figure {
+  --cp-page: #1d1e20;
+  --cp-card: #242526;
+  --cp-card-shadow: rgba(0, 0, 0, 0.45);
+  --cp-navy: #19213a;
+  --cp-border: #3d4148;
+  --cp-muted: #aab6c3;
+  --cp-ink: #e3e3e3;
+  --cp-body: #cdd4db;
+
+  --cp-teal: #3fa592;
+  --cp-teal-ink: #9fe3d6;
+  --cp-gold: #c98f2f;
+  --cp-gold-ink: #f6d8a3;
+  --cp-blue: #6884a2;
+  --cp-sky: #93bcdf;
+  --cp-pale: #35465f;
+  --cp-periwinkle: #5f7fa3;
+  --cp-terracotta: #e08a86;
+  --cp-slate: #8fa6bd;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 320px;
+  max-width: 780px;
+  height: auto;
+  margin: 0 auto;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--cp-muted);
+  text-align: center;
+}
+
+.cardShadow {
+  fill: var(--cp-card-shadow);
+  filter: blur(6px);
+}
+
+.card {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.headerBar {
+  fill: var(--cp-blue);
+}
+
+.headerText {
+  fill: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.categoryBox {
+  fill: var(--cp-navy);
+}
+
+.categoryText {
+  fill: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.cylinderFill {
+  fill: var(--cp-pale);
+  stroke: var(--cp-slate);
+  stroke-width: 1;
+}
+
+.cylinderText {
+  fill: var(--cp-navy);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.exampleText {
+  fill: var(--cp-muted);
+  font-size: 9.5px;
+}
+
+/* Bus architecture diagram */
+
+.appBox {
+  fill: var(--cp-card);
+  stroke: var(--cp-blue);
+  stroke-width: 1.3;
+}
+
+.appText {
+  fill: var(--cp-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.busBar {
+  fill: var(--cp-navy);
+}
+
+.busLabel {
+  fill: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chipEl {
+  fill: var(--cp-sky);
+}
+
+.chipText {
+  fill: var(--cp-navy);
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.martBox {
+  fill: var(--cp-teal);
+}
+
+.martText {
+  fill: var(--cp-teal-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.busConnector {
+  stroke: var(--cp-border);
+  stroke-width: 1.3;
+}
+
+/* Maturity model ladder */
+
+.levelText {
+  fill: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.levelDesc {
+  fill: var(--cp-body);
+  font-size: 10.5px;
+}
+
+.ladderArrow {
+  fill: none;
+  stroke: var(--cp-blue);
+  stroke-width: 2.5;
+}
+
+/* Platform architecture (layered) */
+
+.layerLabel {
+  fill: var(--cp-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.layerSub {
+  fill: var(--cp-muted);
+  font-size: 10px;
+}
+
+.flowArrow {
+  fill: none;
+  stroke: var(--cp-blue);
+  stroke-width: 2;
+}
+
+.appPill {
+  fill: var(--cp-gold);
+}
+
+.appPillText {
+  fill: var(--cp-gold-ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sourcePill {
+  fill: var(--cp-periwinkle);
+}
+
+.sourcePillText {
+  fill: var(--cp-navy);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Focus Mart Designer interface mockup */
+
+.titleBar {
+  fill: var(--cp-navy);
+}
+
+.titleText {
+  fill: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.winDot {
+  fill: var(--cp-border);
+}
+
+.ribbonBg {
+  fill: var(--cp-page);
+}
+
+.ribbonBtn {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.ribbonIcon {
+  fill: none;
+  stroke: var(--cp-blue);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ribbonText {
+  fill: var(--cp-body);
+  font-size: 8.5px;
+  font-weight: 600;
+}
+
+.ribbonGroupLabel {
+  fill: var(--cp-muted);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ribbonDivider {
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.tabActive {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.tabActiveText {
+  fill: var(--cp-ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tabInactiveText {
+  fill: var(--cp-muted);
+  font-size: 10px;
+}
+
+.panelBg {
+  fill: var(--cp-page);
+}
+
+.listItemActive {
+  fill: var(--cp-sky);
+}
+
+.listItemText {
+  fill: var(--cp-navy);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.formLabel {
+  fill: var(--cp-muted);
+  font-size: 9.5px;
+}
+
+.formBox {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.formValue {
+  fill: var(--cp-body);
+  font-size: 10px;
+}
+
+.checkboxBox {
+  fill: var(--cp-card);
+  stroke: var(--cp-muted);
+  stroke-width: 1.2;
+}
+
+.checkMark {
+  fill: none;
+  stroke: var(--cp-teal-ink);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.statusBarBg {
+  fill: var(--cp-gold);
+  opacity: 0.18;
+}
+
+.statusText {
+  fill: var(--cp-gold-ink);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Compass metadata catalog interface mockup */
+
+.compassHeaderBg {
+  fill: var(--cp-navy);
+}
+
+.compassLogo {
+  fill: var(--cp-sky);
+}
+
+.compassTitle {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.compassHeaderNav {
+  fill: var(--cp-sky);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.searchPill {
+  fill: var(--cp-card);
+}
+
+.searchIcon {
+  fill: none;
+  stroke: var(--cp-muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.searchPlaceholder {
+  fill: var(--cp-muted);
+  font-size: 11px;
+}
+
+.crumbChip {
+  fill: var(--cp-page);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.crumbText {
+  fill: var(--cp-body);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.crumbSep {
+  fill: var(--cp-muted);
+  font-size: 10px;
+}
+
+.tableTitleLg {
+  fill: var(--cp-ink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.statusBadgeGood {
+  fill: var(--cp-teal);
+}
+
+.statusBadgeGoodText {
+  fill: var(--cp-teal-ink);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.infoBadge {
+  fill: var(--cp-pale);
+}
+
+.infoBadgeText {
+  fill: var(--cp-navy);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.sectionLabel {
+  fill: var(--cp-muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.bodyText {
+  fill: var(--cp-body);
+  font-size: 11px;
+}
+
+.codeBlockBg {
+  fill: var(--cp-page);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.codeKeyword {
+  fill: var(--cp-blue);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.codeText {
+  fill: var(--cp-body);
+  font-size: 10.5px;
+}
+
+.metaPanelBg {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.metaLabel {
+  fill: var(--cp-muted);
+  font-size: 10px;
+}
+
+.metaValue {
+  fill: var(--cp-ink);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.metaDivider {
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.stewardAvatar {
+  fill: var(--cp-periwinkle);
+}
+
+.stewardInitial {
+  fill: var(--cp-navy);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.stewardText {
+  fill: var(--cp-body);
+  font-size: 10.5px;
+}
+
+.rssBadge {
+  fill: var(--cp-gold);
+}
+
+.rssBadgeText {
+  fill: var(--cp-gold-ink);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+/* Data Warehouse Console dashboard mockup */
+
+.statCard {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.statAccentGood {
+  fill: var(--cp-teal);
+}
+
+.statAccentWarn {
+  fill: var(--cp-gold);
+}
+
+.statAccentBad {
+  fill: var(--cp-terracotta);
+}
+
+.statValue {
+  fill: var(--cp-ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.statLabel {
+  fill: var(--cp-muted);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.filterPill {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.filterText {
+  fill: var(--cp-body);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.filterCaret {
+  fill: var(--cp-muted);
+}
+
+.tableHeaderBg {
+  fill: var(--cp-navy);
+}
+
+.tableHeaderText {
+  fill: #ffffff;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.tableRow {
+  fill: var(--cp-card);
+}
+
+.tableRowAlt {
+  fill: var(--cp-page);
+}
+
+.tableCellText {
+  fill: var(--cp-body);
+  font-size: 10.5px;
+}
+
+.tableCellMuted {
+  fill: var(--cp-muted);
+  font-size: 10px;
+}
+
+.statusPillGood {
+  fill: var(--cp-teal);
+}
+
+.statusPillGoodText {
+  fill: var(--cp-teal-ink);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.statusPillWarn {
+  fill: var(--cp-gold);
+}
+
+.statusPillWarnText {
+  fill: var(--cp-gold-ink);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.statusPillBad {
+  fill: var(--cp-terracotta);
+  opacity: 0.85;
+}
+
+.statusPillBadText {
+  fill: #ffffff;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.rowActionLink {
+  fill: var(--cp-blue);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.rowActionBtn {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+
+.rowActionBtnText {
+  fill: var(--cp-body);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+
+.pulseDot {
+  fill: var(--cp-gold-ink);
+}
+
+.paginationText {
+  fill: var(--cp-muted);
+  font-size: 9.5px;
+}
+
+/* Auditing architecture */
+
+.serverBox {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1.3;
+}
+
+.serverLabel {
+  fill: var(--cp-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.serverIcon {
+  fill: none;
+  stroke: var(--cp-blue);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.repoBox {
+  fill: var(--cp-navy);
+}
+
+.repoLabel {
+  fill: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.repoSubText {
+  fill: #ffffff;
+  opacity: 0.75;
+  font-size: 9.5px;
+}
+
+.iconBadgeBlue {
+  fill: var(--cp-periwinkle);
+}
+
+.iconBadgeTeal {
+  fill: var(--cp-teal);
+}
+
+.iconOnBadge {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.iconOnBadgeDark {
+  fill: none;
+  stroke: var(--cp-navy);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Rapid Data Entry Application form mockup */
+
+.requiredDot {
+  fill: var(--cp-terracotta);
+}
+
+.fieldLabel {
+  fill: var(--cp-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.fieldBox {
+  fill: var(--cp-card);
+  stroke: var(--cp-border);
+  stroke-width: 1.2;
+}
+
+.fieldBoxWarn {
+  fill: var(--cp-card);
+  stroke: var(--cp-gold);
+  stroke-width: 1.4;
+}
+
+.validationBadge {
+  fill: var(--cp-gold);
+}
+
+.validationMark {
+  fill: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.toggleTrackOn {
+  fill: var(--cp-teal);
+}
+
+.toggleTrackOff {
+  fill: var(--cp-border);
+}
+
+.toggleKnob {
+  fill: #ffffff;
+}
+
+.draftBadge {
+  fill: var(--cp-pale);
+}
+
+.draftBadgeText {
+  fill: var(--cp-navy);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.publishBtn {
+  fill: var(--cp-teal);
+}
+
+.publishBtnText {
+  fill: var(--cp-teal-ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.calendarIcon {
+  fill: none;
+  stroke: var(--cp-muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

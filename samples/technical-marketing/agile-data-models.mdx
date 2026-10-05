@@ -1,0 +1,37 @@
+---
+title: "Agile data models"
+section: "Clearpath Analytics Platform"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+import { SourceMartSpokesDiagram } from '@site/src/components/ClearpathPlatformDiagrams';
+
+# Agile data models
+
+<Subtitle>Flexible data models — paired with point-and-click ETL management tools — keep data agile, adaptable, and always up to date.</Subtitle>
+
+Why does it take other vendors up to two years to implement their data warehouse and start delivering actionable insights? They spend too much time mapping portions of the metadata, relying mostly on manual processes and hand-customized ETL scripting. Manual mapping is not only time-consuming, but also must be redone again and again as data models shift.
+
+## Pre-built data models
+
+Clearpath arrives with a library of preconfigured loading scripts based on commonly available source systems, including clinical, financial, and ancillary sources from well-known healthcare software vendors.
+
+## Data mapping made easy
+
+Developing, testing, and deploying custom intake marts is painless with the [Intake Mart Designer](./intake-mart-designer) tool, which captures source system metadata to automatically map tables and columns in a source system to tables and columns in an intake mart.
+
+## Demystifying table and column names
+
+The Clearpath team uses its extensive knowledge of a source system, supplemented by the knowledge base in Intake Mart Designer, to change cryptic source system names into ones that reflect the way people think.
+
+For example, a column in an EMR source system labeled `Pat_ID` may make sense to someone who's worked with healthcare IT software for a long time — and it's only one of many names that could be used. But it's not the way a person unfamiliar with that code would search for that information. The Clearpath team changes that column heading to the more intuitive `PatientID`, so when users search the metadata repository, they're far more likely to find what they're looking for.
+
+## Optimized for late binding
+
+Data loaded from the source system to an intake mart undergoes minimal transformation in the process — just enough to link it to core naming standards like patient ID, provider ID, encounter date and time, facility ID, and more.
+
+Data stays in its raw, undiluted form and isn't bound until a use case requires it, which saves healthcare systems from hammering out their entire data model up front.
+
+<SourceMartSpokesDiagram />
+
+See the [Intake Mart Library](./intake-mart-library) for the full list of source systems Clearpath has integrated.

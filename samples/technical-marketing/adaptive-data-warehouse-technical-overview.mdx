@@ -1,0 +1,78 @@
+---
+title: "Technical Overview"
+section: "Adaptive-Binding Data Warehouse"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+import { AdaptiveBindingBusDiagram, MaturityModelDiagram } from '@site/src/components/ClearpathPlatformDiagrams';
+
+# The Adaptive-Binding Data Warehouse: a detailed technical overview
+
+<Subtitle>How — and when — Clearpath binds data to the rules and vocabularies that give it meaning.</Subtitle>
+
+This approach to data warehousing grew out of applying systems engineering discipline to high-stakes, time-critical decision support in other industries, then adapting those lessons to healthcare. It is now fundamental to Clearpath's data warehouse platform, and it enables time-to-value measured in days and weeks, not months and years — proving far more scalable and adaptable to new analytic use cases and data content than methodologies built on early binding, tightly coupled data models, and vocabulary management.
+
+## The concept of data binding
+
+Data can be "bound" to business rules that are implemented as algorithms, calculations, and inferences acting upon that data. Examples of binding data to business rules in healthcare include:
+
+- Calculating length of stay (LOS)
+- Attributing a primary care provider to a particular patient with a chronic disease
+- Calculating revenue (or expense) allocation and projections to a department or physician
+- Defining data definitions of general disease states for patient registries
+- Defining patient exclusion criteria for disease/population management
+- Defining patient admission, discharge, and transfer rules
+
+Data can also be bound to vocabulary terms, for both local and industry standards. Examples of vocabulary binding include:
+
+- Patient identifier
+- Provider identifier
+- Location of service
+- Gender
+- Diagnosis code
+- Procedure code
+
+Knowing when and how tightly to bind data to rules and vocabularies is critical to the agility — and success or failure — of a data warehouse. In healthcare, the risks of binding data too tightly to rules or vocabularies are particularly high, because of the volatility of change in the industry. Business rules and vocabulary standards in healthcare are among the most complex in any industry, and they undergo near-constant change.
+
+## Lessons from software engineering
+
+The idea of late binding in data warehousing borrows from lessons learned in the early years of software engineering. In those early years, very large software programs characterized software development — it was common to write hundreds of thousands of lines of code in a single module, supporting numerous and widely different business functions. The code for these varied business functions was tightly bound (coupled) together all at once, at compile time. It was a time-consuming process to write and troubleshoot these large programs: if one piece of the program failed at compile time, the entire program failed. It was all-or-nothing programming. If the program required changes because of new business rules after compile time, the entire program had to be modified, recompiled, and placed back in service, often with significant downtime. Agility suffered.
+
+Software engineering has since moved toward looser coupling and later binding — and data warehousing can benefit from the same discipline.
+
+## The cost of early binding, repeated
+
+When new data sources are added to the data warehouse — as occurs in mergers, acquisitions, and partnerships — the complexity of an early-bound data warehouse means the early binding and mapping work of the source system data must be conformed and mapped again. That lengthy time-to-value is repeated. Likewise, as the complexity of an organization's analytic use cases matures, the early-bound data model cannot keep pace with the changes in the analytic environment, and the data warehouse subsequently loses its initial appeal.
+
+File structure association, popularized decades ago by mainframe systems, is reappearing in the form of Hadoop, MapReduce, and other no-schema data stores. Data warehouses based on this technology exhibit the lowest degree of data binding and coupling — there is no data model in this methodology; there is no data binding until declared when the files are read. Data warehouses based upon this technology are very adept at rapidly loading data, but the benefit of time gained in loading is more than repaid by the complexity required to re-associate data into the files and declare associations between the files and data.
+
+The Adaptive-Binding Data Warehouse is balanced between the extremes of early binding and the no-binding environment of schema-less file stores. It emphasizes the following fundamental principles related to data modeling:
+
+1. The key to success for data warehouses is relating data, not modeling data. When in doubt, model less, not more.
+2. Minimize the use of conformed data models in the data warehouse, instead leveraging the data models used in the source systems.
+3. Apply data models to subsets of data — data marts — when binding formerly disparate data in new contexts to support new analytic use cases.
+4. Approximately 20 core data elements are fundamental to almost all analytic use cases in healthcare. Binding to these core elements early is best practice. Bind to other terms and vocabularies later, and only when required by analytic use cases.
+
+The core data elements are shown below, illustrating how these data elements act as a bus for Clearpath's Adaptive-Binding Data Warehouse platform.
+
+<AdaptiveBindingBusDiagram />
+
+This approach allows queries across disparate source system content in the data warehouse in exactly the same fashion as the theoretical benefits of an enterprise data model, but it does not require development of, and conformance to, an enterprise data model. The diagram also illustrates how the Clearpath Analytics Platform can easily feed data to non-Clearpath applications.
+
+## Late binding to other vocabulary terms and rules
+
+As organizations progress in analytic maturity and sophistication, the need to bind to new and more complex vocabularies and rules will follow. By focusing first on the core data elements, and binding to additional rules and vocabulary only when a clear analytic use case requires it, data warehouse projects in healthcare can defer binding until it's actually needed. Some vocabularies that are typically appropriate for later binding include LOINC, RxNorm, SNOMED, and HCPCS. Business and clinical rules about data are even more complex and volatile.
+
+The Data & Analytics Maturity Model below illustrates the relationship between progressively higher levels of analytic capability and the need to bind to more complex rules and vocabularies.
+
+<MaturityModelDiagram />
+
+The important concept to reemphasize is not to bind data to rules or vocabularies until the analytic use case requires it. Too often, data warehouse projects in healthcare attempt to bind to rules and vocabularies in anticipation of functioning at Level 8 of this model, when the organization is still operating at Level 0 or 1. It takes years to progress through the model, and during that time, rules and vocabularies in healthcare will undoubtedly change. As the old saying goes: don't drive beyond your headlights. It's a dangerous waste of resources and time to bind to rules and vocabularies that are far beyond the current analytic use cases of the organization.
+
+## Summary of principles
+
+1. Minimize remodeling data in the data warehouse until the analytic use case requires it. Leverage the natural data models of the source systems by reflecting much of the same data modeling in the data warehouse.
+2. Delay binding to rules and vocabulary as long as possible, until a clear analytic use case requires it.
+3. Earlier binding is appropriate for business rules or vocabularies that change infrequently, or that the organization wants to lock down for consistent analytics.
+4. Late binding in the visualization layer is appropriate for what-if scenario analysis.
+5. Retain a record of the changes to vocabulary and rule bindings in the data models of the data warehouse. This provides a self-contained configuration control history that can be invaluable for retrospective analysis that feeds forecasting and predictive analytics.

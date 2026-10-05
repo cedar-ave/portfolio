@@ -1,0 +1,29 @@
+---
+title: "Metadata-Driven ETL Engine"
+section: "Clearpath Analytics Platform"
+---
+
+import Subtitle from '@site/src/components/Subtitle';
+
+# Metadata-Driven ETL Engine
+
+<Subtitle>In Clearpath's view, metadata is king.</Subtitle>
+
+Many enterprise data warehousing ETL models contain no metadata, relying mostly on manual processes to bring data into their data warehouse. Over many years of updates and code changes — without structure and standards in place — maintenance costs become burdensome, and reports are bottlenecked by the time-consuming work required to massage data into new formats.
+
+## Automated, metadata-driven ETL
+
+Rather than a data analyst maintaining hundreds of ETL scripts and performing each extraction, the Clearpath Analytics Platform deploys Intake Mart Designer to map source system tables and columns to their intake mart counterparts entirely with metadata.
+
+Mappings are then used to create one or more ETL tasks for each source system table, automating extractions of data from the source systems. Users define how often they want the underlying data to refresh — up to as often as every 10–15 minutes. This gives users:
+
+- Near-real-time data
+- The ability to execute potentially hundreds of ETL processes each night
+- Reports that rebuild each time metadata is updated
+- An agile, flexible, and scalable pipeline
+
+## Late binding, by design
+
+Initially, the ETL process does little or no transformation of the source data beyond mapping source system data types to destination system data types. That means that rather than developing the entire data model up front — before knowing what all the use cases for the data will be — data is bound late in the process, just in time to solve an actual clinical or business problem.
+
+This flexibility echoes the way a data lake architecture preserves data in its unstructured form, so it can answer new questions that arise down the road.
