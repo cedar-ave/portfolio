@@ -8,125 +8,66 @@ tags: [Quality improvement, Governance]
 import { RequestFormMockup, RequestToRootProblem } from '@site/src/components/IntakeDiagrams';
 import { AwarenessDashboard } from '@site/src/components/AnalyticsDiagrams';
 
-I once sat by two engineering leaders who were phenomenal at handling requests for new software features. Often team members would come to them and insist on something like, *We really need to add a new feature that lets users do X. Our users are clamoring for it. We might lose customers over this!* The leaders would respond, ***What problem are you trying to solve?*** The conversation immediately shifted to a discussion about root causes, user goals, business value, and real evidence. More often than not, it quickly became clear that the proposed solution was not the right course of action.
+I once sat by two engineering leaders who were phenomenal at handling requests for new software features. Often team members would come to them and insist on something like, *We really need to add a new feature that lets users do X. Our users are clamoring for it. We might lose customers over this!* The leaders would respond, ***What problem are you trying to solve?*** The conversation immediately shifted to a discussion about root causes, user goals, business value, and real evidence. More often than not, it quickly became clear that the proposed solution was not the right thing to spend time on.
 
 {/* truncate */}
 
-## Applying it to my world
+## Applying the question in techcomm
 
 I love as a technical writer when someone on the team comes to me with a request for new content. It shows they see the value of content and trust me to help. But this magic question works just as well on the requests I receive as it does on product feature requests. For example:
 
-| The request | The actual problem | What actually solves it |
-| --- | --- | --- |
-| **"Can we make an FAQ for new customers?"** | New customers don't know the help site exists, so they never find the answers already written. | Introduce the help site during onboarding. |
-| **"Write an article explaining this error message."** | The error message doesn't tell users what to do next. | Rewrite the message in the product, plus a add short troubleshooting entry for the edge cases. |
-| **"Sales needs a one-pager on feature X."** | This already exists, but reps can't find existing content quickly during calls. | Improve the navigation and search, and provide a short list of links the team can share. |
+**Request:** "Can we make an FAQ for new customers?"
 
-## Putting into a process
+**Actual problem:** New customers don't know our help site exists, so they never find the answers already there.
 
-A company I worked for used Jira heavily across the org. I created a Jira form and asked team members to submit requests with it.
+**What might actually solve it:** Introduce the help site during onboarding.
 
-I knew the form needed to be as short and as painless to fill out as possible, so I narrowed everything down to five questions, with the most important at the top:
+<RequestToRootProblem />
+
+## Putting the question into a process
+
+A company I worked for used Jira heavily across the org. I created a Jira form and asked team members to use it to pass on their requests. I knew the form needed to be as short and as painless to fill out as possible, so I narrowed it down to five questions, with the most important at the top:
 
 - What problem are you trying to solve?
 - Describe the new content you're requesting.
 - Who is the audience for the content?
 - How urgent is this request?
-- What content already exists about this topic, even if it's not in great shape?
+- What have people been doing until now to meet this need? (A second magic question!)
 
-### A note on urgency
-
-*Urgent* is the most overused word in any request queue. I gave the requester four options, each with a definition written into the form itself:
+*Urgent* is the most overused word in any request queue. For that question, I set up four options to help understand the request:
 
 - **Mission critical:** Blocking a launch, legal obligation, or customer impact. Must address immediately to prevent measurable harm.
 - **Time sensitive:** Tied to a specific date or event with external visibility. Delay would reduce relevance or credibility.
 - **Nice to have by a certain date:** Helps a project or team but is not time-bound. Not blocking or externally visible.
 - **Flexible:** Schedule when capacity allows. No impact if delayed. Optimize timing for impact.
 
-### What the form looked like
-
-This isn't a screenshot of the form - it's just an illustration - but here's a (clickable!) mockup of what it looked like:
-
 <RequestFormMockup />
 
-## Tracking the request
+A submitted form immediately became a ticket on my technical writing Jira board. This was helpful for a couple reasons:
 
-A submitted form immediately became a ticket on my **Content Development** Jira board. This is important for two reasons:
+- **The requester gets status updates.** Because the requester is the ticket reporter, they get notifications of status changes and new comments.
+- **Communication around the request is visible.** Questions, answers, and progress updates happen in the ticket comments instead of private Slack conversations.
+- **The requester can see the trajectory of their request.** My project's Kanban board shows where the request sits in the queue and what's ahead of it.
+- **A Jira dashboard shows my capacity and progress.** Tracking what's on the table helps me and my leadership scope and prioritize.
 
-- **A requester could stay aware of the status of their request.** The requester could receive notifications of status changes or check in ad-hoc. They could also change it, supply additional information, or tell me to hurry up!
-- **A requestor could see the trajectory of their request.** The project's Kanban board showed where the request sat in the queue and what was ahead of it.
-- **Communication around the request could be captured.** Questions, answers, and progress updates happened in Jira ticket threads instead of private Slack channels.
-- **I could make work visible using a dashboard.** A dashboard helped me and my manager see how much work was requested, scope it, and visualize progress.
+## Answering the question
 
-## Acting on the request
+Next, the requester and I worked together to scope and prioritize the request. A couple more magic questions helped frame the discussion:
 
-Next was a collaborative effort between me, my manager, and the requester to scope and prioritize the request. First, a short triage defined the root problem.
+- What percentage of this request comes from customers?
+- How much time will implementing this request save?
+- Is this more important than other things I'm working on delivering?
 
-* What percentage of this request comes from customers?
-* How much time will implementing this request save?
-* How will we communicate this change to stakeholders?
+From there, we could finally get down to whether it made sense to do what was asked, try another approach, or deprioritize the need.
 
-<RequestToRootProblem />
+## Measuring the answer
 
-Following was a brainstorm to design and prioritize a solution.
-
-## Measuring the effect
-
-The most critical part of the flow above was the final box: **Track site awareness**. Each time we settled on a solution, ideally we'd come up with some way to measure the effect. In this case, I captured which customers visited a page on the help site and which organizations they belonged to. That way, a visualization could show which customer organizations had visitors to the help site and after how long of period after onboarding. Then we could identify which organizations may not have received education that the site existed, or identify other potential barriers to customers visiting the site.
-
-The following is just an illustration:
+Finally, possibly most important of all: measuring if the intervention made a difference. Going back to the example above, where I avoided creating a new FAQ in favor of improving awareness of a help site that already had the answers, I put in a request for a visualization that showed if customers from a given organization visit the help site.
 
 <AwarenessDashboard />
 
-## Making the backlog measurable
+**View date** and **User creation date** sliders gave extra insight into things like how long it takes for customers to visit the site after an organization finishes onboarding. That way, I'm one step closer to figuring out how the education failure occurred.
 
-I created a set of multi-select labels to apply to each Jira ticket on the board. This allowed the backlog to be filtered, reported on, and compared over time.
+## Softening the answer
 
-### Trigger labels: Why did this request come in?
-
-| Label | Category | When to use | Example |
-| --- | --- | --- | --- |
-| `content-trigger-product-update` | Product-driven | A product update, feature release, deprecation, or renaming. | A new onboarding flow, a settings UI change, a pricing update. |
-| `content-trigger-user-feedback` | User-driven | Users flag issues directly through feedback forms, comments, or ratings. | A reader rates an article as unhelpful. |
-| `content-trigger-support-ticket` | Support-driven | A support ticket surfaces a knowledge gap or repeated misunderstanding. | High ticket volume about login issues or account settings. |
-| `content-trigger-analytics-support` | Support-driven | The support team's analytics research reveals needs and gaps. | A high volume of tickets on a particular topic. |
-| `content-trigger-legal` | Compliance and legal | The legal, privacy, or compliance team flags a required change. | New terms of service or a regulatory change. |
-| `content-trigger-analytics-help-site` | Data-driven | Help site metrics show poor performance or unexpected behavior. | Bounce rate over 80%, low time on page, poor search click-through. |
-| `content-trigger-site-maintenance` | Brand-driven | Maintenance or planned improvements to the help site. | A new masthead or closer brand alignment. |
-| `content-trigger-other` | Miscellaneous | A request that doesn't fit another category. | — |
-
-### Content-type labels: What kind of work is it?
-
-| Label | Use for |
-| --- | --- |
-| `type-help-article` | A single help center article, new or updated. |
-| `type-guide` | A longer, multi-part guide or end-to-end workflow. |
-| `type-site-ux` | Navigation, layout, or other help site experience changes. |
-| `type-analytics` | Measurement and reporting work on content performance. |
-| `type-release-notes` | Release notes and change announcements. |
-| `type-automation` | Tooling or automation that supports the content workflow. |
-| `type-other` | Work that doesn't fit another type. |
-
-## Future enhancements
-
-While these enhancements weren't yet implemented, they were promising value adds.
-
-### Automation for priority triggers
-
-Some triggers should carry built-in urgency no matter what - for example, a legal or compliance change that can't wait for the next planning cycle. Jira automation rules could flag Jira tickets carrying those triggers so they rise to the top of the backlog and notify the team, rather than depending on me to spot them.
-
-Labels also turn the backlog into a source of insight. If `content-trigger-support-ticket` keeps showing up on the same product area, that's a signal for the product team. If `content-trigger-analytics-help-site` requests cluster in one category of articles, that category needs a structural fix, not one-off edits.
-
-### Measuring the system
-
-Using the Jira ticket labels, a Jira dashboard could be configured to answer the following questions:
-
-| Dashboard gadget | Question it answers |
-| --- | --- |
-| Average time from story created to completed, by trigger or content type | Which kinds of requests take longest, and where should we invest in templates or tooling? |
-| Average time in each status | Where do stories get stuck? For example, are they waiting in SME review? |
-| Content funnel overview | How many requests are in each phase right now? |
-| Blocked content | Which stories are blocked, and on what? |
-| Aging stories | Which stories haven't moved in more than 14 days? |
-| Approval SLA compliance | Are reviews and approvals meeting internal deadlines? |
-
+It's important to note that good interpersonal skills (especially empathy) are critical when asking this magic question so the requester doesn't feel shut down and stop sharing ideas. They feel the pain firsthand and know a lot of things I don't. But in my experience, most people I've worked with have been more interested in solving the pain point than insisting on their solution. Ultimately, they're happy to see the needle move toward a better experience for users.
