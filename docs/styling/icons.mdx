@@ -1,0 +1,79 @@
+---
+sidebar_position: 3
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Icons (Font Awesome)
+
+<QuickReference>
+
+- To insert an icon, use the `FAIcon` MDX component with the icon's name: `<FAIcon icon="pen" />`.
+- Find an icon name on the [Font Awesome icon search](https://fontawesome.com/search?o=r&m=free) (filter to **Free** — only the free Solid, Regular, and Brands styles are loaded on this site).
+- `FAIcon` is registered globally in [MDXComponents.js](../../src/theme/MDXComponents.js), so no import is needed in any `.md`/`.mdx` file — it just works.
+
+</QuickReference>
+
+Setup followed the [Docusaurus Community guide to Font Awesome](https://docusaurus.community/knowledge/design/icons/fontawesome/).
+
+## Packages
+
+Font Awesome's React bindings and icon sets are installed as dependencies:
+
+```json title="package.json"
+"@fortawesome/fontawesome-svg-core": "^7.3.1",
+"@fortawesome/free-brands-svg-icons": "^7.3.1",
+"@fortawesome/free-regular-svg-icons": "^7.3.1",
+"@fortawesome/free-solid-svg-icons": "^7.3.1",
+"@fortawesome/react-fontawesome": "^3.5.0",
+```
+
+Only the **free** icon sets are used — Solid (`fas`), Regular (`far`), and Brands (`fab`). Font Awesome's Pro sets aren't installed.
+
+## Wiring it up
+
+Everything lives in one file, [MDXComponents.js](../../src/theme/MDXComponents.js):
+
+```js title="src/theme/MDXComponents.js"
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {fas} from '@fortawesome/free-solid-svg-icons';
+import {far} from '@fortawesome/free-regular-svg-icons';
+import {fab} from '@fortawesome/free-brands-svg-icons';
+
+library.add(fas, far, fab);
+
+export default {
+  ...MDXComponents,
+  Gallery,
+  Panel,
+  FAIcon: FontAwesomeIcon,
+};
+```
+
+- `library.add(fas, far, fab)` registers every icon in the three free sets with Font Awesome's icon library, so any icon from those sets can be referenced by name without a per-icon import.
+- Aliasing `FontAwesomeIcon` to `FAIcon` and adding it to the exported component map makes `<FAIcon icon="..." />` available in every `.md`/`.mdx` file (docs, blog posts, pages) site-wide — the same mechanism that makes `Gallery` and `Panel` globally available.
+
+## Using it in MDX
+
+```mdx
+Click the App Launcher icon (<FAIcon icon="grip" />) in Salesforce at top left.
+```
+
+Just pass the icon name as the `icon` prop — no quotes needed beyond the string, no style prefix required for Solid icons (the default). This pattern is used throughout the [roster samples](../../samples/roster/) to represent UI icons inline with instructional text, e.g.:
+
+```mdx
+| <FAIcon icon="font" />     | Text     |
+| <FAIcon icon="hashtag" />  | Number   |
+| <FAIcon icon="calendar" /> | Date     |
+```
+
+For a Regular or Brands icon (rather than the default Solid), pass the two-part array form, e.g. `<FAIcon icon={['fab', 'github']} />`.
+
+## Finding an icon
+
+Browse the [Font Awesome icon search](https://fontawesome.com/search?o=r&m=free), filter to **Free**, and use the name shown on the icon's page (without the `fa-` prefix) as the `icon` prop.
+
+## Adding more icon sets
+
+Only `fas`, `far`, and `fab` are installed. To use Font Awesome's other free set (Brands covers logos; there's no separate free "light"/"duotone" set), install the matching `@fortawesome/free-*-svg-icons` package, import it, and add it to the `library.add(...)` call in `MDXComponents.js`.
