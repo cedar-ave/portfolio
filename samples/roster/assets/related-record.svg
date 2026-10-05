@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="494" viewBox="0 0 512 494" font-family="Arial, Helvetica, sans-serif">
+  <rect width="512" height="494" fill="white"/>
+
+  <!-- Carrier box -->
+  <rect x="12" y="12" width="178" height="216" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="101" y="42" text-anchor="middle" font-size="17" font-weight="bold">Carrier</text>
+  <text x="101" y="62" text-anchor="middle" font-size="13">Account object in</text>
+  <text x="101" y="78" text-anchor="middle" font-size="13">Clearpath</text>
+  <rect x="35" y="96" width="132" height="34" rx="6" fill="#f0f0f0" stroke="black"/>
+  <text x="101" y="117" text-anchor="middle" font-size="13">Account ID</text>
+
+  <!-- Producer box -->
+  <rect x="312" y="12" width="188" height="440" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="406" y="42" text-anchor="middle" font-size="17" font-weight="bold">Producer</text>
+  <text x="406" y="62" text-anchor="middle" font-size="13">Contact object in</text>
+  <text x="406" y="78" text-anchor="middle" font-size="13">Clearpath</text>
+
+  <text x="332" y="112" font-size="15">Producer A</text>
+  <rect x="332" y="124" width="132" height="34" rx="6" fill="#f0f0f0" stroke="black"/>
+  <text x="398" y="145" text-anchor="middle" font-size="13">Account ID</text>
+
+  <text x="332" y="212" font-size="15">Producer B</text>
+  <rect x="332" y="224" width="132" height="34" rx="6" fill="#f0f0f0" stroke="black"/>
+  <text x="398" y="245" text-anchor="middle" font-size="13">Account ID</text>
+
+  <text x="332" y="312" font-size="15">Producer C</text>
+  <rect x="332" y="324" width="132" height="34" rx="6" fill="#f0f0f0" stroke="black"/>
+  <text x="398" y="345" text-anchor="middle" font-size="13">Account ID</text>
+
+  <!-- Related record label -->
+  <text x="252" y="108" text-anchor="middle" font-size="14">Related</text>
+  <text x="252" y="124" text-anchor="middle" font-size="14">record</text>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="black"/>
+    </marker>
+  </defs>
+  <path d="M332,141 L245,130 L190,122" fill="none" stroke="black" marker-end="url(#arrow)"/>
+  <path d="M332,241 L245,160 L190,130" fill="none" stroke="black" marker-end="url(#arrow)"/>
+  <path d="M332,341 L245,180 L190,140" fill="none" stroke="black" marker-end="url(#arrow)"/>
+</svg>

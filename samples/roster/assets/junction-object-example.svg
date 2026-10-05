@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="610" viewBox="0 0 1080 610" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1080" height="610" fill="white"/>
+
+  <!-- Account or Carrier Network -->
+  <rect x="440" y="15" width="200" height="110" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="540" y="50" text-anchor="middle" font-size="15">Account or</text>
+  <text x="540" y="68" text-anchor="middle" font-size="15">Carrier Network</text>
+  <text x="540" y="92" text-anchor="middle" font-size="15">(Carrier)</text>
+
+  <!-- Producer Appointment -->
+  <rect x="460" y="190" width="160" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="540" y="220" text-anchor="middle" font-size="14">Producer</text>
+  <text x="540" y="238" text-anchor="middle" font-size="14">Appointment</text>
+
+  <!-- Contact (Producer) -->
+  <rect x="470" y="330" width="140" height="80" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="540" y="364" text-anchor="middle" font-size="15">Contact</text>
+  <text x="540" y="382" text-anchor="middle" font-size="15">(Producer)</text>
+
+  <defs>
+    <marker id="arrow4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="black"/>
+    </marker>
+    <marker id="arrow4b" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto">
+      <path d="M8,0 L2,3 L8,6 Z" fill="black"/>
+    </marker>
+  </defs>
+  <path d="M540,190 L540,128" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+  <path d="M540,260 L540,327" fill="none" stroke="black" marker-end="url(#arrow4)" marker-start="url(#arrow4b)"/>
+
+  <!-- Sub-objects -->
+  <g font-size="14" text-anchor="middle">
+    <rect x="30" y="490" width="120" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="90" y="530">Education</text>
+
+    <rect x="190" y="490" width="120" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="250" y="530">Training</text>
+
+    <rect x="350" y="490" width="150" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="425" y="518">Branch</text>
+    <text x="425" y="538">Locations</text>
+
+    <rect x="540" y="490" width="130" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="605" y="530">Designations</text>
+
+    <rect x="710" y="490" width="110" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="765" y="530">License</text>
+
+    <rect x="850" y="490" width="150" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="925" y="518">Non-Resident</text>
+    <text x="925" y="538">Licenses</text>
+
+    <rect x="900" y="330" width="150" height="70" fill="white" stroke="black" stroke-width="1.5"/>
+    <text x="975" y="358">E&amp;O</text>
+    <text x="975" y="378">Insurance</text>
+  </g>
+
+  <path d="M90,490 L90,460 L470,390" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+  <path d="M250,490 L250,460 L470,395" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+  <path d="M425,490 L540,410" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+  <path d="M605,490 L540,410" fill="none" stroke="black"/>
+  <path d="M765,490 L610,405" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+  <path d="M925,490 L610,400" fill="none" stroke="black"/>
+  <path d="M900,365 L610,380" fill="none" stroke="black" marker-end="url(#arrow4)"/>
+</svg>

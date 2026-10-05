@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1080" height="360" fill="white"/>
+
+  <!-- Carrier box -->
+  <rect x="20" y="20" width="200" height="140" fill="white" stroke="#888" stroke-width="1.5"/>
+  <text x="120" y="48" text-anchor="middle" font-size="15" font-weight="bold">Carrier</text>
+  <text x="120" y="66" text-anchor="middle" font-size="12">Account object in Clearpath</text>
+  <line x1="20" y1="76" x2="220" y2="76" stroke="#888"/>
+  <text x="40" y="104" font-size="14">Carrier A</text>
+  <line x1="20" y1="118" x2="220" y2="118" stroke="#eee"/>
+  <text x="40" y="146" font-size="14">Carrier B</text>
+
+  <!-- Producer box -->
+  <rect x="860" y="20" width="200" height="140" fill="white" stroke="#888" stroke-width="1.5"/>
+  <text x="960" y="48" text-anchor="middle" font-size="15" font-weight="bold">Producer</text>
+  <text x="960" y="66" text-anchor="middle" font-size="12">Contact object in Clearpath</text>
+  <line x1="860" y1="76" x2="1060" y2="76" stroke="#888"/>
+  <text x="880" y="104" font-size="14">Producer A</text>
+  <line x1="860" y1="118" x2="1060" y2="118" stroke="#eee"/>
+  <text x="880" y="146" font-size="14">Producer B</text>
+
+  <!-- Junction table -->
+  <rect x="300" y="20" width="460" height="230" fill="white" stroke="black" stroke-width="1.5"/>
+  <rect x="300" y="20" width="460" height="56" fill="#eee" stroke="black" stroke-width="1.5"/>
+  <text x="530" y="42" text-anchor="middle" font-size="15" font-weight="bold">Producer Appointment</text>
+  <text x="530" y="62" text-anchor="middle" font-size="12">Junction object</text>
+
+  <line x1="530" y1="76" x2="530" y2="250" stroke="black"/>
+  <text x="415" y="98" text-anchor="middle" font-size="14" font-weight="bold">Carrier</text>
+  <text x="415" y="114" text-anchor="middle" font-size="11">Parent field</text>
+  <text x="645" y="98" text-anchor="middle" font-size="14" font-weight="bold">Producer</text>
+  <text x="645" y="114" text-anchor="middle" font-size="11">Child field</text>
+  <line x1="300" y1="122" x2="760" y2="122" stroke="black"/>
+
+  <text x="340" y="150" font-size="14">Carrier A</text>
+  <text x="600" y="150" font-size="14">Producer A</text>
+  <line x1="300" y1="164" x2="760" y2="164" stroke="#ddd"/>
+
+  <text x="340" y="190" font-size="14">Carrier B</text>
+  <text x="600" y="190" font-size="14">Producer A</text>
+  <line x1="300" y1="204" x2="760" y2="204" stroke="#ddd"/>
+
+  <text x="340" y="230" font-size="14">Carrier B</text>
+  <text x="600" y="230" font-size="14">Producer B</text>
+
+  <defs>
+    <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="black"/>
+    </marker>
+  </defs>
+  <path d="M340,146 L220,104" fill="none" stroke="black" marker-end="url(#arrow3)"/>
+  <path d="M340,186 L220,104" fill="none" stroke="black"/>
+  <path d="M340,186 L220,146" fill="none" stroke="black" marker-end="url(#arrow3)"/>
+  <path d="M340,226 L220,146" fill="none" stroke="black"/>
+
+  <path d="M600,146 L860,104" fill="none" stroke="black" marker-end="url(#arrow3)"/>
+  <path d="M600,186 L860,104" fill="none" stroke="black"/>
+  <path d="M600,226 L860,146" fill="none" stroke="black" marker-end="url(#arrow3)"/>
+</svg>

@@ -1,0 +1,22 @@
+---
+title: "About a related record"
+section: "Create a template"
+---
+
+# About a related record
+
+A related record is based on the concept of a one-to-many relationship. This means you can reference contacts that are direct children of the account, like accessing all producers under a carrier.
+
+In the following example, the **Carrier** table defines the type of object you're using to group producers by, like if you want to run a roster for a program and you plan to use the **Account** object.
+
+The **Producer** table defines the type of object you're using for producers.
+
+The reference field (**Account ID**) identifies which carrier's contacts you want to use, like pulling all contacts that are children of a carrier.
+
+![related-record.png](assets/related-record.svg)
+
+Following is another example.
+
+![related-record-example.png](assets/related-record-example.svg)
+
+To create a template using a related record relationship type, see [Choose a relationship type](./13-choose-a-relationship-type).
