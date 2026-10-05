@@ -257,14 +257,14 @@ Many customers couldn't reach the website, so PDFs mattered as much as the site.
 
 - **Callouts that match the products.** I changed the labels in `token.json`, swapped Glyphicons for Font Awesome, and matched the colors to the company's design system, so notes and warnings looked like the notifications customers saw in the apps.
 - **Headings that don't hide under the header.** A CSS change stopped the fixed navbar from covering a heading when a reader followed an anchor link.
-- **Nested sites without copied files.** A configurable styles path let a section nested one level deeper use the same theme. See [Standing it up](/portfolio/docs-as-code-standing-it-up#example-one-theme-two-folder-structures).
+- **Nested sites without copied files.** A configurable styles path let a section nested one level deeper use the same theme.
 - **Captions for free.** The lightbox script uses each image's title or alt text as its caption, and only applies to images in the article.
 
 ## Keeping the customizations maintainable
 
 Customizations only add value if the team can keep them working after the person who made them moves on. I built that in:
 
-- **One theme package.** Every customization shipped in a single npm package layered on top of DocFX's default template, so a fix reached every site on its next build. See [Standing it up](/portfolio/docs-as-code-standing-it-up).
+- **One theme package.** Every customization shipped in a single npm package layered on top of DocFX's default template, so a fix reached every site on its next build.
 - **A test site.** The theme repo included a test site that listed a local copy of the theme last, so I could preview a change before publishing it to every site.
 - **An upgrade check.** I tracked every default file I had overridden and compared it with each new DocFX release, so the site kept upstream fixes.
 - **Documentation for every customization.** I wrote an admin guide on the contributor site with an article for each customization: what it does, which files it touches, which settings control it, and, where I considered alternatives, why I rejected them.
