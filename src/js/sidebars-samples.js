@@ -21,10 +21,16 @@
  * Add another guide by dropping its source files in a new folder under
  * samples/, then adding a sibling top-level category below.
  *
+ * samples/technical-marketing/ holds a second, unrelated sample set (product
+ * marketing pages rewritten as generic docs). It's a sibling category in the
+ * same sidebar array (below), not a separate sidebar - all samples docs
+ * share one sidebar instance, so every category shows up together in the
+ * left nav regardless of which sample you're currently on.
+ *
  * @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
  */
 const sidebars = {
-  userGuideSidebar: [
+  samplesSidebar: [
     'index',
     {
       type: 'category',
@@ -84,6 +90,12 @@ const sidebars = {
           ],
         },
       ],
+    },
+    {
+      type: 'category',
+      label: 'Technical marketing',
+      collapsed: false,
+      items: ['technical-marketing/intake-mart-designer'],
     },
   ],
 };

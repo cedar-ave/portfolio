@@ -1,0 +1,45 @@
+/* Same card conventions as Panel/QuickReference (radius, shadow, spacing),
+   but with the site's pale-blue palette tint instead of the neutral card
+   background - see the palette comment in src/css/custom.css. The fill is
+   half-strength pale blue (mixed 50/50 with white, rather than the flat
+   --palette-pale-blue) so the card reads as a light tint, not a block of
+   color. Dark mode mirrors that with a halved tint opacity over the page
+   background, the same way blog post cards swap their gray fill. */
+
+.successStory {
+  margin: 1.5rem 0;
+  background-color: #bed4e6;
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--palette-blue);
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+  padding: 1.5rem;
+}
+
+[data-theme='dark'] .successStory {
+  background-color: rgba(166, 220, 247, 0.05);
+  border-color: rgba(166, 220, 247, 0.3);
+}
+
+.successStory > :first-child {
+  margin-top: 0;
+}
+
+.successStory > :last-child {
+  margin-bottom: 0;
+}
+
+.title {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.customer {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--palette-navy);
+}
+
+[data-theme='dark'] .customer {
+  color: var(--palette-sky-blue);
+}

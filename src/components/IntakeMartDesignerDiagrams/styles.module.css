@@ -1,0 +1,321 @@
+/* Diagrams for the technical-marketing "Intake Mart Designer" sample.
+   Colors follow the site palette (see the comment in src/css/custom.css)
+   and switch with the light/dark theme, matching the pattern in
+   RosterUploadDiagrams and DataHealthDashboardMockup. */
+
+.figure {
+  --im-page: #eef1f5;
+  --im-card: #ffffff;
+  --im-card-shadow: rgba(0, 0, 0, 0.12);
+  --im-navbar: #202b49;
+  --im-navbar-crumb: #aebadb;
+  --im-border: #dde3ea;
+  --im-muted: #6b7280;
+  --im-ink: #1f293f;
+  --im-body: #374151;
+
+  --im-teal: #73d3c3;
+  --im-teal-ink: #0f6b5c;
+  --im-gold: #f1b753;
+  --im-gold-ink: #8a5a06;
+  --im-blue: #5f93c7;
+  --im-sky: #a6dcf7;
+  --im-pale: #bed4e6;
+  --im-terracotta: #d06e6a;
+  --im-terracotta-bg: #fbe3e1;
+  --im-terracotta-ink: #a43f3b;
+  --im-neutral-bg: #eef0f3;
+  --im-neutral-ink: #5b6472;
+
+  --im-header-bg: #5e7893;
+  --im-row-alt: #f4f8fb;
+  --im-toolbar-bg: #f6f8fa;
+
+  margin: 2rem 0 2.5rem;
+}
+
+:global([data-theme='dark']) .figure {
+  --im-page: #1d1e20;
+  --im-card: #242526;
+  --im-card-shadow: rgba(0, 0, 0, 0.45);
+  --im-navbar: #19213a;
+  --im-navbar-crumb: #a6b8d6;
+  --im-border: #3d4148;
+  --im-muted: #aab6c3;
+  --im-ink: #e3e3e3;
+  --im-body: #cdd4db;
+
+  --im-teal: #3fa592;
+  --im-teal-ink: #9fe3d6;
+  --im-gold: #c98f2f;
+  --im-gold-ink: #f6d8a3;
+  --im-blue: #6884a2;
+  --im-sky: #93bcdf;
+  --im-pale: #35465f;
+  --im-terracotta: #e08a86;
+  --im-terracotta-bg: #3b2524;
+  --im-terracotta-ink: #f0aaa6;
+  --im-neutral-bg: #2d3138;
+  --im-neutral-ink: #aab6c3;
+
+  --im-header-bg: #2f3d63;
+  --im-row-alt: #202226;
+  --im-toolbar-bg: #1e2023;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 320px;
+  max-width: 760px;
+  height: auto;
+  margin: 0 auto;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--im-muted);
+  text-align: center;
+}
+
+/* ---------- Flow diagram ---------- */
+
+.page {
+  /* fill: var(--im-page); */
+}
+
+.cardShadow {
+  fill: var(--im-card-shadow);
+  filter: blur(6px);
+}
+
+.stepCard {
+  fill: var(--im-card);
+  stroke: var(--im-border);
+  stroke-width: 1;
+}
+
+.stepIconBg {
+  stroke: none;
+}
+
+.stepIcon {
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stepIconOnTeal {
+  stroke: var(--im-teal-ink);
+}
+
+.stepIconOnGold {
+  stroke: var(--im-gold-ink);
+}
+
+.stepLabel {
+  fill: var(--im-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chipTeal {
+  fill: var(--im-teal);
+}
+
+.chipGold {
+  fill: var(--im-gold);
+}
+
+.chipTealText {
+  fill: var(--im-teal-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.chipGoldText {
+  fill: var(--im-gold-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.flowArrow {
+  fill: none;
+  stroke: var(--im-blue);
+  stroke-width: 2;
+}
+
+.repoGradientStart {
+  stop-color: var(--im-blue);
+}
+
+.repoGradientEnd {
+  stop-color: var(--im-navbar);
+}
+
+.repoTopFill {
+  fill: var(--im-sky);
+  opacity: 0.55;
+}
+
+.repoIcon {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.repoLabel {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.flowHeading {
+  fill: var(--im-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ---------- Interface mockup ---------- */
+
+.windowCard {
+  fill: var(--im-card);
+}
+
+.navbarBg {
+  fill: var(--im-navbar);
+}
+
+.navbarLogo {
+  fill: var(--im-teal);
+}
+
+.navbarTitle {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.navbarCrumb {
+  fill: var(--im-navbar-crumb);
+  font-size: 11px;
+}
+
+.toolbarBg {
+  fill: var(--im-toolbar-bg);
+}
+
+.toolbarDivider {
+  stroke: var(--im-border);
+  stroke-width: 1;
+}
+
+.toolbarBtn {
+  fill: var(--im-card);
+  stroke: var(--im-border);
+  stroke-width: 1;
+}
+
+.toolbarIcon {
+  fill: none;
+  stroke: var(--im-blue);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toolbarText {
+  fill: var(--im-body);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.tableTitle {
+  fill: var(--im-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tableBadge {
+  fill: var(--im-pale);
+}
+
+.tableBadgeText {
+  fill: var(--im-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.colHeaderBg {
+  fill: var(--im-header-bg);
+}
+
+.colHeaderText {
+  fill: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rowAlt {
+  fill: var(--im-row-alt);
+}
+
+.rowBase {
+  fill: var(--im-card);
+}
+
+.cellText {
+  fill: var(--im-body);
+  font-size: 11.5px;
+}
+
+.cellMuted {
+  fill: var(--im-muted);
+  font-size: 11.5px;
+}
+
+.checkYes {
+  fill: none;
+  stroke: var(--im-teal-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.checkNo {
+  fill: none;
+  stroke: var(--im-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.chipPii {
+  fill: var(--im-terracotta-bg);
+}
+
+.chipPiiText {
+  fill: var(--im-terracotta-ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.chipNone {
+  fill: var(--im-neutral-bg);
+}
+
+.chipNoneText {
+  fill: var(--im-neutral-ink);
+  font-size: 10px;
+  font-weight: 700;
+}

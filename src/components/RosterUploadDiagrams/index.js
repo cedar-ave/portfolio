@@ -301,7 +301,7 @@ export function UploadScreenAfter() {
       title="Mockup of the improved upload screen"
       desc="A screen titled Upload a CSV file, followed by Make sure to: and four checked rules: include all data in a single tab of a single CSV file, put addresses in a single field, give each column heading a unique name, and remove all columns you don't want to import. A link to CSV formatting guidelines follows, then a dashed drop zone with an Upload file button and Or drop a file. Three notes below point out the task-first singular heading, the four checkable rules, and the link to full guidelines placed right where it's needed."
       viewBox={`0 0 720 ${viewH}`}
-      caption="After: a task-first heading in the singular, four specific rules a user can check before uploading, and a link to the full guidelines.">
+      caption="">
       <rect width={720} height={viewH} className={styles.page} />
       <Chrome id="after" kind="good" badgeText="AFTER" cardTop={cardTop} cardHeight={cardHeight} />
 
