@@ -1,0 +1,65 @@
+---
+draft: true
+slug: how-to-choose-open-source-ssgs
+title: How to choose an open-source static-site generator for a docs-as-code workflow
+authors: marla
+tags: [Docs-as-code]
+---
+
+If you're launching a docs-as-code platform (or retooling one) and want to use an open-source static-site generator, choosing one can be overwhelming. There are a lot out there, and it's tempting to look at which one has the most stars in GitHub and go from there. I've been there, and I've learned a few things the hard way! Here are some things to think about that might help with your decision.
+
+{/* truncate */}
+
+## 1. Who owns the project, and how long has it been around?
+
+Static-site generators on the newer side can be promising and exciting, but it can be a risk to lock in too early. Over time, interest in maintaining the project may wane, so new features to keep the tool aligned with advancing technology may never be added and bugs may never be fixed (unless you fix them yourself).
+
+Take a look at static-site generators used by larger companies. While there's no guarantee, it's easier to trust that these projects will be maintained and advanced. For example:
+
+* **[Hugo](https://gohugo.io)**: [Kubernetes docs](https://kubernetes.io/docs/home) (see [Docs are Migrating from Jekyll to Hugo](https://kubernetes.io/blog/2018/05/05/hugo-migration)), [Docker docs](https://docs.docker.com), and [GitLab docs](https://v2.tauri.app/start) (see [The GitLab documentation site gets a major design overhaul](https://about.gitlab.com/blog/docs-site-design-overhaul) and [A Better Docs UX With Docsy](https://kubernetes.io/blog/2020/06/better-docs-ux-with-docsy))
+* **[Docusaurus](https://docusaurus.io)**: [Electron docs](https://www.electronjs.org/docs) (see the [Docusaurus showcase](https://docusaurus.io/showcase) too)
+* **[Astro/Starlight](https://starlight.astro.build)**: [Cloudflare docs](https://developers.cloudflare.com) (see [Open source all the way down: Upgrading our developer documentation](https://blog.cloudflare.com/open-source-all-the-way-down-upgrading-our-developer-documentation))
+
+## 2. How broadly is the tool used?
+
+The more companies and people who use it, the more you're going to see templates, add-ons, extensions, and answers to questions shared in GitHub repo comments and Stack Overflow. The number of stars in a tool's GitHub repo can be one clue.
+
+However, take into account that some tools may have passed the height of their popularity. Few companies seem to run their documentation sites on Jekyll, even though it was a popular choice a few years ago. It's still a good tool but may no longer have large, active communities developing enhancements for full-blown docs sites.
+
+## 3. How often is the tool updated?
+
+A tool that's updated infrequently or only with minor changes is probably less likely to support new requirements that emerge over time. A GitHub repo's code frequency graph can show you if contributions are waning.
+
+Examples are Gatsby (which was popular a few years ago but is now in low-activity maintenance), and MkDocs (which was popular for years but went into maintenance mode in 2025).
+
+## 4. What are your requirements?
+
+Be intentional and objective when thinking through what you need the static-site generator to support. For example, you may want it to support:
+
+* **AI workflows**: Can the tool output clean Markdown or structured data? These are critical for consumers like LLMs and AI chatbots.
+* **API docs**: Is the audience of your site primarily developers? What kind of API documentation do you need to publish? For example [DocFX](https://dotnet.github.io/docfx/index.html) supports .NET API documentation.
+* **Certain search requirements**: Does the search run in the browser, or does it need an outside service like Algolia?
+* **Integration with an existing app**: Will you need to integrate your documentation site with a software product? You may want a static-site generator built on the same framework.
+* **Contributions from end users**: Will end users contribute to your docs-as-code workflow? Some tools ship with a *Change this doc* link (or something similar) at the bottom of articles that takes users directly to a public GitHub repo, where they can add or change articles and submit a pull request.
+* **Contributions from non-technical authors**: Will authors not comfortable with Git and Markdown contribute to the documentation? You may want support for an open-source headless CMS like [TinaCMS](https://tina.io), which allows you to put a familiar visual editor on top while still storing the content as Markdown in Git.
+* **Content reuse**: Will you need to use some structured authoring in your body of content? While Markdown and docs-as-code tooling is probably not the best approach for that (look into XML and CCMSes), some tools support it to a degree.
+* **Customizations**: How painless is it to add custom features that may not be offered by the tool, like paragraph anchors or feedback forms at the bottom of articles? Are themes available that allow you to add things like sidebars, version switches, and search? Are plugins or extensions offered (like in the [Docusaurus plugin directory](https://docusaurus.community/plugindirectory))?
+* **Translation**: If not now, will you need to ship the documentation website in two or more languages?
+* **Product versioning**: Will users need to navigate between docs for different product versions?
+* **Moving content later**: How tied into a tool are you willing to be? For example, Markdown moves easily between tools, but MDX or RST may not. Tool-specific shortcodes or components can also make a future shift complex.
+* **Certain hosting options**: Does it work with GitHub, Netlify, Vercel, or another service your company prefers?
+* **Accessibility**: What are your requirements for accessibility?
+* **Automated deployment pipelines**: How hard will it be to wire it up with linting tools like Vale or link checkers, or automated testing of code samples in CI?
+
+## 6. Who can help you when things break?
+
+Will you be the primary owner of the docs-as-code workflow? If you're not an engineer or highly technical, this is huge. At least in fast-moving startups, time with engineers is precious - you likely want to use whatever time you can get with one to learn more about how the products work, not asking for help to customize the site, update dependencies, or upgrade a framework.
+
+But once in a blue moon, you may run into an issue so far above your head that you will need to beg for engineering help. To prepare for times like that, you may not want to choose a Python-based tool if the engineering department spends most of their days programming in another language.
+
+
+
+
+## In summary
+Note: If it's going to take a lot of custom config and maintentnce, by all means consider a paid tool like 
+
