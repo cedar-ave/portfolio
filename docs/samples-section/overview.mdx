@@ -11,7 +11,7 @@ How the `/samples` demo area was built: a second, standalone docs instance that 
 <QuickReference>
 
 - `/samples` is a **second `@docusaurus/plugin-content-docs` instance** (`id: 'userGuide'`), configured in `docusaurus.config.js` alongside the main `docs` preset — not a page under the main docs sidebar.
-- Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/user-guide/` and `samples/forms-guide/`.
+- Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/clearpath-roster-guide/` and `samples/clearpath-collect-guide/`.
 - Its sidebar is hand-written at `src/js/sidebars-samples.js` (the main site's sidebar is `src/js/sidebars-docs.js` — both were moved out of the repo root; see [Sidebar file locations](#sidebar-file-locations) below).
 - It's reachable only via the "Product user guide" link on `/portfolio` — nothing registers it in `themeConfig.navbar`.
 
@@ -46,31 +46,31 @@ Order in the `plugins` array is just array order, not a hierarchy — `blogSerie
 ```text
 samples/
 ├── index.mdx              # generic /samples landing page (slug: /)
-├── user-guide/
+├── clearpath-roster-guide/
 │   ├── 01-overview.mdx
 │   ├── 02-about-delegated-authority.mdx
 │   ├── ...
 │   └── assets/
-└── forms-guide/
+└── clearpath-collect-guide/
     ├── 01-overview.mdx
     ├── 02-how-it-works.mdx
     └── ...
 ```
 
-`path: 'samples'` makes `samples/` the content root for this instance, so `samples/index.mdx` can serve as the root landing page while each guide lives in its own sibling folder. `samples/forms-guide/` is the second guide, added this way: drop its files in a new folder, link it from `samples/index.mdx`, and give it its own top-level category in the sidebar (see below) — the hub page was never tied to just the one guide.
+`path: 'samples'` makes `samples/` the content root for this instance, so `samples/index.mdx` can serve as the root landing page while each guide lives in its own sibling folder. `samples/clearpath-collect-guide/` is the second guide, added this way: drop its files in a new folder, link it from `samples/index.mdx`, and give it its own top-level category in the sidebar (see below) — the hub page was never tied to just the one guide.
 
-Unlike `user-guide/`, which reuses plain Markdown tables and admonitions throughout, `forms-guide/` demos screen interactions (home-page tiles, record-entry forms, lookup-list setup) with small React components from `src/components/ClearpathCollectMockups/` — real HTML/CSS, not screenshots or traced SVG, so every label is editable text at a readable size. They follow the same CSS-variable convention (light/dark tokens) as the figure components elsewhere in `/portfolio`, e.g. `RosterUploadDiagrams`.
+Unlike `clearpath-roster-guide/`, which reuses plain Markdown tables and admonitions throughout, `clearpath-collect-guide/` demos screen interactions (home-page tiles, record-entry forms, lookup-list setup) with small React components from `src/components/ClearpathCollectMockups/` — real HTML/CSS, not screenshots or traced SVG, so every label is editable text at a readable size. They follow the same CSS-variable convention (light/dark tokens) as the figure components elsewhere in `/portfolio`, e.g. `RosterUploadDiagrams`.
 
 ### Why `numberPrefixParser: false`
 
-The guide's source files (an export of a help-center article, see `samples/user-guide/_archive/README.md`) use numbered filenames — `01-overview.mdx`, `02-about-delegated-authority.mdx`, etc. — and their own cross-links reference those exact filenames, e.g.:
+The guide's source files (an export of a help-center article, see `samples/clearpath-roster-guide/_archive/README.md`) use numbered filenames — `01-overview.mdx`, `02-about-delegated-authority.mdx`, etc. — and their own cross-links reference those exact filenames, e.g.:
 
-```mdx title="samples/user-guide/01-overview.mdx"
+```mdx title="samples/clearpath-roster-guide/01-overview.mdx"
 If you work with one or more carriers in a
 [delegated relationship](./02-about-delegated-authority), ...
 ```
 
-Docusaurus's default `numberPrefixParser` strips that numeric prefix when computing each doc's id/slug, which breaks links written against the un-stripped filename. Rather than rewrite ~30 internal links, this instance disables that parser, so doc ids keep their numbers (e.g. `user-guide/02-about-delegated-authority`) and the links resolve as authored.
+Docusaurus's default `numberPrefixParser` strips that numeric prefix when computing each doc's id/slug, which breaks links written against the un-stripped filename. Rather than rewrite ~30 internal links, this instance disables that parser, so doc ids keep their numbers (e.g. `clearpath-roster-guide/02-about-delegated-authority`) and the links resolve as authored.
 
 ## The landing page
 
@@ -86,7 +86,7 @@ slug: /
 
 Sample documentation, written to demonstrate structure and style rather than a real product.
 
-- [User guide](/samples/user-guide/01-overview) - ...
+- [Clearpath Roster User Guide](/samples/clearpath-roster-guide/01-overview) - ...
 ```
 
 This mirrors how `docs/overview.mdx` works for the main `/docs` instance, but as its own file rather than reusing the first guide page as the landing page — the guide's own `01-overview.mdx` still exists as that guide's first article, listed normally in the sidebar.
@@ -110,8 +110,8 @@ const sidebars = {
           label: 'Get started',
           collapsed: false,
           items: [
-            'user-guide/01-overview',
-            'user-guide/02-about-delegated-authority',
+            'clearpath-roster-guide/01-overview',
+            'clearpath-roster-guide/02-about-delegated-authority',
             // ...
           ],
         },
@@ -125,7 +125,7 @@ const sidebars = {
 Two things worth calling out:
 
 - **`'index'` is listed first**, so the generic landing page shows up as its own row in the sidebar, above the guide.
-- **Categories have no `link`.** Docusaurus renders a category heading's `href` in the static HTML purely as a no-JS fallback (`useCategoryHrefWithSSRFallback` in `@docusaurus/theme-classic`); once the page hydrates, clicking a heading without an explicit `link` only expands/collapses it. Giving the top "Roster generation guide" category an explicit `link` to the overview doc made that heading behave like a real link instead — which also hid the overview page as a listed row, since it was only reachable by clicking the heading. Removing the `link` and listing `user-guide/01-overview` as the first item under "Get started" fixed both.
+- **Categories have no `link`.** Docusaurus renders a category heading's `href` in the static HTML purely as a no-JS fallback (`useCategoryHrefWithSSRFallback` in `@docusaurus/theme-classic`); once the page hydrates, clicking a heading without an explicit `link` only expands/collapses it. Giving the top "Roster generation guide" category an explicit `link` to the overview doc made that heading behave like a real link instead — which also hid the overview page as a listed row, since it was only reachable by clicking the heading. Removing the `link` and listing `clearpath-roster-guide/01-overview` as the first item under "Get started" fixed both.
 
 Add a second guide by giving it its own top-level category here, as a sibling of "Roster generation guide".
 

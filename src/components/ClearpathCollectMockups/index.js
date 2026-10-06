@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from './styles.module.css';
 
 /* =====================================================================
-   Mockups of the Clearpath Collect app for samples/forms-guide.
+   Mockups of the Clearpath Collect app for samples/clearpath-collect-guide.
 
    These are built as plain HTML/CSS, not screenshots or traced SVG art,
    so every label stays real, selectable text at a readable size (12px+)

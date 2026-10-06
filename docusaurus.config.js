@@ -51,7 +51,7 @@ const config = {
     // A second, standalone docs instance for the "Product user guide" demo
     // linked from /portfolio. It's deliberately not in the navbar - it's a
     // sample guide, not a real section of this site. See
-    // sidebars-user-guide.js.
+    // sidebars-samples.js.
     [
       '@docusaurus/plugin-content-docs',
       /** @type {import('@docusaurus/plugin-content-docs').Options} */
