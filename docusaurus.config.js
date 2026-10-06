@@ -58,7 +58,7 @@ const config = {
         docsRouteBasePath: ["docs", "samples", "portfolio", "resume", "about"],
         docsDir: [],
         indexBlog: true,
-        indexPages: true, // about, portfolio, resume
+        indexPages: true,
         highlightSearchTermsOnTargetPage: true,
         ignoreFiles: [/markdown-page/],
       },
