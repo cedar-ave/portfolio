@@ -5,7 +5,7 @@
 
 .quickReference {
   margin: 1.5rem 0;
-  background-color: var(--ifm-card-background-color);
+  background-color: #fdf7ec;
   border-radius: var(--ifm-card-border-radius);
   border: 1px solid var(--ifm-color-emphasis-200);
   box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
