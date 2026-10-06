@@ -49,55 +49,16 @@ const sidebars = {
       // a page of its own. "Overview" below is the guide's actual landing
       // doc, listed as a normal row.
       items: [
-        {
-          type: 'category',
-          label: 'Get started',
-          collapsed: true,
-          items: [
-            'clearpath-roster-guide/01-overview',
-            'clearpath-roster-guide/02-about-delegated-authority',
-            'clearpath-roster-guide/03-about-rosters',
-            'clearpath-roster-guide/04-prerequisites',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Generate a roster',
-          collapsed: true,
-          items: [
-            'clearpath-roster-guide/06-generate-a-roster',
-            'clearpath-roster-guide/08-see-and-download-previous-exports',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Create a template',
-          collapsed: true,
-          items: [
-            'clearpath-roster-guide/10-create-a-template',
-            'clearpath-roster-guide/11-clone-a-template',
-            'clearpath-roster-guide/12-choose-objects-to-store-carriers-and-producers',
-            'clearpath-roster-guide/13-choose-a-relationship-type',
-            'clearpath-roster-guide/14-about-a-related-record',
-            'clearpath-roster-guide/15-about-a-junction-object',
-            'clearpath-roster-guide/16-configure-a-related-record-relationship-type',
-            'clearpath-roster-guide/17-configure-a-junction-object-relationship-type',
-          ],
-        },
-        {
-          type: 'category',
-          label: "Design a template's layout",
-          collapsed: true,
-          items: [
-            'clearpath-roster-guide/18-configure-a-template-s-layout',
-            'clearpath-roster-guide/19-fields-roster-objects-and-sub-objects',
-            'clearpath-roster-guide/21-rename-a-field-or-object',
-            'clearpath-roster-guide/22-remove-a-field-or-object',
-            'clearpath-roster-guide/23-create-filters',
-            'clearpath-roster-guide/24-activate-or-deactivate-a-template',
-            'clearpath-roster-guide/25-change-a-template-s-name-or-description',
-          ],
-        },
+        'clearpath-roster-guide/01-get-started',
+        'clearpath-roster-guide/06-generate-a-roster',
+        'clearpath-roster-guide/10-create-a-template',
+        'clearpath-roster-guide/13-choose-a-relationship-type',
+        'clearpath-roster-guide/16-configure-a-relationship-type',
+        'clearpath-roster-guide/18-configure-a-template-s-layout',
+        'clearpath-roster-guide/19-fields-roster-objects-and-sub-objects',
+        'clearpath-roster-guide/21-manage-fields-and-objects',
+        'clearpath-roster-guide/23-create-filters',
+        'clearpath-roster-guide/24-manage-templates'
       ],
     },
     {

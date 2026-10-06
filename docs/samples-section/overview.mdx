@@ -14,6 +14,7 @@ How the `/samples` demo area was built: a second, standalone docs instance that 
 - Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/clearpath-roster-guide/` and `samples/clearpath-collect-guide/`.
 - Its sidebar is hand-written at `src/js/sidebars-samples.js` (the main site's sidebar is `src/js/sidebars-docs.js` — both were moved out of the repo root; see [Sidebar file locations](#sidebar-file-locations) below).
 - It's reachable only via the "Product user guide" link on `/portfolio` — nothing registers it in `themeConfig.navbar`.
+- **Direct link vs. category:** a doc id string in `items` (e.g. `'clearpath-roster-guide/01-get-started'`) is just a sidebar row that links straight to that page. A `{ type: 'category', ... }` object is a separate, expandable heading with its own `items`. Pages don't have to be nested inside a category — a bare string can sit as a sibling of category objects in the same `items` array. See [Mixing pages and categories](#mixing-pages-and-categories) below.
 
 </QuickReference>
 
@@ -128,6 +129,34 @@ Two things worth calling out:
 - **Categories have no `link`.** Docusaurus renders a category heading's `href` in the static HTML purely as a no-JS fallback (`useCategoryHrefWithSSRFallback` in `@docusaurus/theme-classic`); once the page hydrates, clicking a heading without an explicit `link` only expands/collapses it. Giving the top "Roster generation guide" category an explicit `link` to the overview doc made that heading behave like a real link instead — which also hid the overview page as a listed row, since it was only reachable by clicking the heading. Removing the `link` and listing `clearpath-roster-guide/01-overview` as the first item under "Get started" fixed both.
 
 Add a second guide by giving it its own top-level category here, as a sibling of "Roster generation guide".
+
+### Mixing pages and categories
+
+`items` is just an array — Docusaurus doesn't require every entry to be wrapped in a category. A plain doc id string and a `{ type: 'category', ... }` object can sit side by side at the same nesting level, and the string renders as a normal clickable row with no heading of its own:
+
+```js title="src/js/sidebars-samples.js"
+{
+  type: 'category',
+  label: 'Clearpath Roster User Guide',
+  collapsed: true,
+  items: [
+    // A bare string: links straight to the page, no sub-heading.
+    'clearpath-roster-guide/01-get-started',
+    // A category object: its own expandable heading with nested items.
+    {
+      type: 'category',
+      label: 'Create a template',
+      collapsed: true,
+      items: [
+        'clearpath-roster-guide/10-create-a-template',
+        'clearpath-roster-guide/13-choose-a-relationship-type',
+      ],
+    },
+  ],
+},
+```
+
+This is the same mechanism used for `'index'` at the top of `userGuideSidebar` above — it just also works one level deeper, inside a guide's own category. Use a bare string when a page doesn't need to group any other pages under it; reach for a category only once you have two or more pages that belong together under a shared heading.
 
 ## Sidebar file locations
 

@@ -5,12 +5,6 @@ section: "Create a template"
 
 # Create a template
 
-:::note
-
-You can also [clone one of your organization's existing templates](./11-clone-a-template).
-
-:::
-
 ## Prepare to create a template
 
 Following are some things to know about configuring a template.
@@ -30,3 +24,34 @@ Following are some things to know about configuring a template.
 4. Enter a name for the template. Users will see this name when generating a roster. As a best practice, enter the name of the carrier the template is for.
 
 5. Enter a description for the template.
+
+## Clone a template
+
+1. Click the menu icon (<FAIcon icon="grip" />) at top left.
+
+2. In the search field, enter **Roster Template Setup**. When it shows in the list of results, select **Roster Template Setup**.
+
+3. In the **Clearpath Roster Templates** table:
+
+   1. Locate the name of a template.
+
+   2. Click the down icon (<FAIcon icon="caret-down" />) at the end of its row.
+
+   3. Select **Clone**.
+
+4. Select one of the following options:
+
+   1. Click **Full Clone** to clone the template name, description, object configuration, and columns.
+
+   2. Click **Detail Clone** to clone the template name, description, and object configuration.
+
+## Choose objects to store carriers and producers
+
+Define an object schema between carrier and producer objects.
+
+Fill out the following fields:
+
+| Field           | What to select                                                                                                                                                                 |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Carrier Object    | Search for an object to store carriers in. Usually, users select the **Account** object.                                                                                         |
+| Producer Object | Search for an object to store producers. The object will have basic information like name and demographic data. Usually, users select the **Contact** or **Producer** objects. |
