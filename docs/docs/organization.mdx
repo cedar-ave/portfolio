@@ -108,13 +108,15 @@ A couple of docs-wide behaviors are set in `docusaurus.config.js` rather than pe
 ```js title="docusaurus.config.js"
 docs: {
   sidebarPath: './src/js/sidebars-docs.js',
-  remarkPlugins: [remarkImageSize, remarkIncludes],
+  remarkPlugins: [remarkImageSize],
+  beforeDefaultRemarkPlugins: [remarkIncludes],
   editUrl: 'https://github.com/...',
 },
 ```
 
 - `sidebarPath` points at the `sidebars-docs.js` described above.
-- `remarkPlugins` adds markdown-processing plugins (e.g. `remarkImageSize`, and `remarkIncludes` for [`{@include: ...}`](../site-config/content-includes)) that apply to every doc page.
+- `remarkPlugins` adds markdown-processing plugins (e.g. `remarkImageSize`) that apply to every doc page.
+- `beforeDefaultRemarkPlugins` runs `remarkIncludes` (for [`\{@include: ...\}`](../site-config/content-includes)) ahead of Docusaurus's own admonitions-transform plugin, so an included `:::note` block still renders as a real callout instead of being left as an unhandled directive.
 - `editUrl` controls the "Edit this page" link; see [Build flags and edit links](../build-deploy/build-flags-and-edit-links) for details.
 
 ## Adding a new doc page

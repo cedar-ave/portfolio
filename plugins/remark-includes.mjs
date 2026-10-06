@@ -1,28 +1,41 @@
 // Remark plugin that lets a markdown/MDX file pull in the content of
 // another file via a directive on its own line:
 //
-//   {@include: ./shared/callout.md}
+//   \{@include: ./shared/callout.md\}
+//
+// The braces must be backslash-escaped in the source file: a bare
+// "{...}" is parsed by MDX itself as a JS expression, at the syntax
+// level, before any remark plugin (this one included) ever gets to run -
+// an unescaped directive fails the whole page's build with "Could not
+// parse expression with acorn" instead of reaching this plugin. The
+// escape is resolved by the time the remark tree exists, leaving a plain
+// text node reading "{@include: ...}", which is what INCLUDE_RE matches.
 //
 // The path is resolved relative to the file containing the directive,
 // unless it starts with "/", in which case it's resolved relative to
-// `siteRoot` (so e.g. {@include: /src/includes/disclaimer.md} works the
-// same from docs, blog, samples, or a src/pages MDX file).
+// `siteRoot` (so e.g. \{@include: /src/includes/disclaimer.md\} works
+// the same from docs, blog, samples, or a src/pages MDX file).
 //
 // Included content is parsed with the *same* processor settings as the
 // including file - same micromark/MDX extensions - so an include can
 // itself contain MDX components, GFM tables, etc., and is recursively
-// scanned for its own nested {@include: ...} directives. A circular
+// scanned for its own nested \{@include: ...\} directives. A circular
 // include chain is reported inline instead of recursing forever.
 //
 // Included files should be plain content fragments - no Docusaurus
 // frontmatter (`---\nid: ...\n---`) - since they're spliced into the
 // including page, not rendered as a page of their own.
 //
-// Register this in the `remarkPlugins` array of every content type that
-// should support includes: the docs preset option, any additional
-// plugin-content-docs instance (e.g. the "samples" docs plugin), the blog
-// preset option, and the pages preset option (which also covers .mdx files
-// under src/pages). See docusaurus.config.js.
+// Register this in the `beforeDefaultRemarkPlugins` array of every content
+// type that should support includes: the docs preset option, any
+// additional plugin-content-docs instance (e.g. the "samples" docs
+// plugin), the blog preset option, and the pages preset option (which also
+// covers .mdx files under src/pages). It has to run via
+// `beforeDefaultRemarkPlugins` rather than `remarkPlugins` so that an
+// admonition (":::note ... :::") inside an included fragment is spliced in
+// before Docusaurus's own admonitions-transform plugin runs - otherwise
+// the spliced-in directive node is never converted and is left as an
+// unused directive instead of a rendered callout. See docusaurus.config.js.
 
 import fs from 'node:fs';
 import path from 'node:path';

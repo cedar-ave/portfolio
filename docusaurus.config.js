@@ -16,8 +16,14 @@ import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
 
 const siteDir = path.dirname(fileURLToPath(import.meta.url));
 
-// {@include: ...} works the same (and "/"-rooted paths resolve the same
-// way) in every content type below - see plugins/remark-includes.mjs.
+// \{@include: ...\} works the same (and "/"-rooted paths resolve the same
+// way) in every content type below - see plugins/remark-includes.mjs. Note
+// the directive's braces must be backslash-escaped in the source file
+// (MDX would otherwise try to parse a bare "{...}" as a JS expression), and
+// this is registered via beforeDefaultRemarkPlugins rather than
+// remarkPlugins so it runs before Docusaurus's own admonitions-transform
+// plugin - otherwise an included ":::note" block would be left as an
+// unhandled directive instead of becoming a real callout.
 const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 
 /** @type {import('@docusaurus/types').Config} */
@@ -60,7 +66,14 @@ const config = {
         path: 'samples',
         routeBasePath: 'samples',
         sidebarPath: './src/js/sidebars-samples.js',
-        remarkPlugins: [remarkImageSize, remarkIncludes],
+        remarkPlugins: [remarkImageSize],
+        // remarkIncludes must run before Docusaurus's admonitions-transform
+        // remark plugin (which runs early in the default pipeline), so an
+        // included ":::note" block gets converted into a real callout
+        // instead of being left as an unhandled directive. See the
+        // remarkIncludes comment above for why it's registered here
+        // instead of in remarkPlugins.
+        beforeDefaultRemarkPlugins: [remarkIncludes],
         editUrl: undefined,
         // The sample content's own cross-links use the raw numbered
         // filenames (e.g. "./02-about-delegated-authority"). Keep that
@@ -96,7 +109,11 @@ const config = {
       ({
         docs: {
           sidebarPath: './src/js/sidebars-docs.js',
-          remarkPlugins: [remarkImageSize, remarkIncludes],
+          remarkPlugins: [remarkImageSize],
+          // remarkIncludes has to run before the admonitions transform, so
+          // it's registered via beforeDefaultRemarkPlugins instead - see
+          // the remarkIncludes comment near the top of this file.
+          beforeDefaultRemarkPlugins: [remarkIncludes],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -120,7 +137,11 @@ const config = {
           // Drafts in progress live in blog/to-write/ and shouldn't be
           // picked up as published posts.
           exclude: ['**/to-write/**'],
-          remarkPlugins: [remarkImageSize, remarkIncludes],
+          remarkPlugins: [remarkImageSize],
+          // remarkIncludes has to run before the admonitions transform, so
+          // it's registered via beforeDefaultRemarkPlugins instead - see
+          // the remarkIncludes comment near the top of this file.
+          beforeDefaultRemarkPlugins: [remarkIncludes],
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
@@ -138,7 +159,11 @@ const config = {
           // See plugins/remark-panel-toc.mjs - lets a page set
           // `toc_source: panels` in frontmatter to build its right-rail TOC
           // from <Panel label="..."> captions instead of headings.
-          remarkPlugins: [remarkPanelToc, remarkIncludes],
+          remarkPlugins: [remarkPanelToc],
+          // remarkIncludes has to run before the admonitions transform, so
+          // it's registered via beforeDefaultRemarkPlugins instead - see
+          // the remarkIncludes comment near the top of this file.
+          beforeDefaultRemarkPlugins: [remarkIncludes],
         },
         theme: {
           customCss: './src/css/custom.css',

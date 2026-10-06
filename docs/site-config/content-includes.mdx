@@ -10,7 +10,7 @@ A remark plugin that lets any page pull in the content of another markdown/MDX f
 
 <QuickReference>
 
-- Syntax, on its own line: `{@include: path/to/file.md}`.
+- Syntax, on its own line, with the braces backslash-escaped: `\{@include: path/to/file.md\}`. The escaping is required because a bare `{...}` is parsed by MDX itself as a JS expression before any remark plugin runs.
 - The path is relative to the file containing the directive, unless it starts with `/`, in which case it's relative to the site root (e.g. `{@include: /src/includes/disclaimer.md}` resolves the same way from anywhere).
 - Includes nest - an included file can itself contain `{@include: ...}` - and a circular chain is caught and rendered as an inline warning instead of hanging the build.
 - A missing include path also renders as an inline `⚠️` warning rather than failing the build.
@@ -30,12 +30,12 @@ A third-party package, [`docusaurus-plugin-includes`](https://github.com/simolog
 ```md
 Some normal paragraph.
 
-{@include: ./shared/callout.md}
+\{@include: ./shared/callout.md\}
 
 More content after the include.
 ```
 
-The directive must be alone on its own line (its own paragraph) - it isn't recognized inline in the middle of a sentence.
+The directive must be alone on its own line (its own paragraph) - it isn't recognized inline in the middle of a sentence. The braces must be backslash-escaped: MDX parses a bare `{...}` as an embedded JS expression at the syntax level, before remark plugins ever run, so an unescaped directive fails the whole page's build with a "Could not parse expression with acorn" error instead of reaching this plugin. The backslash makes MDX treat the braces as ordinary characters; by the time the remark tree exists, the escape has already been resolved to a literal `{@include: ...}` text node, which is what `INCLUDE_RE` matches.
 
 ### Path resolution
 
@@ -64,31 +64,36 @@ const siteDir = path.dirname(fileURLToPath(import.meta.url));
 const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 
 presets: [['classic', {
-  docs: { remarkPlugins: [remarkImageSize, remarkIncludes] },
-  blog: { remarkPlugins: [remarkImageSize, remarkIncludes] },
-  pages: { remarkPlugins: [remarkPanelToc, remarkIncludes] }, // also covers src/pages/*.mdx
+  docs: { remarkPlugins: [remarkImageSize], beforeDefaultRemarkPlugins: [remarkIncludes] },
+  blog: { remarkPlugins: [remarkImageSize], beforeDefaultRemarkPlugins: [remarkIncludes] },
+  // also covers src/pages/*.mdx
+  pages: { remarkPlugins: [remarkPanelToc], beforeDefaultRemarkPlugins: [remarkIncludes] },
 }]],
 plugins: [
   ['@docusaurus/plugin-content-docs', {
     id: 'userGuide',
     path: 'samples',
-    remarkPlugins: [remarkImageSize, remarkIncludes],
+    remarkPlugins: [remarkImageSize],
+    beforeDefaultRemarkPlugins: [remarkIncludes],
   }],
 ],
 ```
 
 The `{ siteRoot: siteDir }` option is what makes a `/`-prefixed path resolve the same way regardless of which content type's pipeline is processing the page.
 
+`remarkIncludes` is registered via `beforeDefaultRemarkPlugins`, not `remarkPlugins`. Docusaurus's own remark pipeline runs the admonitions-transform plugin (which turns `:::note ... :::` into the actual `<Admonition>` component) well before it runs anything in `remarkPlugins`. If an included fragment itself contains an admonition and `remarkIncludes` only ran as a `remarkPlugins` entry, the splice would happen *after* the admonitions pass had already swept the tree - the spliced-in directive node would never get converted, and Docusaurus would log an "unused Markdown directive" warning instead of rendering a callout. `beforeDefaultRemarkPlugins` runs ahead of that pass, so the include is already spliced in by the time admonitions runs over the full tree.
+
 ### Adding it to a new content type
 
-If a future section is added as its own `plugin-content-docs` instance (the same pattern `/samples` already uses), add `remarkIncludes` to that instance's own `remarkPlugins` array the same way - there's nothing else to wire up per content type.
+If a future section is added as its own `plugin-content-docs` instance (the same pattern `/samples` already uses), add `remarkIncludes` to that instance's own `beforeDefaultRemarkPlugins` array the same way - there's nothing else to wire up per content type.
 
 ## Notes
 
-- This is a block-level directive only - there's no inline `{@include: ...}` support in the middle of a paragraph.
-- Nothing currently uses `{@include: ...}` on this site; the plugin exists as available infrastructure for the next shared fragment that's needed, the same way [`remark-panel-toc.mjs`](../visuals/panel-toc) was built ahead of a page that ended up not needing it.
+- This is a block-level directive only - there's no inline `\{@include: ...\}` support in the middle of a paragraph.
+- The directive's braces must be backslash-escaped (`\{...\}`) in the source file - see "Syntax" above.
+- Used on `/portfolio` to pull in the samples disclaimer from `src/includes/disclaimer.md`.
 - Unlike the `docusaurus-plugin-includes` package this was built to replace, there's no separate "copy shared folders into `docs/versioned_docs`" step - this site doesn't use docs versioning, so an included file just needs to exist somewhere on disk at build time, in or out of `docs/`.
 
 ## Source
 
-`plugins/remark-includes.mjs`, the `remarkPlugins` option on the `docs`/`blog`/`pages` presets and the `userGuide` docs instance in `docusaurus.config.js`.
+`plugins/remark-includes.mjs`, the `beforeDefaultRemarkPlugins` option on the `docs`/`blog`/`pages` presets and the `userGuide` docs instance in `docusaurus.config.js`.
