@@ -1,0 +1,62 @@
+---
+sidebar_position: 11
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Search
+
+<QuickReference>
+
+- Search is provided by [`@easyops-cn/docusaurus-search-local`](https://github.com/easyops-cn/docusaurus-search-local), configured in `docusaurus.config.js` under `themes`.
+- It's a local/offline index built at **build time** — no external service (e.g. Algolia) is involved, and there's nothing to provision or pay for.
+- `docsRouteBasePath` lists every route the indexer should crawl: `docs`, `samples`, `portfolio`, `resume`, `about`. Blog and standalone pages are included via `indexBlog`/`indexPages`, not this list.
+- Search does not work under `npm start` — it only builds in a production build (`npm run build`). Use `npm run build && npm run serve` to test it locally.
+
+</QuickReference>
+
+## Configuration
+
+```js title="docusaurus.config.js"
+themes: [
+  'docusaurus-theme-zoom-image',
+  [
+    require.resolve("@easyops-cn/docusaurus-search-local"),
+    {
+      hashed: true,
+      docsRouteBasePath: ["docs", "samples", "portfolio", "resume", "about"],
+      docsDir: [],
+      indexBlog: true,
+      indexPages: true, // about, portfolio, resume
+      highlightSearchTermsOnTargetPage: true,
+      ignoreFiles: [/markdown-page/],
+    },
+  ],
+],
+```
+
+- `hashed: true` fingerprints the generated search index filename so it busts cache correctly across deploys.
+- `docsRouteBasePath` tells the plugin which route prefixes to crawl for content. This site uses it for more than just docs: `portfolio`, `resume`, and `about` are standalone pages under `src/pages/`, not a docs plugin instance, but listing their routes here gets them indexed too.
+- `docsDir: []` — on a typical site this maps each `docsRouteBasePath` entry to a source folder on disk (e.g. `docsDir: ["docs", "samples"]`). Here it's left empty: `docs` and `samples` (the `userGuide` docs plugin instance registered in `plugins`) are both discovered automatically, and `portfolio`/`resume`/`about` aren't doc folders at all, so there's no folder to map them to.
+- `indexBlog: true` indexes blog posts under `/blog`.
+- `indexPages: true` indexes standalone pages in `src/pages/` (About, Portfolio, Resume) — this is what actually makes those pages searchable, in combination with their routes being listed in `docsRouteBasePath`.
+- `highlightSearchTermsOnTargetPage: true` highlights the matched term on the page you land on after clicking a search result.
+- `ignoreFiles: [/markdown-page/]` excludes `src/pages/markdown-page.mdx` (a leftover Docusaurus boilerplate page) from the index.
+
+## Why this plugin instead of Algolia DocSearch
+
+Algolia DocSearch requires an external, hosted index (either Algolia's free DocSearch program, which has its own application/approval process, or a self-managed Algolia account) and a secret key stored outside the repo. `@easyops-cn/docusaurus-search-local` builds its index entirely at `npm run build` time and ships it as a static asset alongside the rest of the site, so it needs no external account, no API keys, and works the same on any static host — which fits a site deployed as a plain static build.
+
+## Testing search locally
+
+Search only works against the production build — the local index is generated during `docusaurus build`, not `docusaurus start`:
+
+```bash
+npm run build && npm run serve
+```
+
+Verify the search box returns results from docs, blog posts, and the About/Portfolio/Resume pages before deploying. Deployment itself is unchanged — see [Deployment](../build-deploy/deployment).
+
+## Adding a new section to the index
+
+If a new standalone page or docs instance is added under `src/pages/` or as a new docs plugin instance, add its route to `docsRouteBasePath` (and, for a real docs plugin instance with its own folder, the matching entry in `docsDir`) so it gets crawled.
