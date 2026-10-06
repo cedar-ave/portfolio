@@ -41,7 +41,7 @@ Unfortunately, the rich-text HTML in the **Release Note** field is not always tr
 ```
 | Note                                                                   | Product |
 |-------------------------------------------------------------------------|---------|
-| New <br>functionality <span style="color: blue">is added</span>         | IDEA    |
+| New <br>functionality <span style="color: blue">is added</span>         | Forge   |
 ```
 
 To provide PMs with a clean Markdown file to review in a pull request, the faulty export must be cleaned up manually.
@@ -81,5 +81,5 @@ The benefit is that content doesn't have to be transformed twice like in Solutio
 The Release Notes extension's support team suggests:
 
 ```handlebars
-{{#markdown}}{{{ field-html 'Platform.ReleaseNote' }}}{{/markdown}}
+{{#markdown}}{{{ field-html 'Vertex.ReleaseNote' }}}{{/markdown}}
 ```

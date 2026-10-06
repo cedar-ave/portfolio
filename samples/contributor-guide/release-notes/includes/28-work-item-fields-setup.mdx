@@ -11,7 +11,7 @@ A custom **RN** tab on Releases, Product Backlog Items, and Bug work items conta
 
 #### Add or change fields
 
-- Go to the Platform process in Azure DevOps.
+- Go to the Vertex process in Azure DevOps.
 - Go to the bug or feature template.
 - Click the **RN** tab.
 
@@ -23,21 +23,21 @@ A custom **RN** tab on Releases, Product Backlog Items, and Bug work items conta
 
 On bugs, the **Version(s) Affected** field is on both the **Details** and **RN** tabs. You only need to update one of them. The same field manifests in both places.
 
-#### Get a list of Azure DevOps work item fields in the Platform process
+#### Get a list of Azure DevOps work item fields in the Vertex process
 
 ```plaintext
-https://dev.azure.com/<org>/Platform/_apis/wit/fields?api-version=5.1
+https://dev.azure.com/<org>/Vertex/_apis/wit/fields?api-version=5.1
 ```
 
 In cURL:
 
 ```curl
-curl -u EMAIL:ADO_PAT --request GET "https://dev.azure.com/<org>/Platform/_apis/wit/wiql/<query-id>?api-version=5.1"
+curl -u EMAIL:ADO_PAT --request GET "https://dev.azure.com/<org>/Vertex/_apis/wit/wiql/<query-id>?api-version=5.1"
 ```
 
 In an application like Postman:
 
 Basic authorization uses:
-- Send a `GET` request to `https://dev.azure.com/<org>/Platform/_apis/wit/fields?api-version=5.1`
+- Send a `GET` request to `https://dev.azure.com/<org>/Vertex/_apis/wit/fields?api-version=5.1`
 - Username: `EMAIL`
 - Password: `ADO_PAT`

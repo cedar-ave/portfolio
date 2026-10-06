@@ -11,7 +11,7 @@ section: "Get started"
 
 #### Classic edition
 
-**Platform** repo > **articles** > **api-reference** > **rest-api** > **rest-api-landing-page.md**
+**Vertex** repo > **articles** > **api-reference** > **rest-api** > **rest-api-landing-page.md**
 
 #### Cloud edition
 
@@ -21,7 +21,7 @@ Currently pointing to Classic edition source files
 
 #### Classic edition
 
-**Platform** repo > **articles** > **dos-services**
+**Vertex** repo > **articles** > **service-docs**
 
 #### Cloud edition
 
@@ -41,11 +41,11 @@ index.md
 
 #### Classic edition
 
-Platform repo
+Vertex repo
 
 #### Cloud edition
 
-docs-template.fork.dos-docs-infrastructure
+docs-template.fork.docs-infrastructure
 
 ## Change the API docs
 
@@ -59,15 +59,15 @@ Try some form of the following. Also adjust the version. These may no longer be 
 ### Examples
 | Service | Example location |
 | --- | --- |
-| Authorization Service | https\<nolink>://server/Authorization/swagger/ui/swagger.json |
-| Data-Processing Service V1 | http\<nolink>://server/DataProcessingService/docs/v1/swagger |
-| Data-Processing Service V2 | https\<nolink>://server/DataProcessingService2/swagger/ui/index |
-| Discovery Service | https\<nolink>://server/DiscoveryService/swagger/swagger.json |
-| IDEA | http\<nolink>://server/idea/docs/v1/swagger |
-| Identity Service | https\<nolink>://server/identity/swagger/ui/index/v1/swagger.json |
-| Identity Provider Search Service | https\<nolink>://server/IdentityProviderSearchService/swagger/ui/swagger.json |
-| Metadata Service V1 | https\<nolink>://server/MetadataService/swagger/swagger.json |
-| Metadata Service V2 | https\<nolink>://server/MetadataService2/swagger/swagger.json |
+| Sentry Service | https\<nolink>://server/Sentry/swagger/ui/swagger.json |
+| Conveyor Service V1 | http\<nolink>://server/Conveyor/docs/V1/swagger |
+| Conveyor Service V2 | https\<nolink>://server/Conveyor2/swagger/ui/index |
+| Beacon Service | https\<nolink>://server/Beacon/swagger/swagger.json |
+| Forge Service | http\<nolink>://server/Forge/docs/V1/swagger |
+| Passport Service | https\<nolink>://server/Passport/swagger/ui/index/V1/swagger.json |
+| Passport Directory Service | https\<nolink>://server/PassportDirectory/swagger/ui/swagger.json |
+| Atlas Service V1 | https\<nolink>://server/Atlas/swagger/swagger.json |
+| Atlas Service V2 | https\<nolink>://server/Atlas2/swagger/swagger.json |
 
 ## If necessary, downgrade the JSON file from OpenAPI to Swagger 2
 
@@ -84,8 +84,8 @@ A description must be at the top of the JSON file for the landing pages to gener
   "swagger": "2.0",
   "info": {
     "version": "swagger.json",
-    "description": "The Metadata Database V2 stores information about source systems and data marts within the platform. Client applications can insert, update, remove, and retrieve information from the Metadata Database by issuing HTTP requests to the Metadata Service V2. The Metadata Service V2 has newer routes to make managing data marts easier. It uses Fabric.Identity.",
-    "title": "Clearpath.Metadata.V2.WebService"
+    "description": "The Atlas database V2 stores information about source systems and data marts within the platform. Client applications can insert, update, remove, and retrieve information from the Atlas database by issuing HTTP requests to Atlas Service V2. Atlas Service V2 has newer routes to make managing data marts easier. It uses the Passport Service.",
+    "title": "Example.Atlas.V2.WebService"
   }
 }
 ```
