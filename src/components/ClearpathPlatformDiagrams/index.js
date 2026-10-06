@@ -442,9 +442,9 @@ export function CompassInterface() {
       titleId="cp-compass"
       title="Compass metadata catalog interface"
       desc="A metadata catalog with a prominent search bar, a breadcrumb reading AdventureWorks, Person, AddressBase, and a details card for the AddressBase table: an Active status badge, a description, the SQL binding that builds it, and a metadata panel with its database, schema, source table, data mart, last-loaded time, row count, and primary key. A footer notes it is maintained by a data steward and updates daily."
-      viewBox="0 0 780 560">
-      <rect x="12" y="20" width="756" height="528" rx="14" className={styles.cardShadow} />
-      <rect x="8" y="8" width="756" height="528" rx="14" className={styles.card} />
+      viewBox="0 0 780 636">
+      <rect x="12" y="20" width="756" height="600" rx="14" className={styles.cardShadow} />
+      <rect x="8" y="8" width="756" height="600" rx="14" className={styles.card} />
 
       {/* Header */}
       <rect x="8" y="8" width="756" height="50" rx="14" className={styles.compassHeaderBg} />
@@ -488,8 +488,8 @@ export function CompassInterface() {
       })()}
 
       {/* Table details card */}
-      <rect x="16" y="172" width="748" height="356" className={styles.cardShadow} />
-      <rect x="16" y="160" width="748" height="356" rx="12" className={styles.card} />
+      <rect x="16" y="172" width="748" height="428" className={styles.cardShadow} />
+      <rect x="16" y="160" width="748" height="428" rx="12" className={styles.card} />
 
       <text x="40" y="196" className={styles.tableTitleLg}>AddressBase</text>
       <rect x="192" y="182" width="58" height="20" rx="10" className={styles.statusBadgeGood} />
@@ -508,31 +508,33 @@ export function CompassInterface() {
       <text x="40" y="271" className={styles.bodyText}>This table stores address information for a person.</text>
 
       <text x="40" y="301" className={styles.sectionLabel}>Binding information</text>
-      <rect x="40" y="312" width="404" height="156" rx="8" className={styles.codeBlockBg} />
+      <rect x="40" y="312" width="404" height="160" rx="8" className={styles.codeBlockBg} />
       {CODE_LINES.map((line, i) => (
-        <CodeLine key={line.text} line={line} y={334 + i * 16} />
+        <CodeLine key={line.text} line={line} y={334 + i * 17} />
       ))}
 
       {/* Right: metadata panel */}
-      <rect x="480" y="252" width="268" height="216" rx="8" className={styles.metaPanelBg} />
+      <rect x="480" y="252" width="268" height="264" rx="8" className={styles.metaPanelBg} />
       {META_ROWS.map((row, i) => {
-        const y = 272 + i * 29;
+        const labelY = 282 + i * 32;
+        const valueY = labelY + 16;
+        const dividerY = labelY + 26;
         return (
           <g key={row.label}>
-            <text x="496" y={y} className={styles.metaLabel}>{row.label}</text>
-            <text x="496" y={y + 15} className={styles.metaValue}>{row.value}</text>
-            {i < META_ROWS.length - 1 && <line x1="496" y1={y + 23} x2="732" y2={y + 23} className={styles.metaDivider} />}
+            <text x="496" y={labelY} className={styles.metaLabel}>{row.label}</text>
+            <text x="496" y={valueY} className={styles.metaValue}>{row.value}</text>
+            {i < META_ROWS.length - 1 && <line x1="496" y1={dividerY} x2="732" y2={dividerY} className={styles.metaDivider} />}
           </g>
         );
       })}
 
       {/* Footer */}
-      <circle cx="56" cy="500" r="12" className={styles.stewardAvatar} />
-      <text x="56" y="504" textAnchor="middle" className={styles.stewardInitial}>JD</text>
-      <text x="78" y="504" className={styles.stewardText}>Maintained by a data steward</text>
+      <circle cx="56" cy="552" r="13" className={styles.stewardAvatar} />
+      <text x="56" y="556" textAnchor="middle" className={styles.stewardInitial}>JD</text>
+      <text x="80" y="556" className={styles.stewardText}>Maintained by a data steward</text>
 
-      <rect x="612" y="490" width="136" height="22" rx="11" className={styles.rssBadge} />
-      <text x="680" y="505" textAnchor="middle" className={styles.rssBadgeText}>Updates daily</text>
+      <rect x="612" y="541" width="136" height="22" rx="11" className={styles.rssBadge} />
+      <text x="680" y="556" textAnchor="middle" className={styles.rssBadgeText}>Updates daily</text>
     </Figure>
   );
 }

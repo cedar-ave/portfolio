@@ -285,13 +285,13 @@
 
 .tabActiveText {
   fill: var(--cp-ink);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .tabInactiveText {
   fill: var(--cp-muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .panelBg {
@@ -361,13 +361,13 @@
 
 .compassTitle {
   fill: #ffffff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .compassHeaderNav {
   fill: var(--cp-sky);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 
@@ -384,7 +384,7 @@
 
 .searchPlaceholder {
   fill: var(--cp-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .crumbChip {
@@ -395,7 +395,7 @@
 
 .crumbText {
   fill: var(--cp-body);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -406,7 +406,7 @@
 
 .tableTitleLg {
   fill: var(--cp-ink);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -416,7 +416,7 @@
 
 .statusBadgeGoodText {
   fill: var(--cp-teal-ink);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
 }
 
@@ -426,13 +426,13 @@
 
 .infoBadgeText {
   fill: var(--cp-navy);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
 }
 
 .sectionLabel {
   fill: var(--cp-muted);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -440,7 +440,7 @@
 
 .bodyText {
   fill: var(--cp-body);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .codeBlockBg {
@@ -451,13 +451,13 @@
 
 .codeKeyword {
   fill: var(--cp-blue);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 700;
 }
 
 .codeText {
   fill: var(--cp-body);
-  font-size: 10.5px;
+  font-size: 11.5px;
 }
 
 .metaPanelBg {
@@ -468,12 +468,12 @@
 
 .metaLabel {
   fill: var(--cp-muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .metaValue {
   fill: var(--cp-ink);
-  font-size: 10px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 
@@ -488,13 +488,13 @@
 
 .stewardInitial {
   fill: var(--cp-navy);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .stewardText {
   fill: var(--cp-body);
-  font-size: 10.5px;
+  font-size: 11.5px;
 }
 
 .rssBadge {
@@ -503,7 +503,7 @@
 
 .rssBadgeText {
   fill: var(--cp-gold-ink);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 700;
 }
 
