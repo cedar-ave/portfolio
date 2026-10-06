@@ -1,0 +1,36 @@
+---
+title: "Interface tour"
+section: "Get started"
+---
+
+import { HomeScreenTiles, HomeScreenTable, TileAnatomy, AppTabsHeader } from '@site/src/components/ClearpathCollectMockups';
+
+# Interface tour
+
+## Home page
+
+The Collect home page shows the apps you have permission to access, sorted alphabetically by name. Use the search field to find an app by name, owner, or description, and toggle between tile and table view with the icons in the menu bar.
+
+<HomeScreenTiles />
+
+Your view choice stays active until you clear the browser's cache, then resets to the default tile view.
+
+<HomeScreenTable />
+
+## Anatomy of a tile
+
+Each app's tile (or table row) carries the same information and actions:
+
+<TileAnatomy />
+
+## Inside an app
+
+Once you open an app, its structure is organized into tabs:
+
+<AppTabsHeader active="Main" />
+
+| Tab | What it shows |
+|---|---|
+| Details | The app's name, schema, and owner |
+| Main | Fields for entering data in the app's main table |
+| Subset (one per subset table) | Fields for entering subset data connected to records in the Main table |

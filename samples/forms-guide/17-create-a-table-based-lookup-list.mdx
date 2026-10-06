@@ -1,0 +1,22 @@
+---
+title: "Create a table-based lookup list"
+section: "Lookup lists"
+---
+
+import { LookupListCreateForm } from '@site/src/components/ClearpathCollectMockups';
+
+# Create a table-based lookup list
+
+**Permissions:** You must be a Collect Administrator, or hold the Create Lookup List permission.
+
+1. On the Collect home page, click **Lookup Lists** in the menu bar.
+2. Click **New Lookup List**.
+3. Assign a view name. It must start with a letter, be alphanumeric, and contain no spaces. The only special character allowed is `_`.
+4. Under **Lookup List Type**, select **Table-Based**. (Query-Based is the default.)
+
+<LookupListCreateForm type="Table-Based" />
+
+You can switch between Table-Based and Query-Based freely until you save — after that, the type is locked. If you've already started adding a field or a query, switching types shows a changes-detected modal; it won't appear if you've only entered a view name or made no other changes.
+
+5. Click **Add Field** to define fields, the same way you would for an [app's Main table](./12-set-up-the-main-table) — lookup lists don't have subsets, but every other control is the same (Display Label, Column Name, Required, Unique ID, Data Type, Max Length, Precision, Default Value, and Help Text).
+6. Click **Save**.

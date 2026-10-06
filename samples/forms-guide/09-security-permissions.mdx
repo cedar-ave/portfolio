@@ -1,0 +1,25 @@
+---
+title: "Security permissions"
+section: "Security and permissions"
+---
+
+# Security permissions
+
+Permissions are rights to complete individual protected actions within Collect. Each is granted through the role assigned to a user.
+
+**Key:** Collect Administrator (CA) and Application Creator (AC) are global, Collect-wide roles. Application Administrator (AA), Contributor (C), and Reader (R) apply within a single app.
+
+| Permission | CA | AC | AA | C | R |
+|---|---|---|---|---|---|
+| Create App | ✓ | ✓ | | | |
+| Import App (from an export file; doesn't include app data) | ✓ | ✓ | | | |
+| Delete Application (metadata, structure, and data) | ✓ | | ✓&nbsp;*(own app)* | | |
+| Manage Global Lookup List | ✓ | | | | |
+| Manage Application Lookup List | ✓ | | ✓ | | |
+| Add records (includes bulk import) | ✓ | | ✓ | ✓ | |
+| Edit records | ✓ | | ✓ | ✓ | |
+| Delete records | ✓ | | ✓ | ✓ | |
+| View records (includes bulk export) | ✓ | | ✓ | ✓ | ✓ |
+| Export App (structure only, as a file; doesn't include app data) | ✓ | | ✓ | | |
+| Configure App (edit app structure) | ✓ | | ✓ | | |
+| Manage Identity Roles (assign roles — see [Security roles](./08-security-roles)) | ✓ | | ✓ | | |

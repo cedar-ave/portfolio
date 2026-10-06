@@ -1,0 +1,25 @@
+---
+title: "Compatible data types"
+section: "Add and manage records"
+---
+
+# Compatible data types
+
+When importing or mapping data, a source field's data type isn't always required to match its destination field's data type exactly. The table below shows which source types (rows) can populate which destination types (columns).
+
+| Source \ Destination | Text | Date/Time | Date | Time | Decimal | Integer | True/False |
+|---|---|---|---|---|---|---|---|
+| Text | ✓ | | | | | | |
+| Date/Time | ✓ | ✓ | | | | | |
+| Date | ✓ | ✓ | ✓ | | | | |
+| Time | ✓ | | | ✓ | | | |
+| Decimal | ✓ | | | | ✓ | | |
+| Integer | ✓ | | | | ✓ | ✓ | |
+| True/False | ✓ | | | | | | ✓ |
+
+## Notes
+
+- A destination Text field accepts any kind of data, as long as its length is large enough to hold it.
+- Date/Time fields accept Date-only data, but not Time-only data.
+- Decimal fields accept Integer data, as long as there's no size issue.
+- True/False, Integer, Date-only, and Time-only fields accept only their own data type as a destination.

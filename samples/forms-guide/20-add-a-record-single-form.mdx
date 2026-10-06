@@ -1,0 +1,43 @@
+---
+title: "Add a record with the single-record form"
+section: "Add and manage records"
+---
+
+import { SingleRecordForm, SubsetOneToOne, SubsetOneToMany } from '@site/src/components/ClearpathCollectMockups';
+
+# Add a record with the single-record form
+
+1. Navigate to the record-entry page for the app.
+2. Enter valid data, then click:
+
+| Action | What happens |
+|---|---|
+| Save | Saves your data and stays on the record |
+| Save and New | Saves your data and opens a new, blank record |
+
+<SingleRecordForm />
+
+## One-to-one subsets
+
+When you first navigate to the record-entry page, you're in Create Record mode, with tabs for Main and each of its subsets.
+
+A new record's one-to-one subsets start optional, with two buttons:
+
+- **Add** *(enabled)*
+- **Remove** *(disabled)*
+
+All fields defined for the subset stay hidden, and any marked required don't block saving yet.
+
+<SubsetOneToOne />
+
+Click **Add** to reveal all fields for the subset — required fields now block **Save** or **Save and New** until they're filled in with valid data. Click **Remove** to clear all fields and return to the original state, which re-enables **Add**, disables **Remove**, and lifts the block on saving.
+
+## One-to-many subsets
+
+When you select a subset tab with a one-to-many relationship, an empty grid displays. Until you add an entry, **Save** and **Save and New** stay active as long as the rest of the record's required fields are filled in with valid, unique data — none of the subset's own fields are active yet.
+
+<SubsetOneToMany />
+
+Click **Add Record** to add a row to the grid. Adding a row flags all of that row's required fields and blocks **Save** or **Save and New** until they're filled in. Removing an empty or invalid row returns the grid to a savable state.
+
+A one-to-many grid on a subset tab works the same way as any multi-record grid — it's just scoped to the subset data tied to this specific record.

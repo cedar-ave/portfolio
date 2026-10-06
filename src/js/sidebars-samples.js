@@ -12,16 +12,18 @@
  *
  * The docs root for this instance is samples/, with samples/index.mdx as
  * the generic /samples landing page (listed first below, above the guides)
- * and each guide living in its own subfolder - currently just
- * samples/user-guide/. Doc ids below are paths relative to samples/,
- * keeping the source files' numbered prefixes because
+ * and each guide living in its own subfolder - samples/user-guide/ (a
+ * roster-builder guide for insurance delegated authority) and
+ * samples/forms-guide/ (a Clearpath Collect guide for building custom
+ * claims/underwriting data-entry apps). Doc ids below are paths relative to
+ * samples/, keeping the source files' numbered prefixes because
  * `numberPrefixParser: false` is set for this docs instance (the sample
  * content's own cross-links reference those filenames directly).
  *
  * Add another guide by dropping its source files in a new folder under
  * samples/, then adding a sibling top-level category below.
  *
- * samples/technical-marketing/ holds a second, unrelated sample set (product
+ * samples/technical-marketing/ holds a third, unrelated sample set (product
  * marketing pages rewritten as generic docs). It's a sibling category in the
  * same sidebar array (below), not a separate sidebar - all samples docs
  * share one sidebar instance, so every category shows up together in the
@@ -87,6 +89,69 @@ const sidebars = {
             'user-guide/23-create-filters',
             'user-guide/24-activate-or-deactivate-a-template',
             'user-guide/25-change-a-template-s-name-or-description',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Clearpath Collect user guide',
+      collapsed: true,
+      items: [
+        {
+          type: 'category',
+          label: 'Get started',
+          key: 'forms-guide-get-started',
+          collapsed: true,
+          items: [
+            'forms-guide/01-overview',
+            'forms-guide/02-how-it-works',
+            'forms-guide/03-primary-uses',
+            'forms-guide/04-whats-new',
+            'forms-guide/05-prerequisites',
+            'forms-guide/06-interface-tour',
+            'forms-guide/07-glossary',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Security and permissions',
+          collapsed: true,
+          items: [
+            'forms-guide/08-security-roles',
+            'forms-guide/09-security-permissions',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Create and manage an app',
+          collapsed: true,
+          items: [
+            'forms-guide/10-steps-to-create-an-app',
+            'forms-guide/11-create-a-new-app',
+            'forms-guide/12-set-up-the-main-table',
+            'forms-guide/13-set-up-subset-tables',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Lookup lists',
+          collapsed: true,
+          items: [
+            'forms-guide/14-lookup-list-types',
+            'forms-guide/15-lookup-list-permissions',
+            'forms-guide/16-create-a-query-based-lookup-list',
+            'forms-guide/17-create-a-table-based-lookup-list',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Add and manage records',
+          collapsed: true,
+          items: [
+            'forms-guide/18-data-type-definitions',
+            'forms-guide/19-compatible-data-types',
+            'forms-guide/20-add-a-record-single-form',
           ],
         },
       ],

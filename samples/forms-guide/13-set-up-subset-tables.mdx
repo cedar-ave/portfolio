@@ -1,0 +1,46 @@
+---
+title: "Set up subset tables"
+section: "Create and manage an app"
+---
+
+# Set up subset tables
+
+Subset tables connect additional data in the Main table to related records.
+
+## About subsets
+
+**Example 1: Claim notes for property claims (one-to-many)**
+
+| Table | What it holds |
+|---|---|
+| Main table | Claim demographic information — one claim per record |
+| Claim Notes subset | One note per record; each note is tied to a specific claim |
+
+A single claim can have many notes.
+
+**Example 2: Inspection summary for property claims (one-to-one)**
+
+| Table | What it holds |
+|---|---|
+| Main table | Claim demographic information — one claim per record |
+| Inspection Summary subset | A single record with inspection details for a claim (inspector, date, outcome, and so on) |
+
+A single claim can have at most one Inspection Summary record.
+
+## Add a subset tab
+
+1. Click **+** in the tab bar to add a tab for each additional subset.
+2. Assign a view name. The name must start with a letter and be alphanumeric. An alert appears if it's invalid or already used in the app's schema.
+3. Select cardinality:
+
+| Cardinality | Connection to Main table |
+|---|---|
+| one-to-many *(default)* | Multiple subset records for each Main-table record |
+| one-to-one | Only one subset record for each Main-table record |
+
+4. Define fields the same way you would for the [Main table](./12-set-up-the-main-table) — subset tables use the same Display Label, Column Name, Required, Unique ID, Data Type, Max Length, Precision, Default Value, and Help Text controls.
+5. Click **Save**.
+
+## Delete a subset table
+
+Click **Delete Subset** at the lower right of the subset's tab.

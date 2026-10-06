@@ -1,0 +1,43 @@
+---
+title: "Set up the Main table"
+section: "Create and manage an app"
+---
+
+import { FieldConfigForm, HelpTextTooltip } from '@site/src/components/ClearpathCollectMockups';
+
+# Set up the Main table
+
+The Main table holds an app's main records.
+
+1. Click the **Main** tab.
+2. Assign a view name. By default it matches your app's name, but you can change it.
+
+Enter a name in the **View Name** field. The name must start with a letter and be alphanumeric. An alert appears if the name is invalid or already used elsewhere in the app's schema.
+
+3. Click **Add Field** to define a field.
+
+<FieldConfigForm />
+
+| Field | What to do | Notes |
+|---|---|---|
+| Display Label | Enter a user-friendly name for the column | Required. Can be changed anytime, but changing it after the app has data no longer updates the underlying field name. |
+| Column Name | Give the column a name | Required. Saved to the database, and auto-generated from the display label (minus unsupported characters). Must start with a letter and be alphanumeric. Becomes read-only once data exists. |
+| Required | Check to make the field required | |
+| Unique ID | Check to make the field part of this table's unique ID | In data entry, the field's label is marked to show it's part of a unique ID. You can't save a record if the combination of unique-ID fields isn't distinct across the table. |
+| Data Type | Select a type from the dropdown | Required. Entry point to define a dropdown control for the type. Dropdown values can be reordered manually, and the control still accepts direct keyboard input as long as it matches the data type. |
+| Max Length | Enter the number of characters or digits allowed | Must be an integer. Choose a length that comfortably fits any value you expect. A shorter length saves storage. |
+| Precision | Enter the number of digits to store after the decimal point | Must be an integer, can be 0, and can't exceed Max Length. |
+| Default Value | Enter a value to pre-fill for every record missing one | Useful for required fields. If an import record is missing this field, the default value is used. |
+| Help Text | Enter up to 255 characters describing the field | Shows as a tooltip during data entry. |
+| Dropdown list *(ellipsis button)* | Assign a list of existing values, set up a quick list, or specify input-field order | |
+
+<HelpTextTooltip />
+
+## Max Length vs. decimal precision
+
+| Field | What it is | Example (456,822.34) |
+|---|---|---|
+| Max Length | Total number of digits | 8 |
+| Precision | Number of digits after the decimal point | 2 |
+
+4. Click **Save**.

@@ -11,7 +11,7 @@ How the `/samples` demo area was built: a second, standalone docs instance that 
 <QuickReference>
 
 - `/samples` is a **second `@docusaurus/plugin-content-docs` instance** (`id: 'userGuide'`), configured in `docusaurus.config.js` alongside the main `docs` preset — not a page under the main docs sidebar.
-- Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and `samples/user-guide/` holds one guide's `.mdx` files.
+- Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/user-guide/` and `samples/forms-guide/`.
 - Its sidebar is hand-written at `src/js/sidebars-samples.js` (the main site's sidebar is `src/js/sidebars-docs.js` — both were moved out of the repo root; see [Sidebar file locations](#sidebar-file-locations) below).
 - It's reachable only via the "Product user guide" link on `/portfolio` — nothing registers it in `themeConfig.navbar`.
 
@@ -46,14 +46,20 @@ Order in the `plugins` array is just array order, not a hierarchy — `blogSerie
 ```text
 samples/
 ├── index.mdx              # generic /samples landing page (slug: /)
-└── user-guide/
+├── user-guide/
+│   ├── 01-overview.mdx
+│   ├── 02-about-delegated-authority.mdx
+│   ├── ...
+│   └── assets/
+└── forms-guide/
     ├── 01-overview.mdx
-    ├── 02-about-delegated-authority.mdx
-    ├── ...
-    └── assets/
+    ├── 02-how-it-works.mdx
+    └── ...
 ```
 
-`path: 'samples'` makes `samples/` the content root for this instance, so `samples/index.mdx` can serve as the root landing page while `samples/user-guide/` holds one guide as a subfolder. Adding a second guide later means dropping its files in a sibling folder (e.g. `samples/another-guide/`) and linking to it from `samples/index.mdx` — the hub page isn't tied to the one guide.
+`path: 'samples'` makes `samples/` the content root for this instance, so `samples/index.mdx` can serve as the root landing page while each guide lives in its own sibling folder. `samples/forms-guide/` is the second guide, added this way: drop its files in a new folder, link it from `samples/index.mdx`, and give it its own top-level category in the sidebar (see below) — the hub page was never tied to just the one guide.
+
+Unlike `user-guide/`, which reuses plain Markdown tables and admonitions throughout, `forms-guide/` demos screen interactions (home-page tiles, record-entry forms, lookup-list setup) with small React components from `src/components/ClearpathCollectMockups/` — real HTML/CSS, not screenshots or traced SVG, so every label is editable text at a readable size. They follow the same CSS-variable convention (light/dark tokens) as the figure components elsewhere in `/portfolio`, e.g. `RosterUploadDiagrams`.
 
 ### Why `numberPrefixParser: false`
 

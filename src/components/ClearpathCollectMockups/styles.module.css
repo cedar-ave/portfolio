@@ -1,0 +1,624 @@
+/* Shared HTML/CSS mockups of the Clearpath Collect app for samples/forms-guide.
+   Built as real DOM elements (not screenshots or SVG art) so interactions
+   stay legible at a readable size. Colors follow the site palette and
+   switch with the light/dark theme, matching the token convention used in
+   RosterUploadDiagrams and SanctionsMatchMockup. All type is 12px+. */
+
+.mockup {
+  --mk-surface: #ffffff;
+  --mk-panel: #f6f8fb;
+  --mk-border: #d5dde6;
+  --mk-ink: #1c1e21;
+  --mk-ink-2: #4a5663;
+  --mk-ink-3: #6b7885;
+  --mk-accent: #3a7fc4;
+  --mk-accent-bg: #e6eef9;
+  --mk-accent-ink: #1f4e7a;
+  --mk-green-bg: #e3f6f2;
+  --mk-green-ink: #1f6b5d;
+  --mk-shadow: rgba(28, 30, 33, 0.1);
+
+  margin: 1.75rem 0 2.25rem;
+  font-family: var(--ifm-font-family-base);
+  color: var(--mk-ink);
+}
+
+:global([data-theme='dark']) .mockup {
+  --mk-surface: #242526;
+  --mk-panel: #1d1e20;
+  --mk-border: #3d4148;
+  --mk-ink: #e3e3e3;
+  --mk-ink-2: #b8c0c9;
+  --mk-ink-3: #8e98a3;
+  --mk-accent: #6aa6e0;
+  --mk-accent-bg: #22324a;
+  --mk-accent-ink: #cfe4fb;
+  --mk-green-bg: #1f3b37;
+  --mk-green-ink: #9fe3d6;
+  --mk-shadow: rgba(0, 0, 0, 0.4);
+}
+
+.caption {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--mk-ink-3);
+  text-align: center;
+}
+
+/* ---------- Window chrome ---------- */
+
+.window {
+  border: 1px solid var(--mk-border);
+  border-radius: 10px;
+  background: var(--mk-surface);
+  box-shadow: 0 6px 18px var(--mk-shadow);
+  overflow: hidden;
+}
+
+.windowBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--mk-panel);
+  border-bottom: 1px solid var(--mk-border);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mk-border);
+  flex: none;
+}
+
+.addressBar {
+  flex: 1;
+  margin-left: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  font-size: 12px;
+  color: var(--mk-ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuBar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+  background: var(--mk-surface);
+  border-bottom: 1px solid var(--mk-border);
+  flex-wrap: wrap;
+}
+
+.menuItem {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-ink-3);
+}
+
+.menuItemActive {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mk-accent);
+}
+
+.menuSpacer {
+  flex: 1;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--mk-panel);
+  border: 1px solid var(--mk-border);
+  font-size: 12px;
+  color: var(--mk-ink-3);
+}
+
+.viewToggle {
+  display: flex;
+  gap: 4px;
+}
+
+.viewToggleBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink-3);
+  font-size: 13px;
+}
+
+.viewToggleBtnActive {
+  background: var(--mk-accent-bg);
+  border-color: var(--mk-accent);
+  color: var(--mk-accent);
+}
+
+.screen {
+  padding: 20px;
+  background: var(--mk-surface);
+}
+
+/* ---------- App tiles (home page) ---------- */
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.tile {
+  position: relative;
+  border: 1px solid var(--mk-border);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--mk-panel);
+}
+
+.tileName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mk-ink);
+  margin: 0 0 2px;
+}
+
+.tileOwner {
+  font-size: 12px;
+  color: var(--mk-ink-3);
+  margin: 0 0 8px;
+}
+
+.tileDesc {
+  font-size: 12.5px;
+  color: var(--mk-ink-2);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+.tileActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tileActionBtn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink-2);
+}
+
+/* ---------- Table / list view ---------- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mk-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--mk-border);
+}
+
+.table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--mk-border);
+  color: var(--mk-ink-2);
+  vertical-align: middle;
+}
+
+.table td.tableAppName {
+  color: var(--mk-ink);
+  font-weight: 700;
+}
+
+/* ---------- Callouts (anatomy diagrams) ---------- */
+
+.calloutWrap {
+  position: relative;
+}
+
+.calloutBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--mk-accent);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+
+.calloutList {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.calloutList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--mk-ink-2);
+}
+
+.calloutList strong {
+  color: var(--mk-ink);
+}
+
+/* ---------- Tabs (inside an app) ---------- */
+
+.tabBar {
+  display: flex;
+  gap: 22px;
+  border-bottom: 1px solid var(--mk-border);
+  padding: 0 18px;
+}
+
+.tab {
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-ink-3);
+  border-bottom: 2px solid transparent;
+}
+
+.tabActive {
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mk-accent);
+  border-bottom: 2px solid var(--mk-accent);
+}
+
+/* ---------- Forms ---------- */
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.formRowStacked {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-ink);
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #c1403a;
+}
+
+.fieldGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink);
+}
+
+.inputNarrow {
+  width: 90px;
+  flex: none;
+}
+
+.select {
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 70px;
+  font-size: 13px;
+  font-family: var(--ifm-font-family-monospace);
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-panel);
+  color: var(--mk-ink);
+  resize: none;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--mk-ink-2);
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #ffffff;
+}
+
+.checkboxChecked {
+  background: var(--mk-accent);
+  border-color: var(--mk-accent);
+}
+
+.ellipsisBtn {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink-3);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.helpIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid var(--mk-ink-3);
+  color: var(--mk-ink-3);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--mk-ink-3);
+}
+
+.footerRow {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid var(--mk-border);
+  margin-top: 4px;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-border);
+  background: var(--mk-surface);
+  color: var(--mk-ink-2);
+}
+
+.btn:disabled,
+.btnDisabled {
+  color: var(--mk-ink-3);
+  background: var(--mk-panel);
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--mk-accent);
+  background: var(--mk-accent);
+  color: #ffffff;
+}
+
+/* ---------- Pill toggle (query-based / table-based) ---------- */
+
+.pillToggle {
+  display: inline-flex;
+  border: 1px solid var(--mk-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.pill {
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mk-ink-3);
+  background: var(--mk-surface);
+}
+
+.pillActive {
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--mk-accent);
+}
+
+/* ---------- Step flow ---------- */
+
+.stepFlow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.step {
+  border: 1px solid var(--mk-border);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--mk-panel);
+  position: relative;
+}
+
+.stepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mk-accent);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stepTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mk-ink);
+  margin: 0 0 4px;
+}
+
+.stepBody {
+  font-size: 12.5px;
+  color: var(--mk-ink-2);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ---------- Lookup list type grid ---------- */
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.typeCard {
+  border: 1px solid var(--mk-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--mk-panel);
+}
+
+.typeCardTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mk-ink);
+  margin: 0 0 4px;
+}
+
+.typeCardBody {
+  font-size: 12.5px;
+  color: var(--mk-ink-2);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.badgePill {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--mk-accent-bg);
+  color: var(--mk-accent-ink);
+  margin-bottom: 6px;
+}
+
+/* ---------- Tooltip ---------- */
+
+.tooltipDemo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tooltipBubble {
+  position: relative;
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: var(--mk-ink);
+  color: var(--mk-surface);
+  font-size: 12.5px;
+  width: fit-content;
+}
+
+:global([data-theme='dark']) .tooltipBubble {
+  background: var(--mk-panel);
+  color: var(--mk-ink);
+  border: 1px solid var(--mk-border);
+}
+
+/* ---------- New-record flag ---------- */
+
+.newFlag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--mk-green-bg);
+  color: var(--mk-green-ink);
+  margin-left: 8px;
+}
