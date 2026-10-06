@@ -35,7 +35,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'User guide',
-      collapsed: false,
+      collapsed: true,
       // No `link` here - the heading is a pure expand/collapse toggle, not
       // a page of its own. "Overview" below is the guide's actual landing
       // doc, listed as a normal row.
@@ -43,7 +43,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Get started',
-          collapsed: false,
+          collapsed: true,
           items: [
             'user-guide/01-overview',
             'user-guide/02-about-delegated-authority',
@@ -54,7 +54,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Generate a roster',
-          collapsed: false,
+          collapsed: true,
           items: [
             'user-guide/06-generate-a-roster',
             'user-guide/08-see-and-download-previous-exports',
@@ -63,7 +63,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Create a template',
-          collapsed: false,
+          collapsed: true,
           items: [
             'user-guide/10-create-a-template',
             'user-guide/11-clone-a-template',
@@ -78,7 +78,7 @@ const sidebars = {
         {
           type: 'category',
           label: "Design a template's layout",
-          collapsed: false,
+          collapsed: true,
           items: [
             'user-guide/18-configure-a-template-s-layout',
             'user-guide/19-fields-roster-objects-and-sub-objects',
@@ -94,21 +94,12 @@ const sidebars = {
     {
       type: 'category',
       label: 'Technical marketing',
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: 'category',
-          label: 'Adaptive-Binding Data Warehouse',
-          collapsed: false,
-          items: [
-            'technical-marketing/adaptive-data-warehouse',
-            'technical-marketing/adaptive-data-warehouse-technical-overview',
-          ],
-        },
-        {
-          type: 'category',
           label: 'Clearpath Analytics Platform',
-          collapsed: false,
+          collapsed: true,
           items: [
             'technical-marketing/clearpath-analytics-platform',
             'technical-marketing/metadata-driven-etl-engine',
@@ -121,7 +112,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Platform applications',
-          collapsed: false,
+          collapsed: true,
           items: [
             'technical-marketing/compass-metadata-management',
             'technical-marketing/data-warehouse-console',
@@ -134,7 +125,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Data acquisition & storage',
-          collapsed: false,
+          collapsed: true,
           items: [
             'technical-marketing/intake-mart-designer',
             'technical-marketing/intake-mart-library',
