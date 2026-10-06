@@ -1,0 +1,31 @@
+---
+title: "Unable to load service index"
+section: "Troubleshoot the build"
+---
+
+# Unable to load service index
+
+## Error
+
+```txt
+Running `docfx metadata`...
+Using .NET Core SDK 6.0.410
+Loading project C:/Source/Platform/Shared/Engine.PluginInterfaces/Engine.PluginInterfaces.csproj
+  Determining projects to restore...
+C:\Source\Platform\Shared\Shared.Models\Shared.Models.csproj : error NU1301: Unable to load the service index
+for source https://pkgs.dev.azure.com/<org>/_packaging/<feed>/nuget/v3/index.json.
+[C:\Source\Platform\Shared\Engine.PluginInterfaces\Engine.PluginInterfaces.csproj]
+...
+  Failed to restore C:\Source\Platform\Shared\Engine.PluginInterfaces\Engine.PluginInterfaces.csproj (in 1.02 min).
+  Failed to restore C:\Source\Platform\Shared\Shared.Models\Shared.Models.csproj (in 1.02 min).
+```
+
+*The real build log repeats this `NU1301` failure for every NuGet feed the project restores from, and then cascades into a long run of `CS0400`/`CS0246`/`CS0518` compiler errors once the restore fails &mdash; trimmed here since it's the same root cause repeated many times.*
+
+## Solution
+
+Delete **NuGet.Config** locally. Don't merge this change.
+
+:::note
+[Nuget connection attempt failed "Unable to load the service index for source"](https://stackoverflow.com/questions/41185443/nuget-connection-attempt-failed-unable-to-load-the-service-index-for-source)
+:::

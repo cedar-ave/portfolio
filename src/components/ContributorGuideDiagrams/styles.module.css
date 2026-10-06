@@ -1,0 +1,269 @@
+/* Diagrams for samples/contributor-guide. Built as real DOM elements (not
+   screenshots or traced SVG art) so every label stays selectable text,
+   and so color follows the site's light/dark theme tokens, matching the
+   convention used in ClearpathCollectMockups and RosterUploadDiagrams. */
+
+.diagram {
+  --cg-surface: #ffffff;
+  --cg-panel: #f6f8fb;
+  --cg-border: #d5dde6;
+  --cg-ink: #1c1e21;
+  --cg-ink-2: #4a5663;
+  --cg-ink-3: #6b7885;
+  --cg-accent: #3a7fc4;
+  --cg-accent-bg: #e6eef9;
+  --cg-accent-ink: #1f4e7a;
+  --cg-green: #2f9e6e;
+  --cg-green-bg: #e3f6f2;
+  --cg-green-ink: #1f6b5d;
+  --cg-amber: #b8860b;
+  --cg-amber-bg: #fdf3da;
+  --cg-amber-ink: #7a5b00;
+  --cg-red: #c4453a;
+  --cg-red-bg: #fbe7e5;
+  --cg-red-ink: #8a2f27;
+
+  margin: 1.75rem 0 2.25rem;
+  font-family: var(--ifm-font-family-base);
+  color: var(--cg-ink);
+}
+
+:global([data-theme='dark']) .diagram {
+  --cg-surface: #242526;
+  --cg-panel: #1d1e20;
+  --cg-border: #3d4148;
+  --cg-ink: #e3e3e3;
+  --cg-ink-2: #b8bcc2;
+  --cg-ink-3: #8a9099;
+  --cg-accent: #6ba3e0;
+  --cg-accent-bg: #203349;
+  --cg-accent-ink: #bcdcff;
+  --cg-green: #4fc897;
+  --cg-green-bg: #163b30;
+  --cg-green-ink: #8fe4c4;
+  --cg-amber: #e0b84a;
+  --cg-amber-bg: #3a2f10;
+  --cg-amber-ink: #f3d78a;
+  --cg-red: #e2766c;
+  --cg-red-bg: #3a1e1b;
+  --cg-red-ink: #f4b1aa;
+}
+
+.caption {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--cg-ink-3);
+  text-align: center;
+}
+
+/* ---------- Two-column scenario comparison ---------- */
+
+.scenarioGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .scenarioGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scenario {
+  border: 1px solid var(--cg-border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: var(--cg-surface);
+}
+
+.scenarioTitle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0 0 0.6rem;
+}
+
+.branchRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  margin: 0.3rem 0;
+}
+
+.branchDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.dotMain { background: var(--cg-ink-3); }
+.dotA { background: var(--cg-accent); }
+.dotB { background: var(--cg-amber); }
+
+.mergeOk {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cg-green-ink);
+}
+
+.mergeConflict {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cg-red-ink);
+}
+
+/* ---------- Status legend ---------- */
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.badge {
+  flex: 0 0 auto;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+.badgeRunning { background: var(--cg-accent); }
+.badgeOk { background: var(--cg-green); }
+.badgeFail { background: var(--cg-red); }
+.badgeSkip { background: var(--cg-ink-3); }
+
+/* ---------- Metadata map ---------- */
+
+.metadataMap {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.5rem 0.75rem;
+  border: 1px solid var(--cg-border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: var(--cg-surface);
+}
+
+.metadataNum {
+  grid-column: 1;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--cg-accent-bg);
+  color: var(--cg-accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.metadataItem {
+  grid-column: 2;
+  font-size: 0.85rem;
+  padding-top: 0.15rem;
+}
+
+.metadataItem strong {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.metadataItem span {
+  color: var(--cg-ink-3);
+}
+
+/* ---------- Note anatomy ---------- */
+
+.noteCard {
+  border: 1px solid var(--cg-border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: var(--cg-surface);
+  margin-bottom: 0.75rem;
+}
+
+.noteKind {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+
+.noteKindNew {
+  background: var(--cg-green-bg);
+  color: var(--cg-green-ink);
+}
+
+.noteKindFixed {
+  background: var(--cg-amber-bg);
+  color: var(--cg-amber-ink);
+}
+
+.noteText {
+  font-size: 0.88rem;
+}
+
+.noteTag {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  background: var(--cg-panel);
+  color: var(--cg-ink-2);
+  margin-left: 0.35rem;
+}
+
+/* ---------- Work item flow ---------- */
+
+.flowGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flowBox {
+  flex: 1 1 10rem;
+  border: 1px solid var(--cg-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  background: var(--cg-surface);
+  font-size: 0.82rem;
+}
+
+.flowBox strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.flowArrow {
+  flex: 0 0 auto;
+  color: var(--cg-ink-3);
+}
+
+.flowDest {
+  border-color: var(--cg-accent);
+  background: var(--cg-accent-bg);
+}

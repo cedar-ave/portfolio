@@ -1,0 +1,66 @@
+---
+title: "Types of publications"
+section: "Release notes"
+---
+
+# Types of publications
+
+**Jump to**
+- [Release notes](#release-notes)
+- [Known issues](#known-issues)
+- [Critical and high bugs](#critical-and-high-bugs)
+- [Quarterly recaps](#quarterly-recaps)
+
+:::note
+Publications are posted on the Clearpath Community Releases wiki.
+:::
+
+## Release notes
+
+Release notes are generated from Azure DevOps work items. See [Work item logic](./27-work-item-logic).
+
+| Subtype | What it is | Work item type | Location of source content | How it's published | How it's refreshed |
+| --- | --- | --- | --- | --- | --- |
+| What's new items | New functionality | Product Backlog Item or Feature | release-notes repo | Local scripts | Local scripts |
+| Fixed bug | Fixed bug | Bug | release-notes repo | Local scripts | Local scripts |
+
+:::tip
+[How to change, add, or remove release notes](./32-review-release-notes#add-remove-or-change-a-release-note)
+:::
+
+## Known issues
+
+Known issues are generated from Azure DevOps work items. See [Work item logic](./27-work-item-logic).
+
+| Subtype | What it is | Work item type | Location of source content | How it's published | How it's refreshed |
+| --- | --- | --- | --- | --- | --- |
+| N/A | Active bug | Bug | Azure DevOps queries (one per Classic edition release) | Build pipelines (one per Classic edition release) | Automatic trigger for the pipelines every four hours |
+
+Product categories with no notes are removed on release notes pages on Clearpath Community. They remain on known issues pages.
+
+:::tip
+[How to change, add, or remove known issues](./36-update-known-issues-report)
+:::
+
+## Critical and high bugs
+
+Critical and high bugs reports are generated from Azure DevOps work items. See [Work item logic](./27-work-item-logic). The report is separated into two lists: open and closed.
+
+| Subtype | What it is | Work item type | Location of source content | How it's published | How it's refreshed |
+| --- | --- | --- | --- | --- | --- |
+| Open in Classic edition | Open bug with a **Critical** or **High** status | Bug | Azure DevOps query | Build pipelines | Automatic trigger for the pipelines every four hours |
+| Closed in Classic edition, past 60 days | Closed bug with a **Critical** or **High** status closed in the past 60 days | Bug | Azure DevOps query | Build pipelines | Automatic trigger for the pipelines every four hours |
+
+:::tip
+[How to change, add, or remove critical and high bugs](./38-update-critical-and-high-bugs-report)
+:::
+
+## Quarterly recaps
+
+Each quarter, the platform team publishes a high-level recap on Clearpath Community of recent changes. See [Quarterly recaps](./41-quarterly-recaps).
+
+:::note[Admins]
+- [Release notes setup](./34-release-notes-setup)
+- [Known issues setup](./37-known-issues-setup)
+- [Critical and high bugs setup](./39-critical-and-high-bugs-setup)
+:::

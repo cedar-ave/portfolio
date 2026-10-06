@@ -1,0 +1,29 @@
+---
+title: "Update known issues report"
+section: "Release notes"
+---
+
+# Update known issues report
+
+Known issues are generated from Azure DevOps queries that return work items that meet the criteria in [Work item logic](./27-work-item-logic).
+
+When the **State** of a work item returned in the query changes to **Closed**, it's no longer published as a known issue. It's published as a fixed bug. See [Prepare release notes for review](./31-prepare-release-notes-for-review).
+
+Known issues are published on the **Known issues** pages of the Clearpath Community Releases wiki.
+
+## Choose work items to become known issues
+
+Follow the steps in [Fill out work items](./29-fill-out-work-items).
+
+## Add, remove, or change a known issue
+
+- To add or remove a known issue, change the work item's **Publish** field.
+- To change the text, edit the work item's **Release note** field.
+- To change which product categor(ies) it's published under, change the work item's **Product(s) Affected** field.
+- To change which Classic edition version known issues Clearpath Community page(s) it's published on, change the work item's **Version(s) Affected** field.
+
+Changes are published on Clearpath Community with the next automatic refresh. See [Refresh known issues and critical and high bugs](./40-refresh-known-issues-and-critical-and-high-bugs).
+
+:::note[Admins]
+[Known issues setup](./37-known-issues-setup)
+:::

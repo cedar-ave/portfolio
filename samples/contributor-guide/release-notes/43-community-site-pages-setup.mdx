@@ -1,0 +1,124 @@
+---
+title: "Community site pages setup"
+section: "Release notes"
+---
+
+# Community site pages setup
+
+**Jump to**
+- [Prerequisites to post HTML to Clearpath Community with the REST API](#prerequisites-to-post-html-to-clearpath-community-with-the-rest-api)
+  - [Base-64 encoded API token](#base-64-encoded-api-token)
+  - [Get IDs](#get-ids)
+- [Send the HTML file to Clearpath Community](#send-the-html-file-to-clearpath-community)
+- [Customize the CSS](#customize-the-css)
+- [Create a page](#create-a-page)
+- [Move, hide, or unhide a page](#move-hide-or-unhide-a-page)
+
+Release notes, known issues, and critical and high bug reports are posted as HTML files to Clearpath Community using the REST API. Quarterly recaps are manually entered and maintained in a Clearpath Community blog post.
+
+The steps to generate the HTML files and post them to Clearpath Community are executed in local scripts and release pipelines. The information on the rest of this page is for reference.
+
+:::note[Admins]
+See:
+- [Release notes setup](./34-release-notes-setup)
+- [Known issues setup](./37-known-issues-setup)
+- [Critical and high bugs setup](./39-critical-and-high-bugs-setup)
+:::
+
+## Prerequisites to post HTML to Clearpath Community with the REST API
+
+The HTML file is sent to a wiki page using the Clearpath Community API. This requires a Wiki ID and Wiki Page ID. The Wiki page ID is in the page's URL. To get a Wiki ID, you need a Group ID.
+
+### Base-64 encoded API token
+
+#### Steps
+
+- Clearpath Community > Avatar at top right > **Settings** > Scroll down to **API Keys** > Click **Manage application API keys**. Copy your key.
+- Go to something like a base64 encoder > Click **Encode** at top of page > Enter `API_KEY:user.name` > Click **Encode**. This is your REST user token.
+
+### Get IDs
+
+#### Group ID
+
+```curl
+curl -H "Rest-User-Token: API_KEY" -X GET https://<community-site>/api.ashx/v2/groups.json?IncludeAllSubGroups=true > groups.json
+```
+
+#### Wiki ID
+
+See some Wiki IDs in a reference file in the webhook-storage repo.
+
+```curl
+curl -H "Rest-User-Token: API_KEY" -X GET https://<community-site>/api.ashx/v2/groups/GROUP-ID/wikis.json > wikis.json
+```
+
+#### Wiki Page ID
+
+This is also in the page's URL.
+
+```curl
+curl -H "Rest-User-Token: API_KEY" -X GET https://<community-site>/api.ashx/v2/wikis/WIKI-ID/pages.json > wiki-pages.json
+```
+
+#### If you don't see all objects returned
+
+Clearpath Community limits the number of objects returned with a call. For example, if you send a call for the Group IDs and not all are returned, it may be because more exist than the limit. To see more, customize and add `PageIndex` and `PageSize` after **.json**:
+
+```plaintext
+?PageIndex=1&PageSize=100
+```
+
+##### Example
+
+```curl
+curl -H "Rest-User-Token: API_KEY" -X GET https://<community-site>/api.ashx/v2/groups.json?IncludeAllSubGroups=true?PageIndex=1&PageSize=100 > groups.json
+```
+
+##### Automated script
+
+For each type of Clearpath Community content, the **api.sh** script automatically loops through each set of 100 objects and compiles them into one JSON file. See prerequisites at the top of the script. Other scripts in the directory accomplish similar tasks.
+
+## Send the HTML file to Clearpath Community
+
+```curl
+curl -v -H "Rest-User-Token: API_KEY" -H "Rest-Method: PUT" -F "Body=<file.html" POST https://<community-site>/api.ashx/v2/wikis/WIKI_ID/pages/PAGE_ID.json
+```
+
+### Example
+
+```curl
+curl -v -H "Rest-User-Token: API_KEY" -H "Rest-Method: PUT" -F "Body=<file.html" -X POST https://<community-site>/api.ashx/v2/wikis/18/pages/3820.json
+```
+
+In the command above, the Wiki ID is `18`. The Content ID is `3820`.
+
+## Customize the CSS
+
+Clearpath Community accepts custom styles, but in some cases, they may need to be inline. To apply styles from a CSS file to a file as inline styles:
+
+```plaintext
+install juice -g
+juice --css style.css input.html output.html
+```
+
+:::note
+**style.css** in the release-notes repo
+:::
+
+The Azure DevOps pipelines execute this step.
+
+## Use the API to return other content types
+
+See examples in the webhook-storage repo.
+
+## Create a page
+
+Use the UI to create a page in a wiki. A test space is the **Testing SDK** test group's **Releases** wiki.
+
+To post the HTML to the test page, see the example above.
+
+## Move, hide, or unhide a page
+
+From within a wiki, click the pencil at the top-left of the page > **Manage Wiki** > **Table of Contents**. Drag and drop the page.
+
+Hide and unhide pages in the wiki's **Table of Contents** settings.

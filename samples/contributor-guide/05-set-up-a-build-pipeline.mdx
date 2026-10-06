@@ -1,0 +1,76 @@
+---
+title: "Set up a build pipeline"
+section: "Get started"
+---
+
+# Set up a build pipeline
+
+We use Azure DevOps pipelines to build and publish the Docs site content to the web. Each docs project needs its own pipeline.
+
+You can use the same pipeline to publish from any of your Azure DevOps branches to either the Production site, the Development site, or to both.
+
+## Check for an existing pipeline
+
+If you're working in a project that's been around for a while, check for an existing pipeline before creating a new one. Duplicate pipelines can cause confusion.
+
+To check for existing pipelines, do the following:
+
+1. Navigate to your repository in Azure DevOps.
+1. Click **Pipelines** in the left navigation pane.
+1. Enter the name of your repo in the **Filter pipelines** box in the upper right corner. The pipeline name should be the same as the repo name.
+    - If there is an existing pipeline, don't create a new one. Instead, use the steps in [Publish the docs](./06-publish-the-docs) to run that pipeline.
+    - If you don't see a pipeline for your project, proceed with the steps below to create one.
+
+## Steps
+
+The workflow for setting up a build pipeline is as follows:
+
+1. [Configure](#step-1-configure-the-project-build-variables) the build variables in your project source files.
+1. [Create](#step-2-create-the-build-pipeline) the pipeline in Azure DevOps.
+1. [Test](#step-3-test-the-build-pipeline) the pipeline to confirm that it works as expected.
+
+### Step 1: Configure the project build variables
+
+1. Decide on a name for the folder that will hold the docs output on the web server. This folder name becomes part of the doc site URL. To be consistent with other existing projects, use all lower-case letters, with hyphens between words (no blank spaces).
+
+    :::note[Example]
+    A product's docs might be in a directory named `example-product`. That folder name appears at the end of the URL to access that product's docs site.
+    :::
+
+1. Reach out to the docs platform team to request that a new directory be added to the Docs site blob. Make sure to share what the folder name should be.
+
+   :::note
+   This step is not necessary for members of the Product Content team.
+   :::
+
+1. Open the project's source files, either in a local clone or directly in Azure DevOps. Although normally it's not a good idea to work directly in the `main` or `master` branch, for this procedure, it's okay to do so.
+
+1. Open the `builds/variables.yml` file, which should be at the root level of the project.
+
+1. In Line 7 of the `builds/variables.yml` file, enter the folder name that you decided on for the product.
+
+1. If you're working on a project that stores the docs code in the same repo with the product code, you also must set the following two variables:
+    - For the **DocsRootDirectory**, enter the path to the docs root directory in source control (usually `''` or `'/docs'`).
+    - **RunDocfxMetadata** is used by projects that automatically generate API documentation from source code.
+
+1. Save and commit your updates. If you were working in a local clone, you also must publish your updates to Azure DevOps. If you were working in a branch other than `main`/`master`, create a pull request to bring the updates into the `main`/`master` branch.
+
+### Step 2: Create the build pipeline
+
+There is more than one way to create a build pipeline. This method should work for either a new or an existing repo.
+
+1. Open your repo in Azure DevOps.
+1. Click **Pipelines** in the left navigation pane.
+1. Click **New pipeline** in the upper right.
+1. Click **Azure Repos Git.**
+1. Select your repository.
+1. Click **Existing Azure Pipelines YAML file**.
+1. Verify that either `main` or `master` is selected for the branch. The pipeline will run automatically any time you check in to that branch. You'll also have the option to run the pipeline manually from other branches.
+1. Select **builds/publish.yaml** for the Path.
+1. Click **Continue.**
+1. Click the arrow on the right side of the **Run** button and select **Save**.
+1. Click **Pipelines** in the left navigation bar, and then verify that you can see your newly created pipeline in the list.
+
+### Step 3: Test the build pipeline
+
+Run a manual build of the pipeline to the Dev environment to confirm that the pipeline successfully publishes the output. See [Publish the docs](./06-publish-the-docs) for detailed instructions on running a pipeline.

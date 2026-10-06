@@ -1,0 +1,99 @@
+---
+title: "REST API docs"
+section: "Get started"
+---
+
+# REST API docs
+
+## Find the source files
+
+### Landing page
+
+#### Classic edition
+
+**Platform** repo > **articles** > **api-reference** > **rest-api** > **rest-api-landing-page.md**
+
+#### Cloud edition
+
+Currently pointing to Classic edition source files
+
+### Conceptual
+
+#### Classic edition
+
+**Platform** repo > **articles** > **dos-services**
+
+#### Cloud edition
+
+Currently pointing to Classic edition source files
+
+### Reference
+
+DocFx generates REST API docs from Swagger files in a **restapi** directory at the root of a docs source. Example:
+
+```plaintext
+articles/
+builds/
+restapi/
+docfx.json
+index.md
+```
+
+#### Classic edition
+
+Platform repo
+
+#### Cloud edition
+
+docs-template.fork.dos-docs-infrastructure
+
+## Change the API docs
+
+- To change them: Add, remove, or replace a **.json** file in **restapi**.
+- To change their order on the site: Update **restapi/toc.yml**.
+
+## How to get a JSON file from Swagger
+
+Try some form of the following. Also adjust the version. These may no longer be accurate.
+
+### Examples
+| Service | Example location |
+| --- | --- |
+| Authorization Service | https\<nolink>://server/Authorization/swagger/ui/swagger.json |
+| Data-Processing Service V1 | http\<nolink>://server/DataProcessingService/docs/v1/swagger |
+| Data-Processing Service V2 | https\<nolink>://server/DataProcessingService2/swagger/ui/index |
+| Discovery Service | https\<nolink>://server/DiscoveryService/swagger/swagger.json |
+| IDEA | http\<nolink>://server/idea/docs/v1/swagger |
+| Identity Service | https\<nolink>://server/identity/swagger/ui/index/v1/swagger.json |
+| Identity Provider Search Service | https\<nolink>://server/IdentityProviderSearchService/swagger/ui/swagger.json |
+| Metadata Service V1 | https\<nolink>://server/MetadataService/swagger/swagger.json |
+| Metadata Service V2 | https\<nolink>://server/MetadataService2/swagger/swagger.json |
+
+## If necessary, downgrade the JSON file from OpenAPI to Swagger 2
+
+Currently DocFx does not support OpenAPI.
+
+See the api-spec-converter project on GitHub.
+
+## Write a description
+
+A description must be at the top of the JSON file for the landing pages to generate correctly. Example:
+
+```json
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "swagger.json",
+    "description": "The Metadata Database V2 stores information about source systems and data marts within the platform. Client applications can insert, update, remove, and retrieve information from the Metadata Database by issuing HTTP requests to the Metadata Service V2. The Metadata Service V2 has newer routes to make managing data marts easier. It uses Fabric.Identity.",
+    "title": "Clearpath.Metadata.V2.WebService"
+  }
+}
+```
+
+## For admins only
+
+Use scripts to add a tags object to the end of each Swagger file and generate landing pages for each API.
+
+## Troubleshoot
+
+See [API already defined build error](./troubleshoot/24-api-already-defined-build-error).

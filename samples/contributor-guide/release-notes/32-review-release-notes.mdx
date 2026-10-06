@@ -1,0 +1,147 @@
+---
+title: "Review release notes"
+section: "Release notes"
+---
+
+# Review release notes
+
+**Jump to**
+- [Monitor Slack](#monitor-slack)
+- [Review the pull request](#review-the-pull-request)
+- [Find a missing note](#find-a-missing-note)
+  - [Possible reasons a note is missing](#possible-reasons-a-note-is-missing)
+- [Add comments and ask questions in the pull request](#add-comments-and-ask-questions-in-the-pull-request)
+- [Add, remove, or change a release note](#add-remove-or-change-a-release-note)
+- [Approve the pull request](#approve-the-pull-request)
+
+:::important
+Changes to Azure DevOps work item fields are meaningless after the pull request is created. Change the Markdown file in the pull request.
+:::
+
+The person who prepares the release notes for review in the [Prepare release notes for review](./31-prepare-release-notes-for-review) step creates a pull request in the release-notes repo that includes reviewers who should approve release notes before publication.
+
+## Monitor Slack
+
+When the pull request is created, a link posts automatically to the engineering program management channel in Slack. The channel is notified with a `@here` notification. The deadline to review is generally for 24 hours.
+
+## Review the pull request
+
+A Markdown file of release notes has two sections: **What's new** and **Fixed bugs**. See [Types of publications](./26-types-of-publications#release-notes).
+
+Verify that:
+- Each note is accurate (the person who prepares the release notes for review edits the notes to follow the [Writing guidelines](./30-release-notes-writing-guidance))
+- Each note is in the appropriate section (a fixed bug may be better categorized as a new feature or vice versa)
+- A note should be added (see [Find a missing note](#find-a-missing-note))
+- A note should be removed (see below)
+
+## Find a missing note
+
+At the bottom of the Markdown file is a table of all work items generated in the [Generate the notes by comparing releases](./31-prepare-release-notes-for-review#generate-the-notes-by-comparing-releases) step that don't meet the required logic to be included in the **What's new** and **Fixed bugs** sections. For example:
+
+```markdown
+| Area path | Work item title | Release note | Products | ID | Type |
+|-----------|------------------|---------------|----------|----|------|
+| Platform\Data Governance | Subsets cannot be edited | | | 369351 | Bug |
+| Platform\Data Governance | IDEA API only returns top 50 identity roles | | | 371550 | Bug |
+| Platform\GDP-Compiler | Update the R articles in Clearpath Docs | | | 369588 | PBI |
+| Platform\TechPlatform\Core | Classic edition install on Windows 11 fails | | | 331629 | Bug |
+```
+
+This table is removed before publication. Review it to see if a work item in the table should be in the **What's new** or **Fixed bugs** sections. Make changes in the Markdown file, not the work items.
+
+### Possible reasons a note is missing
+
+- Required fields are not marked on an Azure DevOps work item
+- Required fields are marked after the notes are generated
+
+## Add comments and ask questions in the pull request
+
+- **For the PR**: Click **Add a comment** on the **Overview** tab.
+- **For a file**: On the **Files** tab, click the three stacked dots next to the file > **Add comment**.
+- **For line(s) in a file**: On the **Files** tab, click the file. Hover next to a line number and click the comment bubble icon.
+
+## Add, remove, or change a release note
+
+**Jump to**
+- [Option 1: Use the Azure DevOps online editor](#option-1-use-the-azure-devops-online-editor)
+- [Option 2: Use VS Code](#option-2-use-vs-code)
+
+### Option 1: Use the Azure DevOps online editor
+
+**Jump to**
+- [Prerequisites](#prerequisites)
+- [Change the notes](#change-the-notes)
+- [Create a pull request](#create-a-pull-request)
+
+#### Prerequisites
+
+- Write access in Azure DevOps to the release-notes repo
+
+#### Change the notes
+
+- Open the link to the pull request.
+- Click the **Files** tab.
+- Next to the file to edit, click the three stacked dots > **Open in File Explorer**.
+- Click **Edit**.
+- Change the content.
+- Click **Commit**.
+- Enter in a description of what you changed.
+- **Important!** Change the branch name.
+- Check the **Create a pull request** box.
+
+#### Create a pull request
+
+- Add reviewers. Some repos don't require you to add reviewers to a pull request.
+- Click **Create**.
+
+### Option 2: Use VS Code
+
+**Jump to**
+- [Prerequisites](#prerequisites-1)
+- [Clone the repo (first time only)](#clone-the-repo-first-time-only)
+- [Find the release notes file](#find-the-release-notes-file)
+- [Change the doc](#change-the-doc)
+- [Commit and sync changes](#commit-and-sync-changes)
+
+#### Prerequisites
+
+- Write access in Azure DevOps to the repo with the docs
+- Git installed
+- VS Code installed
+
+#### Clone the repo (first time only)
+
+- Go to the release-notes repo in Azure DevOps online.
+- At the top right of the page, click **Clone**.
+- Copy the URL under the heading **Command line**.
+- On your machine, open a command line tool in the directory you want to clone the repo.
+- Type `git clone` and paste the URL.
+
+```git
+git clone <release-notes-repo-url>
+```
+
+#### Find the release notes file
+
+- Open VS Code.
+- Go to **File** > **Open folder**.
+- Select the directory with the cloned release-notes repo.
+- Run `git fetch` and `git pull`.
+- Click `master` or `main` in the bottom left of the window.
+- Click the branch of the pull request. It is named something like `1-jan-2022-notes`.
+- Sync.
+
+#### Change the doc
+
+- Browse files in the **Explorer** pane.
+- Change the file.
+
+#### Commit and sync changes
+
+- The **Source Control** pane shows files you changed, added, or removed. Add a commit message like `Added a release note`.
+- Click **Commit**.
+- Click **Sync changes**.
+
+## Approve the pull request
+
+Click **Approve** on the pull request.

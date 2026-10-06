@@ -1,0 +1,189 @@
+---
+title: "Prepare release notes for review"
+section: "Release notes"
+---
+
+# Prepare release notes for review
+
+:::note
+See [Fill out work items](./29-fill-out-work-items) to identify notes to review and publish.
+:::
+
+**Jump to**
+- [Create a new branch in the release-notes repo](#create-a-new-branch-in-the-release-notes-repo)
+- [Update parameters](#update-parameters)
+- [Generate the notes by comparing releases](#generate-the-notes-by-comparing-releases)
+- [Export release notes to the repo](#export-release-notes-to-the-repo)
+- [Install prerequisites to generate notes (one time only)](#install-prerequisites-to-generate-notes-one-time-only)
+- [Transform the notes from HTML to Markdown](#transform-the-notes-from-html-to-markdown)
+- [Fix list of all work items associated with the release](#fix-list-of-all-work-items-associated-with-the-release)
+- [Edit the notes](#edit-the-notes)
+- [If necessary, update the table of contents programmatically](#if-necessary-update-the-table-of-contents-programmatically)
+- [Push changes to the repo](#push-changes-to-the-repo)
+- [Create a pull request for PMs](#create-a-pull-request-for-pms)
+
+:::note
+Classic edition releases include Classic edition, Template Designer, and Data Mart Designer.
+:::
+
+## Create a new branch in the release-notes repo
+
+- (First time only) Clone the release-notes repo locally:
+
+```git
+git clone <release-notes-repo-url>
+```
+
+- If you already cloned in the past, pull `master`.
+- Create a new branch - something like `1-jan-2022-notes`.
+- Sync.
+
+## Update parameters
+
+- Go to the Release Notes extension.
+- Open a template:
+
+| Release | Template to select |
+| --- | --- |
+| Classic edition | **Classic edition What's New** |
+| Template Designer and/or Data Mart Designer | **Classic Template/Data Mart Designer What's New** |
+
+- On the **Work items** tab, click **Clear** to remove the work items added the last time the template was used.
+- On the **Parameters** tab:
+
+| Release | Parameter(s) to change |
+| --- | --- |
+| All | Add the release date in **releaseDate**. The convention is `7 June 2022`. |
+| Classic edition\* | Add the new Classic edition version in **versionDos**. |
+| Template Designer and/or Data Mart Designer\*\* | If a new Template Designer version is released, add the version number in **versionSamd**. If a new Data Mart Designer version is released, add the version number in **versionSmd**. |
+
+\* Classic edition releases are named with a convention like **Release-33**. The Release Notes extension compares releases using these names. However, the published release notes don't include this name. They include the actual Classic edition version, like **2022.06.077**. See the Release pipeline to see which name goes with which version.
+
+\*\* If only Template Designer or Data Mart Designer is released, don't remove the one that isn't released from the Release Notes extension template before exporting it. We'll remove it in a later step.
+
+Don't worry about the other parameters.
+
+## Generate the notes by comparing releases
+
+On the **Work items** tab:
+
+### Repetition 1
+
+- Click **Add**.
+- Click **Release**.
+- Select a release:
+
+| Release | Template to select |
+| --- | --- |
+| Classic edition | **Release Classic edition** |
+| Template Designer | **Release Template Designer** |
+| Data Mart Designer | **Release Data Mart Designer** |
+
+- Skip the **Environment** dropdown.
+- In the **Release** dropdown, select the current release.
+- In the **Choose your base release to compare to** dropdown, select the most recent release.
+- Check only the **All directly associated** box.
+- Click **Add work items**.
+- Click **Save**.
+
+### Repetition 2
+
+- Repeat all steps except to uncheck the **All directly associated** box and select **Bug**, **Feature**, and **Product Backlog Item**.
+- Click **Add work items**.
+- Click **Save**.
+
+## Export release notes to the repo
+
+- Click **Export**.
+- Under **Format**, select **HTML**.
+- Under **Target**, select **Repository**.
+- Under **Save to repository**, select **release-notes**.
+- Under **Branch**, select the branch you created in step 2 of the [Create a new branch in the release-notes repo](#create-a-new-branch-in-the-release-notes-repo) section above.
+- Under **Path**, name the file with this convention: `YYYY-MM-DD.html`. Use the upcoming release date.
+  - **Note**: Using the precise naming convention is critical. The script functions based on this convention. Include zeros, like `2022-06-01`.
+- Click **Save**.
+- Click **Save** again.
+
+## Install prerequisites to generate notes (one time only)
+
+- Bash
+- Perl
+- Pandoc
+  - Using Chocolatey, run `choco install pandoc`.
+- Juice
+  - Run `install juice -g`.
+
+## Transform the notes from HTML to Markdown
+
+- Open the release-notes repo in VS Code.
+- Run `git fetch`.
+- Run `git pull`.
+- Go to the branch you created in the [Create a new branch in the release-notes repo](#create-a-new-branch-in-the-release-notes-repo) section above.
+- Find the **YYYY-MM-DD.html** file at the root of the repo. Move it to the root of the **YYYY** directory (e.g, **2022**).
+- Open **scripts/years** in the terminal.
+- Run `./1_html-to-md.sh`.
+
+## Fix list of all work items associated with the release
+
+At the end of the file is a list of all work items associated with the release. This was requested by PMs. If the transformation from HTML to Markdown produces something like `[TABLE]`:
+
+- Go back to the Release Notes extension.
+- Click **Export**.
+- Under **Format**, select **Markdown**.
+- Under **Target**, select **Download**.
+- Enter any filename.
+- Locate the file on your local machine and open.
+- Copy the table at the end of the file.
+- In **YYYY/YYYY-MM-DD/YYYY-MM-DD.md**, replace `[TABLE]` with the copied table.
+
+## Edit the notes
+
+- Find the Markdown file of the notes under **YYYY/YYYY-MM-DD/YYYY-MM-DD.md**.
+  - **Note**: The **toc** directory contains the files used to generate a table of contents that is inserted automatically at the top of the Markdown file. Ignore it.
+- Use the VS Code search field to search the entire repo for each work item number in the Markdown file. Often a work item included in the notes exported from the Release Notes extension was already published with a previous release. Remove any notes from the Markdown file that were already published.
+- *For a Template Designer or Data Mart Designer release*: If only Template Designer or only Data Mart Designer was released, remove the the version line of the app not released from the top of the file.
+- Don't change the table of contents. If it needs to be updated, we do it automatically later.
+- Edit the notes. See [Writing guidance](./30-release-notes-writing-guidance).
+
+## If necessary, update the table of contents programmatically
+
+The table of contents contains links to headings of **What's new** release notes. The heading is generated from the title of the work item. If you update a heading, you don't need to update the table of contents manually to match. Instead, manually execute a script to regenerate the table of contents:
+
+- Open **scripts** > **years** > **only-toc-on-existing-md.sh** file for editing.
+- Change the variables on lines 6, 7, and 8 to match the date in the filename of the **YYYY-MM-DD.md** file. Include zeros, like `06` for June.
+- Delete the table of contents items in **YYYY-MM-DD.md**. Don't delete **Contents** or **Scroll up slightly after the jump**.
+- Open **scripts/years** in the terminal.
+- Run `./only-toc-on-existing-md.sh`.
+- Remove any unnecessary blank lines added in the Markdown file.
+
+## Push changes to the repo
+
+- Commit the changes and push the commit in VS Code.
+
+## Create a pull request for PMs
+
+- Go to the release-notes repo page.
+- Click **Pull requests**.
+- Click **Create a pull request**.
+- In the **Title** field, enter a title like `11 July 2022 release notes`.
+- For the **Reviewers** field:
+  - Open the most recently completed pull request by clicking **Pull requests** > **Completed**.
+    - For a Classic edition release, select the most recent Classic edition release.
+    - For a Template Designer and/or Data Mart Designer release, select the most recent Template Designer and/or Data Mart Designer releases.
+  - Add the reviewers from the most recently completed pull request to the pull request you're creating.
+  - Remove users who are no longer in a role that requires review.
+  - Add users who are new to a role that requires review. If the pull request fails because the user doesn't have access to the repo, submit a ticket to IT.
+- Click **Create**.
+- A link to the pull request is automatically posted to the engineering program management channel in Slack. Add a `@here` notification with an arrow to the post.
+  - **Note**: Not all reviewers included on the pull request receive email notifications a pull request is ready for their review.
+- Post a note in the release channel that the release notes are being reviewed.
+- Give reviewers approximately 24 hours to review.
+- Complete the pull request.
+
+:::tip[Next]
+[Review release notes](./32-review-release-notes)
+:::
+
+:::note[Admins]
+[Release notes setup](./34-release-notes-setup)
+:::

@@ -1,0 +1,85 @@
+---
+title: "Release Notes extension setup"
+section: "Release notes"
+---
+
+# Release Notes extension setup
+
+**Jump to**
+- [CSS and Handlebars templates](#css-and-handlebars-templates)
+- [Limitation](#limitation)
+  - [Solution 1: HTML &gt; MD &gt; HTML](#solution-1-html--md--html)
+  - [Solution 2: MD &gt; HTML](#solution-2-md--html)
+  - [Solution 3: Handlebars code (unsuccessful)](#solution-3-handlebars-code-unsuccessful)
+
+The Release Notes extension is a commercial Azure DevOps extension that generates release notes from Azure DevOps work items. Clearpath pays for a block of licenses.
+
+:::note[Reference]
+- Location: Azure DevOps > **Builds and Releases** tab > **Release Notes**
+- Release Notes extension help site
+:::
+
+## CSS and Handlebars templates
+
+:::note[Reference]
+- Release notes templates - Classic edition
+- Release notes templates - Template Designer and Data Mart Designer
+- Known issues templates
+- Critical and high bugs templates - Open bugs
+- Critical and high bugs template - Closed bugs
+- release-notes repo > **backups/release-notes-extension-templates** directory
+:::
+
+## Limitation
+
+Release notes are typed in a custom rich-text HTML **Release Note** field in an Azure DevOps work item.
+
+Logic in the Release Notes extension collects the notes into a list at a release. The list can be exported as HTML or Markdown.
+
+Unfortunately, the rich-text HTML in the **Release Note** field is not always transformed to Markdown when the list is exported from the Release Notes extension as Markdown. For example, the exported file may have something like:
+
+```
+| Note                                                                   | Product |
+|-------------------------------------------------------------------------|---------|
+| New <br>functionality <span style="color: blue">is added</span>         | IDEA    |
+```
+
+To provide PMs with a clean Markdown file to review in a pull request, the faulty export must be cleaned up manually.
+
+### Solution 1: HTML &gt; MD &gt; HTML
+
+Send an HTML file to a wiki page in Clearpath Community. The benefit is that the Release Notes extension export is pure HTML instead of half Markdown and half HTML, arguably making cleanup easier. For context, see [Prepare release notes for review](./31-prepare-release-notes-for-review).
+
+- Export from the Release Notes extension as HTML
+- Transform HTML to Markdown
+  - Clean up exported HTML
+  - Use pandoc to transform HTML to Markdown
+  - Clean up transformed HTML
+- Send Markdown to PMs in a pull request
+- Transform Markdown to HTML supported by Clearpath Community
+  - Transform Markdown to HTML
+  - Clean up HTML
+- Assemble each release notes file (e.g., March 2022, April 2022, etc.) into one file (e.g., 2022)
+- Customize styles (optional)
+- Send the HTML file to Clearpath Community (see [Community site pages setup](./43-community-site-pages-setup))
+
+### Solution 2: MD &gt; HTML
+
+The benefit is that content doesn't have to be transformed twice like in Solution 1.
+
+- Export from the Release Notes extension as Markdown
+- Clean up exported Markdown code
+- Send a pull request as Markdown to PMs
+- Assemble each release notes file (e.g., March 2022, April 2022, etc.) into one file (e.g., 2022)
+- Use pandoc to transform HTML to Markdown
+- Conform CSS to Clearpath Community standards
+- Customize styles (optional)
+- Send the HTML file to Clearpath Community (see [Community site pages setup](./43-community-site-pages-setup))
+
+### Solution 3: Handlebars code (unsuccessful)
+
+The Release Notes extension's support team suggests:
+
+```handlebars
+{{#markdown}}{{{ field-html 'Platform.ReleaseNote' }}}{{/markdown}}
+```

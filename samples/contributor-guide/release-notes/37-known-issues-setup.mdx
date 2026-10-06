@@ -1,0 +1,99 @@
+---
+title: "Known issues setup"
+section: "Release notes"
+---
+
+# Known issues setup
+
+**Jump to**
+
+- [How they're generated](#how-theyre-generated)
+- [How they're published](#how-theyre-published)
+- [How they're refreshed](#how-theyre-refreshed)
+  - [Power Automate flow](#power-automate-flow)
+- [Backend setup](#backend-setup)
+  - [Azure DevOps query](#azure-devops-query)
+  - [Release Notes extension template](#release-notes-extension-template)
+
+## How they're generated
+
+Known issues are generated differently than [release notes](./34-release-notes-setup). Known issues are never in the release-notes repo. Instead, Azure DevOps pipeline build tasks gather the work items from the query, use the Release Notes extension to transform them to publishable known issues, and publish them on the **Known issues** pages of the Clearpath Community Releases wiki.
+
+Azure DevOps builds (names are prepended with `release-notes`):
+
+- Use the Release Notes extension task to:
+  - Gather work items from [Azure DevOps queries](#azure-devops-query)
+  - Filter out work items that don't meet the required [work items logic](./27-work-item-logic)
+  - Use fields marked in the work item to curate a known issue with a description and work item ID
+  - Organize the extracted data into known issues in a tabular format
+  - Organize the known issues by product
+  - Output the known issues as a Markdown file
+  - Publish images
+- Run [local scripts](#code) to prepare the known issues for publication on Clearpath Community:
+  - Transform the Markdown file to an HTML file
+  - Apply CSS styles that support Clearpath Community conventions (e.g., only inline CSS is accepted, tables must meet certain formats)
+  - Publish the known issues HTML files on the **Known issues** pages of the Clearpath Community Releases wiki via the Clearpath Community REST API using cURL
+
+The build YAML files are in the **builds** directory of the **release-notes** repo.
+
+## How they're published
+
+An Azure DevOps build triggered once per day refreshes the Clearpath Community pages. They can also be refreshed manually. See [Refresh known issues and critical and high bugs](./40-refresh-known-issues-and-critical-and-high-bugs).
+
+## How they're refreshed
+
+### Power Automate flow
+
+A scheduled Power Automate flow triggers the builds once each day to refresh of the known issues and critical and high bug reports. A Slack message with a link to each build is sent when the flow triggers.
+
+:::note
+A Power Automate flow can't be co-owned with another team member without allowing all owners to modify connections using the creator's authentication. Keep that in mind before adding a co-owner to this flow.
+:::
+
+## Backend setup
+
+See [Custom fields on Azure DevOps work items](./includes/28-work-item-fields-setup).
+
+### Azure DevOps query
+
+#### Example logic
+
+See [Work item logic](./27-work-item-logic).
+
+### Release Notes extension template
+
+:::note[Reference]
+- Known issues templates
+:::
+
+See [Release Notes extension setup](./42-release-notes-extension-setup).
+
+#### Example label
+
+The template's work items are labeled to drive how they sort and group on the published page.
+
+### Build pipelines
+
+There is one pipeline per Classic edition version. Names are prepended with `release-notes`.
+
+#### YAML build file variables
+
+See [Community site pages setup](./43-community-site-pages-setup#base-64-encoded-api-token) for steps to get a token for the `restUserToken` pipeline variable and get Clearpath Community wiki and wiki page variables.
+
+#### Release Notes extension task
+
+#### Code
+
+Tasks with script code entered directly in them are in the YAML build files.
+
+Local scripts executed by tasks:
+
+- md-to-html.ps1: Transform Markdown exported from the Release Notes extension to HTML
+- prettify-css.ps1: Prepares the HTML to be styled with CSS
+- style.css: Applies inline styles the HTML
+- clean-css-final-output.ps1: Cleans up issues after CSS is applied
+
+#### Tools and packages
+
+- pandoc: Transforms Markdown exported from the Release Notes extension to HTML
+- juice npm package: Applies inline CSS styles to support Clearpath Community conventions

@@ -1,0 +1,67 @@
+---
+title: "Publish release notes"
+section: "Release notes"
+---
+
+# Publish release notes
+
+**Jump to**
+- [Complete the pull request](#complete-the-pull-request)
+- [Resolve changes to the pull request](#resolve-changes-to-the-pull-request)
+  - [If notes have fixed bugs only](#if-notes-have-fixed-bugs-only)
+- [Verify the date the software is released matches the contents of the Markdown file](#verify-the-date-the-software-is-released-matches-the-contents-of-the-markdown-file)
+- [Watch for the software to be posted](#watch-for-the-software-to-be-posted)
+- [Publish the notes to Clearpath Community](#publish-the-notes-to-clearpath-community)
+- [Commit and merge the changes](#commit-and-merge-the-changes)
+- [Add, remove, or change a published release note](#add-remove-or-change-a-published-release-note)
+
+## Complete the pull request
+
+Click **Complete**.
+
+## Resolve changes to the pull request
+
+- In VS Code, go to the `master` branch and sync.
+- Edit if necessary changes PMs made to the pull request.
+- Remove empty product sections.
+- Remove the table of work items at the end.
+
+### If notes have fixed bugs only
+
+If the table of contents is empty except for a link to fixed bugs, remove the table of contents.
+
+## Verify the date the software is released matches the contents of the Markdown file
+
+If necessary, update:
+
+- The first line of the Markdown file
+- The name of the directory with the **YYYY-MM-DD.md** file
+- The name of the **YYYY-MM-DD.md** file
+
+## Watch for the software to be posted
+
+Post the software immediately after the software is posted on Clearpath Community. Notifications the software is posted show on:
+
+- Clearpath Community email notifications (if you are subscribed)
+- In the Clearpath Community channel on Slack
+  - The post includes an up-arrow icon and the text **Classic edition YYYY.MM.vvv Installer**
+
+## Publish the notes to Clearpath Community
+
+- Open **scripts/years** in the terminal.
+- Run `./2_assemble-markdown.sh`. This concatenates all release notes files into a single Markdown file in reverse chronological order.
+  - Compare changes to **YYYY.md** in the VS Code **Source Control** screen to verify the new notes are at the top and a reference in the table of contents is added.
+- Run `./3_md-to-html.sh` to post the notes to Clearpath Community. Your Clearpath Community token must be in the file. Ignore warnings in the terminal about missing images.
+- Verify the notes posted correctly on Clearpath Community.
+
+## Commit and merge the changes
+
+Commit and merge the changes to the `master` branch of the repository. Do not merge changes to `./3_md-to-html.sh` if it includes your Clearpath Community token.
+
+## Add, remove, or change a published release note
+
+Change the appropriate Markdown file in the release-notes repo and run `./2_assemble-markdown.sh` and `./3_md-to-html.sh` to re-publish (see [steps above](#publish-the-notes-to-clearpath-community)). Changes to work item fields are meaningless after the file of notes is exported to the repo.
+
+:::note[Admins]
+[Release notes setup](./34-release-notes-setup)
+:::

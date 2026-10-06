@@ -1,0 +1,73 @@
+---
+title: "Include images"
+section: "Release notes"
+---
+
+# Include images
+
+You can add an image to a Clearpath Community page with the UI editor. However, release notes are posted programmatically using the Clearpath Community REST API. Changes made in the UI editor are overwritten by programmatic updates.
+
+That means that:
+- The image is first uploaded to Clearpath Community cloud storage
+- The URL to the image in cloud storage is procured
+- The URL is included in the Markdown file
+
+## Prerequisites
+
+- jq
+- Clearpath Community API key (see [Prerequisites to post HTML to Clearpath Community with the REST API](./43-community-site-pages-setup#prerequisites-to-post-html-to-clearpath-community-with-the-rest-api))
+
+## Steps
+
+Create a **media** directory in the **YYYY-MM-DD** directory.
+
+Add the images to the **media** directory.
+
+Match the variables in the release-notes repo > **scripts** > **years** > **img.sh** to the date of the **YYYY-MM-DD** directory. For example:
+
+```bash
+year=2021
+month=03
+day=10
+```
+
+Add your Clearpath Community API key in the two lines with `'Rest-User-Token: API_KEY'`. See [Prerequisites](#prerequisites).
+
+Create a **key.json** file with the filename(s) and title(s) you want to give the image(s). For example:
+
+```json
+[
+  {
+    "filename": "data-catalog-details.png",
+    "title": "Data Catalog details"
+  },
+  {
+    "filename": "data-quality-catalog-details.png",
+    "title": "Data Quality Catalog Details"
+  },
+  {
+    "filename": "data-quality-catalog-list.png",
+    "title": "Data Quality Catalog List"
+  }
+]
+```
+
+Open **scripts/years** in the terminal.
+
+Run `./img.sh`.
+
+A **url.txt** file is output to the directory. For example:
+
+```plaintext
+<clearpath-community-file-url-1>
+<clearpath-community-file-url-2>
+<clearpath-community-file-url-3>
+```
+
+Add the URLs in the Markdown file. For example:
+
+```markdown
+![Chart, scatter chart description automatically generated](<clearpath-community-file-url>)
+```
+
+The images are published on the release notes page in the [Publish release notes](./33-publish-release-notes) step.

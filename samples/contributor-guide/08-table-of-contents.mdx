@@ -1,0 +1,115 @@
+---
+title: "Table of contents"
+section: "Get started"
+---
+
+# Table of contents
+
+**Jump to**
+- [How a table of contents is created](#how-a-table-of-contents-is-created)
+- [Change a table of contents](#change-a-table-of-contents)
+- [Add sub-items in a table of contents](#add-sub-items-in-a-table-of-contents)
+  - [Option 1: Point `href` to another **toc.yml** file](#option-1-point-href-to-another-tocyml-file)
+  - [Option 2: Point `href` to a directory](#option-2-point-href-to-a-directory)
+- [Add headings in a table of contents](#add-headings-in-a-table-of-contents)
+- [Add a stamp for deprecated content](#add-a-stamp-for-deprecated-content)
+- [Hide an article in a table of contents](#hide-an-article-in-a-table-of-contents)
+
+## How a table of contents is created
+
+A **toc.yml** file determines the order of articles on the site and what items are called in a table of contents on the site.
+
+Find a **toc.yml** file in a directory structure like `articles/toc.yml` or `articles/{guide-name}/toc.yml`.
+
+## Change a table of contents
+
+Update references in the **toc.yml** file. For example:
+
+```yaml
+- name: Article 1
+  href: article-1.md
+- name: Article 2
+  href: article-2.md
+```
+
+A file can be referenced in more than one **toc.yml** file.
+
+## Add sub-items in a table of contents
+
+### Option 1: Point `href` to another **toc.yml** file
+
+This puts the items in that **toc.yml** file in an expandable section below the content in `name`. This options creates more complete breadcrumbs than the others. Example source files:
+
+**toc.yml**:
+
+```yaml
+- name: Troubleshoot
+  href: troubleshoot/toc.yml
+```
+
+**troubleshoot/toc.yml**:
+
+```yaml
+- name: Troubleshooting article 1
+  href: troubleshooting-1.md
+- name: Troubleshooting article 2
+  href: troubleshooting-2.md
+```
+
+#### Resulting table of contents on the site
+
+```plaintext
+- Troubleshoot
+    Troubleshooting article 1
+    Troubleshooting article 2
+```
+
+### Option 2: Point `href` to a directory
+
+This creates a link to a new page with a table of contents that has the items in **subdirectory/toc.yml**. For example:
+
+**toc.yml**:
+
+```yaml
+- name: Troubleshoot
+  href: troubleshoot/
+```
+
+#### Resulting table of contents on the site
+
+The table of contents item on the landing page...
+
+```plaintext
+Troubleshoot
+```
+
+...links to a new page with this table of contents:
+
+```plaintext
+Troubleshooting article 1
+Troubleshooting article 2
+```
+
+## Add headings in a table of contents
+
+Add a class to a reference in a **toc.yml** file. For example, see the [toc-styles](./admin/includes/49-toc-styles) reference.
+
+Use this feature sparingly.
+
+## Add a stamp for deprecated content
+
+To add a **Deprecated** stamp before an item in the table of contents, see [Stamp](./admin/48-stamp).
+
+## Hide an article in a table of contents
+
+A team might want to document a feature but hide the information before the functionality it describes is released. Also, some pages might clutter search results.
+
+Follow the steps in [Hide an article in a table of contents](#change-a-table-of-contents).
+
+Perform the steps in reverse to restore the article on the site and in search results.
+
+:::note[Admins]
+- See the table of contents reference
+- See the table of contents styles reference
+- See the DocFx documentation on table of contents files
+:::

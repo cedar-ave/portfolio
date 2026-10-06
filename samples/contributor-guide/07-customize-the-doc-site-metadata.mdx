@@ -1,0 +1,55 @@
+---
+title: "Customize the doc site metadata"
+section: "Get started"
+---
+
+import { MetadataMap } from '@site/src/components/ContributorGuideDiagrams';
+
+# Customize the doc site metadata
+
+Each project has several metadata items that need to be customized for the product. These items control which objects appear on the product docs site and where certain links point to.
+
+To edit these metadata items, do the following:
+
+1. Open the `docfx.json` file in your project.
+1. Locate the `globalMetaData` section.
+1. Edit the options for the following items as needed. See the diagram below to identify where each item appears on the docs site when it is enabled.
+
+<MetadataMap />
+
+| # | Item | Configuration information |
+| --- | --- | --- |
+| 1 | Main navigation | Cannot be disabled. Updates to this menu must be made in the **docs.json** file for the Doc site theme. Contact the docs platform team to edit items on this menu. |
+| 2 | Developer menu | Can be enabled or disabled.<br/>- Disable the menu: `"_showDevMenu": "none"`.<br/>- Enable the menu: `"_showDevMenu": ""`. |
+| 3 | Help menu | Icon and drop-down cannot be disabled. The following links should be customized for the product:<br/>- **Community** links to the community site for the product. Set `"hccLink": "/product-folder/"`, where *product-folder* is the part of the URL that follows the community site's domain. For example, the metadata setting for Example Insights would be `"hccLink": "/example-insights/"`.<br/>- **Product Information** links to the data sheet for the product. Set `"prodCatLink": "/table-of-contents/path-to-data-sheet"`, replacing *path-to-data-sheet* with the part of the URL that follows the product catalog site's domain. For example, the metadata setting for Example Insights would be `"prodCatLink": "/table-of-contents/products/example-insights/"`. |
+| 4 | Version menu | Can be enabled or disabled. When enabled, set the version ID variable and then write JavaScript in product.js to select the ID and populate the dropdown.<br/>- To disable the menu, set `"_showVersionDropdown": "none"`.<br/>- To enable the menu, set `"_showVersionDropdown": ""`.<br/>- To specify where the version ID file is, set `"_versionDropdownID":"yourIDhere"`. |
+| 5 | Home link | Cannot be disabled.<br/>- Set `"_homePath":"/your-path/"` replacing *your-path* with the path of the doc site URL that follows the docs site's domain.<br/>- **Example:** For Example Insights, the metadata setting would read `"_homePath":"/example-insights/"`. |
+| 6 | Affix menu | Whole menu and individual links can be enabled or disabled, both globally and on individual pages.<br/>- Set `"_enableAffix": true` to enable the menu.<br/>- Set `"_enableAffix": false` to disable the menu.<br/>- See the Affix section in the Metadata topic to see the list of options available for this menu. |
+| 7 | Feedback form | Can be enabled/disabled. Provides a way for readers to give us feedback on the page.<br/>- Set `"enableFeedback": true` to enable feedback.<br/>- Set `"enableFeedback": false` to hide the feedback form. |
+| 8 | Contributor options | Can be enabled/disabled. Provides a way for other Clearpath staff to submit changes for the page. See Reader Contributions in the Metadata article for details. |
+
+## More information about global and topic metadata
+
+There are additional global and topic-level metadata options beyond those listed above. To learn more about these, see the Metadata reference.
+
+## Turn on the metadata build step
+
+The metadata build step produces .NET reference API documentation. The metadata build step isn't required for repos that don't build metadata. It isn't included by default in the forked template.
+
+## Enable the metadata build step in a build
+
+Add these lines to **gulpfile.ts**.
+
+Add these lines to **docfx.json**.
+
+## Update the fork
+
+```cmd
+git fetch upstream
+git merge upstream/main
+```
+
+Then run:
+```cmd
+npm update
+```

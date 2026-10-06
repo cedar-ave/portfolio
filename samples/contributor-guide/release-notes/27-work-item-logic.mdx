@@ -1,0 +1,43 @@
+---
+title: "Work item logic"
+section: "Release notes"
+---
+
+import { WorkItemFlow } from '@site/src/components/ContributorGuideDiagrams';
+
+# Work item logic
+
+Release notes, known issues, and critical and high bugs are generated from Azure DevOps queries that return work items that meet the following criteria:
+
+## Logic
+
+<WorkItemFlow />
+
+| Work item type | State | Severity | Publish | Under the section |
+| --- | --- | --- | --- | --- |
+| Feature or product backlog item | Closed | N/A | Yes | **What's new** item |
+| Bug | Closed | N/A | Yes | Fixed bug |
+| Bug | &lt;&gt; Closed | N/A | Yes | Known issue |
+| Bug | &lt;&gt; Closed | Critical or High | N/A | Critical bug, open |
+| Bug | Closed in the past 60 days | Critical or High | Yes | Critical bug, closed |
+
+:::note
+See [Fill out work items](./29-fill-out-work-items).
+:::
+
+The following fields are on the **RN** tab of all Features, Product Backlog Items, and Bugs in Azure DevOps.
+
+| Field | What it is | Type |
+| --- | --- | --- |
+| Publish | Dropdown to indicate if the work item should be published as a note | Single-select |
+| Release Note | Field to write the release note | Rich HTML text |
+| Product(s) Affected | Dropdown to select which product(s) the note is about | Multi-select |
+| Version(s) Affected | Dropdown to select which version(s) the note applies to | Multi-select |
+
+## How the fields become notes
+
+Selections determine which work items translate to notes, how notes are organized, and the text they contain.
+
+- [Release notes template setup](./34-release-notes-setup#release-notes-extension-templates)
+- [Known issues template setup](./37-known-issues-setup#release-notes-extension-template)
+- [Critical and high bugs template setup](./39-critical-and-high-bugs-setup#release-notes-extension-templates)

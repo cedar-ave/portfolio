@@ -1,0 +1,49 @@
+---
+title: "Stamp"
+section: "Admin"
+---
+
+# Stamp
+
+:::note[Steps for users]
+See the conventions reference, under "Stamps."
+:::
+
+:::note
+This feature uses the framework in [toc styles](./includes/49-toc-styles).
+:::
+
+## Add a "Deprecated" stamp
+
+To add a stamp with the word *Deprecated* before a table of contents item, add a **toc-deprecated** class in the **toc.yml** file:
+
+```yaml
+ - name: Schedule a job with the Data Processing Service V1
+   href: example-schedule-job-v1.md
+   class: toc-deprecated
+```
+
+## Create additional stamps
+
+Duplicate and rename the following CSS block in **main.css** (site-theme repo > **src/clearpath-docfx-template/templates/clearpath/styles/main.css**) and change the text in `content`. The following CSS may be outdated.
+
+```css
+.toc-deprecated:before {
+  content: "Deprecated " !important;
+  background-color: #008bcc;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: .15px;
+  margin-left: 0px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-right: 4px;
+  padding-left: 6px;
+  padding-top: 3px;
+  padding-right: 3px;
+  padding-bottom: 3px;
+}
+```

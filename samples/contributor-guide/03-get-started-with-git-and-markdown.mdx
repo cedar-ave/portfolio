@@ -1,0 +1,126 @@
+---
+title: "Get started with Git and Markdown"
+section: "Get started"
+---
+
+import { EditPageFooter } from '@site/src/components/ContributorGuideDiagrams';
+
+# Get started with Git and Markdown
+
+:::note
+See [Get help](./includes/51-get-help) if you get stuck.
+:::
+
+**Jump to**
+- [Option 1: Use the Azure DevOps online editor](#option-1-use-the-azure-devops-online-editor)
+  - [Prerequisites](#prerequisites)
+  - [Find the article](#find-the-article)
+    - [Option 1: From the docs site UI](#option-1-from-the-docs-site-ui)
+    - [Option 2: From inside Azure DevOps](#option-2-from-inside-azure-devops)
+  - [Change the doc](#change-the-doc)
+  - [Create a pull request](#create-a-pull-request)
+- [Option 2: Use VS Code](#option-2-use-vs-code)
+  - [Prerequisites](#prerequisites-1)
+    - [Clone the repo](#clone-the-repo)
+  - [Find the article](#find-the-article-1)
+  - [Create a new branch](#create-a-new-branch)
+  - [Change the doc](#change-the-doc-1)
+  - [Preview changes locally](#preview-changes-locally)
+  - [Commit and sync changes](#commit-and-sync-changes)
+  - [Create a pull request](#create-a-pull-request-1)
+
+## Option 1: Use the Azure DevOps online editor
+
+### Prerequisites
+
+- Write access in Azure DevOps to the repo with the docs
+
+### Find the article
+
+#### Option 1: From the docs site UI
+
+Some sites on the Clearpath docs site have an **Edit this page** link at the bottom of each page. Click this link to go to the source page in Azure DevOps.
+
+<EditPageFooter />
+
+#### Option 2: From inside Azure DevOps
+
+- Go to the directory in the repo with the docs.
+- Navigate to the file to change.
+
+### Change the doc
+
+- Click **Edit**.
+- Make your change.
+- Click **Commit**.
+- Enter in a description of what you changed.
+- **Important!** Change the branch name.
+- Check the **Create a pull request** box.
+
+### Create a pull request
+
+- Attach a work item. Some repos don't require you to attach a work item to a pull request.
+- Add reviewers. Some repos don't require you to add reviewers to a pull request.
+- Click **Create**.
+- When the validation build completes successfully, click **Complete**. Pull requests in some repos don't require a validation build.
+
+The Clearpath docs site updates automatically after a short period.
+
+## Option 2: Use VS Code
+
+You can use any Markdown editor. These steps apply to VS Code.
+
+### Prerequisites
+
+- Write access in Azure DevOps to the repo with the docs
+- Git installed
+- VS Code installed
+
+#### Clone the repo
+
+- Go to the repo in Azure DevOps online.
+- At the top right of the page, click **Clone**.
+- Copy the URL under the heading **Command line**.
+- On your machine, open a command line tool in the directory you want to clone the repo.
+- Type `git clone` and paste the repo's URL by right clicking in the command line. For example:
+
+```git
+git clone <repo-url>
+```
+
+### Find the article
+
+- Open VS Code.
+- Go to **File** > **Open folder**.
+- Select the directory with the repo you just cloned.
+
+### Create a new branch
+
+- Click `master` or `main` in the bottom left of the window. Click **Create new branch.**
+- Enter a name like `docs-changes` and press `Enter`.
+
+### Change the doc
+
+- Browse files in the **Explorer** pane.
+- Click **Edit**, make your change, and save the file.
+
+### Preview changes locally
+
+- See [Set up a build pipeline](./05-set-up-a-build-pipeline). The build's error output in the command line identifies broken links, missing anchors, etc.
+
+### Commit and sync changes
+
+- The **Source Control** pane shows files you changed, added, or removed. Add a commit message like `Added documentation on required ports`.
+- Click **Commit**.
+- Click **Sync changes**.
+
+### Create a pull request
+
+- Go to the repo online.
+- Click **Branches** in the left pane.
+- Attach a work item. Some repos don't require you to attach a work item to a pull request.
+- Add reviewers. Some repos don't require you to add reviewers to a pull request.
+- Click **Create**.
+- When the validation build completes successfully, click **Complete**. Pull requests in some repos don't require a validation build.
+
+The Clearpath docs site updates automatically after a short period.

@@ -1,0 +1,89 @@
+---
+title: "Critical and high bugs setup"
+section: "Release notes"
+---
+
+# Critical and high bugs setup
+
+**Jump to**
+- [How they're generated](#how-theyre-generated)
+- [How they're published and refreshed](#how-theyre-published-and-refreshed)
+- [Back-end setup](#back-end-setup)
+  - [Azure DevOps queries](#azure-devops-queries)
+  - [Release Notes extension templates](#release-notes-extension-templates)
+  - [Build pipelines](#build-pipelines)
+    - [Local scripts assemble the report](#local-scripts-assemble-the-report)
+
+## How they're generated
+
+The report of critical and high bugs is generated [the same way as known issues](./37-known-issues-setup#how-theyre-generated).
+
+## How they're published and refreshed
+
+The report of critical and high bugs is [published](./37-known-issues-setup#how-theyre-published) and [refreshed](./37-known-issues-setup#how-theyre-refreshed) the same way as known issues.
+
+## Back-end setup
+
+See [Custom fields on Azure DevOps work items](./includes/28-work-item-fields-setup).
+
+### Azure DevOps queries
+
+Critical and high bugs reports are generated from queries of Azure DevOps work items based on [Work item logic](./27-work-item-logic).
+
+Each Classic edition version's report is built with two queries: one for the open bugs and the other for the closed bugs.
+
+#### Example of a query for open bugs
+
+##### Logic
+
+See [Work item logic](./27-work-item-logic).
+
+#### Example of a query for closed bugs
+
+##### Logic
+
+See [Work item logic](./27-work-item-logic).
+
+### Release Notes extension templates
+
+Each Classic edition version's report is built with two Release Notes extension templates: one for the open bugs and the other for the closed bugs.
+
+There are no work items in the templates because the templates are populated and concatenated during the Azure DevOps build.
+
+See [Release Notes extension setup](./42-release-notes-extension-setup).
+
+#### Example of a template for open bugs
+
+##### Label
+
+#### Example of a template for closed bugs
+
+##### Label
+
+#### Sorting by two factors
+
+```handlebars
+{{#workItems orderBy='ClosedDate desc, Severity'}}  |  {{#workItems orderBy='Severity asc, Platform.ProductsAffected asc'}}
+```
+
+### Build pipelines
+
+There is one pipeline per Classic edition version. A script task concatenates and publishes the results of the open and closed bugs queries to a single Clearpath Community page.
+
+See [Known issues setup](./37-known-issues-setup#build-pipelines) for pipeline naming conventions.
+
+#### YAML build file variables
+
+See [Community site pages setup](./43-community-site-pages-setup#base-64-encoded-api-token) for steps to get a token for the `restUserToken` pipeline variable and get Clearpath Community wiki and wiki page variables.
+
+#### Local scripts assemble the report
+
+The pipeline executes scripts in the **scripts/known-issues-combined** subdirectory in the release-notes repo to output a document assembled from the two queries:
+
+- md-to-html.ps1: Transforms Markdown exported during the Release Notes extension task to HTML
+- prettify-css.ps1: Applies CSS styles supported by Clearpath Community
+- concat-final-output.ps1: Fix any formatting problems and concatenate reports of open and closed bugs
+
+### Refresh
+
+The report of critical and high bugs is refreshed [the same way as known issues](./40-refresh-known-issues-and-critical-and-high-bugs).

@@ -1,0 +1,90 @@
+---
+title: "Hide the feedback form"
+section: "Admin"
+---
+
+# Hide the feedback form
+
+## Metadata methods (recommended)
+
+### Option 1 - In docfx.json
+
+First, enable feedback on all pages in **docfx.json**:
+
+```json
+{
+    "build": {
+        "globalMetadata": {
+            "_enableFeedback": true
+        }
+    }
+}
+```
+
+Next, identify pages to hide the feedback form on:
+
+```json
+{
+    "build": {
+        "fileMetadata": {
+            "_enableFeedback": {
+                "articles/**/includes/**": false,
+                "index.md": false
+            }
+        }
+    }
+}
+```
+
+### Option 2 - In the YAML heading of a Markdown file
+
+```yaml
+---
+uid: videos.md
+title: Videos
+_enableFeedback: false
+---
+```
+
+## JavaScript method (not recommended)
+
+The feedback form is not needed on the landing page of individual dev sites, which have little to no content and are for team members only.
+
+To hide it on the landing page (`{host}/` and `{host}/index.html`):
+
+Add **localDevBuild.js** to **Docs/templates/clearpath/styles**.
+
+(Code may not be current.)
+
+```js
+const host = "http://localhost:3000/";
+
+//For index.html
+if (window.location.href == host + "index.html") {
+  var nodes = document.getElementsByClassName("feedback-container");
+  [].forEach.call(nodes, function (node) {
+    node.parentNode.removeChild(node);
+  });
+}
+//For the home page
+if (window.location.href == host) {
+  var nodes = document.getElementsByClassName("feedback-container");
+  [].forEach.call(nodes, function (node) {
+    node.parentNode.removeChild(node);
+  });
+}
+```
+
+This removes the feedback form from both the home and **index.html** pages.
+
+Add on the line after **main.js** to **scripts.tmpl.partial** (site-theme repo > **src/clearpath-docfx-template/templates/clearpath/partials/scripts.tmpl.partial**):
+
+```html
+<script type="text/javascript" src="{{_rel}}styles/localDevBuild.js"></script>
+```
+
+This applies the JavaScript in **localDevBuild.js** to the designated pages after the JavaScript in **main.js** loads. Otherwise, **main.js** overrides, including the feedback form on all pages.
+
+FYI: Putting the JavaScript in the body of the actual homepage between **script** tags does not work because **main.js** (which applies the feedback form to every page) overrides it.
+
+**localhost:3000** is set in **gulpfile.ts**, the file that auto refreshes browser tab upon save.

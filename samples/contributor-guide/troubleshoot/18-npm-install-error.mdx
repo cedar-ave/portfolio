@@ -1,0 +1,34 @@
+---
+title: "npm install error"
+section: "Troubleshoot the build"
+---
+
+# npm install error
+
+```plaintext
+SyntaxError: Unexpected token in JSON at position 0
+```
+
+In **gulpfile.ts**, change:
+
+```typescript
+var docfxSettings = JSON.parse(fs.readFileSync('./docfx.json'));
+```
+
+to
+
+```typescript
+import * as docfxSettings from './docfx.json';
+```
+
+Try adding or removing **tsconfig.json** at root:
+
+```json
+{
+"compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "resolveJsonModule": true
+    }
+}
+```

@@ -1,0 +1,31 @@
+---
+title: "Prerequisites for working on a docs site"
+section: "Get started"
+---
+
+# Prerequisites for working on a docs site
+
+The following tools are required before you can create or edit a docs site. You only need to install them one time, no matter how many docs sites you work on.
+
+| Tool | Used for | Notes |
+| --- | --- | --- |
+| Visual Studio Code | Editing source files; running commands in the terminal; source control tasks (for example, committing to Azure DevOps). | Some tasks require you to run VS Code as an administrator. You can set this as your default using these instructions. |
+| Node.js | Downloading template/theme elements stored in node packages; running some automated tasks. | If the latest version causes errors when building your site, roll back to v14.17.6; for Windows, choose node-v14.17.6-x64.msi. |
+| Gulp | Running automated backend tasks. | You can use Node.js to install Gulp. See the steps below. |
+
+:::important
+The docs site instructions assume that you are using the tools listed above. You can choose to use a different text editor or command line window. If you choose to do so, you might need to modify the provided instructions to accommodate those other tools.
+:::
+
+## Installation steps
+
+1. Install Visual Studio Code by following the instructions here: code.visualstudio.com
+1. Install Node.js by following the instructions here: nodejs.org/en/download
+
+   :::note
+   The latest version of Node may give you errors when building your site. If so, roll back to 14.17.6, nodejs.org/download/release/v14.17.6 [for Windows, choose node-v14.17.6-x64.msi].
+   :::
+
+1. Use Node to install Gulp. To do this, open a command line terminal with administrator permissions and run `npm install gulp -g`. To open a command-line terminal on Windows:
+   - Press the **Windows** key and type `cmd`.
+   - Right-click **Command Prompt** and select **Run as administrator**.

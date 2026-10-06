@@ -1,0 +1,101 @@
+---
+title: "Writing guidance"
+section: "Release notes"
+---
+
+import { NoteAnatomy } from '@site/src/components/ContributorGuideDiagrams';
+
+# Writing guidance
+
+**Jump to**
+- [Release notes](#release-notes)
+  - [What's new](#whats-new)
+  - [Fixed bugs](#fixed-bugs)
+- [Known issues](#known-issues)
+- [Critical and high bugs](#critical-and-high-bugs)
+- [Formatting](#formatting)
+  - [Examples](#examples)
+
+## Release notes
+
+There are two types of release notes: **What's new** and **Fixed bugs**.
+
+Sometimes judgment is required to determine if a fixed bug is better presented as a **What's new** item or vice versa. Move the item in the file accordingly.
+
+<NoteAnatomy />
+
+### What's new
+
+Features and product backlog work items become **What's new** items at the top of the notes.
+
+- They represent new functionality that is not a bug fix.
+- They are advertisements of why an organization should upgrade.
+- They are formed as complete sentences.
+- They have a heading. This is generated from the title of the work item.
+
+See [Writing guidance](../09-writing-guidance).
+
+### Fixed bugs
+
+Bug work items are at the bottom of the notes under a **Fixed bugs** section.
+
+- They are worded as if the bug is unfixed:
+   - This convention is because the content in Bug work items is scraped directly into the content of bugs in the notes. When a team creates a Bug, the author doesn't word the release note content of the work item as if the bug was fixed. Neither do they update the release note content when they close a bug.
+   - Correct: `Metadata Service returns an error`
+   - Incorrect: `Metadata Service used to return an error`
+- They are formed in present tense:
+   - Correct: `Metadata Service returns an error`
+   - Incorrect: `Metadata Service returned an error`
+- They are formed as incomplete sentences:
+   - Correct: `Metadata Service returns an error`
+   - Incorrect: `Metadata Service returned an error. This is now fixed.`
+- They are worded as a short, terse phrase, ideally one line only:
+  - Correct: Non-persisted entities visible in the **Custom Entities** list
+  - Correct: Rerunning a batch does not remap **TableHistoryID** on **BindingHistories**
+  - Correct: ODBC driver fails when refreshing metadata
+- They don't start with articles when possible:
+  - Correct: `Metadata Service returns an error`
+  - Incorrect: `The Metadata Service returns an error`
+- They don't state the product name unless the note is ambiguous without it (notes are already grouped by product)
+
+If a release note absolutely requires an explanation that expands beyond one line (ideally very few require this), add it in an italicized **Details** complete sentence after the note:
+
+```markdown
+**TableID could not be mapped to an EntityID** errors occur | *Details: Logic is updated to reduce instances of the errors.*
+```
+
+## Known issues
+
+Known issues are published separately on Clearpath Community on a page for each Classic edition version.
+
+See writing guidance for [Fixed bugs](#fixed-bugs).
+
+## Critical and high bugs
+
+Critical and high bugs are published on Clearpath Community separately on a page for each Classic edition version.
+
+See writing guidance for [Fixed bugs](#fixed-bugs).
+
+## Formatting
+
+Names of elements visible on a screen are bolded, like interface elements (headings, buttons, links), table components, errors, etc.
+
+### Examples
+
+```markdown
+Entity and binding descriptions are listed in the entity and binding lists of the **Data Mart Details** pages of the Data Catalog
+```
+
+```markdown
+Streaming jobs erroneously remain in **Processing** state when the Data Processing Engine fails to connect to the Realtime queue
+```
+
+```markdown
+When users create an app using the Legacy IDEA user interface, only the **ModifiedDTS** and **ModifiedUserNM** system columns are created | *Details: The **CreatedDTS** and **CreatedUserNM** system columns are now created.*
+```
+
+:::note[Reference]
+- Clearpath usage guidelines
+- Clearpath writing guidance
+- [Writing guidance](../09-writing-guidance)
+:::

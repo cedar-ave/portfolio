@@ -1,0 +1,73 @@
+---
+title: "Release notes setup"
+section: "Release notes"
+---
+
+# Release notes setup
+
+**Jump to**
+- [How they're generated](#how-theyre-generated)
+- [How they're published](#how-theyre-published)
+- [How they're refreshed](#how-theyre-refreshed)
+- [Back-end setup](#back-end-setup)
+  - [Release Notes extension templates](#release-notes-extension-templates)
+- [For the future: Clean up release pipelines from deprecated Classic edition versions](#for-the-future-clean-up-release-pipelines-from-deprecated-classic-edition-versions)
+
+## How they're generated
+
+Release notes are generated in the Release Notes extension, an Azure DevOps extension. The extension:
+- Compares Azure DevOps releases to identify work items that represent changes between releases
+- Uses templating logic in a template to:
+  - Filter out work items that don't meet the [work item logic](./27-work-item-logic)
+  - Use fields marked in the work item to curate a note with a title, description, and work item ID
+  - Sort notes by product
+- Exports a file of the notes to the release-notes repo
+
+## How they're published
+
+[Local scripts](#local-scripts-prepare-notes-for-review-assembly-and-publish):
+- Transform the exported file to a format compatible with Clearpath Community requirements
+- Post the notes on Clearpath Community
+
+## How they're refreshed
+
+Execute the scripts manually to refresh a release notes page on Clearpath Community.
+
+## Back-end setup
+
+See [Custom fields on Azure DevOps work items](./includes/28-work-item-fields-setup).
+
+### Release Notes extension templates
+
+:::note[Reference]
+- Classic edition What's New
+  - Handlebars template
+- Classic Template/Data Mart Designer What's New
+  - Handlebars template
+:::
+
+See [Release Notes extension setup](./42-release-notes-extension-setup).
+
+#### Labels
+
+The release notes extension's templates are tagged with labels that drive the sort order and section headings on the published page.
+
+### Local scripts prepare notes for review, assembly, and publish
+
+:::note
+See [Prepare release notes for review](./31-prepare-release-notes-for-review) for steps to execute.
+:::
+
+The scripts directory in the release-notes repo contains:
+
+| Script | What it does |
+| --- | --- |
+| 1_html-to-md.sh | Transforms exported HTML to Markdown (see [why the export is in HTML and not Markdown](./42-release-notes-extension-setup#limitation)) |
+| 2_assemble-markdown.sh | Assembles all release notes files in reverse chronological order and adds a master table of contents |
+| 3_md-to-html.sh | Transforms the exported Markdown to HTML, applies CSS styles supported by Clearpath Community, and posts it on Clearpath Community; see [Community site pages setup](./43-community-site-pages-setup) for steps to get a token for the `restUserToken` variable |
+| img.sh | Uploads images to Clearpath Community and outputs the URL so they can be inserted in the published page on Clearpath Community; see [Include images in release notes](./35-include-images-in-release-notes) |
+| only-toc-on-existing-md.sh | Updates the table of contents for a release date file if the file was changed after the original table of contents is generated |
+
+See the detailed notes at the top of each script for added information.
+
+## For the future: Clean up release pipelines from deprecated Classic edition versions

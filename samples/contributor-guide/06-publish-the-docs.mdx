@@ -1,0 +1,61 @@
+---
+title: "Publish the docs"
+section: "Get started"
+---
+
+import { PipelineStatusLegend } from '@site/src/components/ContributorGuideDiagrams';
+
+# Publish the docs
+
+The docs are published to the web using Azure DevOps pipelines. Each doc site has its own pipeline. The same pipeline can publish to both the Production and Dev sites.
+
+A build pipeline can be triggered in two ways:
+
+- **By merging updates into the `main`/`master` branch of your repo in Azure DevOps.** The pipeline launches automatically when you check in to these branches.
+    The automated build always publishes to Production. You cannot choose a different branch or publish location. For this reason, only check in updates to these branches when the content is customer-ready. See [Run an automated build](#run-an-automated-build) below for more info.
+- **By manually triggering the pipeline.** This method gives you the opportunity to choose the branch you want to publish from and the environment you want to publish to. A common reason for using this method is to publish in-progress updates from a feature branch to the Dev site so you can share the updates with others before they are published to Production.
+   See [Run the pipeline manually](#run-the-pipeline-manually) for instructions.
+
+## Run an automated build
+
+1. Merge changes into the `main`/`master` branch in Azure DevOps to immediately launch the build pipeline. Azure DevOps checks for any conflicts that need to be resolved.
+    - If no conflicts are found, the build/publish will begin with no further action on your part.
+    - If Azure DevOps identifies merge conflicts, [resolve them](#resolve-merge-conflicts). Once they are resolved, the build/publish process will begin with no further action on your part.
+1. [Monitor](#monitoring-the-build-progress) the build progress to verify there are no problems.
+
+## Run the pipeline manually
+
+1. Open your repo in Azure DevOps.
+1. Click **Pipelines** in the left navigation pane.
+1. Locate your pipeline in the list. The pipeline should have the same name as the repo.
+      :::tip
+      You can enter all or part of the repo name in the **Filter pipelines** box in the upper-right corner to quickly find your pipeline.
+      :::
+1. Hover the pointer over the pipeline until the three dot menu appears on the right side of the list. Click the three dots, and then select **Run pipeline**.
+1. Select the branch you want to publish from in the Branch/tag field.
+1. Select the check box for either **PROD** or **DEV**, depending on which environment you want to publish to.
+   :::note
+   You can choose one, both, or no environments. If you don't select an environment, the output is built and placed in a zip file that you can download.
+   :::
+1. Click **Run**.
+1. [Monitor](#monitoring-the-build-progress) the build progress to verify there are no problems.
+
+## Resolve merge conflicts
+
+Do the following if Azure DevOps indicates there are merge conflicts when running your build pipeline:
+
+1. Click **Conflicts**.
+1. Review the changes that are conflicting. To resolve them, click the dropdown next to **Submit Merge**.
+1. Choose which changes to keep.
+1. Click **OK**.
+1. Click **Overview** to go back to the main pipeline screen.
+
+## Monitoring the build progress
+
+When you launch a pipeline manually, Azure DevOps displays a page that shows the pipeline progress. If you run an automatic build, you can access the same page by clicking **Pipelines** in the left navigation pane, and then clicking your pipeline in the list on that page.
+
+Click on the task in the **Jobs** section to view a detailed list of the tasks that the pipeline performs.
+
+<PipelineStatusLegend />
+
+If a task &mdash; and thus the pipeline &mdash; fails, you can click on that task to view more detail about why the task failed. Clicking **View raw log** in the upper right corner allows you to view an even more detailed log of tasks performed by the pipeline. This log is useful if you are troubleshooting a failed pipeline.
