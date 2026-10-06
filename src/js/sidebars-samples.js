@@ -95,7 +95,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Clearpath Collect user guide',
+      label: 'Clearpath Collect User Guide',
       collapsed: true,
       items: [
         {
