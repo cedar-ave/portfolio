@@ -415,19 +415,30 @@ article h3 {
 }
 
 table {
-  border: none;
+  display: table;
+  border: 1px solid var(--ifm-table-border-color);
+  border-radius: 10px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
 }
 
 thead {
-  background: #5e7893;
+  background: #f5f7fa;
+}
+
+[data-theme='dark'] thead {
+  background: #30343b;
 }
 
 table tr {
   border-top: none;
 }
 
+/* Infima stripes tbody rows by default (--ifm-table-stripe-background);
+   cancel it so all rows share the same background. */
 table tbody tr:nth-child(2n) {
-  background-color: #f0f5f9;
+  background-color: transparent;
 }
 
 table thead tr {
@@ -441,18 +452,23 @@ table td {
   border-bottom: 1px solid var(--ifm-table-border-color);
   text-align: left;
   vertical-align: top;
-  padding: 6px;
+  padding: 10px 12px;
+}
+
+table tbody tr:last-child th,
+table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 table th {
-  font-size: .9rem;
-  color: #fff;
-  font-weight: 500;
+  font-size: .85rem;
+  color: var(--ifm-font-color-base);
+  font-weight: 600;
 }
 
 table th:first-child,
 table td:first-child {
-  padding-left: 10px;
+  padding-left: 14px;
 }
 
 .nowrap-col1 table th:first-child,
@@ -462,7 +478,7 @@ table td:first-child {
 
 table th:last-child,
 table td:last-child {
-  padding-right: 10px;
+  padding-right: 14px;
 }
 
 /* docusaurus-theme-zoom-image dims the image gray on hover via a
