@@ -14,7 +14,7 @@ How the `/samples` demo area was built: a second, standalone docs instance that 
 - Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/clearpath-roster-guide/` and `samples/clearpath-collect-guide/`.
 - Its sidebar is hand-written at `src/js/sidebars-samples.js` (the main site's sidebar is `src/js/sidebars-docs.js` — both were moved out of the repo root; see [Sidebar file locations](#sidebar-file-locations) below).
 - It's reachable only via the "Product user guide" link on `/portfolio` — nothing registers it in `themeConfig.navbar`.
-- **Direct link vs. category:** a doc id string in `items` (e.g. `'clearpath-roster-guide/01-get-started'`) is just a sidebar row that links straight to that page. A `{ type: 'category', ... }` object is a separate, expandable heading with its own `items`. Pages don't have to be nested inside a category — a bare string can sit as a sibling of category objects in the same `items` array. See [Mixing pages and categories](#mixing-pages-and-categories) below.
+- **Direct link vs. category:** a doc id string in `items` (e.g. `'clearpath-roster-guide/get-started'`) is just a sidebar row that links straight to that page. A `{ type: 'category', ... }` object is a separate, expandable heading with its own `items`. Pages don't have to be nested inside a category — a bare string can sit as a sibling of category objects in the same `items` array. See [Mixing pages and categories](#mixing-pages-and-categories) below.
 
 </QuickReference>
 
@@ -64,14 +64,16 @@ Unlike `clearpath-roster-guide/`, which reuses plain Markdown tables and admonit
 
 ### Why `numberPrefixParser: false`
 
-The guide's source files (an export of a help-center article, see `samples/clearpath-roster-guide/_archive/README.md`) use numbered filenames — `01-overview.mdx`, `02-about-delegated-authority.mdx`, etc. — and their own cross-links reference those exact filenames, e.g.:
+`clearpath-collect-guide/` and `contributor-guide/`'s source files (exports of help-center articles) use numbered filenames — `01-overview.mdx`, `02-how-it-works.mdx`, etc. — and their own cross-links reference those exact filenames, e.g.:
 
-```mdx title="samples/clearpath-roster-guide/01-overview.mdx"
+```mdx title="samples/clearpath-collect-guide/01-overview.mdx"
 If you work with one or more carriers in a
-[delegated relationship](./02-about-delegated-authority), ...
+[delegated relationship](./02-how-it-works), ...
 ```
 
-Docusaurus's default `numberPrefixParser` strips that numeric prefix when computing each doc's id/slug, which breaks links written against the un-stripped filename. Rather than rewrite ~30 internal links, this instance disables that parser, so doc ids keep their numbers (e.g. `clearpath-roster-guide/02-about-delegated-authority`) and the links resolve as authored.
+Docusaurus's default `numberPrefixParser` strips that numeric prefix when computing each doc's id/slug, which breaks links written against the un-stripped filename. Rather than rewrite those internal links, this instance disables that parser, so doc ids keep their numbers (e.g. `clearpath-collect-guide/02-how-it-works`) and the links resolve as authored.
+
+`clearpath-roster-guide/` doesn't have this problem: its source filenames had their numeric prefixes stripped (`01-get-started.mdx` → `get-started.mdx`, etc.) and its internal cross-links were rewritten to match, so its doc ids are unnumbered even though `numberPrefixParser: false` applies to the whole instance.
 
 ## The landing page
 
@@ -87,7 +89,7 @@ slug: /
 
 Sample documentation, written to demonstrate structure and style rather than a real product.
 
-- [Clearpath Roster User Guide](/samples/clearpath-roster-guide/01-overview) - ...
+- [Clearpath Roster User Guide](/samples/clearpath-roster-guide/get-started) - ...
 ```
 
 This mirrors how `docs/overview.mdx` works for the main `/docs` instance, but as its own file rather than reusing the first guide page as the landing page — the guide's own `01-overview.mdx` still exists as that guide's first article, listed normally in the sidebar.
@@ -141,15 +143,15 @@ Add a second guide by giving it its own top-level category here, as a sibling of
   collapsed: true,
   items: [
     // A bare string: links straight to the page, no sub-heading.
-    'clearpath-roster-guide/01-get-started',
+    'clearpath-roster-guide/get-started',
     // A category object: its own expandable heading with nested items.
     {
       type: 'category',
       label: 'Create a template',
       collapsed: true,
       items: [
-        'clearpath-roster-guide/10-create-a-template',
-        'clearpath-roster-guide/13-choose-a-relationship-type',
+        'clearpath-roster-guide/create-a-template',
+        'clearpath-roster-guide/choose-a-relationship-type',
       ],
     },
   ],

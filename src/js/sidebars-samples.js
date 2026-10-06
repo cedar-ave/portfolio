@@ -15,10 +15,12 @@
  * and each guide living in its own subfolder - samples/clearpath-roster-guide/
  * (a roster-builder guide for insurance delegated authority) and
  * samples/clearpath-collect-guide/ (a Clearpath Collect guide for building
- * custom claims/underwriting data-entry apps). Doc ids below are paths relative to
- * samples/, keeping the source files' numbered prefixes because
- * `numberPrefixParser: false` is set for this docs instance (the sample
- * content's own cross-links reference those filenames directly).
+ * custom claims/underwriting data-entry apps). Doc ids below are paths relative
+ * to samples/. clearpath-collect-guide/ and contributor-guide/ keep their
+ * source files' numbered prefixes because `numberPrefixParser: false` is set
+ * for this docs instance (their own cross-links reference those filenames
+ * directly); clearpath-roster-guide/ source files were renamed to drop their
+ * numeric prefixes, so its doc ids and cross-links go unnumbered.
  *
  * Add another guide by dropping its source files in a new folder under
  * samples/, then adding a sibling top-level category below.
@@ -49,16 +51,16 @@ const sidebars = {
       // a page of its own. "Overview" below is the guide's actual landing
       // doc, listed as a normal row.
       items: [
-        'clearpath-roster-guide/01-get-started',
-        'clearpath-roster-guide/06-generate-a-roster',
-        'clearpath-roster-guide/10-create-a-template',
-        'clearpath-roster-guide/13-choose-a-relationship-type',
-        'clearpath-roster-guide/16-configure-a-relationship-type',
-        'clearpath-roster-guide/18-configure-a-template-s-layout',
-        'clearpath-roster-guide/19-fields-roster-objects-and-sub-objects',
-        'clearpath-roster-guide/21-manage-fields-and-objects',
-        'clearpath-roster-guide/23-create-filters',
-        'clearpath-roster-guide/24-manage-templates'
+        'clearpath-roster-guide/get-started',
+        'clearpath-roster-guide/generate-a-roster',
+        'clearpath-roster-guide/create-a-template',
+        'clearpath-roster-guide/choose-a-relationship-type',
+        'clearpath-roster-guide/configure-a-relationship-type',
+        'clearpath-roster-guide/configure-a-template-s-layout',
+        'clearpath-roster-guide/fields-roster-objects-and-sub-objects',
+        'clearpath-roster-guide/manage-fields-and-objects',
+        'clearpath-roster-guide/create-filters',
+        'clearpath-roster-guide/manage-templates'
       ],
     },
     {
