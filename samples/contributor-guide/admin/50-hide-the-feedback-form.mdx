@@ -7,7 +7,7 @@ section: "Admin"
 
 ## Metadata methods (recommended)
 
-### Option 1 - In docfx.json
+### Option 1: In docfx.json
 
 First, enable feedback on all pages in **docfx.json**:
 
@@ -36,7 +36,7 @@ Next, identify pages to hide the feedback form on:
 }
 ```
 
-### Option 2 - In the YAML heading of a Markdown file
+### Option 2: In the YAML heading of a Markdown file
 
 ```yaml
 ---
@@ -53,8 +53,6 @@ The feedback form is not needed on the landing page of individual dev sites, whi
 To hide it on the landing page (`{host}/` and `{host}/index.html`):
 
 Add **localDevBuild.js** to **Docs/templates/clearpath/styles**.
-
-(Code may not be current.)
 
 ```js
 const host = "http://localhost:3000/";

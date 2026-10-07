@@ -1,11 +1,13 @@
 ---
-title: "'Has already been defined' build error; published API documentation is not formatted correctly"
+title: "Published API documentation is not formatted correctly"
 section: "Troubleshoot the build"
 ---
 
-# 'Has already been defined' build error; published API documentation is not formatted correctly
+# Published API documentation is not formatted correctly
 
-## Error examples
+## Symptom
+
+The published API documentation is not formatted correctly (for example, a duplicate `operationId` across two routes produces overlapping entries on the published landing page instead of two distinct ones) and you see any of the following errors:
 
 ### Example error 1
 
@@ -19,19 +21,15 @@ section: "Troubleshoot the build"
 (restapi/sentry.json)Uid(Sentry API/2.0/GetUserAsync) has already been defined in restapi/sentry.json
 ```
 
-### Example of incorrect formatting
-
-A duplicate `operationId` across two routes produces overlapping entries on the published landing page instead of two distinct ones.
-
 ## Solution
 
 All `operationId`s for each route in the JSON input file must be unique. Developers should do this when they add/update the JSON for each API.
 
-### Option 1 &mdash; Must only be done once
+### Option 1: Must only be done once
 
 - Modify the Startup.cs class for the API to generate custom `operationId`s for each route (this has proven successful).
 - Put an attribute above each API route that denotes what the `operationId` should be set to. It's manual, but you only have to do it once and add it for each new route.
 
-### Option 2 &mdash; Must be done every time a new Swagger file is ready
+### Option 2: Must be done every time a new Swagger file is ready
 
 - Manually edit the JSON file to make the `operationId`s unique (not recommended).

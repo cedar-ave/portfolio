@@ -5,9 +5,15 @@ section: "Troubleshoot the build"
 
 # npm install error
 
+## Symptom
+
+The build fails with the following error:
+
 ```plaintext
 SyntaxError: Unexpected token in JSON at position 0
 ```
+
+## Solution
 
 In **gulpfile.ts**, change:
 
@@ -21,7 +27,7 @@ to
 import * as docfxSettings from './docfx.json';
 ```
 
-Try adding or removing **tsconfig.json** at root:
+Next, add **tsconfig.json** at root:
 
 ```json
 {

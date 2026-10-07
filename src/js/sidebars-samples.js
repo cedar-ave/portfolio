@@ -137,7 +137,6 @@ const sidebars = {
           key: 'contributor-guide-get-started',
           collapsed: true,
           items: [
-            'contributor-guide/01-overview',
             'contributor-guide/02-prerequisites',
             'contributor-guide/03-get-started-with-git-and-markdown',
             'contributor-guide/04-work-in-source-control',
@@ -151,31 +150,14 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Write well',
-          collapsed: true,
-          items: [
-            'contributor-guide/outlines/11-copy-and-paste-templates',
-            'contributor-guide/outlines/12-outline-concept',
-            'contributor-guide/outlines/13-outline-task',
-            'contributor-guide/outlines/14-outline-troubleshooting',
-            'contributor-guide/outlines/15-outline-blank',
-          ],
-        },
-        {
-          type: 'category',
           label: 'Troubleshoot the build',
           collapsed: true,
           items: [
-            'contributor-guide/troubleshoot/16-engine-pages-are-missing-styling',
-            'contributor-guide/troubleshoot/17-metadata-build-throws-warnings',
             'contributor-guide/troubleshoot/18-npm-install-error',
             'contributor-guide/troubleshoot/19-unable-to-load-service-index',
-            'contributor-guide/troubleshoot/20-obj-api-error',
             'contributor-guide/troubleshoot/21-node-sass-or-ts-node-errors',
-            'contributor-guide/troubleshoot/22-nodejs-error',
             'contributor-guide/troubleshoot/23-net-sdk-not-found',
             'contributor-guide/troubleshoot/24-api-already-defined-build-error',
-            'contributor-guide/troubleshoot/25-build-fails-on-the-npm-task',
           ],
         },
         {
@@ -215,7 +197,6 @@ const sidebars = {
             'contributor-guide/admin/48-stamp',
             'contributor-guide/admin/includes/49-toc-styles',
             'contributor-guide/admin/50-hide-the-feedback-form',
-            'contributor-guide/includes/51-get-help',
           ],
         },
       ],

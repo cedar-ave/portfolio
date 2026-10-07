@@ -66,8 +66,8 @@ Try some form of the following. Also adjust the version. These may no longer be 
 | Forge Service | http\<nolink>://server/Forge/docs/V1/swagger |
 | Passport Service | https\<nolink>://server/Passport/swagger/ui/index/V1/swagger.json |
 | Passport Directory Service | https\<nolink>://server/PassportDirectory/swagger/ui/swagger.json |
-| Atlas Service V1 | https\<nolink>://server/Atlas/swagger/swagger.json |
-| Atlas Service V2 | https\<nolink>://server/Atlas2/swagger/swagger.json |
+| Forge Service V1 | https\<nolink>://server/Forge/swagger/swagger.json |
+| Forge Service V2 | https\<nolink>://server/Forge2/swagger/swagger.json |
 
 ## If necessary, downgrade the JSON file from OpenAPI to Swagger 2
 
@@ -84,8 +84,8 @@ A description must be at the top of the JSON file for the landing pages to gener
   "swagger": "2.0",
   "info": {
     "version": "swagger.json",
-    "description": "The Atlas database V2 stores information about source systems and data marts within the platform. Client applications can insert, update, remove, and retrieve information from the Atlas database by issuing HTTP requests to Atlas Service V2. Atlas Service V2 has newer routes to make managing data marts easier. It uses the Passport Service.",
-    "title": "Example.Atlas.V2.WebService"
+    "description": "The Collect database V2 stores information about source systems and data marts within the platform. Client applications can insert, update, remove, and retrieve information from the Collect database by issuing HTTP requests to Collect Service V2. Collect Service V2 has newer routes to make managing data marts easier. It uses the Passport Service.",
+    "title": "Example.Collect.V2.WebService"
   }
 }
 ```

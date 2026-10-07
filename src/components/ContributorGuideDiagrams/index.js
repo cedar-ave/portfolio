@@ -87,7 +87,7 @@ export function PipelineStatusLegend() {
         </div>
         <div className={styles.legendRow}>
           <span className={clsx(styles.badge, styles.badgeFail)}>&times;</span>
-          Failed &mdash; click the step to see why
+          Failed, click the step to see why
         </div>
         <div className={styles.legendRow}>
           <span className={clsx(styles.badge, styles.badgeSkip)}>&raquo;</span>
