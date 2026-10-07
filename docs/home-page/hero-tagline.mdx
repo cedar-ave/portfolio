@@ -1,0 +1,91 @@
+---
+sidebar_position: 1
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Hero tagline
+
+<QuickReference>
+
+- To change a tagline line or its icon: edit `taglineItems` in `docusaurus.config.js` (`{ icon, text }` per line).
+- `icon` is either a path to a custom image under `static/` (starts with `/`, e.g. `'/img/home-page/03-docs-as-code.svg'`) or an [Iconify](../styling/icons-iconify) `set:name` id (e.g. `'mdi:github'`).
+- Custom icons live in `static/img/home-page/`. They're full-color SVGs (a filled circle with artwork), numbered in tagline order.
+- Size and spacing live in [index.module.css](../../src/pages/index.module.css): `.taglineIcon` `width` sets the icon size (custom images stay square via `aspect-ratio`), `.taglineItem+.taglineItem` sets the gap between lines.
+- The top-level `tagline` field is a plain-text join of the same items, used only for page metadata.
+
+</QuickReference>
+
+## What it does
+
+The homepage hero shows the headshot, the site title, and a list of one-line tagline items, each with an icon to its left. The list is rendered by `HomepageHeader` in [index.js](../../src/pages/index.js) from `customFields.taglineItems`.
+
+## Editing the lines
+
+```js title="docusaurus.config.js"
+const taglineItems = [
+  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'AI-fluent documentation engineer' },
+  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'Technical writer and editor' },
+  { icon: '/img/home-page/03-docs-as-code.svg', text: 'Docs-as-code' },
+  { icon: '/img/home-page/04-xml-ccms-workflows.svg', text: 'XML and CCMS workflows' },
+  { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk master' },
+  { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation designer' },
+  { icon: '/img/home-page/07-ai-assisted-pipelines.svg', text: 'AI-assisted pipelines' },
+];
+```
+
+The array is passed to the page through `customFields.taglineItems`. `tagline` is built from it with `taglineItems.map((item) => item.text).join(' • ')`, because that field feeds `<meta>` tags and can't contain markup.
+
+To add a line, drop a new SVG in `static/img/home-page/` and add an item pointing at its path.
+
+## How icons are rendered
+
+`TaglineIcon` in `index.js` picks the renderer from the `icon` value:
+
+- **Starts with `/`:** rendered as an `<img>` (with `alt=""` and `aria-hidden`, since the text beside it carries the meaning). The path goes through `useBaseUrl`, so it keeps working if `baseUrl` changes.
+- **Anything else:** treated as an Iconify id and rendered with `<Icon height="3em" />`.
+
+Custom SVGs keep their own colors. The `color` on `.taglineIcon` only affects Iconify icons, which draw with `currentColor`.
+
+## Sizing and alignment
+
+```css title="src/pages/index.module.css"
+.taglineItem {
+  display: flex;
+  align-items: center; /* text centered vertically beside the icon */
+  gap: 0.5em;
+}
+
+.taglineItem+.taglineItem {
+  /* space between lines */
+}
+
+.taglineIcon {
+  flex-shrink: 0;
+  width: 2em; /* fixed slot (and icon size), so every line's text starts at the same x */
+  margin-right: 0.5em;
+}
+
+.taglineList .taglineImage {
+  height: auto;
+  aspect-ratio: 1 / 1; /* height follows width, so icons stay square */
+  border: none;
+}
+```
+
+Every icon sits in the same fixed-width slot, so the text column lines up even when an Iconify glyph is narrower than the custom circles. Custom images take their height from that width through `aspect-ratio`, so change the size in one place (`.taglineIcon` `width`) and they stay square.
+
+### Why the border override needs extra specificity
+
+`custom.css` gives every image inside `.container` a thin gray border (`.container img`). That selector (one class and one element) outranks a single class like `.taglineIcon`, so `border: none` there has no effect. Scoping the rule as `.taglineList .taglineImage` (two classes) wins.
+
+### Styling a single icon
+
+Add an optional `iconClass` to an item and define a class with that exact name in `index.module.css`. It's applied on top of `.taglineIcon`. See [Icons: Iconify](../styling/icons-iconify#styling-a-single-tagline-icon) for details. None of the current items use it.
+
+## Source
+
+- `docusaurus.config.js` (`taglineItems`)
+- `src/pages/index.js` (`HomepageHeader`, `TaglineIcon`)
+- `src/pages/index.module.css` (`.tagline*` classes)
+- `static/img/home-page/` (custom icons)

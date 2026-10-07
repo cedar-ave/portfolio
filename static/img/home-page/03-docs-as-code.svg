@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="784" height="784" role="img" aria-label="Docs as code icon">
+  <circle cx="98" cy="98" r="95.5" fill="#93BCDF"/>
+  <g fill="#FFFFFF" stroke="#202B49" stroke-width="4.5" stroke-linejoin="round">
+    <rect x="41" y="53" width="114" height="90" rx="20"/>
+  </g>
+  <text x="98" y="116" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700" fill="#202B49">H#</text>
+</svg>

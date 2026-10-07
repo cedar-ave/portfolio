@@ -10,6 +10,8 @@ import QuickReference from '@site/src/components/QuickReference';
 
 - To change the three "what I do" cards (title, link, icon, description): edit the `FeatureList` array directly in `src/components/HomepageFeatures/index.js`.
 - To change where the row appears: edit `src/pages/index.js`.
+- Currently hidden: the `<HomepageFeatures />` line in `src/pages/index.js` is commented out. To show the row again, uncomment it (see [Turning it on and off](#turning-it-on-and-off)).
+- Card icons are `static/img/ai_brain_icon.svg`, `code_icon.svg`, and `bulb_icon.svg`. Don't delete them while the component is imported, even if it's hidden, or the build fails.
 - Not registered globally, so it is not available as an MDX tag in docs or blog posts.
 
 </QuickReference>
@@ -26,9 +28,22 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 <HomepageFeatures />
 ```
 
+## Turning it on and off
+
+`src/pages/index.js` always imports the component, and the row is shown or hidden by commenting out the JSX:
+
+```jsx title="src/pages/index.js"
+{/* <HomepageFeatures /> */}   // hidden
+<HomepageFeatures />           // shown
+```
+
+Webpack resolves the component's `require(...)` calls whenever it's imported, not just when it renders. So the three card SVGs must exist even while the row is hidden. To get rid of them for good, remove the `import HomepageFeatures` line from `index.js` as well.
+
 ## Editing content
 
 Content (title, link, icon, description) lives in the `FeatureList` array inside the component itself. Edit `src/components/HomepageFeatures/index.js` directly rather than passing props.
+
+Each card's `Svg` is loaded with `require('@site/static/img/<name>.svg').default`, which imports the file as a React component. To change a card's icon, point that path at a different SVG (it must be an `.svg`, not a PNG or JPG).
 
 ## Source
 

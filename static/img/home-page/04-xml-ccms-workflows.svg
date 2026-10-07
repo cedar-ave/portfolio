@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="784" height="784" role="img" aria-label="Code icon">
+  <circle cx="98" cy="98" r="95.5" fill="#73D3C3"/>
+
+  <g fill="#FFFFFF" stroke="#202B49" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- left bracket -->
+    <path d="M64 68
+             L40 98
+             L64 128
+             L75 118
+             L59 98
+             L75 78
+             Z"/>
+
+    <!-- center slash -->
+    <path d="M89 132
+             L103 64
+             H115
+             L101 132
+             Z"/>
+
+    <!-- right bracket -->
+    <path d="M121 78
+             L137 98
+             L121 118
+             L132 128
+             L156 98
+             L132 68
+             Z"/>
+  </g>
+</svg>

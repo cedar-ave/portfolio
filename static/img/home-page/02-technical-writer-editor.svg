@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="784" height="784" role="img" aria-label="Technical writer and editor icon">
+  <circle cx="98" cy="98" r="95.5" fill="#F1B753"/>
+  <g stroke="#202B49" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M55 132 L67 96 L119 44 L151 76 L99 128 L63 140 Z" fill="#FFFFFF"/>
+    <path d="M67 96 L99 128" fill="none"/>
+    <path d="M119 44 L151 76" fill="none"/>
+    <path d="M55 132 L63 140 L48 148 Z" fill="#FFFFFF"/>
+  </g>
+</svg>

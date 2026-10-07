@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="784" height="784" role="img" aria-label="Monitor screen icon">
+  <circle cx="98" cy="98" r="95.5" fill="#EB9C5C"/>
+
+  <g fill="#FFFFFF" stroke="#202B49" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- monitor -->
+    <rect x="44" y="50" width="108" height="74" rx="10"/>
+    <!-- stand -->
+    <path d="M85 124 H111 V142 H85 Z"/>
+    <path d="M71 147 H125"/>
+  </g>
+
+  <!-- small UI accents inside the screen -->
+  <g fill="#FFFFFF" stroke="#202B49" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M59 67 H137"/>
+    <path d="M59 83 H104"/>
+    <circle cx="126" cy="91" r="10"/>
+  </g>
+</svg>

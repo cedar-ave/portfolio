@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 196" width="784" height="784" role="img" aria-label="AI conversation designer icon">
+  <circle cx="98" cy="98" r="95.5" fill="#D06E6A"/>
+  <g fill="#FFFFFF" stroke="#202B49" stroke-width="6.5" stroke-linejoin="round">
+    <path d="M47 58 H127 A18 18 0 0 1 145 76 V107 A18 18 0 0 1 127 125 H86 L62 145 V125 H47 A18 18 0 0 1 29 107 V76 A18 18 0 0 1 47 58 Z"/>
+    <path d="M142 42 C145 53 149 57 160 60 C149 63 145 67 142 78 C139 67 135 63 124 60 C135 57 139 53 142 42 Z"/>
+  </g>
+  <g fill="#202B49">
+    <circle cx="62" cy="92" r="5"/>
+    <circle cx="86" cy="92" r="5"/>
+    <circle cx="110" cy="92" r="5"/>
+  </g>
+</svg>

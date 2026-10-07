@@ -12,10 +12,12 @@ import QuickReference from '@site/src/components/QuickReference';
 - Find an icon name on the [Iconify Icon Explorer](https://icon-sets.iconify.design/) — it covers 200,000+ icons across dozens of free sets (Material Design Icons, Simple Icons for brand logos, etc.), unlike Font Awesome's free tier.
 - `IIcon` is registered globally in [MDXComponents.js](../../src/theme/MDXComponents.js), so no import is needed in any `.md`/`.mdx` file — it just works.
 - Pass `height="1em"` to size an icon to match the surrounding text instead of a fixed pixel size.
+- Homepage tagline icons: edit `taglineItems` in `docusaurus.config.js` (`{ icon, text }` per line). Most lines now use custom SVGs from `static/img/home-page/`; an `icon` that doesn't start with `/` is treated as an Iconify id. See [Hero tagline](../home-page/hero-tagline).
+- To style one tagline icon differently, add `iconClass: 'myClassName'` to its item and define `.myClassName` in `index.module.css`. It's applied on top of `.taglineIcon`, and the name must match exactly.
 
 </QuickReference>
 
-Setup followed the [Docusaurus Community guide to Iconify](https://docusaurus.community/knowledge/design/icons/iconify/). It was added alongside [Font Awesome](./icons.mdx) to pull in icon sets Font Awesome's free tier doesn't cover — brand logos in particular, like the Zendesk icon in the homepage tagline (`cib:zendesk`, from Simple Icons).
+Setup followed the [Docusaurus Community guide to Iconify](https://docusaurus.community/knowledge/design/icons/iconify/). It was added alongside [Font Awesome](./icons.mdx) to pull in icon sets Font Awesome's free tier doesn't cover — brand logos in particular, like `cib:zendesk` from Simple Icons.
 
 ## Packages
 
@@ -64,7 +66,25 @@ For an icon placed inline with text (rather than standalone), a small vertical n
 
 ## Using it outside MDX (plain JS/JSX)
 
-The homepage tagline (`docusaurus.config.js`'s `tagline` field) is a plain string, not MDX — it also feeds page `<meta>` tags, so it can't contain real JSX. [index.js](../../src/pages/index.js) works around this with a small `renderTagline()` helper that parses two inline markers out of that string — `</br>` for a line break and `<IIcon icon="..." height=".." />` for an icon — and turns them into real `<br/>` and `<Icon/>` elements before rendering. If you add a similar icon-in-a-config-string case elsewhere, reuse that pattern rather than reaching for `dangerouslySetInnerHTML`, which can only inject raw HTML and can't execute a React component like `Icon`.
+The homepage tagline lines are defined in `docusaurus.config.js` as `customFields.taglineItems`, an array of `{ icon, text }` objects. [index.js](../../src/pages/index.js) maps them to a styled `<ul>`, rendering each `icon` as an `<img>` if it's a path starting with `/`, or as an Iconify `<Icon/>` otherwise (styles in `index.module.css`; see [Hero tagline](../home-page/hero-tagline)). The top-level `tagline` field is a plain-text join of the same items, because it feeds page `<meta>` tags and can't contain markup. If you need icons driven from config elsewhere, store structured data like this and render it in JSX rather than embedding markup in a string or reaching for `dangerouslySetInnerHTML`, which can only inject raw HTML and can't execute a React component like `Icon`.
+
+### Styling a single tagline icon
+
+Every tagline icon gets the `.taglineIcon` class. To give one icon its own style, add an optional `iconClass` to its item (no current item uses this; the example is illustrative):
+
+```js title="docusaurus.config.js"
+{ icon: 'cib:zendesk', text: 'Zendesk master', iconClass: 'taglineIconZendesk' },
+```
+
+Then define a class with that exact name in the CSS module:
+
+```css title="src/pages/index.module.css"
+.taglineIconZendesk {
+  color: #03363d;
+}
+```
+
+`index.js` looks the name up in the CSS module (`styles[iconClass]`) and applies it alongside `.taglineIcon`, so the extra class only needs the properties that differ. CSS module class names are hashed at build time, which is why the config stores the module key rather than a literal class name. A misspelled name doesn't break anything; the extra style just doesn't apply.
 
 ## Finding an icon
 

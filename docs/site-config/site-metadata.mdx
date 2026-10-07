@@ -8,9 +8,9 @@ import QuickReference from '@site/src/components/QuickReference';
 
 <QuickReference>
 
-- Title/tagline/URL/org/project are plain top-level fields in `docusaurus.config.js`, filled in with this site's own values instead of the template's Docusaurus placeholders.
+- Title/URL/org/project are plain top-level fields in `docusaurus.config.js`, filled in with this site's own values instead of the template's Docusaurus placeholders.
 - `organizationName`/`projectName` only matter for `npm run deploy` (GitHub Pages) — see [Deployment](../build-deploy/deployment).
-- Social share image: `themeConfig.image: 'img/social-card.jpg'`. The template's own `docusaurus-social-card.jpg` is still sitting unused in `static/img/`.
+- Social share image: `themeConfig.image: 'img/social-card.jpg'`.
 - Favicon: `favicon: 'img/favicon.ico'`.
 - `colorMode.respectPrefersColorScheme: true` — defaults to the visitor's OS/browser light-dark preference instead of always starting in light mode (the template's default).
 - Analytics: `gtag.trackingID: 'G-8S1BSK4F9Q'`, `anonymizeIP: true` — not present at all in the template.
@@ -21,7 +21,8 @@ import QuickReference from '@site/src/components/QuickReference';
 
 ```js title="docusaurus.config.js"
 title: 'Marla Sowards',
-tagline: 'AI-fluent documentation engineer • Technical writer and editor • ...',
+// Plain-text join of taglineItems, for <meta> tags only. See Home page > Hero tagline.
+tagline: taglineItems.map((item) => item.text).join(' • '),
 url: 'https://www.marlasowards.com',
 baseUrl: '/',
 organizationName: 'cedar-ave',
@@ -37,7 +38,7 @@ themeConfig: {
   image: 'img/social-card.jpg',
 ```
 
-This is the default Open Graph / Twitter card image used when a page or blog post doesn't set its own `image` frontmatter — the preview shown when a link to the site is shared on LinkedIn, X, Slack, etc. The classic template ships `img/docusaurus-social-card.jpg`; that file is still present under `static/img/` but unreferenced. To update the card image, replace `static/img/social-card.jpg` (or point `image` at a new file) — recommended size is 1200×630.
+This is the default Open Graph / Twitter card image used when a page or blog post doesn't set its own `image` frontmatter — the preview shown when a link to the site is shared on LinkedIn, X, Slack, etc. To update the card image, replace `static/img/social-card.jpg` (or point `image` at a new file) — recommended size is 1200×630.
 
 ## Favicon
 

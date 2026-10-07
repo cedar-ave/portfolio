@@ -26,10 +26,29 @@ const siteDir = path.dirname(fileURLToPath(import.meta.url));
 // unhandled directive instead of becoming a real callout.
 const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 
+// Homepage tagline lines - rendered as a styled list by src/pages/index.js
+// (via customFields.taglineItems). `icon` is either a path to a custom image
+// under static/ (e.g. '/img/home-page/foo.svg') or an Iconify "set:name" id.
+// Optional `iconClass` names an extra class from src/pages/index.module.css
+// to apply to that line's icon, on top of .taglineIcon.
+const taglineItems = [
+  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'AI-fluent documentation engineer' },
+  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'Technical writer and editor' },
+  { icon: '/img/home-page/03-docs-as-code.svg', text: 'Docs-as-code' },
+  { icon: '/img/home-page/04-xml-ccms-workflows.svg', text: 'XML and CCMS workflows' },
+  { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk master' },
+  { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation designer' },
+  { icon: '/img/home-page/07-ai-assisted-pipelines.svg', text: 'AI-assisted pipelines' },
+];
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-fluent documentation engineer</br>Technical writer and editor</br>Docs-as-code</br>XML and CCMS workflows</br><IIcon icon="cib:zendesk" height="1em" /> Zendesk master</br>AI conversation designer</br>AI-assisted pipelines',
+  // Plain-text version for page metadata (<title>, meta description).
+  tagline: taglineItems.map((item) => item.text).join(' • '),
+  customFields: {
+    taglineItems,
+  },
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
