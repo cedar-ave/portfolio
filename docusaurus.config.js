@@ -29,7 +29,7 @@ const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-fluent documentation engineer • Technical writer and editor • Docs-as-code and CCMS workflows • Zendesk master • AI conversation designer • AI-assisted pipelines',
+  tagline: 'AI-fluent documentation engineer <span class="bullet-shade">•</span> Technical writer and editor <span class="bullet-shade">•</span> Docs-as-code and CCMS workflows <span class="bullet-shade">•</span> Zendesk master <span class="bullet-shade">•</span> AI conversation designer <span class="bullet-shade">•</span> AI-assisted pipelines',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -109,10 +109,10 @@ const config = {
     { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
   ],
 
-  // Roboto: all weights (100-900), widths (75-100) and italics
+  // Schibsted Grotesk: all weights (400-900) and italics
   // Roboto Mono: all weights (100-700), used for the site's monospace font
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
+    'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
   ],
 
   presets: [

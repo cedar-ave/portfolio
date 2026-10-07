@@ -8,20 +8,21 @@ import QuickReference from '@site/src/components/QuickReference';
 
 <QuickReference>
 
-- The site's typeface is [Roboto](https://fonts.google.com/specimen/Roboto?categoryFilters=Sans+Serif:%2FSans%2FNeo+Grotesque), a Sans Serif / Neo-grotesque family from Google Fonts.
+- The site's typeface is [Schibsted Grotesk](https://fonts.google.com/specimen/Schibsted+Grotesk), a Grotesque Sans Serif family from Google Fonts.
 - It's loaded from Google Fonts in `docusaurus.config.js` and set as `--ifm-font-family-base` in `src/css/custom.css` so it applies everywhere by default — no per-component import needed.
-- The full variable font is loaded: all weights (100–900), all widths (75–100 / condensed to normal), and italics.
-- To use a specific weight inline, set `font-weight` (e.g. `font-weight: 600`) rather than adding a new font import — Roboto's variable axes already cover it. There's also a `.roboto-semibold` utility class (`font-weight: 600`) for inline emphasis, used e.g. in `src/pages/index.js`.
+- The full variable font is loaded: all weights (400–900) and italics.
+- To use a specific weight inline, set `font-weight` (e.g. `font-weight: 600`) rather than adding a new font import — Schibsted Grotesk's variable weight axis already covers it. There's also a `.semibold` utility class (`font-weight: 600`) for inline emphasis.
+- The monospace font is still [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) — only the base (body/heading) font changed.
 
 </QuickReference>
 
-## Why Roboto
+## Why Schibsted Grotesk
 
-Roboto is Google's Neo-grotesque sans-serif — geometric forms with some mechanical-skeleton curves, designed to be neutral and highly readable across sizes and weights. It's the base font family for the whole site (body text, headings, nav) via Infima's `--ifm-font-family-base`.
+Schibsted Grotesk is a Grotesque sans-serif with a bit more character than a neutral system font — slightly rounded terminals and a warmer rhythm — while staying highly readable across sizes and weights. It's the base font family for the whole site (body text, headings, nav) via Infima's `--ifm-font-family-base`.
 
 ## Where it's loaded
 
-Fetching it as a variable font (single request, every weight/width/italic combination) instead of a fixed set of static weights:
+Fetching it as a variable font (single request, every weight/italic combination) instead of a fixed set of static weights:
 
 ```js title="docusaurus.config.js"
 headTags: [
@@ -29,31 +30,32 @@ headTags: [
   { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
 ],
 
-// Roboto: all weights (100-900), widths (75-100) and italics
+// Schibsted Grotesk: all weights (400-900) and italics
+// Roboto Mono: all weights (100-700), used for the site's monospace font
 stylesheets: [
-  'https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap',
+  'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
 ],
 ```
 
-The `preconnect` hints open the connections to Google's font hosts early, and the `stylesheet` URL's `ital,wdth,wght` axis range is what pulls in every weight/width/italic combination in one file instead of one request per static weight.
+The `preconnect` hints open the connections to Google's font hosts early, and the `stylesheet` URL's `ital,wght` axis range is what pulls in every weight/italic combination in one file instead of one request per static weight.
 
 ## Where it's applied
 
 ```css title="src/css/custom.css"
 :root {
-  --ifm-font-family-base: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifm-font-family-base: 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 ```
 
-`--ifm-font-family-base` is Infima's base font variable, so setting it once here makes Roboto the default everywhere — body copy, headings, nav, sidebar. The fallback stack (`system-ui`, `-apple-system`, `Segoe UI`, `sans-serif`) only kicks in if the Google Fonts request fails.
+`--ifm-font-family-base` is Infima's base font variable, so setting it once here makes Schibsted Grotesk the default everywhere — body copy, headings, nav, sidebar. The fallback stack (`system-ui`, `-apple-system`, `Segoe UI`, `sans-serif`) only kicks in if the Google Fonts request fails.
 
-Diagram components (`src/components/*Diagrams`) that render text in SVG reference the same variable (`font-family: var(--ifm-font-family-base)`) rather than hard-coding `Roboto`, so they stay in sync if the base font ever changes.
+Diagram components (`src/components/*Diagrams`) that render text in SVG reference the same variable (`font-family: var(--ifm-font-family-base)`) rather than hard-coding a specific font name, so they stay in sync if the base font ever changes.
 
 ## Weight utilities
 
 ```css title="src/css/custom.css"
 .hero__title {
-  font-weight: 500;
+  font-weight: 900;
 }
 
 .hero__subtitle {
@@ -61,12 +63,12 @@ Diagram components (`src/components/*Diagrams`) that render text in SVG referenc
   font-size: 1.35rem;
 }
 
-.roboto-semibold {
+.semibold {
   font-weight: 600;
 }
 ```
 
-`.roboto-semibold` is a small helper for emphasizing a phrase inline (e.g. `<span class="roboto-semibold">End users</span>` on the homepage) without introducing a `<strong>` or a one-off inline style.
+`.semibold` is a small helper for emphasizing a phrase inline (e.g. `<span class="semibold">End users</span>`) without introducing a `<strong>` or a one-off inline style.
 
 ## Changing the font
 

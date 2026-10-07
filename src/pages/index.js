@@ -15,7 +15,10 @@ function HomepageHeader() {
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p
+          className="hero__subtitle"
+          dangerouslySetInnerHTML={{ __html: siteConfig.tagline }}
+        />
         {/* <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
@@ -39,8 +42,8 @@ export default function Home() {
           {/* <div className="container">
             <p>I create high quality, accurate content and deliver it consumers the moment they need it. I help:</p>
             <ul>
-              <li><span class="roboto-semibold">End users</span> adopt products faster and meet their goals with ease and confidence</li>
-              <li><span class="roboto-semibold">Team members</span> in engineering, customer success, sales, operations, and support access the information they need to serve customers excellently</li>
+              <li><span class="semibold">End users</span> adopt products faster and meet their goals with ease and confidence</li>
+              <li><span class="semibold">Team members</span> in engineering, customer success, sales, operations, and support access the information they need to serve customers excellently</li>
             </ul>
             <h3>How I can help you</h3>
             <ul>
