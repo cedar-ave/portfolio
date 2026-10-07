@@ -48,11 +48,11 @@ function HomepageHeader() {
             ))}
           </ul>
           <div className={styles.heroButtons}>
-            <Link className="button button--primary button--lg" to="/portfolio">
-              Portfolio
-            </Link>
             <Link className="button button--primary button--lg" to="/resume">
               Resume
+            </Link>
+            <Link className="button button--primary button--lg" to="/portfolio">
+              Portfolio
             </Link>
           </div>
         </div>
