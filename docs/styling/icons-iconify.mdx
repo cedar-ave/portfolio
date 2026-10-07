@@ -1,0 +1,71 @@
+---
+sidebar_position: 4
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Icons: Iconify
+
+<QuickReference>
+
+- To insert an icon, use the `IIcon` MDX component with the icon's full name (set\:name): `<IIcon icon="mdi:github" />`.
+- Find an icon name on the [Iconify Icon Explorer](https://icon-sets.iconify.design/) — it covers 200,000+ icons across dozens of free sets (Material Design Icons, Simple Icons for brand logos, etc.), unlike Font Awesome's free tier.
+- `IIcon` is registered globally in [MDXComponents.js](../../src/theme/MDXComponents.js), so no import is needed in any `.md`/`.mdx` file — it just works.
+- Pass `height="1em"` to size an icon to match the surrounding text instead of a fixed pixel size.
+
+</QuickReference>
+
+Setup followed the [Docusaurus Community guide to Iconify](https://docusaurus.community/knowledge/design/icons/iconify/). It was added alongside [Font Awesome](./icons.mdx) to pull in icon sets Font Awesome's free tier doesn't cover — brand logos in particular, like the Zendesk icon in the homepage tagline (`cib:zendesk`, from Simple Icons).
+
+## Packages
+
+Iconify's React bindings are installed as a single dependency — unlike Font Awesome, there's no separate package per icon set, since Iconify fetches icon data on demand:
+
+```json title="package.json"
+"@iconify/react": "^6.0.2",
+```
+
+## Wiring it up
+
+In [MDXComponents.js](../../src/theme/MDXComponents.js):
+
+```js title="src/theme/MDXComponents.js"
+import { Icon } from '@iconify/react';
+
+export default {
+  ...MDXComponents,
+  IIcon: Icon,
+};
+```
+
+Aliasing `Icon` to `IIcon` (to avoid colliding with other `Icon` components/imports) and adding it to the exported component map makes `<IIcon icon="..." />` available in every `.md`/`.mdx` file site-wide — the same mechanism used for `FAIcon`, `Gallery`, and `Panel`.
+
+## Using it in MDX
+
+```mdx
+Click the GitHub icon (<IIcon icon="mdi:github" height="1em" />) at top right.
+```
+
+The `icon` prop is the set-prefixed name shown on each icon's page in the [Icon Explorer](https://icon-sets.iconify.design/) — e.g. `mdi:github`, `cib:zendesk`, `logos:slack-icon`. No per-set import or registration step is needed; Iconify resolves and loads icon data for whatever name is passed.
+
+## Sizing to match text
+
+Unlike Font Awesome icons (which inherit the surrounding font size by default), Iconify's `Icon` renders at a fixed pixel size unless told otherwise. Pass `height="1em"` so the icon scales with whatever text it sits next to:
+
+```mdx
+<IIcon icon="cib:zendesk" height="1em" />
+```
+
+For an icon placed inline with text (rather than standalone), a small vertical nudge usually reads better too:
+
+```jsx
+<Icon icon="cib:zendesk" height="1em" style={{ verticalAlign: '-0.15em' }} />
+```
+
+## Using it outside MDX (plain JS/JSX)
+
+The homepage tagline (`docusaurus.config.js`'s `tagline` field) is a plain string, not MDX — it also feeds page `<meta>` tags, so it can't contain real JSX. [index.js](../../src/pages/index.js) works around this with a small `renderTagline()` helper that parses two inline markers out of that string — `</br>` for a line break and `<IIcon icon="..." height=".." />` for an icon — and turns them into real `<br/>` and `<Icon/>` elements before rendering. If you add a similar icon-in-a-config-string case elsewhere, reuse that pattern rather than reaching for `dangerouslySetInnerHTML`, which can only inject raw HTML and can't execute a React component like `Icon`.
+
+## Finding an icon
+
+Browse the [Iconify Icon Explorer](https://icon-sets.iconify.design/), search by keyword, and copy the `set:name` string shown for whichever icon you pick. Useful sets for this site: **Material Design Icons** (`mdi:*`) for general UI icons, **Simple Icons** (`cib:*` / `simple-icons:*`) for brand/product logos.
