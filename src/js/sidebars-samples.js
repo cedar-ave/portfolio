@@ -30,10 +30,15 @@
  * holds a fourth: a sample of a contributor guide (docs for people
  * contributing to a docs-as-code site, not for the product itself), adapted
  * closely from a real one - genericized product/company names and URLs,
- * but not paraphrased. Its subfolders (outlines/, troubleshoot/,
- * release-notes/, admin/, and each of those two's own includes/) mirror the
- * source repo's own folder layout rather than sitting flat, which is why
- * doc ids below include the subfolder segment. Each guide is a sibling
+ * but not paraphrased. Its subfolders (troubleshoot/, admin/, and admin's
+ * own includes/) mirror the source repo's own folder layout rather than
+ * sitting flat, which is why doc ids below include the subfolder segment.
+ * samples/release-notes-automation-guide/ holds a fifth, split out of that
+ * same contributor guide (it was originally its release-notes/ subfolder):
+ * an engineering-driven release notes, known issues, and announcements
+ * workflow. It keeps the numbered filenames and its own includes/ subfolder
+ * from the source, and links back into contributor-guide/ with absolute
+ * /samples/contributor-guide/... paths. Each guide is a sibling
  * category in the same sidebar array (below), not a separate sidebar - all
  * samples docs share one sidebar instance, so every category shows up
  * together in the left nav regardless of which sample you're currently on.
@@ -162,33 +167,6 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Release notes',
-          collapsed: true,
-          items: [
-            'contributor-guide/release-notes/26-types-of-publications',
-            'contributor-guide/release-notes/27-work-item-logic',
-            'contributor-guide/release-notes/includes/28-work-item-fields-setup',
-            'contributor-guide/release-notes/29-fill-out-work-items',
-            'contributor-guide/release-notes/30-release-notes-writing-guidance',
-            'contributor-guide/release-notes/31-prepare-release-notes-for-review',
-            'contributor-guide/release-notes/32-review-release-notes',
-            'contributor-guide/release-notes/33-publish-release-notes',
-            'contributor-guide/release-notes/34-release-notes-setup',
-            'contributor-guide/release-notes/35-include-images-in-release-notes',
-            'contributor-guide/release-notes/36-update-known-issues-report',
-            'contributor-guide/release-notes/37-known-issues-setup',
-            'contributor-guide/release-notes/38-update-critical-and-high-bugs-report',
-            'contributor-guide/release-notes/39-critical-and-high-bugs-setup',
-            'contributor-guide/release-notes/40-refresh-known-issues-and-critical-and-high-bugs',
-            'contributor-guide/release-notes/41-quarterly-recaps',
-            'contributor-guide/release-notes/42-release-notes-extension-setup',
-            'contributor-guide/release-notes/43-community-site-pages-setup',
-            'contributor-guide/release-notes/44-announce-changes-on-a-community-banner',
-            'contributor-guide/release-notes/45-announce-changes-on-slack',
-          ],
-        },
-        {
-          type: 'category',
           label: 'Admin',
           collapsed: true,
           items: [
@@ -199,6 +177,33 @@ const sidebars = {
             'contributor-guide/admin/50-hide-the-feedback-form',
           ],
         },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Release Notes Automation Guide',
+      collapsed: true,
+      items: [
+        'release-notes-automation-guide/26-types-of-publications',
+        'release-notes-automation-guide/27-work-item-logic',
+        'release-notes-automation-guide/includes/28-work-item-fields-setup',
+        'release-notes-automation-guide/29-fill-out-work-items',
+        'release-notes-automation-guide/30-release-notes-writing-guidance',
+        'release-notes-automation-guide/31-prepare-release-notes-for-review',
+        'release-notes-automation-guide/32-review-release-notes',
+        'release-notes-automation-guide/33-publish-release-notes',
+        'release-notes-automation-guide/34-release-notes-setup',
+        'release-notes-automation-guide/35-include-images-in-release-notes',
+        'release-notes-automation-guide/36-update-known-issues-report',
+        'release-notes-automation-guide/37-known-issues-setup',
+        'release-notes-automation-guide/38-update-critical-and-high-bugs-report',
+        'release-notes-automation-guide/39-critical-and-high-bugs-setup',
+        'release-notes-automation-guide/40-refresh-known-issues-and-critical-and-high-bugs',
+        'release-notes-automation-guide/41-quarterly-recaps',
+        'release-notes-automation-guide/42-release-notes-extension-setup',
+        'release-notes-automation-guide/43-community-site-pages-setup',
+        'release-notes-automation-guide/44-announce-changes-on-a-community-banner',
+        'release-notes-automation-guide/45-announce-changes-on-slack',
       ],
     },
     {
