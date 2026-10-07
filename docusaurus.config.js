@@ -29,7 +29,7 @@ const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Marla Sowards',
-  tagline: 'AI-fluent documentation engineer <span class="bullet-shade">•</span> Technical writer and editor <span class="bullet-shade">•</span> Docs-as-code and CCMS workflows <span class="bullet-shade">•</span> Zendesk master <span class="bullet-shade">•</span> AI conversation designer <span class="bullet-shade">•</span> AI-assisted pipelines',
+  tagline: 'AI-fluent documentation engineer</br>Technical writer and editor</br>Docs-as-code</br>XML and CCMS workflows</br><IIcon icon="cib:zendesk" height="1em" /> Zendesk master</br>AI conversation designer</br>AI-assisted pipelines',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -240,25 +240,6 @@ const config = {
       },
       footer: {
         style: 'light',
-        links: [
-          {
-            title: 'Links',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/cedar-ave',
-              },
-              {
-                label: 'LinkedIn',
-                href: 'https://www.linkedin.com/in/marlasowards',
-              },
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/users/7848350/hcdocs',
-              }
-            ],
-          }
-        ],
         copyright: `Copyright © ${new Date().getFullYear()} Marla Sowards`,
       },
       prism: {

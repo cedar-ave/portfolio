@@ -16,6 +16,53 @@
   }
 }
 
+.heroContainer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  text-align: left;
+}
+
+.heroImage {
+  flex: 0 0 33%;
+  display: flex;
+  justify-content: center;
+}
+
+.heroImageFrame {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.heroImageImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroText {
+  flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .heroContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .heroImage {
+    flex: 0 0 auto;
+  }
+
+  .heroImageFrame {
+    width: 180px;
+    height: 180px;
+  }
+}
+
 .textSection {
   padding: 0;
   text-align: left;
@@ -25,4 +72,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.heroButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .heroButtons {
+    justify-content: center;
+  }
 }
