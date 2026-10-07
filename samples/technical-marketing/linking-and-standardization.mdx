@@ -11,7 +11,7 @@ import Subtitle from '@site/src/components/Subtitle';
 
 Traditional data warehouses try to model the perfect database from the outset, determining in advance every possible business rule and vocabulary set needed to bring together data for analysis.
 
-This practice, called early binding, is a time-consuming, expensive undertaking. In healthcare, business rules and vocabularies change rapidly — and so do the use cases that data linked across different source systems can serve.
+This practice, called early binding, is a time-consuming, expensive undertaking. In healthcare, business rules and vocabularies change rapidly, and so do the use cases that data linked across different source systems can serve.
 
 ## The wisdom of late binding
 
@@ -23,7 +23,7 @@ Clearpath's Adaptive-Binding Data Warehouse architecture avoids the consequences
 
 ## ETL with a lowercase "t"
 
-When data is extracted from source systems and loaded into the data warehouse, it undergoes almost no transformation. Aside from some minimal data conformance — for example, making sure the "patient name" field in one intake mart is structured the same as the "patient name" field in another — the data is kept as raw as possible, in a source system's natural data model.
+When data is extracted from source systems and loaded into the data warehouse, it undergoes almost no transformation. Aside from some minimal data conformance (for example, making sure the "patient name" field in one intake mart is structured the same as the "patient name" field in another) the data is kept as raw as possible, in a source system's natural data model.
 
 Minimal transformation also helps analysts easily track and catalog data lineage through a single enterprise metadata dictionary.
 
