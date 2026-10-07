@@ -106,11 +106,6 @@
   border: none;
 }
 
-@media screen and (max-width: 768px) {
-  .taglineItem {
-    justify-content: center;
-  }
-}
 
 .textSection {
   padding: 0;
