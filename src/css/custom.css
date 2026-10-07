@@ -38,9 +38,12 @@
 
   --ifm-navbar-link-active-color: #50657C;
 
+  --ifm-color-secondary-contrast-background: var(--palette-alice-blue);
+
   --palette-teal: #73d3c3;
   --palette-navy: #202b49;
   --palette-pale-blue: #bed4e6;
+  --palette-alice-blue: #f0f5f9;
   --palette-blue: #5f93c7;
   --palette-sky-blue: #a6dcf7;
   --palette-gold: #f1b753;
@@ -384,7 +387,7 @@ article h3 {
 
 .button--lg {
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .hero .container {
@@ -517,4 +520,25 @@ li > p {
 
 li .alert {
   margin-top: 1rem;
+}
+
+/* Nested bullet markers: 2nd level en dash, 3rd level hyphen. */
+.markdown ul ul {
+  list-style-type: '–  ';
+}
+
+.markdown ul ul ul {
+  list-style-type: '-  ';
+}
+
+
+/* Resume */
+
+.resume-subtitle {
+  margin-top: -0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+  letter-spacing: -.3px;
 }

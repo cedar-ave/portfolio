@@ -8,7 +8,7 @@
 
 .successStory {
   margin: 1.5rem 0;
-  background-color: #f0f5f9;
+  background-color: var(--palette-alice-blue);
   border-radius: var(--ifm-card-border-radius);
   border: 1px solid var(--palette-pale-blue);
   box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
