@@ -33,6 +33,8 @@
 
   --ifm-font-weight-bold: 500;
 
+  --ifm-list-item-margin: 0.4rem;
+
   --ifm-link-color: #50657C;
   --ifm-link-hover-color: #5e7893;
 
@@ -522,12 +524,22 @@ li .alert {
   margin-top: 1rem;
 }
 
-/* Nested bullet markers: 2nd level en dash, 3rd level hyphen. */
-.markdown ul ul {
-  list-style-type: '–  ';
+/* Infima only spaces list items inside .markdown; standalone MDX pages
+   (src/pages/*.mdx) don't get that wrapper, so apply the same spacing. */
+.mdx-page article li + li {
+  margin-top: var(--ifm-list-item-margin);
 }
 
-.markdown ul ul ul {
+/* Nested bullet markers: 2nd level en dash, 3rd level hyphen. */
+.markdown ul ul,
+.mdx-page article ul ul {
+  list-style-type: '–  ';
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.markdown ul ul ul,
+.mdx-page article ul ul ul {
   list-style-type: '-  ';
 }
 
