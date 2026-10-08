@@ -11,6 +11,7 @@ exclude = [
   # These sites block automated requests, so they always fail.
   '^https://(www\.)?npmjs\.com',
   '^https://stackoverflow\.com',
+  'https://coolors.co/73d3c3-202b49-bed4e6-5f93c7-a6dcf7-f1b753-5e7893-93bcdf-d06e6a',
 ]
 
 exclude_path = ["src/pages/portfolio/_archive"]
