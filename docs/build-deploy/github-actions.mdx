@@ -42,7 +42,7 @@ If codespell flags a word that's spelled the way you want, add it to `ignore-wor
 To allow a word on one line only, put `codespell:ignore` on that line. In MDX, use a comment so it doesn't render:
 
 ```mdx
-A line with a word that codespell would otherwise flag. {/* codespell:ignore */}
+The `categor` prefix matches both spellings. {/* codespell:ignore */}
 ```
 
 ### Skipping files
@@ -150,7 +150,7 @@ To turn off a single rule, name it, as in `{/* vale Vale.Repetition = NO */}`, a
 
 ## Running the checks locally
 
-Each tool reads the same config file locally as it does in the workflow, so you can run them from the repo root before you push. Install them first (for example, `pip install codespell`, and the [lychee](https://lychee.cli.rs/installation/) and [Vale](https://vale.sh/docs/install) installers). Vale also needs `npm install --global mdx2vast`.
+Each tool reads the same config file locally as it does in the workflow, so you can run them from the repo root before you push. Install them first (for example, `pip install codespell`, and the [lychee](https://lychee.cli.rs/guides/getting-started/) and [Vale](https://docs.vale.sh/topics/installation) installers). Vale also needs `npm install --global mdx2vast`.
 
 ```bash
 codespell
