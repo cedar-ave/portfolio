@@ -1,0 +1,71 @@
+---
+title: Custom MCP servers
+description: Descriptions and links for custom MCP server samples
+hide_table_of_contents: false
+table_of_contents_levels: 2
+back_to_portfolio: true
+---
+
+import { } from '@site/src/components/McpDiagrams';
+
+# Custom MCP servers
+
+## Zendesk guide MCP server
+
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [zendesk_guide_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/zendesk_guide_mcp.py)
+
+### What it is
+
+This MCP server performs actions around Zendesk categories, sections, articles, labels, content tags, redirects, and themes. It is a wrapper around the [Zendesk Help Center API](https://developer.zendesk.com/api-reference/help_center/help-center-api/introduction), including both content management and [theming](https://developer.zendesk.com/api-reference/help_center/help-center-api/theming).
+
+### Why I built it
+
+It's tedious and time consuming to work with Zendesk content by clicking around the Zendesk UI, and some features (like redirects) aren't even available there. AI agent skills using this MCP server allow me to use natural language prompts for things like:
+
+- *Apply an `export_data` label to every article in the **Export data** section of the **Data User Guide**.*
+- *Remove callouts with **Coming soon** at the top of all articles with a `sprint_201_release` label.*
+- *List all articles that have no label, including their title and direct URL, and suggest labels.*
+- *List all unused labels and delete them with my approval.*
+
+For ultimate time savings, this MCP server can also be used in tandem with MCP servers for other enterprise tools (like Paligo CCMS) to perform multi-system actions like:
+
+- *Publish the updated **Data User Guide** in Paligo to Zendesk and apply the Zendesk label `extract_data` to all new articles created in that guide in Paligo last week.*
+
+See [zendesk-guide-pal](https://github.com/cedar-ave/ai-content-toolkit/tree/main/skills/zendesk-guide-pal) for a sample of an AI agent skill that uses the Zendesk guide MCP server.
+
+## Zendesk tickets MCP server
+
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [zendesk_tickets_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/zendesk_tickets_mcp.py)
+
+### What it is
+
+This MCP server reads Zendesk ticket contents, including the user's question and any conversation following. It also reads fields like a user's organization, ticket labels, ticket status, and custom fields like a user's product platform. It is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). 
+
+### Why I built it
+
+Support tickets from users have a wealth of information around issues users experience and agent resolutions, which can reveal opportunities to deflect future tickets with strategic content. But with thousands of tickets in play, it's time consuming and ineffective to manually read through even a subset. AI agent skills using this MCP server can slice tickets into segments, analyze them for common issues and resolutions, and draft troubleshooting articles, FAQs, cheat sheets, and reference material.
+
+## Paligo MCP server
+
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [paligo_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/paligo_mcp.py)
+
+### What it is
+
+This MCP server performs actions like creating, updating, and deleting articles; creating publications and productions; uploading and inserting images; and managing taxonomies and variables. It is a wrapper around the [Paligo API](https://docs.paligo.net/en/paligo-rest-api.html). 
+
+### Why I built it
+It's tedious and time consuming to work with Paligo content by clicking around the Paligo UI performing one action at a time. AI agent skills using this MCP server can perform multiple actions at a time - even a full publishing workflow - from transforming a Google doc into XML according to the Paligo XML spec, uploading it to a new document in Paligo, adding it to a guide's table of contents, and triggering the publishing pipeline.
+
+See [paligo-pal](https://github.com/cedar-ave/ai-content-toolkit/tree/main/skills/paligo-pal) for a sample of an AI agent skill that uses the Paligo MCP server.
+
+## Google Drive MCP server
+
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [gdrive_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/gdrive_mcp.py)
+
+### What it is
+
+This MCP server performs actions like reading Google Drive files, creating files, and publishing content to them from another source. In particular, this MCP server let me manage content as Markdown.
+
+### Why I built it
+
+Formatting a Google Doc with a Google Drive connection in AI tool is notoriously unpredictable. Applied styles can be offset by a character or two, bullets can be misaligned, and formatting can disappear. This custom MCP server allows the content to be extracted from the Google Doc as Markdown using the Google Docs API's `text/markdown` export MIME type, formats the content straightforwardly Markdown, and converts it into a native Google Doc format.
