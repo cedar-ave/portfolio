@@ -12,7 +12,8 @@ import QuickReference from '@site/src/components/QuickReference';
 - `organizationName`/`projectName` only matter for `npm run deploy` (GitHub Pages) — see [Deployment](../build-deploy/deployment).
 - Social share image: `themeConfig.image: 'img/social-card.jpg'`.
 - Favicon: `favicon: 'img/favicon.ico'`.
-- `colorMode.respectPrefersColorScheme: true` — defaults to the visitor's OS/browser light-dark preference instead of always starting in light mode (the template's default).
+- **Light/dark toggle:** currently **off**. `colorMode.disableSwitch: true` hides the navbar toggle. To turn it back on, delete that line (or set it to `false`).
+- `colorMode.respectPrefersColorScheme: true` — the site follows the visitor's OS/browser light-dark preference instead of always starting in light mode (the template's default). With the toggle off, this still applies: visitors whose OS is in dark mode get the dark site. To force light mode for everyone, also delete this line. See [Color mode](#color-mode).
 - Analytics: `gtag.trackingID: 'G-8S1BSK4F9Q'`, `anonymizeIP: true` — not present at all in the template.
 
 </QuickReference>
@@ -53,11 +54,30 @@ Resolves to `static/img/favicon.ico`. Swap that file to change it; no other conf
 ```js title="docusaurus.config.js"
 themeConfig: {
   colorMode: {
+    disableSwitch: true,
     respectPrefersColorScheme: true,
   },
 ```
 
-Not set at all in the classic template, which means visitors always land in light mode until they manually toggle dark mode (and Docusaurus remembers that per-visitor choice afterward via local storage). With this on, first-time visitors instead get whichever mode their OS/browser is already set to.
+Neither option is set in the classic template, which means visitors always land in light mode and can switch to dark mode with a toggle in the navbar. Docusaurus remembers that choice per visitor in local storage.
+
+### Follow the OS preference
+
+`respectPrefersColorScheme: true` makes first-time visitors get whichever mode their OS/browser is already set to, instead of light mode.
+
+### Light/dark toggle
+
+`disableSwitch: true` removes the light/dark toggle from the navbar. It was added to turn the dark site off for now.
+
+With the toggle off, Docusaurus also ignores any light/dark choice a visitor saved earlier, so returning visitors can't get stuck in a mode they can no longer switch out of. The page's starting mode then comes only from `respectPrefersColorScheme`:
+
+| `disableSwitch` | `respectPrefersColorScheme` | Result |
+| --- | --- | --- |
+| `true` | `true` (current) | No toggle. Visitors get their OS preference, so OS-dark visitors still see the dark site. |
+| `true` | removed or `false` | No toggle. Everyone gets light mode (`defaultMode`, which defaults to `'light'`). |
+| removed or `false` | `true` | Toggle shown. Starts in the OS preference; the visitor's choice is remembered. |
+
+To turn the toggle back on, delete the `disableSwitch` line. To fully disable dark mode, delete `respectPrefersColorScheme` too. The dark-mode colors in `src/css/custom.css` (`[data-theme='dark']` blocks, see [Colors](../styling/colors)) can stay in place either way; they just go unused while the site is light-only.
 
 ## Analytics
 
