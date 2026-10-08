@@ -1,0 +1,9 @@
+{{- /* Prints Vale alerts as GitHub Actions workflow commands so they show up as annotations. */ -}}
+{{- range .Files -}}
+{{- $path := .Path -}}
+{{- range .Alerts -}}
+{{- $level := .Severity -}}
+{{- if eq $level "suggestion" -}}{{- $level = "notice" -}}{{- end -}}
+::{{ $level }} file={{ $path }},line={{ .Line }},col={{ index .Span 0 }},title=Vale {{ .Check }}::{{ .Message }}
+{{ end -}}
+{{- end -}}

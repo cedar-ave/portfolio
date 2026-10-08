@@ -1,0 +1,96 @@
+# Lints the site's prose before it publishes.
+#
+# - cspell checks spelling. Add real words to the "words" list in cspell.json.
+# - Vale checks for defects such as repeated words and leftover merge conflict
+#   markers. Rules live in .github/vale/styles. Only error-level alerts fail
+#   the run; warnings and suggestions show up as annotations.
+#
+# Netlify builds on every push no matter what this workflow reports. To make
+# these checks block publishing, either merge to main through pull requests
+# with these checks required, or turn on the deploy job below.
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VALE_VERSION: 3.24.0
+
+jobs:
+  spelling:
+    name: Spelling (cspell)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: streetsidesoftware/cspell-action@v9
+        with:
+          files: |
+            README.md
+            docs/**/*.{md,mdx}
+            blog/**/*.{md,mdx}
+            samples/**/*.{md,mdx}
+            src/**/*.{md,mdx}
+          incremental_files_only: false
+
+  style:
+    name: Style (Vale)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # Vale needs mdx2vast on the PATH to parse .mdx files.
+      - name: Install Vale and mdx2vast
+        run: |
+          npm install --global mdx2vast
+          curl -sSfL "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP" vale
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Run Vale
+        run: vale --output=.github/vale/github.tmpl docs blog samples src/pages README.md
+
+  # Optional: publish to Netlify from here, only after both checks pass.
+  # Off until the repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true".
+  # Before turning it on, stop builds in Netlify (Site configuration > Build &
+  # deploy > Continuous deployment > Stop builds) so pushes don't also deploy,
+  # and add the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets.
+  deploy:
+    name: Deploy to Netlify
+    needs: [spelling, style]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.NETLIFY_DEPLOY_FROM_ACTIONS == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: netlify-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Publish
+        run: npx --yes netlify-cli@27 deploy --prod --dir=build --message "Deploy ${GITHUB_SHA::7} from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
