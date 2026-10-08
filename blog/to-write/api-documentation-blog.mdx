@@ -76,12 +76,12 @@ Each service published its own Swagger file, but not at a consistent address. So
 
 | Service | Where the spec lives (generalized) |
 | --- | --- |
-| Authorization service | `https://<server>/Authorization/swagger/ui/swagger.json` |
-| Data processing service, v1 | `https://<server>/DataProcessingService/docs/v1/swagger` |
-| Data processing service, v2 | `https://<server>/DataProcessingService2/swagger/ui/index` |
-| Discovery service | `https://<server>/DiscoveryService/swagger/swagger.json` |
-| Identity service | `https://<server>/identity/swagger/ui/index/v1/swagger.json` |
-| Metadata service, v2 | `https://<server>/MetadataService2/swagger/swagger.json` |
+| Forge service | `https://<server>/Authorization/swagger/ui/swagger.json` |
+| Vortex service, v1 | `https://<server>/DataProcessingService/docs/v1/swagger` |
+| Vortex service, v2 | `https://<server>/DataProcessingService2/swagger/ui/index` |
+| Data service | `https://<server>/DiscoveryService/swagger/swagger.json` |
+| Development service | `https://<server>/identity/swagger/ui/index/v1/swagger.json` |
+| Development service, v2 | `https://<server>/MetadataService2/swagger/swagger.json` |
 
 ### Step 2: Convert newer specs to a version DocFX can read
 
@@ -96,8 +96,8 @@ DocFX builds each service's landing page from the `description` in the spec's `i
   "swagger": "2.0",
   "info": {
     "version": "v2",
-    "title": "Metadata Service V2",
-    "description": "The metadata database stores information about source systems and data marts on the platform. Client applications insert, update, remove, and retrieve that information by sending HTTP requests to the Metadata Service V2. Version 2 adds routes that make data marts easier to manage, and it authenticates through the platform's identity service."
+    "title": "Forge Service V2",
+    "description": "The metadata database stores information about source systems and data marts on the platform. Client applications insert, update, remove, and retrieve that information by sending HTTP requests to the Forge Service V2. Version 2 adds routes that make data marts easier to manage, and it authenticates through the platform's identity service."
   }
 }
 ```

@@ -399,7 +399,7 @@ export function PipelineMap() {
    3. Interactive: one work item, every publication
    ===================================================================== */
 
-const PRODUCTS = ['Data platform', 'Pipeline designer', 'Metadata service'];
+const PRODUCTS = ['Data platform', 'Pipeline designer', 'Forge service'];
 const VERSIONS = ['2022.2', '2022.1'];
 const SEVERITIES = ['Critical', 'High', 'Medium', 'Low'];
 const PUBLISH = ['Yes', 'Yes, but covered elsewhere', 'No', ''];
@@ -422,7 +422,7 @@ const PRESETS = {
     state: 'Closed',
     severity: 'Medium',
     publish: 'Yes',
-    product: 'Metadata service',
+    product: 'Forge service',
     version: '2022.2',
     title: 'ODBC refresh error',
     note: 'ODBC driver fails when refreshing metadata',

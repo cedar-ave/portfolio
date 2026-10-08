@@ -145,7 +145,7 @@ export function NoteAnatomy() {
       <div className={styles.noteCard}>
         <span className={clsx(styles.noteKind, styles.noteKindFixed)}>Fixed bug</span>
         <p className={styles.noteText}>
-          Metadata Service returns an error when refreshing a large data mart
+          Forge Service returns an error when refreshing a large data mart
           <span className={styles.noteTag}>worded as if still broken</span>
           <span className={styles.noteTag}>terse, no period</span>
         </p>
