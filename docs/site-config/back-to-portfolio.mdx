@@ -1,0 +1,73 @@
+---
+sidebar_position: 12
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Back to portfolio link
+
+<QuickReference>
+
+- **Turn on:** add `back_to_portfolio: true` to a page's frontmatter.
+- **Turn off:** delete the line, or set it to `false`. Pages without the line don't show the link.
+- It shows a "← Back to portfolio" link above the page content, linking to `/portfolio`.
+- Works on standalone pages under `src/pages/` (for example, `src/pages/portfolio/*.mdx`). `/samples` pages get the link from their sidebar instead, so they don't need the flag.
+- Source: `src/theme/MDXPage/index.js`, `src/theme/MDXPage/styles.module.css`.
+
+</QuickReference>
+
+## What it does
+
+Pages linked from `/portfolio` don't have a sidebar, so there's no built-in way back to the list they came from. Setting the flag adds a link at the top of the page, matching the "← Back to portfolio" row at the top of the `/samples` sidebar.
+
+```mdx title="src/pages/portfolio/example.mdx"
+---
+title: Example page
+back_to_portfolio: true
+---
+```
+
+Every page in `src/pages/portfolio/` that's linked from `/portfolio` sets the flag. When you add a new sample page and link it from `/portfolio`, add the line to its frontmatter too.
+
+## How it works
+
+Docusaurus renders every `.md`/`.mdx` file under `src/pages/` with the `MDXPage` theme component from `@docusaurus/theme-classic`. Frontmatter on those pages is passed to that component as `metadata.frontMatter`, but a page's own MDX content can't place anything outside its `<article>`, and there's no built-in frontmatter option for a breadcrumb on standalone pages.
+
+`src/theme/MDXPage/index.js` is an ejected copy of the upstream component (from Docusaurus 3.10.2). Because it lives in `src/theme/`, Docusaurus uses it in place of the original for every page. It changes two things:
+
+1. It reads the flag along with the other frontmatter fields:
+
+   ```js title="src/theme/MDXPage/index.js"
+   const {
+     keywords,
+     wrapperClassName,
+     hide_table_of_contents: hideTableOfContents,
+     back_to_portfolio: backToPortfolio,
+   } = frontMatter;
+   ```
+
+2. When the flag is set, it renders the link between the content-visibility banner (the draft/unlisted notice) and the `<article>`:
+
+   ```jsx title="src/theme/MDXPage/index.js"
+   {backToPortfolio && (
+     <nav aria-label="Breadcrumbs" className={styles.backToPortfolio}>
+       <Link to="/portfolio">← Back to portfolio</Link>
+     </nav>
+   )}
+   ```
+
+The link uses `@docusaurus/Link`, so `onBrokenLinks: 'throw'` would catch it at build time if `/portfolio` were ever renamed.
+
+### Styling
+
+`src/theme/MDXPage/styles.module.css` keeps the upstream `.mdxPageWrapper` rule and adds `.backToPortfolio`. Its bottom border uses `--ifm-toc-border-color`, the same divider as the `.backToPortfolio` row in `src/theme/DocSidebar/Desktop/Content/styles.module.css`, so the two links look alike.
+
+### Why eject instead of wrap
+
+Docusaurus also lets you *wrap* a theme component, which renders the original inside your own component. A wrapper around `MDXPage` can only add markup outside the whole page layout (above the navbar or below the footer), not inside the content column. Ejecting was the only way to put the link directly above the article.
+
+The downside: the ejected copy doesn't pick up upstream changes. When you upgrade Docusaurus, diff `src/theme/MDXPage/index.js` against `node_modules/@docusaurus/theme-classic/lib/theme/MDXPage/index.js` and carry over any changes, keeping the two additions above.
+
+## Remove the feature
+
+To remove it from the whole site, delete `src/theme/MDXPage/`. Docusaurus then falls back to the original component, and any leftover `back_to_portfolio` lines in frontmatter are ignored.

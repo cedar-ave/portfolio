@@ -1,0 +1,12 @@
+.mdxPageWrapper {
+  justify-content: center;
+}
+
+/* Matches the "Back to portfolio" row at the top of the /samples sidebar
+   (src/theme/DocSidebar/Desktop/Content/styles.module.css). */
+.backToPortfolio {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  font-size: 0.9rem;
+}
