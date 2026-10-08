@@ -1,0 +1,177 @@
+---
+sidebar_position: 15
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# GitHub Actions checks
+
+The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github/workflows/checks.yml) lints the site's prose on every push to `main`, on every pull request, and when run by hand from the Actions tab. It runs three checks as separate jobs, so one failing doesn't hide the others.
+
+<QuickReference>
+
+- **codespell**: spelling. Settings are in `.codespellrc`. To allow a word, add it to `ignore-words-list`.
+- **lychee**: links to other sites. Settings are in `lychee.toml`. To skip a link, add a regex for it to `exclude`.
+- **Vale**: style defects such as repeated words and leftover merge conflict markers. Settings are in `.vale.ini`, and the custom rules are in `.vale/styles/Portfolio`. Only error-level alerts fail the run.
+- Netlify builds on every push no matter what these checks report. A failing check doesn't block publishing unless you turn on the optional deploy job.
+
+</QuickReference>
+
+## What gets checked
+
+| Check | Files |
+| --- | --- |
+| codespell | Everything in the repo except code, generated folders, and archives (see `skip` in `.codespellrc`) |
+| lychee | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src` |
+| Vale | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src/pages` |
+
+## Spelling: codespell
+
+codespell looks for common misspellings. It doesn't use a dictionary, so it doesn't flag product names or jargon it hasn't seen before. The job runs [`codespell-project/actions-codespell`](https://github.com/codespell-project/actions-codespell), which reads `.codespellrc` from the repo root.
+
+```ini title=".codespellrc"
+[codespell]
+skip = ./.git,./node_modules,./build,./.docusaurus,./static,./_archive,./src/pages/portfolio/_archive,./Claude outputs,*.js,*.jsx,*.ts,*.tsx,*.css,*.json,*.svg
+ignore-words-list = categor,pre-selected,sme,wit
+```
+
+### Allowing a word
+
+If codespell flags a word that's spelled the way you want, add it to `ignore-words-list`. Entries are lowercase and comma-separated, and they apply everywhere.
+
+To allow a word on one line only, put `codespell:ignore` on that line. In MDX, use a comment so it doesn't render:
+
+```mdx
+A line with a word that codespell would otherwise flag. {/* codespell:ignore */}
+```
+
+### Skipping files
+
+Add a path or glob to `skip`. Paths start with `./` and are relative to the repo root.
+
+## Links: lychee
+
+lychee checks that links to other sites still resolve. The job runs [`lycheeverse/lychee-action`](https://github.com/lycheeverse/lychee-action), which reads `lychee.toml` from the repo root. The link report appears on the run's summary page.
+
+Links within this site aren't checked here. lychee resolves them against `base_url` and then skips them, because the Docusaurus build already fails on broken internal links (see [Build flags and edit links](build-flags-and-edit-links)).
+
+```toml title="lychee.toml"
+base_url = "https://www.marlasowards.com"
+
+exclude = [
+  '^https?://(www\.)?marlasowards\.com',
+  # These sites block automated requests, so they always fail.
+  '^https://(www\.)?npmjs\.com',
+  '^https://stackoverflow\.com',
+]
+
+exclude_path = ["src/pages/portfolio/_archive"]
+
+include_mail = false
+
+max_retries = 3
+timeout = 20
+accept = ["100..=103", "200..=299", "429"]
+```
+
+A few of these settings keep flaky sites from failing the run. lychee tries each link up to three times, waits up to 20 seconds for a response, and counts `429 Too Many Requests` as a pass.
+
+### Skipping a link
+
+lychee has no inline comment for skipping a single link, so you exclude links by URL. Add a regex to `exclude` in `lychee.toml`:
+
+```toml title="lychee.toml"
+exclude = [
+  # ...
+  # One page only:
+  '^https://example\.com/some/page$',
+  # A whole site:
+  '^https://(www\.)?example\.com',
+]
+```
+
+- Each entry is a regex that's matched against the full URL. Escape dots as `\.`.
+- To skip a single page, anchor the regex with `^` at the start and `$` at the end.
+- Add a comment that says why the link is excluded. Otherwise it's hard to know later whether the exclusion is still needed.
+
+You can also list regexes one per line in a `.lycheeignore` file at the repo root. lychee reads that file on its own, but keeping every exclusion in `lychee.toml` means there's only one place to look.
+
+### Skipping files
+
+Add a path to `exclude_path`.
+
+## Style: Vale
+
+Vale checks for style defects. The job installs Vale (the version is pinned by `VALE_VERSION` at the top of the workflow) and [`mdx2vast`](https://www.npmjs.com/package/mdx2vast), which Vale needs to parse `.mdx` files.
+
+```ini title=".vale.ini"
+StylesPath = .vale/styles
+MinAlertLevel = suggestion
+
+[*.{md,mdx}]
+BasedOnStyles = Vale, Portfolio
+
+# codespell handles spelling (see .codespellrc), so Vale's spell checker stays off.
+Vale.Spelling = NO
+```
+
+Two styles apply:
+
+- **`Vale`** is Vale's built-in style. It catches problems such as a word repeated twice in a row. Its spell checker is turned off, since codespell handles spelling.
+- **`Portfolio`** holds this site's own rules in `.vale/styles/Portfolio`. Right now it has one rule, `MergeConflictMarkers`, which fails the run if a `<<<<<<<`, `=======`, or `>>>>>>>` line is left in a file.
+
+### Alerts and annotations
+
+Vale prints its alerts through `.vale/github.tmpl`, a template that turns each alert into a GitHub annotation. The annotations show up on the run's summary page and, in pull requests, on the affected lines in the **Files changed** tab.
+
+| Vale level | Annotation | Fails the run? |
+| --- | --- | --- |
+| `error` | Error | Yes |
+| `warning` | Warning | No |
+| `suggestion` | Notice | No |
+
+### Adding a rule
+
+Add a YAML file to `.vale/styles/Portfolio`. The file name becomes the rule name, for example `Portfolio.MergeConflictMarkers`. Set `level: error` only if the rule should fail the run. For the rule types and their options, see [Vale's styles documentation](https://vale.sh/docs/styles).
+
+### Turning Vale off for part of a file
+
+Wrap the content in comments. In MDX:
+
+```mdx
+{/* vale off */}
+
+Text that Vale skips.
+
+{/* vale on */}
+```
+
+To turn off a single rule, name it, as in `{/* vale Vale.Repetition = NO */}`, and turn it back on afterward with `{/* vale Vale.Repetition = YES */}`.
+
+## Running the checks locally
+
+Each tool reads the same config file locally as it does in the workflow, so you can run them from the repo root before you push. Install them first (for example, `pip install codespell`, and the [lychee](https://lychee.cli.rs/installation/) and [Vale](https://vale.sh/docs/install) installers). Vale also needs `npm install --global mdx2vast`.
+
+```bash
+codespell
+lychee --no-progress README.md 'docs/**/*.md*' 'blog/**/*.md*' 'samples/**/*.md*' 'src/**/*.md*'
+vale docs blog samples src/pages README.md
+```
+
+## Making checks block publishing
+
+Netlify builds and publishes on every push, whatever the checks report. There are two ways to make a failing check stop a bad change from going live.
+
+### Option 1: Require the checks on pull requests
+
+Protect the `main` branch in the repo settings so that changes go through pull requests and the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks must pass before a pull request can be merged. Netlify still builds on every push, but only changes that passed reach `main`.
+
+### Option 2: Deploy from the workflow
+
+The workflow has a `deploy` job that builds the site and publishes it to Netlify, but only after all three checks pass. It's off until you turn it on. To turn it on:
+
+1. Stop builds in Netlify (**Site configuration** > **Build & deploy** > **Continuous deployment** > **Stop builds**) so that pushes don't also deploy from Netlify.
+2. Add the `NETLIFY_AUTH_TOKEN` and `NETLIFY_SITE_ID` repository secrets.
+3. Set the repository variable `NETLIFY_DEPLOY_FROM_ACTIONS` to `true`.
+
+The job runs only for pushes to `main`. It never runs for pull requests.
