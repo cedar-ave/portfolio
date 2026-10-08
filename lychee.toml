@@ -1,0 +1,24 @@
+# lychee config: checks links to other sites from the site's Markdown and MDX.
+#
+# Links within this site (/portfolio/..., ./page, /img/...) are resolved
+# against base_url and then excluded, because the Docusaurus build already
+# fails on broken internal links (onBrokenLinks: 'throw').
+
+base_url = "https://www.marlasowards.com"
+
+exclude = [
+  '^https?://(www\.)?marlasowards\.com',
+  # These sites block automated requests, so they always fail.
+  '^https://(www\.)?npmjs\.com',
+  '^https://stackoverflow\.com',
+]
+
+exclude_path = ["src/pages/portfolio/_archive"]
+
+# Skip mailto: links rather than checking the address.
+include_mail = false
+
+# Flaky sites shouldn't fail the run on the first try.
+max_retries = 3
+timeout = 20
+accept = ["100..=103", "200..=299", "429"]

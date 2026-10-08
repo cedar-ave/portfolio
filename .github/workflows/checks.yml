@@ -1,6 +1,8 @@
 # Lints the site's prose before it publishes.
 #
-# - cspell checks spelling. Add real words to the "words" list in cspell.json.
+# - codespell checks for common misspellings. Add false positives to
+#   ignore-words-list in .codespellrc.
+# - lychee checks links to other sites. Settings are in lychee.toml.
 # - Vale checks for defects such as repeated words and leftover merge conflict
 #   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
@@ -28,20 +30,31 @@ env:
 
 jobs:
   spelling:
-    name: Spelling (cspell)
+    name: Spelling (codespell)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - uses: streetsidesoftware/cspell-action@v9
+      # Reads its settings from .codespellrc.
+      - uses: codespell-project/actions-codespell@v2
+
+  links:
+    name: Links (lychee)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Reads its settings from lychee.toml. The report appears on the run's
+      # summary page.
+      - uses: lycheeverse/lychee-action@v2
         with:
-          files: |
+          args: >-
+            --no-progress
             README.md
-            docs/**/*.{md,mdx}
-            blog/**/*.{md,mdx}
-            samples/**/*.{md,mdx}
-            src/**/*.{md,mdx}
-          incremental_files_only: false
+            'docs/**/*.md*'
+            'blog/**/*.md*'
+            'samples/**/*.md*'
+            'src/**/*.md*'
 
   style:
     name: Style (Vale)
@@ -71,7 +84,7 @@ jobs:
   # and add the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets.
   deploy:
     name: Deploy to Netlify
-    needs: [spelling, style]
+    needs: [spelling, links, style]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.NETLIFY_DEPLOY_FROM_ACTIONS == 'true'
     runs-on: ubuntu-latest
     concurrency:
