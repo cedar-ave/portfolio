@@ -1,0 +1,98 @@
+---
+sidebar_position: 13
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Table of contents
+
+<QuickReference>
+
+- **Choose levels:** add `table_of_contents_levels: 2,3,4` to a page's frontmatter to list only those heading levels. Levels don't need to be consecutive (`2,4` works).
+- **Hide it:** add `hide_table_of_contents: true`. The default is `false`, so `hide_table_of_contents: false` changes nothing.
+- Without either line, the table of contents lists `##` and `###` headings.
+- Works on standalone pages under `src/pages/` (for example, `src/pages/portfolio/*.mdx`).
+- Source: `src/theme/MDXPage/index.js`.
+
+</QuickReference>
+
+## Choose which headings show
+
+Standalone pages under `src/pages/` show an "On this page" table of contents on the right, built from the page's headings. By default it lists `##` (level 2) and `###` (level 3) headings. To pick different levels, list them in `table_of_contents_levels`:
+
+```mdx title="src/pages/portfolio/example.mdx"
+---
+title: Example page
+table_of_contents_levels: 2,3,4
+---
+```
+
+The field accepts any of these forms:
+
+| Form | Example | Shows |
+| --- | --- | --- |
+| Comma-separated | `table_of_contents_levels: 2,3,4` | `##`, `###` and `####` |
+| Gaps | `table_of_contents_levels: 2,4` | `##` and `####`, skipping `###` |
+| Single level | `table_of_contents_levels: 2` | `##` only |
+| YAML list | `table_of_contents_levels: [2, 3]` | `##` and `###` |
+
+Things to know:
+
+- **Level 1 has no effect.** Docusaurus treats a `#` heading as the page title and never adds it to the table of contents. `1,2,3` works, but it shows the same headings as `2,3`.
+- **Invalid values are ignored.** Anything that isn't a whole number from 1 to 6 is dropped. If nothing valid is left, the page uses the default levels.
+- **No matching headings, no column.** If the page has no headings at the listed levels, the table of contents isn't shown.
+- **It overrides the built-in options.** Docusaurus also has `toc_min_heading_level` and `toc_max_heading_level`, which set a range. They still work, but when `table_of_contents_levels` is set, it wins.
+
+## Hide the table of contents
+
+To remove the column entirely, set `hide_table_of_contents`:
+
+```mdx title="src/pages/portfolio/example.mdx"
+---
+title: Example page
+hide_table_of_contents: true
+---
+```
+
+This is a built-in Docusaurus option. Besides hiding the table of contents, it widens the content to fill the space. Use it on pages where the table of contents doesn't help, such as a page with few headings or one built around a wide component. `src/pages/portfolio/api-documentation.mdx` sets it so the `ApiReferenceMockup` has room.
+
+## How it works
+
+The `MDXPage` theme component renders every `.md`/`.mdx` file under `src/pages/`. This site uses an ejected copy, `src/theme/MDXPage/index.js` (see [Back to portfolio link](./back-to-portfolio.mdx) for why it's ejected).
+
+### Heading levels
+
+`table_of_contents_levels` is added by this site. `parseTocLevels` turns the field into a sorted list of levels, and the component filters the page's headings (`MDXPageContent.toc`, a flat list where each item has a `level`) down to those levels before passing them to `TOC`:
+
+```jsx title="src/theme/MDXPage/index.js"
+const tocLevels = parseTocLevels(tableOfContentsLevels);
+const toc = tocLevels
+  ? MDXPageContent.toc.filter((item) => tocLevels.includes(item.level))
+  : MDXPageContent.toc;
+```
+
+It also passes the lowest and highest listed levels to `TOC` as `minHeadingLevel` and `maxHeadingLevel`, in place of `toc_min_heading_level` and `toc_max_heading_level`. `TOC` nests the remaining headings under each other, so with `2,4` a `####` heading appears directly under the `##` before it.
+
+Filtering happens before `TOC` builds the nested list, not after. That's what allows gaps like `2,4`: the built-in min/max options can only describe a continuous range.
+
+### Hiding
+
+`hide_table_of_contents` is upstream behavior that the ejected copy keeps unchanged. The component uses it in two places:
+
+1. The content column is only narrowed to `col--8` when the table of contents isn't hidden:
+
+   ```jsx title="src/theme/MDXPage/index.js"
+   <div className={clsx('col', !hideTableOfContents && 'col--8')}>
+   ```
+
+2. The table of contents renders only when it isn't hidden and there are headings to show:
+
+   ```jsx title="src/theme/MDXPage/index.js"
+   {!hideTableOfContents && toc.length > 0 && (
+     <div className="col col--2">
+       <TOC ... />
+     </div>
+   )}
+   ```
+
+So a page with `hide_table_of_contents: true` gets the full-width column. A page that isn't hidden but has no headings to show (none at all, or none at its `table_of_contents_levels`) keeps the narrower `col--8` column with empty space on the right.

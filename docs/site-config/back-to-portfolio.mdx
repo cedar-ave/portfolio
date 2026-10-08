@@ -33,7 +33,7 @@ Every page in `src/pages/portfolio/` that's linked from `/portfolio` sets the fl
 
 Docusaurus renders every `.md`/`.mdx` file under `src/pages/` with the `MDXPage` theme component from `@docusaurus/theme-classic`. Frontmatter on those pages is passed to that component as `metadata.frontMatter`, but a page's own MDX content can't place anything outside its `<article>`, and there's no built-in frontmatter option for a breadcrumb on standalone pages.
 
-`src/theme/MDXPage/index.js` is an ejected copy of the upstream component (from Docusaurus 3.10.2). Because it lives in `src/theme/`, Docusaurus uses it in place of the original for every page. It changes two things:
+`src/theme/MDXPage/index.js` is an ejected copy of the upstream component (from Docusaurus 3.10.2). Because it lives in `src/theme/`, Docusaurus uses it in place of the original for every page. It also adds the `table_of_contents_levels` option (see [Table of contents](./table-of-contents.mdx)). For this link, it changes two things:
 
 1. It reads the flag along with the other frontmatter fields:
 
@@ -43,6 +43,7 @@ Docusaurus renders every `.md`/`.mdx` file under `src/pages/` with the `MDXPage`
      wrapperClassName,
      hide_table_of_contents: hideTableOfContents,
      back_to_portfolio: backToPortfolio,
+     table_of_contents_levels: tableOfContentsLevels,
    } = frontMatter;
    ```
 
@@ -66,8 +67,8 @@ The link uses `@docusaurus/Link`, so `onBrokenLinks: 'throw'` would catch it at 
 
 Docusaurus also lets you *wrap* a theme component, which renders the original inside your own component. A wrapper around `MDXPage` can only add markup outside the whole page layout (above the navbar or below the footer), not inside the content column. Ejecting was the only way to put the link directly above the article.
 
-The downside: the ejected copy doesn't pick up upstream changes. When you upgrade Docusaurus, diff `src/theme/MDXPage/index.js` against `node_modules/@docusaurus/theme-classic/lib/theme/MDXPage/index.js` and carry over any changes, keeping the two additions above.
+The downside: the ejected copy doesn't pick up upstream changes. When you upgrade Docusaurus, diff `src/theme/MDXPage/index.js` against `node_modules/@docusaurus/theme-classic/lib/theme/MDXPage/index.js` and carry over any changes, keeping the two additions above and the `table_of_contents_levels` code.
 
 ## Remove the feature
 
-To remove it from the whole site, delete `src/theme/MDXPage/`. Docusaurus then falls back to the original component, and any leftover `back_to_portfolio` lines in frontmatter are ignored.
+To remove it from the whole site, delete `src/theme/MDXPage/`. Docusaurus then falls back to the original component, and any leftover `back_to_portfolio` lines in frontmatter are ignored. This also removes `table_of_contents_levels`, so pages that set it go back to the default table of contents.
