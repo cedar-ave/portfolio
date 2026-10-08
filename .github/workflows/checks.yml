@@ -2,7 +2,7 @@
 #
 # - cspell checks spelling. Add real words to the "words" list in cspell.json.
 # - Vale checks for defects such as repeated words and leftover merge conflict
-#   markers. Rules live in .github/vale/styles. Only error-level alerts fail
+#   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
 #
 # Netlify builds on every push no matter what this workflow reports. To make
@@ -62,7 +62,7 @@ jobs:
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
       - name: Run Vale
-        run: vale --output=.github/vale/github.tmpl docs blog samples src/pages README.md
+        run: vale --output=.vale/github.tmpl docs blog samples src/pages README.md
 
   # Optional: publish to Netlify from here, only after both checks pass.
   # Off until the repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true".
