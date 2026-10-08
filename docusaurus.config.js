@@ -214,6 +214,7 @@ const config = {
       // Social card shown when links to this site are shared (LinkedIn, Twitter, etc.)
       image: 'img/social-card.jpg',
       colorMode: {
+        disableSwitch: true,
         respectPrefersColorScheme: true,
       },
       navbar: {
