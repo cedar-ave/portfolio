@@ -78,19 +78,18 @@ export function SkillSuite() {
   });
   const lanes = [
     {
-      name: 'Search, classify, & ingest',
+      name: ['Search, classify, and', 'ingest knowledge'],
       items: [skill('/source-librarian', 'Catalogs + indexes sources', 'according to a faceted', 'classification scheme')],
     },
     {
-      name: 'Generate',
+      name: ['Generate content'],
       items: [
         skill('/diataxis-drafter', 'Generate articles', 'from the library'),
-        skill('/release-docs-drafter', 'Generate articles', 'for new features'),
         skill('/release-notes-drafter', 'Generate notes for', 'one audience'),
       ],
     },
     {
-      name: 'Optimize and review',
+      name: ['Optimize and review'],
       items: [
         skill('/ai-optimizer', 'Optimize for AI readiness'),
         skill('/vocabulary-pal', 'Enforce terminology', 'standards'),
@@ -103,7 +102,7 @@ export function SkillSuite() {
       ],
     },
     {
-      name: 'Publish',
+      name: ['Publish output'],
       items: [
         skill('/paligo-pal', 'Publish to an XML CCMS'),
         skill('/zendesk-guide-pal', 'Deploy to Help Center'),
@@ -113,7 +112,9 @@ export function SkillSuite() {
   const laneW = 200;
   const laneGap = 28;
   const laneX = (i) => 8 + i * (laneW + laneGap);
-  const laneY = 30;
+  const headLh = 16;
+  const headLines = Math.max(...lanes.map((l) => l.name.length));
+  const laneY = 30 + (headLines - 1) * headLh;
   const chipW = 184;
   const chipGap = 8;
   const lh = 16;
@@ -136,8 +137,8 @@ export function SkillSuite() {
   return (
     <Figure
       titleId="skill-suite"
-      title="Nine AI agent skills covering the full help-content lifecycle"
-      desc="Four stages from left to right. Research: source librarian. Draft: Diátaxis drafter, release docs drafter, and release notes drafter. Review: AI optimizer, vocabulary pal, style pal, then a human-in-the-loop review. Publish: Paligo pal and Zendesk Guide pal. All skills ship as one versioned plugin with custom MCP servers."
+      title="Eight AI agent skills covering the full help-content lifecycle"
+      desc="Four stages from left to right. Research: source librarian. Draft: Diátaxis drafter and release notes drafter. Review: AI optimizer, vocabulary pal, style pal, then a human-in-the-loop review. Publish: Paligo pal and Zendesk Guide pal. All skills ship as one versioned plugin with custom MCP servers."
       viewBox={`0 0 900 ${hubY + hubH + 8}`}
       caption="">
       <defs>
@@ -147,10 +148,15 @@ export function SkillSuite() {
       {lanes.map((lane, li) => {
         const x = laneX(li);
         return (
-          <g key={lane.name}>
+          <g key={lane.name.join(' ')}>
             <rect x={x} y={laneY} width={laneW} height={laneH} rx={10} className={styles.lane} />
-            <text x={x + laneW / 2} y="20" textAnchor="middle" className={styles.heading}>
-              {`${li + 1} · ${lane.name}`}
+            {/* Bottom-align headings so one-line headings sit just above their lane. */}
+            <text textAnchor="middle" className={styles.heading}>
+              {lane.name.map((t, i) => (
+                <tspan key={i} x={x + laneW / 2} y={laneY - 10 - (lane.name.length - 1 - i) * headLh}>
+                  {i === 0 ? `${li + 1} · ${t}` : t}
+                </tspan>
+              ))}
             </text>
             {lane.items.map((it) => (
               <Box
@@ -265,74 +271,36 @@ export function TieredReading() {
 /* ---------- 3. Changelog to customer value ---------- */
 
 export function ReleaseNoteFilter() {
-  const y = 32;
-  const h = 60;
-  const mid = y + h / 2;
-  const boxes = [
-    { x: 10, w: 140, lines: [{ t: 'Changelog in' }, { t: 'GitHub release,', c: 'sub' }, { t: 'commits, Jira', c: 'sub' }] },
-    { x: 180, w: 130, lines: [{ t: 'Read every' }, { t: 'ticket in full', c: 'sub' }] },
-    { x: 340, w: 130, kind: 'gate', lines: [{ t: 'Exclusion filter' }, { t: 'internal work out', c: 'sub' }] },
-    { x: 500, w: 150, kind: 'mcp', lines: [{ t: 'Rewrite as' }, { t: 'customer value', c: 'sub' }] },
-    { x: 680, w: 110, kind: 'hub', lines: [{ t: 'One audience', c: 'hubTitle' }, { t: 'app · web · API', c: 'hubSub' }] },
-  ];
-
   return (
     <Figure
       titleId="skill-relnotes"
-      title="How release notes drafter turns an engineering changelog into customer release notes"
-      desc="A GitHub release, commits, and Jira tickets go in. Every ticket is read in full, then an exclusion filter drops internal work such as CI/CD, refactors, monitoring, and dependency upgrades, listing each with a reason. Kept items are rewritten as customer value for one audience per run. Example: 'Added retry logic to sync job' becomes 'Data stays current even when data sources are temporarily down.'"
-      viewBox="0 0 800 306"
-      caption="Nothing is dropped silently: every excluded item is listed with a reason, so reviewers can check the call. What remains is written as what the customer gains.">
+      title="Example rewrite from engineering changelog to customer release note"
+      desc="The engineering changelog entry 'Added retry logic to sync job' is rewritten as the customer release note 'Data stays current even when data sources are temporarily down.'"
+      viewBox="0 0 800 72"
+      caption="">
       <defs>
         <ArrowMarker id="rn-arrow" />
-        <ArrowMarker id="rn-arrow-drop" variant="drop" />
       </defs>
-
-      {boxes.slice(0, -1).map((b, i) => (
-        <path
-          key={i}
-          d={`M${b.x + b.w} ${mid} L${boxes[i + 1].x - 2} ${mid}`}
-          className={styles.edge}
-          markerEnd="url(#rn-arrow)"
-        />
-      ))}
-      {boxes.map((b, i) => (
-        <Box key={i} x={b.x} y={y} w={b.w} h={h} kind={b.kind || 'node'} lh={16} lines={b.lines} />
-      ))}
-
-      <path d="M405 92 L405 122" className={styles.edgeDrop} markerEnd="url(#rn-arrow-drop)" />
-      <Box
-        x={330}
-        y={124}
-        w={150}
-        h={62}
-        kind="drop"
-        lh={16}
-        lines={[{ t: 'Dropped + reason' }, { t: 'CI/CD · refactors ·', c: 'sub' }, { t: 'monitoring · deps', c: 'sub' }]}
-      />
-
-      <line x1="10" y1="206" x2="790" y2="206" className={styles.divider} />
-      <text x="10" y="228" className={styles.heading}>Example rewrite</text>
 
       <Box
         x={10}
-        y={238}
+        y={6}
         w={330}
         h={60}
         lh={18}
         lines={[{ t: 'Engineering changelog', c: 'sub' }, { t: '“Added retry logic to sync job”', c: 'quote' }]}
       />
-      <path d="M340 268 L388 268" className={styles.edge} markerEnd="url(#rn-arrow)" />
+      <path d="M340 36 L388 36" className={styles.edge} markerEnd="url(#rn-arrow)" />
       <Box
         x={390}
-        y={238}
+        y={6}
         w={400}
         h={60}
         kind="ok"
         lh={16}
         lines={[
           { t: 'Customer release note', c: 'sub' },
-          { t: 'Data stays current even when', c: 'quote' },
+          { t: '“Data stays current even when', c: 'quote' },
           { t: 'data sources are temporarily down.”', c: 'quote' },
         ]}
       />
