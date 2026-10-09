@@ -5,11 +5,12 @@ import styles from './styles.module.css';
 
 // Box with vertically centered lines of text.
 // lines: [{ t: 'text', c: 'title' | 'code' | 'sub' | 'hubTitle' | 'hubSub' | 'quote' }]
-function Box({ x, y, w, h, kind = 'node', lines = [], rx = 8, lh = 17 }) {
+// href: optional link target; wraps the box in an SVG anchor.
+function Box({ x, y, w, h, kind = 'node', lines = [], rx = 8, lh = 17, href }) {
   const cx = x + w / 2;
   const cy = y + h / 2;
   const startY = cy - ((lines.length - 1) * lh) / 2 + 4.5;
-  return (
+  const box = (
     <g>
       <rect x={x} y={y} width={w} height={h} rx={rx} className={styles[kind]} />
       <text textAnchor="middle">
@@ -20,6 +21,13 @@ function Box({ x, y, w, h, kind = 'node', lines = [], rx = 8, lh = 17 }) {
         ))}
       </text>
     </g>
+  );
+  return href ? (
+    <a href={href} className={styles.link}>
+      {box}
+    </a>
+  ) : (
+    box
   );
 }
 
@@ -61,37 +69,44 @@ function Figure({ titleId, title, desc, viewBox, caption, children }) {
 /* ---------- 1. Overview: the suite across the content lifecycle ---------- */
 
 export function SkillSuite() {
+  // Each box: kind, optional href, and lines ({ t, c }). Box height grows with line count.
+  const skill = (name, ...subs) => ({
+    kind: 'mcp',
+    key: name,
+    href: `#${name.slice(1)}`,
+    lines: [{ t: name, c: 'code' }, ...subs.map((t) => ({ t, c: 'sub' }))],
+  });
   const lanes = [
     {
-      name: 'Research',
-      skills: [
-        ['/source-librarian', 'catalogs + indexes sources'],
-        ['/source-analyzer', 'compares variant guides'],
+      name: 'Search, classify, & ingest',
+      items: [skill('/source-librarian', 'Catalogs + indexes sources', 'according to a faceted', 'classification scheme')],
+    },
+    {
+      name: 'Generate',
+      items: [
+        skill('/diataxis-drafter', 'Generate articles', 'from the library'),
+        skill('/release-docs-drafter', 'Generate articles', 'for new features'),
+        skill('/release-notes-drafter', 'Generate notes for', 'one audience'),
       ],
     },
     {
-      name: 'Draft',
-      skills: [
-        ['/diataxis-drafter', 'articles from the library'],
-        ['/release-docs-drafter', 'articles for new features'],
-        ['/release-notes-drafter', 'notes for one audience'],
-        ['/release-notes-jira-gdoc', 'notes from fix versions'],
-      ],
-    },
-    {
-      name: 'Review',
-      skills: [
-        ['/ai-optimizer', 'AI readiness'],
-        ['/vocabulary-pal', 'terminology'],
-        ['/style-pal', 'house style'],
+      name: 'Optimize and review',
+      items: [
+        skill('/ai-optimizer', 'Optimize for AI readiness'),
+        skill('/vocabulary-pal', 'Enforce terminology', 'standards'),
+        skill('/style-pal', 'Enforce house style'),
+        {
+          kind: 'gate',
+          key: 'gate',
+          lines: [{ t: 'Human-in-the-loop review' }],
+        },
       ],
     },
     {
       name: 'Publish',
-      gate: true,
-      skills: [
-        ['/paligo-pal', 'XML CCMS'],
-        ['/zendesk-guide-pal', 'Help Center'],
+      items: [
+        skill('/paligo-pal', 'Publish to an XML CCMS'),
+        skill('/zendesk-guide-pal', 'Deploy to Help Center'),
       ],
     },
   ];
@@ -99,59 +114,57 @@ export function SkillSuite() {
   const laneGap = 28;
   const laneX = (i) => 8 + i * (laneW + laneGap);
   const laneY = 30;
-  const laneH = 236;
   const chipW = 184;
-  const chipH = 46;
-  const chipY = (i) => 42 + i * 54;
+  const chipGap = 8;
+  const lh = 16;
+  const chipH = (it) => 14 + it.lines.length * lh;
+  // Stack boxes top to bottom with a fixed gap.
+  for (const lane of lanes) {
+    let y = laneY + 12;
+    for (const it of lane.items) {
+      it.y = y;
+      it.h = chipH(it);
+      y += it.h + chipGap;
+    }
+    lane.bottom = y - chipGap;
+  }
+  const laneH = Math.max(...lanes.map((l) => l.bottom)) + 12 - laneY;
   const arrowY = laneY + laneH / 2;
+  const hubY = laneY + laneH + 14;
+  const hubH = 38;
 
   return (
     <Figure
       titleId="skill-suite"
-      title="Eleven AI agent skills covering the full help-content lifecycle"
-      desc="Four stages from left to right. Research: source librarian and source analyzer. Draft: Diátaxis drafter, release docs drafter, release notes drafter, and release notes from Jira to Google Docs. Review: AI optimizer, vocabulary pal, and style pal. Publish: a human confirmation step, then Paligo pal and Zendesk Guide pal. All skills ship as one versioned plugin with custom MCP servers."
-      viewBox="0 0 900 326"
-      caption="Every stage of help content has a dedicated skill, and nothing reaches a live system until I confirm it. Teammates install the whole toolkit in one step.">
+      title="Nine AI agent skills covering the full help-content lifecycle"
+      desc="Four stages from left to right. Research: source librarian. Draft: Diátaxis drafter, release docs drafter, and release notes drafter. Review: AI optimizer, vocabulary pal, style pal, then a human-in-the-loop review. Publish: Paligo pal and Zendesk Guide pal. All skills ship as one versioned plugin with custom MCP servers."
+      viewBox={`0 0 900 ${hubY + hubH + 8}`}
+      caption="">
       <defs>
         <ArrowMarker id="ss-arrow" />
       </defs>
 
       {lanes.map((lane, li) => {
         const x = laneX(li);
-        const items = lane.gate
-          ? [{ gate: true }, ...lane.skills.map((s) => ({ s }))]
-          : lane.skills.map((s) => ({ s }));
         return (
           <g key={lane.name}>
             <rect x={x} y={laneY} width={laneW} height={laneH} rx={10} className={styles.lane} />
             <text x={x + laneW / 2} y="20" textAnchor="middle" className={styles.heading}>
               {`${li + 1} · ${lane.name}`}
             </text>
-            {items.map((it, i) =>
-              it.gate ? (
-                <Box
-                  key="gate"
-                  x={x + 8}
-                  y={chipY(i)}
-                  w={chipW}
-                  h={chipH}
-                  kind="gate"
-                  lh={16}
-                  lines={[{ t: 'I confirm first' }, { t: 'before any live write', c: 'sub' }]}
-                />
-              ) : (
-                <Box
-                  key={it.s[0]}
-                  x={x + 8}
-                  y={chipY(i)}
-                  w={chipW}
-                  h={chipH}
-                  kind="mcp"
-                  lh={16}
-                  lines={[{ t: it.s[0], c: 'code' }, { t: it.s[1], c: 'sub' }]}
-                />
-              ),
-            )}
+            {lane.items.map((it) => (
+              <Box
+                key={it.key}
+                x={x + 8}
+                y={it.y}
+                w={chipW}
+                h={it.h}
+                kind={it.kind}
+                lh={lh}
+                href={it.href}
+                lines={it.lines}
+              />
+            ))}
             {li < lanes.length - 1 && (
               <path
                 d={`M${x + laneW + 2} ${arrowY} L${x + laneW + laneGap - 2} ${arrowY}`}
@@ -165,9 +178,9 @@ export function SkillSuite() {
 
       <Box
         x={8}
-        y={280}
+        y={hubY}
         w={884}
-        h={38}
+        h={hubH}
         kind="hub"
         lines={[{ t: 'Shipped together as one versioned plugin with custom MCP servers', c: 'hubSub' }]}
       />

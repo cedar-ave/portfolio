@@ -102,3 +102,8 @@
 .arrowGate { fill: var(--dg-gate-stroke); }
 .arrowDrop { fill: var(--dg-drop-stroke); }
 .divider { stroke: var(--dg-node-stroke); stroke-width: 1; stroke-dasharray: 3 5; }
+
+/* Linked boxes */
+.link { cursor: pointer; }
+.link:hover rect,
+.link:focus-visible rect { stroke-width: 2.5; }

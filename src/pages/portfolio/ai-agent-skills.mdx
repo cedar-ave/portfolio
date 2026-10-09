@@ -10,7 +10,6 @@ import {
  SkillSuite,
  TieredReading,
  ReleaseNoteFilter,
- SubagentFanOut,
  DocToPaligo,
  SafeWrites,
  ReviewStack,
@@ -18,7 +17,9 @@ import {
 
 # AI agent skills
 
-I've built Claude AI agent skills designed to run at low cost that cover the full lifecycle of end-user help documentation: cataloging source knowledge; generating articles; reviewing them for style, terminology, and AI readiness; facilitating human-in-the-loop reviews, publishing through Paligo XML CCMS and Zendesk, and writing release notes. The skills ship together as a versioned Claude Code plugin with custom MCP servers, so teammates can install and update the whole toolkit in one step.
+I've built Claude AI agent skills designed to run at low cost that cover the full lifecycle of end-user help documentation: cataloging source knowledge; generating articles and release notes; reviewing them for style, terminology, and AI readiness; facilitating human-in-the-loop reviews, publishing through Paligo XML CCMS and Zendesk. The skills ship together as a versioned Claude Code plugin with [custom MCP servers](/portfolio/custom-mcp-servers), so teammates can install and update the whole toolkit in one step.
+
+## Content development plugin
 
 <SkillSuite />
 
@@ -40,22 +41,6 @@ A drafting skill can only use the sources it can find, and no one can afford to 
 - *Catalog these Zendesk tickets and read them for how-to and conceptual content.*
 - *Tag this Gong transcript and add it to the source library.*
 - *Re-catalog this Tango guide with --refresh.*
-
-### `/source-analyzer`
-
-#### What it is
-
-An analysis skill that compares a set of cataloged Tango guides covering the same workflow. It produces two files: a step alignment document that maps every step in every guide to a canonical workflow phase, and a deviation register (CSV) that records every UI label variant and structural difference, with how often it appears and which guide it came from.
-
-#### Why I built it
-
-When customers configure the product differently, their step-by-step guides describe the same workflow with different button labels, extra steps, or missing phases. Before I write one authoritative article, I need to know exactly where the guides agree and where they differ. The skill flags unusual guides before reading them in depth, proposes a phase map (for example, 18 phases for Feature X) and waits for my approval, and writes alignment notes to disk after each guide so a long analysis can pick up where it left off. It records every variant, even ones that appear in a single guide, so the final article can document every label a customer might see.
-
-#### Example prompts
-
-- *Analyze these 2026 Feature X guides and build a step alignment.*
-- *Run source analyzer on the Feature Y guides with the slug feature-y-2026.*
-- *Find variants across these Tango guides.*
 
 ## Content generation AI agent skills
 
@@ -110,24 +95,6 @@ Engineering changelogs describe what was built, but customers want to know what 
 - *Draft release notes for App X version 2.99 from this GitHub release.*
 - *Write API release notes for March 2026 from these Jira keys.*
 - *Draft release notes for App Y from this list of commits.*
-
-### `/release-notes-jira-gdoc`
-
-#### What it is
-
-A skill that builds complete release notes from every ticket in one or more Jira fix versions, adding detail from linked tickets, remote links, and supporting product materials. It produces Markdown ready to paste into a new Google Doc and ends with an audit log that lists every ticket and link, whether it was read, and whether it was used.
-
-#### Why I built it
-
-A release can include dozens of tickets across several Jira projects, and the best customer-facing language often lives in linked specs, slide decks, and Confluence pages rather than in the ticket itself. To handle that volume without dropping tickets, the skill uses subagents that save to disk: they fetch tickets and linked content in parallel, write it to files, and return only a confirmation, which keeps the main conversation small. The skill never changes Jira or existing Drive files. It retries unreachable links through several connectors before asking me how to proceed, leaves out tickets with restricted labels, and flags any place where tickets and product materials disagree. The audit log shows reviewers that nothing was skipped.
-
-<SubagentFanOut />
-
-#### Example prompts
-
-- *Create release notes for fix version 2.98.*
-- *Show me all fix versions so I can choose which ones to include.*
-- *Draft release notes for 2.98.1 and vApril, and use this product brief and slide deck for context.*
 
 ## Content management automation AI agent skills
 
