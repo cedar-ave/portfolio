@@ -10,7 +10,7 @@ import QuickReference from '@site/src/components/QuickReference';
 
 - The site's palette comes from [coolors.co/73d3c3-202b49-bed4e6-5f93c7-a6dcf7-f1b753-5e7893-93bcdf-d06e6a](https://coolors.co/73d3c3-202b49-bed4e6-5f93c7-a6dcf7-f1b753-5e7893-93bcdf-d06e6a), a 9-color palette.
 - All nine are defined as CSS custom properties (`--palette-*`) in `src/css/custom.css` so components can reference them by name instead of hex.
-- The **primary** color is **slate blue** `#5e7893` in light mode and **sky blue** `#a6dcf7` in dark mode — these drive Infima's `--ifm-color-primary` family (links, buttons, active nav items).
+- The **primary** color is **slate blue** `#5e7893` in light mode and **sky blue** `#a6dcf7` in dark mode — these drive Infima's `--ifm-color-primary` family (buttons, active sidebar items). Links have their own color; see [Link colors](./links).
 - **Navy** `#202b49` is the secondary/structural color — used for the hero background and as the dark "hub" fill in diagrams.
 - The rest (teal, pale blue, blue, gold, periwinkle, terracotta) are accents, used mostly to color-code nodes in the architecture diagrams under `src/components/*Diagrams`.
 
@@ -20,7 +20,7 @@ import QuickReference from '@site/src/components/QuickReference';
 
 | Swatch | Name | Hex | Role |
 | --- | --- | --- | --- |
-| 🟦 | Slate blue | `#5e7893` | **Primary (light mode).** `--ifm-color-primary`; links, buttons, active nav/sidebar items. |
+| 🟦 | Slate blue | `#5e7893` | **Primary (light mode).** `--ifm-color-primary`; buttons, active sidebar items. |
 | 🟦 | Sky blue | `#a6dcf7` | **Primary (dark mode).** `--ifm-color-primary` under `[data-theme='dark']`; lighter so it reads on a dark background. |
 | 🟪 | Navy | `#202b49` | **Secondary/structural.** Hero background (`.hero--primary`), and the dark hub fill in diagrams. |
 

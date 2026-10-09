@@ -1,0 +1,66 @@
+---
+sidebar_position: 5
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Link colors
+
+<QuickReference>
+
+- Link colors are set once, as `--site-link-color` (`#407ab5`) and `--site-link-hover-color` (`#305c88`), in the `:root` block of `src/css/custom.css`.
+- Infima's `--ifm-link-color` and `--ifm-link-hover-color` point at those two variables, and so do the navbar's active and hover link colors.
+- Links inside admonitions (`:::note`, `:::tip`, `:::caution`, and so on) use the same colors as links everywhere else. Infima normally recolors them to match the admonition's text.
+- To change the site's link color, edit only `--site-link-color` and `--site-link-hover-color`. Everything else, including links in admonitions, follows.
+
+</QuickReference>
+
+## Where it's defined
+
+```css title="src/css/custom.css"
+:root {
+  /* Stored separately so components that redefine --ifm-link-color
+     locally (e.g. Infima's .alert) can point back at the site values. */
+  --site-link-color: #407ab5;
+  --site-link-hover-color: #305c88;
+  --ifm-link-color: var(--site-link-color);
+  --ifm-link-hover-color: var(--site-link-hover-color);
+
+  --ifm-navbar-link-active-color: var(--ifm-link-color);
+  --ifm-navbar-link-hover-color: var(--ifm-link-hover-color);
+}
+```
+
+The link color is set separately from `--ifm-color-primary`. Infima's default ties links to the primary color, but this site sets them independently. Buttons and active sidebar items still use the primary color (see [Colors](./colors)).
+
+The `[data-theme='dark']` block doesn't override `--site-link-color`, so links use the same colors in both themes.
+
+## Why links in admonitions needed a fix
+
+Infima's `.alert` class (which Docusaurus admonitions render as) redefines `--ifm-link-color` locally, scoped to the alert, so that links pick up the alert's foreground color. Because of this, links in a `:::note` looked like regular body text with an underline, not like links anywhere else on the site.
+
+Setting `--ifm-link-color` back to a hex value inside `.alert` would duplicate the color in two places. And `var(--ifm-link-color)` can't be used there, because inside the alert that variable *is* the one being redefined, which would be a circular reference. Keeping the real values in separate `--site-link-*` variables lets the alert rule point back at them:
+
+```css title="src/css/custom.css"
+.alert[class*='alert--'] {
+  --ifm-alert-background-color: var(--ifm-color-secondary-contrast-background);
+  --ifm-alert-background-color-highlight: rgba(235, 237, 240, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-secondary-contrast-foreground);
+  --ifm-alert-border-color: var(--ifm-color-secondary-dark);
+  --ifm-link-color: var(--site-link-color);
+  --ifm-link-hover-color: var(--site-link-hover-color);
+}
+```
+
+The same rule also makes every admonition type render with `:::note` (`alert--secondary`) colors, so a `:::tip` or `:::danger` doesn't bring in its own green or red. The `[class*='alert--']` attribute selector is more specific than Infima's per-type `.alert--*` rules, so it wins no matter which stylesheet loads first.
+
+## Adding another component that overrides link colors
+
+If a new component sets `--ifm-link-color` locally (for example, a colored card or callout) but its links should still look like site links, use the same pattern:
+
+```css
+.my-component {
+  --ifm-link-color: var(--site-link-color);
+  --ifm-link-hover-color: var(--site-link-hover-color);
+}
+```

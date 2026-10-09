@@ -35,10 +35,15 @@
 
   --ifm-list-item-margin: 0.4rem;
 
-  --ifm-link-color: #50657C;
-  --ifm-link-hover-color: #5e7893;
+  /* Stored separately so components that redefine --ifm-link-color
+     locally (e.g. Infima's .alert) can point back at the site values. */
+  --site-link-color: #407ab5;
+  --site-link-hover-color: #305c88;
+  --ifm-link-color: var(--site-link-color);
+  --ifm-link-hover-color: var(--site-link-hover-color);
 
-  --ifm-navbar-link-active-color: #50657C;
+  --ifm-navbar-link-active-color: var(--ifm-link-color);
+  --ifm-navbar-link-hover-color: var(--ifm-link-hover-color);
 
   --ifm-color-secondary-contrast-background: var(--palette-alice-blue);
 
@@ -522,6 +527,19 @@ li > p {
 
 li .alert {
   margin-top: 1rem;
+}
+
+/* Render every admonition/alert type (tip, info, caution, danger, etc.)
+   with the same colors as :::note (the alert--secondary class). The
+   attribute selector outranks the per-type .alert--* rules regardless
+   of CSS load order. */
+.alert[class*='alert--'] {
+  --ifm-alert-background-color: var(--ifm-color-secondary-contrast-background);
+  --ifm-alert-background-color-highlight: rgba(235, 237, 240, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-secondary-contrast-foreground);
+  --ifm-alert-border-color: var(--ifm-color-secondary-dark);
+  --ifm-link-color: var(--site-link-color);
+  --ifm-link-hover-color: var(--site-link-hover-color);
 }
 
 /* Infima only spaces list items inside .markdown; standalone MDX pages
