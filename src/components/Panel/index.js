@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import styles from './styles.module.css';
 
 // Wraps a run of MDX content in a soft, rounded panel with a slight
@@ -22,6 +23,8 @@ import styles from './styles.module.css';
 // `toc_source: panels`, so the right-rail TOC can scroll to this panel. You
 // can also pass it by hand for a stable anchor link outside of that flow.
 export default function Panel({ children, label, id }) {
+  // Register the id so Docusaurus's broken-anchor check knows it exists.
+  useBrokenLinks().collectAnchor(id);
   return (
     <div id={id} className={clsx(styles.panel)}>
       {label && <p className={styles.panelLabel}>{label}</p>}
