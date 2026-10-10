@@ -1,0 +1,34 @@
+---
+title: Docs-as-code help site
+description: Docs-as-code help site sample
+hide_table_of_contents: false
+table_of_contents_levels: 2
+back_to_portfolio: true
+---
+
+import { DataBuildHomeMockup, DataBuildArticleMockup } from '@site/src/components/DataBuildDocsMockup';
+import { HelpSiteWorkflow, HelpSitePipelines } from '@site/src/components/DocsAsCodeHelpSiteDiagrams';
+
+# Docs-as-code help site
+
+\{@include: /src/includes/disclaimer.md\}
+
+## Overview
+
+## Home page
+
+<DataBuildHomeMockup />
+
+## Article page
+
+<DataBuildArticleMockup />
+
+## Docs-as-code workflow
+
+Article pages included an **Edit this page** link, which let contributors submit changes as pull requests. A **Contributor reference** link went to a simple guide that walked contributors through the steps.
+
+<HelpSiteWorkflow />
+
+## Automated deployment pipelines
+
+<HelpSitePipelines />
