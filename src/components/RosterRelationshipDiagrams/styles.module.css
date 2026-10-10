@@ -1,0 +1,198 @@
+/* Relationship-type diagrams for the Clearpath Roster guide. Same palette
+   and card conventions as ClearpathPlatformDiagrams; colors switch with the
+   light/dark theme. */
+
+.figure {
+  --rr-card: #ffffff;
+  --rr-shadow: rgba(0, 0, 0, 0.08);
+  --rr-border: #d5dce4;
+  --rr-rule: #e6eaef;
+  --rr-muted: #6b7280;
+  --rr-ink: #1f293f;
+  --rr-body: #374151;
+
+  --rr-blue: #5f93c7;
+  --rr-blue-bg: #e8f0f8;
+  --rr-teal: #3fa592;
+  --rr-teal-bg: #e3f5f1;
+  --rr-gold: #c98f2f;
+  --rr-gold-bg: #fdf3df;
+  --rr-slate: #5e7893;
+
+  --rr-chip-bg: #f3f5f8;
+  --rr-pill-bg: #202b49;
+  --rr-pill-ink: #ffffff;
+
+  margin: 2rem 0 2.5rem;
+}
+
+:global([data-theme='dark']) .figure {
+  --rr-card: #242526;
+  --rr-shadow: rgba(0, 0, 0, 0.35);
+  --rr-border: #4a4f57;
+  --rr-rule: #3a3d42;
+  --rr-muted: #aab6c3;
+  --rr-ink: #e3e3e3;
+  --rr-body: #cdd4db;
+
+  --rr-blue: #93bcdf;
+  --rr-blue-bg: #263447;
+  --rr-teal: #73d3c3;
+  --rr-teal-bg: #1f3b37;
+  --rr-gold: #f1b753;
+  --rr-gold-bg: #3b311f;
+  --rr-slate: #a6b8cc;
+
+  --rr-chip-bg: #2f3134;
+  --rr-pill-bg: #a6dcf7;
+  --rr-pill-ink: #19213a;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 320px;
+  max-width: 780px;
+  height: auto;
+  margin: 0 auto;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--rr-muted);
+  text-align: center;
+}
+
+/* Boxes */
+
+.shadow {
+  fill: var(--rr-shadow);
+  filter: blur(4px);
+}
+
+.body {
+  fill: var(--rr-card);
+}
+
+.noFill {
+  fill: none;
+}
+
+.carrierFill { fill: var(--rr-blue-bg); }
+.carrierBand { fill: var(--rr-blue-bg); }
+.carrierStroke { stroke: var(--rr-blue); stroke-width: 1.5; }
+
+.producerFill { fill: var(--rr-teal-bg); }
+.producerBand { fill: var(--rr-teal-bg); }
+.producerStroke { stroke: var(--rr-teal); stroke-width: 1.5; }
+
+.junctionFill { fill: var(--rr-gold-bg); }
+.junctionBand { fill: var(--rr-gold-bg); }
+.junctionStroke { stroke: var(--rr-gold); stroke-width: 1.5; }
+
+.neutralFill { fill: var(--rr-card); }
+.neutralStroke { stroke: var(--rr-border); stroke-width: 1.2; }
+
+.colHeadBg {
+  fill: var(--rr-chip-bg);
+}
+
+.rowRule {
+  stroke: var(--rr-rule);
+  stroke-width: 1;
+}
+
+/* Text */
+
+.entityTitle {
+  fill: var(--rr-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.entitySub {
+  fill: var(--rr-muted);
+  font-size: 12px;
+}
+
+.rowTitle {
+  fill: var(--rr-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.colSub {
+  fill: var(--rr-muted);
+  font-size: 11px;
+}
+
+.cellText {
+  fill: var(--rr-body);
+  font-size: 13.5px;
+}
+
+.subText {
+  fill: var(--rr-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.groupLabel {
+  fill: var(--rr-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.sideLabel {
+  fill: var(--rr-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Field chips and labels */
+
+.chip {
+  fill: var(--rr-chip-bg);
+  stroke: var(--rr-border);
+  stroke-width: 1;
+}
+
+.chipText {
+  fill: var(--rr-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pill {
+  fill: var(--rr-pill-bg);
+}
+
+.pillText {
+  fill: var(--rr-pill-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Connectors */
+
+.lineSlate,
+.lineBlue,
+.lineTeal {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.lineSlate { stroke: var(--rr-slate); }
+.lineBlue { stroke: var(--rr-blue); }
+.lineTeal { stroke: var(--rr-teal); }
+
+.headSlate { fill: var(--rr-slate); }
+.headBlue { fill: var(--rr-blue); }
+.headTeal { fill: var(--rr-teal); }
