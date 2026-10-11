@@ -32,13 +32,13 @@ const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 // Optional `iconClass` names an extra class from src/pages/index.module.css
 // to apply to that line's icon, on top of .taglineIcon.
 const taglineItems = [
-  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'AI-fluent documentation engineer' },
-  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'Technical writer and editor' },
+  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'Generative and agentic AI' },
+  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'Technical writing and editing' },
+  { icon: '/img/home-page/07-api-documentation.svg', text: 'API documentation' },
   { icon: '/img/home-page/03-docs-as-code.svg', text: 'Docs-as-code' },
   { icon: '/img/home-page/04-xml-ccms-workflows.svg', text: 'XML and CCMS workflows' },
-  { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk master' },
-  { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation designer' },
-  { icon: '/img/home-page/07-ai-assisted-pipelines.svg', text: 'AI-assisted pipelines' },
+  { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk CMS' },
+  { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation design' },
 ];
 
 /** @type {import('@docusaurus/types').Config} */
@@ -47,6 +47,8 @@ const config = {
   // Plain-text version for page metadata (<title>, meta description).
   tagline: taglineItems.map((item) => item.text).join(' • '),
   customFields: {
+    // Subhead under the name on the homepage hero
+    heroSubtitle: 'AI-fluent documentation engineer',
     taglineItems,
   },
   favicon: 'img/favicon.ico',
@@ -89,7 +91,7 @@ const config = {
     // A second, standalone docs instance for the "Product user guide" demo
     // linked from /portfolio. It's deliberately not in the navbar - it's a
     // sample guide, not a real section of this site. See
-    // sidebars-samples.js.
+    // sidebarsSamples.js.
     [
       '@docusaurus/plugin-content-docs',
       /** @type {import('@docusaurus/plugin-content-docs').Options} */
@@ -97,7 +99,7 @@ const config = {
         id: 'userGuide',
         path: 'samples',
         routeBasePath: 'samples',
-        sidebarPath: './src/js/sidebars-samples.js',
+        sidebarPath: './sidebarsSamples.js',
         remarkPlugins: [remarkImageSize],
         // remarkIncludes must run before Docusaurus's admonitions-transform
         // remark plugin (which runs early in the default pipeline), so an
@@ -140,7 +142,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: './src/js/sidebars-docs.js',
+          sidebarPath: './sidebars.js',
           remarkPlugins: [remarkImageSize],
           // remarkIncludes has to run before the admonitions transform, so
           // it's registered via beforeDefaultRemarkPlugins instead - see
