@@ -1,123 +1,331 @@
 // Netlify Function behind the Norway Facts API sample. The reference page
 // at /api-reference (rendered by @scalar/docusaurus from
-// static/openapi/norway-facts.yaml) sends its "Try it" requests here, and
+// static/openapi/norway-facts.yaml) sends its "Test Request" calls here, and
 // the generated code samples point here too, so they return real responses.
 //
-// Keep this file and the OpenAPI spec in sync: every route, parameter,
-// status code, and response shape below is documented there.
+// The spec is the contract. scripts/api-contract-test.mjs calls every route
+// through this handler and fails CI if a response, status code, or header
+// doesn't match the spec - run it with `npm run test:api` after any change
+// here or in the spec.
 
+import { createHash } from 'node:crypto';
 import { categories, counties, facts } from './data.mjs';
 
-const BASE_PATH = '/api/norway-facts';
+const ROOT_PATH = '/api/norway-facts';
+const VERSION = 'v1';
+const BASE_PATH = `${ROOT_PATH}/${VERSION}`;
+const SITE = 'https://www.marlasowards.com';
+const DOCS_URL = `${SITE}/api-reference`;
+const SPEC_URL = `${SITE}/openapi/norway-facts.yaml`;
+
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
+const MAX_OFFSET = 10000;
+
+// Data only changes when the site deploys, and every deploy purges
+// Netlify's CDN cache. So the CDN may keep responses indefinitely, while
+// browsers and other shared caches revalidate hourly using the ETag.
+const CACHEABLE = {
+  'Cache-Control': 'public, max-age=3600',
+  'Netlify-CDN-Cache-Control': 'public, durable, s-maxage=31536000',
+};
+const UNCACHEABLE = { 'Cache-Control': 'no-store' };
 
 // Read-only public data, so any origin may call it. This also lets the
-// reference page's "Try it" panel work from deploy previews and localhost.
+// reference page's "Test Request" panel work from deploy previews and
+// localhost.
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Expose-Headers': 'ETag, Link',
+};
+const ALLOWED_METHODS = 'GET, HEAD, OPTIONS';
+
+// Problem types, each documented under its own heading in the spec's
+// introduction - the type URI links straight to it.
+const PROBLEMS = {
+  'invalid-parameter': { status: 400, title: 'Invalid parameter' },
+  'not-found': { status: 404, title: 'Not found' },
+  'method-not-allowed': { status: 405, title: 'Method not allowed' },
+  'internal-error': { status: 500, title: 'Internal error' },
 };
 
-const json = (body, status = 200) =>
-  new Response(JSON.stringify(body, null, 2), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS },
-  });
+class ProblemError extends Error {
+  constructor(slug, detail, extensions = {}) {
+    super(detail);
+    this.slug = slug;
+    this.extensions = extensions;
+  }
+}
 
-// Errors use RFC 9457 problem details.
-const problem = (status, title, detail) =>
-  new Response(JSON.stringify({ type: 'about:blank', title, status, detail }, null, 2), {
+// Responses are pretty-printed on purpose: this is a learning sample, and
+// the output is easier to read in a terminal or the reference page.
+const serialize = (body) => JSON.stringify(body, null, 2);
+
+const baseHeaders = (contentType) => ({
+  'Content-Type': contentType,
+  'X-Content-Type-Options': 'nosniff',
+  ...CORS_HEADERS,
+});
+
+function problemResponse(err, req, requestId) {
+  const { status, title } = PROBLEMS[err.slug];
+  const url = new URL(req.url);
+  const body = {
+    type: `${DOCS_URL}#description/${err.slug}`,
+    title,
     status,
-    headers: { 'Content-Type': 'application/problem+json; charset=utf-8', ...CORS_HEADERS },
-  });
+    detail: err.message,
+    instance: url.pathname + url.search,
+    requestId,
+    ...err.extensions,
+  };
+  const headers = { ...baseHeaders('application/problem+json'), ...UNCACHEABLE };
+  if (status === 405) headers.Allow = ALLOWED_METHODS;
+  return new Response(serialize(body), { status, headers });
+}
+
+// Sends a 200 with an ETag, or a 304 when the client already has this
+// exact representation.
+function jsonResponse(req, body, { cacheable = true, extraHeaders = {} } = {}) {
+  const text = serialize(body);
+  const headers = { ...baseHeaders('application/json'), ...extraHeaders };
+  if (!cacheable) return new Response(text, { status: 200, headers: { ...headers, ...UNCACHEABLE } });
+
+  const etag = `"${createHash('sha256').update(text).digest('base64url').slice(0, 27)}"`;
+  Object.assign(headers, CACHEABLE, { ETag: etag });
+  const ifNoneMatch = req.headers.get('If-None-Match');
+  if (ifNoneMatch && ifNoneMatch.split(',').some((tag) => tag.trim().replace(/^W\//, '') === etag || tag.trim() === '*')) {
+    delete headers['Content-Type'];
+    return new Response(null, { status: 304, headers });
+  }
+  return new Response(text, { status: 200, headers });
+}
+
+// ---- Query parameters ------------------------------------------------------
+
+// Validates the query string against the parameters an endpoint accepts.
+// Unknown, repeated, and invalid parameters are all rejected, and every
+// problem is reported at once in `errors`.
+function parseQuery(searchParams, spec) {
+  const errors = [];
+  const values = {};
+  const names = [...new Set(searchParams.keys())];
+
+  for (const name of names) {
+    if (!(name in spec)) {
+      errors.push({ parameter: name, detail: `Unknown parameter. Allowed: ${Object.keys(spec).join(', ') || 'none'}.` });
+    } else if (searchParams.getAll(name).length > 1) {
+      errors.push({ parameter: name, detail: 'Specify this parameter only once.' });
+    }
+  }
+
+  for (const [name, rule] of Object.entries(spec)) {
+    const raw = searchParams.get(name);
+    if (raw === null || errors.some((e) => e.parameter === name)) {
+      values[name] = rule.default;
+      continue;
+    }
+    if (rule.enum) {
+      if (rule.enum.includes(raw)) values[name] = raw;
+      else errors.push({ parameter: name, detail: `Must be one of: ${rule.enum.join(', ')}.` });
+    } else {
+      const value = Number(raw);
+      if (/^(0|[1-9]\d*)$/.test(raw) && value >= rule.min && value <= rule.max) values[name] = value;
+      else errors.push({ parameter: name, detail: `Must be an integer from ${rule.min} to ${rule.max}.` });
+    }
+  }
+
+  if (errors.length) {
+    const summary = errors.length === 1 ? 'A query parameter is invalid.' : `${errors.length} query parameters are invalid.`;
+    throw new ProblemError('invalid-parameter', `${summary} See errors for details.`, { errors });
+  }
+  return values;
+}
 
 const categoryIds = categories.map((c) => c.id);
+const CATEGORY_PARAM = { enum: categoryIds };
+const PAGING_PARAMS = {
+  limit: { min: 1, max: MAX_LIMIT, default: DEFAULT_LIMIT },
+  offset: { min: 0, max: MAX_OFFSET, default: 0 },
+};
 
-// Returns the validated category filter, null when absent, or a problem
-// Response when the value isn't a known category.
-function parseCategory(params) {
-  const category = params.get('category');
-  if (category === null) return null;
-  if (!categoryIds.includes(category)) {
-    return problem(400, 'Invalid parameter', `category must be one of: ${categoryIds.join(', ')}.`);
-  }
-  return category;
-}
-
-function parseInteger(params, name, fallback, min, max) {
-  const raw = params.get(name);
-  if (raw === null) return fallback;
-  const value = Number(raw);
-  if (!/^\d+$/.test(raw) || value < min || value > max) {
-    return problem(400, 'Invalid parameter', `${name} must be an integer from ${min} to ${max}.`);
-  }
-  return value;
-}
-
-function listFacts(params) {
-  const category = parseCategory(params);
-  if (category instanceof Response) return category;
-  const limit = parseInteger(params, 'limit', DEFAULT_LIMIT, 1, MAX_LIMIT);
-  if (limit instanceof Response) return limit;
-  const offset = parseInteger(params, 'offset', 0, 0, Number.MAX_SAFE_INTEGER);
-  if (offset instanceof Response) return offset;
-
-  const matches = category ? facts.filter((f) => f.category === category) : facts;
-  return json({
-    data: matches.slice(offset, offset + limit),
-    pagination: { total: matches.length, limit, offset },
+function invalidPathParameter(name, detail) {
+  return new ProblemError('invalid-parameter', `The ${name} path parameter is invalid.`, {
+    errors: [{ parameter: name, detail }],
   });
 }
 
-function randomFact(params) {
-  const category = parseCategory(params);
-  if (category instanceof Response) return category;
-  const pool = category ? facts.filter((f) => f.category === category) : facts;
-  return json(pool[Math.floor(Math.random() * pool.length)]);
-}
+// ---- Pagination ------------------------------------------------------------
 
-function getFact(rawId) {
-  const fact = /^\d+$/.test(rawId) && facts.find((f) => f.id === Number(rawId));
-  return fact ? json(fact) : problem(404, 'Not found', `No fact has the ID ${rawId}.`);
-}
-
-function getCounty(code) {
-  const county = counties.find((c) => c.code === code);
-  return county ? json(county) : problem(404, 'Not found', `No county has the code ${code}.`);
-}
-
-export default async (req) => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
-  if (req.method !== 'GET') {
-    const res = problem(405, 'Method not allowed', 'This API is read-only. Use GET.');
-    res.headers.set('Allow', 'GET, OPTIONS');
-    return res;
-  }
-
+// Every collection is paginated the same way, even short ones, so clients
+// need only one code path and a list can grow without a breaking change.
+// Page links use the request's own origin, so they stay on a deploy
+// preview's host instead of jumping to production.
+function paginate(req, items, query) {
+  const { limit, offset } = query;
+  const total = items.length;
   const url = new URL(req.url);
-  const segments = url.pathname.slice(BASE_PATH.length).split('/').filter(Boolean).map(decodeURIComponent);
-  const params = url.searchParams;
+  const pageUrl = (newOffset) => {
+    const next = new URL(url);
+    next.searchParams.set('limit', String(limit));
+    next.searchParams.set('offset', String(newOffset));
+    return next.href;
+  };
 
-  switch (segments.length === 0 ? '' : segments[0]) {
+  const lastOffset = total === 0 ? 0 : Math.floor((total - 1) / limit) * limit;
+  const links = {
+    first: pageUrl(0),
+    prev: offset > 0 ? pageUrl(Math.max(0, offset - limit)) : null,
+    next: offset + limit < total ? pageUrl(offset + limit) : null,
+    last: pageUrl(lastOffset),
+  };
+  const linkHeader = Object.entries(links)
+    .filter(([, href]) => href)
+    .map(([rel, href]) => `<${href}>; rel="${rel}"`)
+    .join(', ');
+
+  return jsonResponse(
+    req,
+    { data: items.slice(offset, offset + limit), pagination: { total, limit, offset, links } },
+    { extraHeaders: { Link: linkHeader } },
+  );
+}
+
+// ---- Routes ----------------------------------------------------------------
+
+function index(req) {
+  const { origin, searchParams } = new URL(req.url);
+  parseQuery(searchParams, {});
+  return jsonResponse(req, {
+    name: 'Norway Facts API',
+    version: VERSION,
+    documentation: DOCS_URL,
+    openapi: SPEC_URL,
+    links: {
+      facts: `${origin}${BASE_PATH}/facts`,
+      randomFact: `${origin}${BASE_PATH}/random-fact`,
+      categories: `${origin}${BASE_PATH}/categories`,
+      counties: `${origin}${BASE_PATH}/counties`,
+    },
+  });
+}
+
+function listFacts(req) {
+  const query = parseQuery(new URL(req.url).searchParams, { category: CATEGORY_PARAM, ...PAGING_PARAMS });
+  const matches = query.category ? facts.filter((f) => f.category === query.category) : facts;
+  return paginate(req, matches, query);
+}
+
+function getFact(req, rawId) {
+  parseQuery(new URL(req.url).searchParams, {});
+  // Only canonical positive integers, so each fact has exactly one URL
+  // (/facts/010 is rejected rather than treated as /facts/10).
+  if (!/^[1-9]\d*$/.test(rawId)) throw invalidPathParameter('id', 'Must be a positive integer with no leading zeros.');
+  const fact = facts.find((f) => f.id === Number(rawId));
+  if (!fact) throw new ProblemError('not-found', `No fact has the ID ${rawId}.`);
+  return jsonResponse(req, fact);
+}
+
+function randomFact(req) {
+  const { category } = parseQuery(new URL(req.url).searchParams, { category: CATEGORY_PARAM });
+  const pool = category ? facts.filter((f) => f.category === category) : facts;
+  // Every category has facts, so an empty pool is a data bug - a 500, not
+  // something the client did wrong.
+  if (pool.length === 0) throw new Error(`Category ${category} has no facts.`);
+  return jsonResponse(req, pool[Math.floor(Math.random() * pool.length)], { cacheable: false });
+}
+
+function listCategories(req) {
+  return paginate(req, categories, parseQuery(new URL(req.url).searchParams, PAGING_PARAMS));
+}
+
+function listCounties(req) {
+  return paginate(req, counties, parseQuery(new URL(req.url).searchParams, PAGING_PARAMS));
+}
+
+function getCounty(req, code) {
+  parseQuery(new URL(req.url).searchParams, {});
+  if (!/^\d{2}$/.test(code)) throw invalidPathParameter('code', 'Must be a two-digit county code, such as 46.');
+  const county = counties.find((c) => c.code === code);
+  if (!county) throw new ProblemError('not-found', `No county has the code ${code}.`);
+  return jsonResponse(req, county);
+}
+
+// Returns the handler for a path, or null when no endpoint matches.
+function route(pathname) {
+  const trimmed = pathname.replace(/\/+$/, '');
+  if (trimmed === ROOT_PATH || trimmed === BASE_PATH) return index;
+  if (!trimmed.startsWith(`${BASE_PATH}/`)) return null;
+
+  const segments = trimmed.slice(BASE_PATH.length + 1).split('/').map(decodeURIComponent);
+  const [resource, id, ...rest] = segments;
+  if (rest.length) return null;
+
+  switch (resource) {
     case 'facts':
-      if (segments.length === 1) return listFacts(params);
-      if (segments.length === 2) return segments[1] === 'random' ? randomFact(params) : getFact(segments[1]);
-      break;
+      return id === undefined ? listFacts : (req) => getFact(req, id);
+    case 'random-fact':
+      return id === undefined ? randomFact : null;
     case 'categories':
-      if (segments.length === 1) return json({ data: categories });
-      break;
+      return id === undefined ? listCategories : null;
     case 'counties':
-      if (segments.length === 1) return json({ data: counties });
-      if (segments.length === 2) return getCounty(segments[1]);
-      break;
+      return id === undefined ? listCounties : (req) => getCounty(req, id);
+    default:
+      return null;
   }
-  return problem(404, 'Not found', `No endpoint matches ${url.pathname}.`);
+}
+
+export default async (req, context) => {
+  const requestId = context?.requestId ?? req.headers.get('x-nf-request-id') ?? crypto.randomUUID();
+  try {
+    const url = new URL(req.url);
+    let handler;
+    try {
+      handler = route(url.pathname);
+    } catch (err) {
+      // decodeURIComponent throws on malformed percent-encoding (/facts/%E0).
+      if (err instanceof URIError) throw new ProblemError('not-found', 'The request path contains malformed percent-encoding.');
+      throw err;
+    }
+    if (!handler) throw new ProblemError('not-found', `No endpoint matches ${url.pathname}.`);
+
+    if (req.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          ...CORS_HEADERS,
+          Allow: ALLOWED_METHODS,
+          'Access-Control-Allow-Methods': ALLOWED_METHODS,
+          'Access-Control-Allow-Headers': 'If-None-Match',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      throw new ProblemError('method-not-allowed', `${req.method} isn't supported. This API is read-only.`);
+    }
+
+    const res = handler(req);
+    // HEAD gets exactly what GET would, minus the body.
+    return req.method === 'HEAD' ? new Response(null, { status: res.status, headers: res.headers }) : res;
+  } catch (err) {
+    if (err instanceof ProblemError) return problemResponse(err, req, requestId);
+    console.error(`[${requestId}]`, err);
+    return problemResponse(new ProblemError('internal-error', 'Something went wrong on our side. Try again later.'), req, requestId);
+  }
 };
 
-// Netlify reads this statically at deploy time, so the paths must be string
-// literals - not BASE_PATH or a template string. Keep them in sync by hand.
+// Netlify reads this statically at deploy time, so every value must be a
+// literal - not ROOT_PATH or a template string. Keep them in sync by hand.
+//
+// rateLimit: Netlify answers with its own 429 once a client (IP address)
+// exceeds 60 requests in 60 seconds. Requests served from the CDN cache
+// never reach the function and don't count.
 export const config = {
   path: ['/api/norway-facts', '/api/norway-facts/*'],
+  rateLimit: {
+    windowLimit: 60,
+    windowSize: 60,
+    aggregateBy: ['ip', 'domain'],
+  },
 };

@@ -267,7 +267,7 @@ const config = {
           },
           {
             to: '/api-reference',
-            label: 'API reference',
+            label: 'Norway Facts API',
             position: 'left',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
