@@ -9,29 +9,31 @@ series_title: "Series: Custom MCPs"
 series_order: 1
 ---
 
-import { McpHub, ManualVsPrompt } from '@site/src/components/McpDiagrams';
-
-This is the first in a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in, so I can generate content from the information they hold, set up workflows that cover multiple tools, and eliminate manual, repetitive work that would otherwise only be possible through the application UI. The code is proprietary to the company I built it for, so I can't share it here — this covers what it enabled me to do and the results.
+This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in, so I can generate content from the information they hold, set up workflows that cover multiple tools, and eliminate manual, repetitive work that would otherwise only be possible through the application UI.
 
 {/* truncate */}
 
-<McpHub />
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [zendesk_guide_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/zendesk_guide_mcp.py)
 
-**What it is**: This MCP is a wrapper around the [Zendesk Help Center API](https://developer.zendesk.com/api-reference/help_center/help-center-api/introduction), including both content management and [theming](https://developer.zendesk.com/api-reference/help_center/help-center-api/theming).
+## What it is
 
-**Why I built it**: With this MCP, I can use natural language prompts to instantly perform actions in Zendesk Guide instead of repeatedly clicking through multiple UI controls. For example:
+This MCP server performs actions around Zendesk categories, sections, articles, labels, content tags, redirects, and themes. It is a wrapper around the [Zendesk Help Center API](https://developer.zendesk.com/api-reference/help_center/help-center-api/introduction), including both content management and [theming](https://developer.zendesk.com/api-reference/help_center/help-center-api/theming).
 
-- *Move Articles A, C, and Q from the sandbox environment to prod*
-- *Change view permissions for all articles in Category P to internal team members only*
-- *List all articles that contain instructions for the user to perform Task X*
+## Why I built it
 
-I can also perform actions not possible through the Zendesk Guide UI, like bulk actions or creating redirects. For example:
+It's tedious and time consuming to work with Zendesk content by clicking around the Zendesk UI, and some features (like redirects) aren't even available there. AI agent skills using this MCP server allow me to use natural language prompts for things like:
 
-- *Apply `example label` to all pages that reference `example action` in the title or first paragraph*
-- *Create redirects from Article A to Article B, archive Article A, and add the redirect to the redirect index*
+- *Apply an `export_data` label to every article in the **Export data** section of the **Data User Guide**.*
+- *Remove callouts with **Coming soon** at the top of all articles with a `sprint_201_release` label.*
+- *List all articles that have no label, including their title and direct URL, and suggest labels.*
+- *List all unused labels and delete them with my approval.*
 
-For ultimate time savings, it can also be used in tandem with MCPs for other enterprise tools (like Paligo CCMS) to perform multi-system actions like:
+For ultimate time savings, this MCP server can also be used in tandem with MCP servers for other enterprise tools (like Paligo CCMS) to perform multi-system actions like:
 
-- *Remove the `This feature will be released in Summer 2027` callout in all articles that contain that callout (scoping created date to the past 3 weeks), publish the articles to Zendesk with the label `release_100.11`, and promote those articles on the help site home page*
+- *Publish the updated **Data User Guide** in Paligo to Zendesk and apply the Zendesk label `extract_data` to all new articles created in that guide in Paligo last week.*
 
-<ManualVsPrompt />
+:::tip
+See [Zendesk Guide Pal](/portfolio/ai-agent-skills/#zendesk-guide-pal) for a sample of an AI agent skill that uses the Zendesk guide MCP server.
+
+See my blog post, [Build your own MCP server to hand off content management system tasks to an AI agent](/blog/build-mcps), for details on how I built the Zendesk Guide MCP server and wired it up with the [Zendesk Guide Pal](/portfolio/ai-agent-skills/#zendesk-guide-pal) skill.
+:::

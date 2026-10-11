@@ -9,16 +9,16 @@ series_title: "Series: Custom MCPs"
 series_order: 4
 ---
 
-This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in.
+This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in, so I can generate content from the information they hold, set up workflows that cover multiple tools, and eliminate manual, repetitive work that would otherwise only be possible through the application UI.
 
 {/* truncate */}
 
-:::tip
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [gdrive_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/gdrive_mcp.py)
 
-See the genericized MCP code.
+## What it is
 
-:::
+This MCP server performs actions like reading Google Drive files, creating files, and publishing content to them from another source. In particular, this MCP server let me manage content as Markdown.
 
-**What it is**: This MCP lets me perform one action that the company's MCP did not: manage content as Markdown.
+## Why I built it
 
-**Why I built it**: Formatting a Google Doc with a Google Drive connection in AI tool is notoriously unpredictable. Applied styles can be offset by a character or two, bullets can misalign, and formatting can disappear. This custom MCP allows the content to be extracted from the Google Doc as Markdown using the Google Docs API's `text/markdown` export MIME type, formats the content straightforwardly Markdown, and converts it into a native Google Doc format.
+Formatting a Google Doc with a Google Drive connection in AI tool is notoriously unpredictable. Applied styles can be offset by a character or two, bullets can be misaligned, and formatting can disappear. This custom MCP server allows the content to be extracted from the Google Doc as Markdown using the Google Docs API's `text/markdown` export MIME type, formats the content straightforwardly Markdown, and converts it into a native Google Doc format.

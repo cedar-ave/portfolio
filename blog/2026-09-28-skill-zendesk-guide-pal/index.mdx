@@ -9,22 +9,45 @@ series_title: "Series: AI Agent Skills"
 series_order: 5
 ---
 
-import { SafeWrites } from '@site/src/components/SkillDiagrams';
-
-This is part of a series about the AI agent skills I design, build, and maintain to cover the full lifecycle of end-user help documentation.
+This is part of a series about the AI agent skills I designed, built, and maintained to cover the full lifecycle of end-user help documentation.
 
 {/* truncate */}
 
-**What it is**: A skill for Zendesk Help Center operations: article metadata, content tags, labels, redirect rules, and theme management. A custom MCP server with more than 40 tools powers it, and it works in both a production and a sandbox environment.
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [zendesk-guide-pal](https://github.com/cedar-ave/ai-content-toolkit/tree/main/skills/zendesk-guide-pal)
 
-**Why I built it**: Tagging hundreds of articles, cleaning up labels, and deploying theme changes through the Zendesk UI is slow and risky. I designed the skill to play it safe. It reads from production by default, so I see real data, and writes to sandbox by default, so mistakes can be undone. Writing to production requires my explicit confirmation. The skill adds new tags alongside existing ones instead of replacing them, limits the rate of bulk writes and backs off automatically when Zendesk pushes back, and won't delete a tag or label from the whole Help Center until I confirm its name and ID. For themes, it handles the full cycle of export, edit, preview, package, import, and publish. It checks Zendesk's 10-theme limit before importing and never deletes the original base theme. It can also find the Zendesk article that was published from a given Paligo topic, which connects the two systems.
+## What it is
 
-<SafeWrites />
+`/zendesk-guide-pal` performs Zendesk Help Center operations, like managing article metadata, content tags, labels, redirect rules, and themes.
 
-**Example prompts**:
+## How it works
 
-- *We're working in sandbox today.*
-- *Find all untagged articles in the onboarding section and apply the getting-started content tag.*
-- *Create a 301 redirect from the old Article X to the new one.*
-- *Launch a preview of the theme.*
-- *Deploy the local theme to production.*
+A [custom Python MCP server](/portfolio/custom-mcp-servers#zendesk-guide-mcp-server) is a wrapper around the [Zendesk Help Center API](https://developer.zendesk.com/api-reference/help_center/help-center-api/introduction), including both content management and [theming](https://developer.zendesk.com/api-reference/help_center/help-center-api/theming). The skill then accepts natural language prompts for actions like (among many others):
+
+- Add or remove labels by name, on one article or many at once
+- See how often each label is used, including labels that no article uses
+- Create, update, or delete an article
+- List all articles, or only the articles in one category or section
+- Find all articles that have a given content tag, with each article's title, URL, section and category
+- List all sections, or only the sections in one category
+- Create a redirect from one article to another, using article IDs instead of full URLs, with a choice of redirect status (such as 301 or 302)
+- Package a local theme folder into a zip that's ready to upload, leaving out hidden files and old zips
+- Perform actions in dev or prod
+
+## Why I built it
+
+Performing actions through the Zendesk UI requires lots of repetitive clicking to get things done. This is especially true for custom themes managed locally. I wanted to save time and clicks so I could work faster, more efficiently, and without mistakes.
+
+## Example prompts
+
+- *Apply an "export_data" label to every article in the "Export data" section of the Data User Guide.*
+- *Remove callouts with "Coming soon" at the top of all articles with a "sprint_201_release" label.*
+- *List all articles that have no label, including their title and direct URL, and suggest labels.*
+- *List all unused labels and delete them with my approval.*
+
+For ultimate time savings, I used my [Zendesk Guide MCP server](/portfolio/custom-mcp-servers#zendesk-guide-mcp-server) in tandem with my [Paligo MCP server](/portfolio/custom-mcp-servers#paligo-mcp-server) to perform multi-system actions, like:
+
+- *Publish the updated "Data User Guide" in Paligo to Zendesk and apply the Zendesk label "extract_data" to all new articles created in that guide in Paligo last week.*
+
+:::tip
+See my blog post, [Build your own MCP server to hand off content management system tasks to an AI agent](/blog/build-mcps), for details on how I built the [Zendesk Guide MCP server](/portfolio/custom-mcp-servers#zendesk-guide-mcp-server) and wired it up with the `/zendesk-guide-pal` skill.
+:::

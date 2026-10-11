@@ -9,18 +9,16 @@ series_title: "Series: Custom MCPs"
 series_order: 2
 ---
 
-import { TicketPipeline } from '@site/src/components/McpDiagrams';
-
-This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in. The code is proprietary to the company I built it for, so I can't share it here — this covers what it enabled me to do and the results.
+This is part of a series about custom [MCP](https://modelcontextprotocol.io/) servers I've built to connect the systems I work in, so I can generate content from the information they hold, set up workflows that cover multiple tools, and eliminate manual, repetitive work that would otherwise only be possible through the application UI.
 
 {/* truncate */}
 
-**What it is**: This MCP is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). It reads ticket contents, including the user's question and any conversation following. It also reads fields like a user's organization, ticket labels, ticket status, and custom fields like a user's product platform.
+<IIcon icon="bi:github" height="1.5em" style={{ verticalAlign: '-0.4em', marginRight: '0.4em' }}/> [zendesk_tickets_mcp.py](https://github.com/cedar-ave/ai-content-toolkit/blob/main/mcp/zendesk_tickets_mcp.py)
 
-**Why I built it**: This is excellent for research and generating help content from ticket conversations. For example:
+## What it is
 
-- *Find tickets closed in the past 3 months where the `Reason` field contains `training issue` and group the tickets into...*
+This MCP server reads Zendesk ticket contents, including the user's question and any conversation following. It also reads fields like a user's organization, ticket labels, ticket status, and custom fields like a user's product platform. It is a wrapper around the [Zendesk Ticketing API](https://developer.zendesk.com/api-reference/ticketing/introduction). 
 
-**Roadmap**: A ticket with a **Closed** status doesn't mean the answer provided by the agent was correct. Neither does a user's satisfaction score. That's why help content generated from a ticket can't be trusted as accurate.
+## Why I built it
 
-<TicketPipeline />
+Support tickets from users have a wealth of information around issues users experience and agent resolutions, which can reveal opportunities to deflect future tickets with strategic content. But with thousands of tickets in play, it's time consuming and ineffective to manually read through even a subset. AI agent skills using this MCP server can slice tickets into segments, analyze them for common issues and resolutions, and draft troubleshooting articles, FAQs, cheat sheets, and reference material.
