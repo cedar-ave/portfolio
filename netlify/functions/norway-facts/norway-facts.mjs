@@ -116,6 +116,8 @@ export default async (req) => {
   return problem(404, 'Not found', `No endpoint matches ${url.pathname}.`);
 };
 
+// Netlify reads this statically at deploy time, so the paths must be string
+// literals - not BASE_PATH or a template string. Keep them in sync by hand.
 export const config = {
-  path: [BASE_PATH, `${BASE_PATH}/*`],
+  path: ['/api/norway-facts', '/api/norway-facts/*'],
 };
