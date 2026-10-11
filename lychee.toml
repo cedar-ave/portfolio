@@ -16,6 +16,12 @@ exclude = [
 
 exclude_path = ["src/pages/portfolio/_archive"]
 
+# GitHub answers bursts of automated requests for blob pages with 503s. Check
+# the raw file instead, which still fails if the file is moved or deleted.
+remap = [
+  'https://github\.com/([^/]+)/([^/]+)/blob/(.+) https://raw.githubusercontent.com/$1/$2/$3',
+]
+
 # Skip mailto: links rather than checking the address.
 include_mail = false
 
