@@ -676,8 +676,6 @@ export function ApiReferenceMockup() {
         </div>
       </div>
       <figcaption className={styles.caption}>
-        Mockup of a REST API reference page. Click the sidebar endpoints, response codes and
-        sample tabs to explore.
       </figcaption>
     </figure>
   );

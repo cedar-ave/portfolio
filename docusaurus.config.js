@@ -32,12 +32,12 @@ const remarkIncludes = [remarkIncludesPlugin, { siteRoot: siteDir }];
 // Optional `iconClass` names an extra class from src/pages/index.module.css
 // to apply to that line's icon, on top of .taglineIcon.
 const taglineItems = [
-  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'Generative and agentic AI' },
-  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'Technical writing and editing' },
-  { icon: '/img/home-page/07-api-documentation.svg', text: 'API documentation' },
+  { icon: '/img/home-page/01-ai-fluent-documentation-engineer.svg', text: 'AI content pipelines' },
+  { icon: '/img/home-page/02-technical-writer-editor.svg', text: 'AI-assisted technical writing and editing' },
   { icon: '/img/home-page/03-docs-as-code.svg', text: 'Docs-as-code' },
   { icon: '/img/home-page/04-xml-ccms-workflows.svg', text: 'XML and CCMS workflows' },
   { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk CMS' },
+  { icon: '/img/home-page/07-api-documentation.svg', text: 'API documentation portals' },
   { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation design' },
 ];
 

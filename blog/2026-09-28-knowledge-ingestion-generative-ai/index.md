@@ -8,6 +8,8 @@ tags: [Generative AI, Knowledge classification, AI agent skills]
 
 # Drafting new content with generative AI
 
+Tech writers know how unproductive it feels to look for knowledge tracking down knowledge from all over the org, reading it It's a major time saver when an AI tool like Claude ingests source materials and turns them into new content. 
+
 How I designed a faceted taxonomy and a support-field crosswalk that let AI draft accurate help articles from thousands of mixed sources, while cutting the tokens spent finding the right ones.
 
 {/* truncate */}

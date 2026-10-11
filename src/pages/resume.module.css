@@ -1,0 +1,16 @@
+.resume-subtitle {
+  margin-top: -0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+  letter-spacing: -.3px;
+  line-height: 1.4;
+}
+
+.separator-resume {
+  margin: 0 0.25em;
+  color: #a7c4dd;
+  font-size: 0.7em;
+  vertical-align: middle;
+}
