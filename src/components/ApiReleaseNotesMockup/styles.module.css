@@ -208,6 +208,7 @@
 .itemTitle {
   font-size: 0.95rem;
   margin: 0 0 0.35rem;
+  line-height: 1.4;
 }
 
 .itemBody {

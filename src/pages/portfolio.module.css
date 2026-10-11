@@ -1,0 +1,9 @@
+.portfolioList ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.separator {
+  margin: 0 0.25em;
+  color: #a7c4dd;
+}

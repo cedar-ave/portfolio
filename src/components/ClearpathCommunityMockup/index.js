@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon as IconifyIcon } from '@iconify/react';
 import styles from './styles.module.css';
-import rs from './releases.module.css';
 
 /* =====================================================================
    Icons. All share a 24x24 grid, 1.75 stroke, and round caps so they
@@ -575,7 +574,7 @@ function LayersIcon() {
 
 function CaretIcon({ open }) {
   return (
-    <Icon className={rs.caret}>
+    <Icon className={styles.caret}>
       {open ? <path d="M7 10l5 5 5-5" /> : <path d="M10 7l5 5-5 5" />}
     </Icon>
   );
@@ -583,7 +582,7 @@ function CaretIcon({ open }) {
 
 function TagIcon() {
   return (
-    <Icon className={rs.tagIcon}>
+    <Icon className={styles.tagIcon}>
       <path d="M3.5 12.5V4.5a1 1 0 0 1 1-1h8l8 8-9 9-8-8z" fill="currentColor" fillOpacity="0.16" />
       <circle cx="8" cy="8" r="1.25" />
     </Icon>
@@ -592,7 +591,7 @@ function TagIcon() {
 
 function StarIcon() {
   return (
-    <Icon className={rs.star}>
+    <Icon className={styles.star}>
       <path d="M12 3.75l2.5 5.1 5.6.8-4.05 3.95.95 5.6L12 16.55 6.99 19.2l.96-5.6L3.9 9.65l5.6-.8L12 3.75z" />
     </Icon>
   );
@@ -729,13 +728,13 @@ const RELATED = [
 
 function NavTree({ items, depth = 0 }) {
   return (
-    <ul className={rs.navList}>
+    <ul className={styles.navList}>
       {items.map((item) => (
         <li key={item.label}>
           <span
-            className={`${rs.navItem} ${item.active ? rs.navActive : ''}`}
+            className={`${styles.navItem} ${item.active ? styles.navActive : ''}`}
             style={{ paddingLeft: `${0.4 + depth * 0.8}rem` }}>
-            <span className={rs.caretSlot}>{item.folder ? <CaretIcon open={item.open} /> : null}</span>
+            <span className={styles.caretSlot}>{item.folder ? <CaretIcon open={item.open} /> : null}</span>
             <span>{item.label}</span>
           </span>
           {item.open && item.children ? <NavTree items={item.children} depth={depth + 1} /> : null}
@@ -796,21 +795,21 @@ export function ClearpathReleasesMockup() {
             <span className={styles.newButton}>+ New</span>
           </section>
 
-          <div className={rs.layout}>
+          <div className={styles.releasesLayout}>
             {/* Left navigation */}
-            <aside className={rs.side}>
-              <div className={`${styles.sideCard} ${rs.navCard}`}>
+            <aside className={styles.releasesSide}>
+              <div className={`${styles.sideCard} ${styles.navCard}`}>
                 <NavTree items={RELEASE_NAV} />
               </div>
 
-              <div className={rs.sideButtons}>
-                <span className={rs.sideButton}>Turn page notifications off</span>
-                <span className={rs.sideButton}>Bookmark this wiki</span>
+              <div className={styles.sideButtons}>
+                <span className={styles.sideButton}>Turn page notifications off</span>
+                <span className={styles.sideButton}>Bookmark this wiki</span>
               </div>
 
               <div className={styles.sideCard}>
                 <h4 className={styles.sideHeading}>DAS links</h4>
-                <ul className={rs.links}>
+                <ul className={styles.links}>
                   {DAS_LINKS.map(({ title, body, Icon: LinkIcon }) => (
                     <li key={title}>
                       <span className={styles.sideTitle}>
@@ -824,41 +823,41 @@ export function ClearpathReleasesMockup() {
             </aside>
 
             {/* Article */}
-            <main className={rs.main}>
-              <article className={rs.article}>
-                <h3 className={rs.title}>DAS 20.3 Release</h3>
-                <div className={rs.date}>6 November 2020</div>
+            <main className={styles.releasesMain}>
+              <article className={styles.article}>
+                <h3 className={styles.title}>DAS 20.3 Release</h3>
+                <div className={styles.date}>6 November 2020</div>
 
-                <h4 className={rs.heading}>Key resources</h4>
-                <ul className={rs.bullets}>
+                <h4 className={styles.heading}>Key resources</h4>
+                <ul className={styles.bullets}>
                   <li>
-                    Short overviews of major changes: <span className={rs.link}>DAS 20.3: What changed</span>
+                    Short overviews of major changes: <span className={styles.link}>DAS 20.3: What changed</span>
                   </li>
                   <li>
-                    <span className={rs.link}>DAS 20.3: Release notes and patches</span>
+                    <span className={styles.link}>DAS 20.3: Release notes and patches</span>
                   </li>
                   <li>
-                    <span className={rs.link}>DAS 20.3: Known issues</span>
+                    <span className={styles.link}>DAS 20.3: Known issues</span>
                   </li>
                 </ul>
 
-                <h4 className={rs.heading}>For installs and upgrades</h4>
-                <ul className={rs.bullets}>
+                <h4 className={styles.heading}>For installs and upgrades</h4>
+                <ul className={styles.bullets}>
                   <li>
                     To schedule an upgrade, submit a service request in{' '}
-                    <span className={rs.link}>Client Support</span>.
+                    <span className={styles.link}>Client Support</span>.
                   </li>
                   <li>
-                    <strong className={rs.link}>New in the DAS install process</strong>
+                    <strong className={styles.link}>New in the DAS install process</strong>
                   </li>
                   <li>
-                    <strong className={rs.link}>Compatibility matrix</strong>
+                    <strong className={styles.link}>Compatibility matrix</strong>
                   </li>
                 </ul>
 
-                <h4 className={rs.heading}>DAS 20.3</h4>
-                <div className={rs.tableWrap}>
-                  <table className={rs.table}>
+                <h4 className={styles.heading}>DAS 20.3</h4>
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
                     <thead>
                       <tr>
                         <th>Download software</th>
@@ -868,56 +867,56 @@ export function ClearpathReleasesMockup() {
                     </thead>
                     <tbody>
                       {DOWNLOADS.map(({ name, primary, install, user }) => (
-                        <tr key={name} className={primary ? rs.primaryRow : rs.childRow}>
-                          <td>{primary ? <strong className={rs.link}>{name}</strong> : name}</td>
-                          <td>{install ? <span className={rs.link}>{install}</span> : null}</td>
-                          <td>{user ? <span className={rs.link}>{user}</span> : null}</td>
+                        <tr key={name} className={primary ? styles.primaryRow : styles.childRow}>
+                          <td>{primary ? <strong className={styles.link}>{name}</strong> : name}</td>
+                          <td>{install ? <span className={styles.link}>{install}</span> : null}</td>
+                          <td>{user ? <span className={styles.link}>{user}</span> : null}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
 
-                <p className={rs.note}>
+                <p className={styles.note}>
                   Guides in PDF format are available on request. Please post a comment below. PDFs may not always be as
-                  current as the <span className={rs.link}>online documentation</span>.
+                  current as the <span className={styles.link}>online documentation</span>.
                 </p>
-                <p className={rs.note}>
+                <p className={styles.note}>
                   *The Mart Builder GUI installer used in DAS 20.2 and earlier is retired. It is replaced by the Mart
                   Builder PowerShell installer.
                 </p>
 
-                <div className={rs.tags}>
-                  <span className={rs.tag}>
+                <div className={styles.tags}>
+                  <span className={styles.tag}>
                     <TagIcon /> das 20.3
                   </span>
-                  <span className={rs.tag}>
+                  <span className={styles.tag}>
                     <TagIcon /> release directory
                   </span>
                 </div>
 
-                <div className={rs.actions}>
-                  <span className={rs.editButton}>Edit</span>
-                  <span className={rs.link}>Like</span>
-                  <span className={rs.stars}>
+                <div className={styles.actions}>
+                  <span className={styles.editButton}>Edit</span>
+                  <span className={styles.link}>Like</span>
+                  <span className={styles.stars}>
                     {[0, 1, 2, 3, 4].map((i) => (
                       <StarIcon key={i} />
                     ))}
                   </span>
-                  <span className={rs.link}>Share</span>
-                  <span className={rs.link}>More</span>
+                  <span className={styles.link}>Share</span>
+                  <span className={styles.link}>More</span>
                 </div>
               </article>
 
-              <section className={rs.article}>
-                <h4 className={rs.relatedHeading}>Related</h4>
-                <div className={rs.related}>
+              <section className={styles.article}>
+                <h4 className={styles.relatedHeading}>Related</h4>
+                <div className={styles.related}>
                   {RELATED.map(({ title, body }) => (
-                    <div key={title} className={rs.relatedItem}>
+                    <div key={title} className={styles.relatedItem}>
                       <Avatar initials="CT" tone={0} />
                       <span>
-                        <span className={rs.link}>{title}</span>
-                        <span className={rs.relatedBody}>{body}</span>
+                        <span className={styles.link}>{title}</span>
+                        <span className={styles.relatedBody}>{body}</span>
                       </span>
                     </div>
                   ))}

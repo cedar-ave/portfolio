@@ -36,6 +36,7 @@ function HomepageHeader() {
           <Heading as="h1" className="hero__title">
             {siteConfig.title}
           </Heading>
+          <p className={styles.heroSubtitle}>{siteConfig.customFields.heroSubtitle}</p>
           <ul className={clsx('hero__subtitle', styles.taglineList)}>
             {siteConfig.customFields.taglineItems.map(({ icon, text, iconClass }) => (
               <li key={text} className={styles.taglineItem}>
