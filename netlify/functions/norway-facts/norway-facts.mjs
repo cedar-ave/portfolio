@@ -9,7 +9,7 @@
 // here or in the spec.
 
 import { createHash } from 'node:crypto';
-import { categories, counties, facts } from './data.mjs';
+import { categories, facts, places } from './data.mjs';
 
 const ROOT_PATH = '/api/norway-facts';
 const VERSION = 'v1';
@@ -40,8 +40,10 @@ const CORS_HEADERS = {
 };
 const ALLOWED_METHODS = 'GET, HEAD, OPTIONS';
 
-// Problem types, each documented under its own heading in the spec's
-// introduction - the type URI links straight to it.
+// Problem types. The type URI is a stable identifier clients branch on, so
+// it's a tag URI (RFC 4151) that doesn't depend on any page's headings or
+// URL - renaming docs can't change it. The spec's Errors section lists them.
+const PROBLEM_TYPE_PREFIX = 'tag:marlasowards.com,2026:norway-facts/';
 const PROBLEMS = {
   'invalid-parameter': { status: 400, title: 'Invalid parameter' },
   'not-found': { status: 404, title: 'Not found' },
@@ -71,7 +73,7 @@ function problemResponse(err, req, requestId) {
   const { status, title } = PROBLEMS[err.slug];
   const url = new URL(req.url);
   const body = {
-    type: `${DOCS_URL}#description/${err.slug}`,
+    type: `${PROBLEM_TYPE_PREFIX}${err.slug}`,
     title,
     status,
     detail: err.message,
@@ -127,7 +129,7 @@ function parseQuery(searchParams, spec) {
     }
     if (rule.enum) {
       if (rule.enum.includes(raw)) values[name] = raw;
-      else errors.push({ parameter: name, detail: `Must be one of: ${rule.enum.join(', ')}.` });
+      else errors.push({ parameter: name, detail: rule.message ?? `Must be one of: ${rule.enum.join(', ')}.` });
     } else {
       const value = Number(raw);
       if (/^(0|[1-9]\d*)$/.test(raw) && value >= rule.min && value <= rule.max) values[name] = value;
@@ -144,6 +146,9 @@ function parseQuery(searchParams, spec) {
 
 const categoryIds = categories.map((c) => c.id);
 const CATEGORY_PARAM = { enum: categoryIds };
+// Too many places to list in an error message, so point to the list instead.
+const PLACE_PARAM = { enum: places.map((p) => p.id), message: 'No place has this ID. Get place IDs from /places.' };
+const PLACE_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const PAGING_PARAMS = {
   limit: { min: 1, max: MAX_LIMIT, default: DEFAULT_LIMIT },
   offset: { min: 0, max: MAX_OFFSET, default: 0 },
@@ -205,14 +210,16 @@ function index(req) {
       facts: `${origin}${BASE_PATH}/facts`,
       randomFact: `${origin}${BASE_PATH}/random-fact`,
       categories: `${origin}${BASE_PATH}/categories`,
-      counties: `${origin}${BASE_PATH}/counties`,
+      places: `${origin}${BASE_PATH}/places`,
     },
   });
 }
 
 function listFacts(req) {
-  const query = parseQuery(new URL(req.url).searchParams, { category: CATEGORY_PARAM, ...PAGING_PARAMS });
-  const matches = query.category ? facts.filter((f) => f.category === query.category) : facts;
+  const query = parseQuery(new URL(req.url).searchParams, { category: CATEGORY_PARAM, place: PLACE_PARAM, ...PAGING_PARAMS });
+  const matches = facts.filter(
+    (f) => (!query.category || f.category === query.category) && (!query.place || f.placeIds.includes(query.place)),
+  );
   return paginate(req, matches, query);
 }
 
@@ -239,16 +246,16 @@ function listCategories(req) {
   return paginate(req, categories, parseQuery(new URL(req.url).searchParams, PAGING_PARAMS));
 }
 
-function listCounties(req) {
-  return paginate(req, counties, parseQuery(new URL(req.url).searchParams, PAGING_PARAMS));
+function listPlaces(req) {
+  return paginate(req, places, parseQuery(new URL(req.url).searchParams, PAGING_PARAMS));
 }
 
-function getCounty(req, code) {
+function getPlace(req, id) {
   parseQuery(new URL(req.url).searchParams, {});
-  if (!/^\d{2}$/.test(code)) throw invalidPathParameter('code', 'Must be a two-digit county code, such as 46.');
-  const county = counties.find((c) => c.code === code);
-  if (!county) throw new ProblemError('not-found', `No county has the code ${code}.`);
-  return jsonResponse(req, county);
+  if (!PLACE_ID.test(id)) throw invalidPathParameter('id', 'Must be lowercase letters, digits, and single hyphens, such as sognefjord.');
+  const place = places.find((p) => p.id === id);
+  if (!place) throw new ProblemError('not-found', `No place has the ID ${id}.`);
+  return jsonResponse(req, place);
 }
 
 // Returns the handler for a path, or null when no endpoint matches.
@@ -268,8 +275,8 @@ function route(pathname) {
       return id === undefined ? randomFact : null;
     case 'categories':
       return id === undefined ? listCategories : null;
-    case 'counties':
-      return id === undefined ? listCounties : (req) => getCounty(req, id);
+    case 'places':
+      return id === undefined ? listPlaces : (req) => getPlace(req, id);
     default:
       return null;
   }
@@ -311,16 +318,16 @@ export default async (req, context) => {
   } catch (err) {
     if (err instanceof ProblemError) return problemResponse(err, req, requestId);
     console.error(`[${requestId}]`, err);
-    return problemResponse(new ProblemError('internal-error', 'Something went wrong on our side. Try again later.'), req, requestId);
+    return problemResponse(new ProblemError('internal-error', 'The server hit an unexpected error. Try again later.'), req, requestId);
   }
 };
 
 // Netlify reads this statically at deploy time, so every value must be a
 // literal - not ROOT_PATH or a template string. Keep them in sync by hand.
 //
-// rateLimit: Netlify answers with its own 429 once a client (IP address)
-// exceeds 60 requests in 60 seconds. Requests served from the CDN cache
-// never reach the function and don't count.
+// rateLimit: Netlify answers with its own 429 once one IP address sends
+// more than 60 requests to one hostname within a sliding 60-second window.
+// The spec's Rate limits section describes this - update both together.
 export const config = {
   path: ['/api/norway-facts', '/api/norway-facts/*'],
   rateLimit: {

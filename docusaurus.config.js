@@ -117,7 +117,7 @@ const config = {
     ],
     // Norway Facts API sample: an interactive API reference rendered by
     // Scalar from static/openapi/norway-facts.yaml. Its code samples and
-    // "Try it" requests hit a real Netlify Function at /api/norway-facts -
+    // "Test Request" calls hit a real Netlify Function at /api/norway-facts -
     // see netlify/functions/norway-facts/. showNavLink is off because the
     // plugin would append its link to the end of the navbar; the link is
     // added by hand in themeConfig.navbar.items instead.

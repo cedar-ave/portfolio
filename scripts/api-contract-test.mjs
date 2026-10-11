@@ -2,21 +2,32 @@
 // handler directly (no server or deploy needed) and checks every response
 // against static/openapi/norway-facts.yaml - status code documented for the
 // operation, media type, body schema, and documented headers. It also
-// checks that every documented status code is exercised, that the spec's
-// own examples match their schemas, and that pagination links walk the
-// whole collection.
+// checks that:
+// - every documented status code is exercised
+// - every example in the spec matches its schema, and every example with a
+//   known request (x-example-request, or a curl block right before a json
+//   block in the introduction) is the exact response to that request
+// - every error type the API returns is listed in the Errors section
+// - pagination links walk each whole collection
+// - the dataset's cross-references (category and place IDs) resolve
 //
 // Run with `npm run test:api`. CI runs it in .github/workflows/checks.yml.
 
 import { readFileSync } from 'node:fs';
+import { isDeepStrictEqual } from 'node:util';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import yaml from 'js-yaml';
 import handler from '../netlify/functions/norway-facts/norway-facts.mjs';
+import { categories, facts, places } from '../netlify/functions/norway-facts/data.mjs';
 
 const spec = yaml.load(readFileSync(new URL('../static/openapi/norway-facts.yaml', import.meta.url), 'utf8'));
 const serverUrl = new URL(spec.servers[0].url);
 const basePath = serverUrl.pathname;
+// The placeholder request ID used in every documented example.
+const EXAMPLE_REQUEST_ID = '01JEXAMPLE0REQUEST0ID00000';
+// Error types listed in the Errors table of the introduction.
+const DOCUMENTED_TYPES = new Set(spec.info.description.match(/tag:[^`\s]+/g));
 
 // Statuses the handler can't produce on its own: Netlify's rate limiter
 // sends 429, and 500 only happens on an unexpected exception.
@@ -46,6 +57,7 @@ const validatorFor = (schema) => ajv.compile(toAjvRefs(schema));
 // ---- Helpers ---------------------------------------------------------------
 
 const failures = [];
+const exampleChecks = [];
 const exercised = new Set();
 let checks = 0;
 
@@ -71,7 +83,7 @@ function findOperation(pathname) {
 
 async function call(path, { method = 'GET', headers = {} } = {}) {
   const url = new URL(path, serverUrl.origin);
-  const res = await handler(new Request(url, { method, headers }), { requestId: 'contract-test' });
+  const res = await handler(new Request(url, { method, headers }), { requestId: EXAMPLE_REQUEST_ID });
   const text = await res.text();
   return { url, res, text };
 }
@@ -115,11 +127,14 @@ async function request(path, expectedStatus, options = {}) {
     check(res.headers.get('access-control-allow-origin') === '*', `${label}: missing CORS header`);
 
     const body = JSON.parse(text);
+    if (mediaType === 'application/problem+json') check(DOCUMENTED_TYPES.has(body.type), `${label}: error type ${body.type} isn't in the Errors table`);
     const validate = validatorFor(media.schema);
     if (!validate(body)) failures.push(`${label}: body doesn't match schema: ${ajv.errorsText(validate.errors)}`);
     return body;
   }
-  return text ? JSON.parse(text) : null;
+  const body = text ? JSON.parse(text) : null;
+  if (res.headers.get('content-type') === 'application/problem+json') check(DOCUMENTED_TYPES.has(body.type), `${label}: error type ${body.type} isn't in the Errors table`);
+  return body;
 }
 
 // ---- Cases -----------------------------------------------------------------
@@ -152,14 +167,22 @@ check(random?.category === 'nature', 'random-fact ignored the category filter');
 await request(v('/random-fact?category=food'), 400);
 await request(v('/random-fact?limit=1'), 400);
 
-// Categories and counties
+// Place filter on facts
+const svalbard = await request(v('/facts?place=svalbard'), 200);
+check(svalbard?.data.length > 0 && svalbard.data.every((f) => f.placeIds.includes('svalbard')), 'place filter returned wrong facts');
+const both = await request(v('/facts?place=svalbard&category=nature'), 200);
+check(both?.data.every((f) => f.category === 'nature' && f.placeIds.includes('svalbard')), 'combined filters returned wrong facts');
+await request(v('/facts?place=bergen'), 400);
+await request(v('/facts?place=Svalbard'), 400);
+
+// Categories and places
 await request(v('/categories'), 200);
 await request(v('/categories?limit=51'), 400);
-await request(v('/counties'), 200);
-await request(v('/counties?limit=0'), 400);
-await request(v('/counties/46'), 200);
-await request(v('/counties/99'), 404);
-await request(v('/counties/4'), 400);
+await request(v('/places'), 200);
+await request(v('/places?limit=0'), 400);
+await request(v('/places/sognefjord'), 200);
+await request(v('/places/bergen'), 404);
+for (const bad of ['Sognefjord', 'sogne_fjord', '-oslo', 'oslo-']) await request(v(`/places/${bad}`), 400);
 
 // Unknown paths, malformed encoding, unsupported methods
 await request(v('/nope'), 404);
@@ -170,7 +193,7 @@ await request(v('/facts'), 405, { method: 'POST' });
 await request(v('/facts/10'), 405, { method: 'DELETE' });
 
 // Conditional requests: every cacheable 200 must support a 304.
-for (const path of ['', '/facts', '/facts/10', '/categories', '/counties', '/counties/46']) {
+for (const path of ['', '/facts', '/facts/10', '/categories', '/places', '/places/sognefjord']) {
   const { res } = await call(v(path));
   const etag = res.headers.get('etag');
   await request(v(path), 304, { headers: { 'If-None-Match': etag } });
@@ -193,7 +216,7 @@ check(randomRes.headers.get('etag') === null, 'random-fact must not send an ETag
 }
 
 // Following pagination links visits every item exactly once.
-for (const collection of ['/facts', '/categories', '/counties']) {
+for (const collection of ['/facts', '/categories', '/places']) {
   const seen = [];
   let next = `${serverUrl.origin}${v(collection)}?limit=4`;
   let total;
@@ -226,6 +249,60 @@ for (const [template, item] of Object.entries(spec.paths)) {
       checks++;
     }
   }
+}
+
+// Examples tied to a request must be that request's exact response, so the
+// docs can't drift from the data.
+for (const [template, item] of Object.entries(spec.paths)) {
+  for (const [status, ref] of Object.entries(item.get.responses)) {
+    for (const media of Object.values(resolve(ref).content ?? {})) {
+      const path = media['x-example-request'];
+      if (!path) continue;
+      const { text } = await call(v(path === '/' ? '' : path));
+      check(isDeepStrictEqual(JSON.parse(text), media.example), `example for GET ${template} ${status} isn't the actual response to ${path}`);
+    }
+  }
+}
+{
+  // In the introduction, a json block right after a curl block is that
+  // request's response.
+  const blocks = [...spec.info.description.matchAll(/```(\w+)\n([\s\S]*?)```/g)].map(([, lang, body]) => ({ lang, body }));
+  let verified = 0;
+  blocks.forEach((block, i) => {
+    const prev = blocks[i - 1];
+    if (block.lang !== 'json' || prev?.lang !== 'bash') return;
+    const url = prev.body.match(/curl "?([^"\s]+)"?/)?.[1];
+    if (!url) return;
+    verified++;
+    exampleChecks.push(
+      call(new URL(url).pathname + new URL(url).search).then(({ text }) =>
+        check(isDeepStrictEqual(JSON.parse(text), JSON.parse(block.body)), `introduction example for ${url} isn't the actual response`),
+      ),
+    );
+  });
+  check(verified >= 4, `expected at least 4 verified introduction examples, found ${verified}`);
+}
+await Promise.all(exampleChecks);
+
+// The dataset's cross-references resolve, and IDs follow the documented
+// formats.
+{
+  const placeIds = new Set(places.map((p) => p.id));
+  const categoryIds = new Set(categories.map((c) => c.id));
+  const slug = new RegExp(spec.components.schemas.PlaceId.pattern);
+  for (const f of facts) {
+    check(categoryIds.has(f.category), `fact ${f.id} has unknown category ${f.category}`);
+    for (const id of f.placeIds) check(placeIds.has(id), `fact ${f.id} references unknown place ${id}`);
+  }
+  for (const p of places) check(slug.test(p.id), `place ID ${p.id} isn't a valid slug`);
+  for (const c of categories) check(slug.test(c.id), `category ID ${c.id} isn't a valid slug`);
+  check(new Set(facts.map((f) => f.id)).size === facts.length, 'fact IDs are not unique');
+  check(placeIds.size === places.length, 'place IDs are not unique');
+  const sorted = (ids) => ids.every((id, i) => i === 0 || ids[i - 1] < id);
+  check(sorted(facts.map((f) => f.id)), 'facts are not in ID order');
+  check(sorted(places.map((p) => p.id)), 'places are not in ID order');
+  const categoryEnum = spec.components.parameters.Category.schema.enum;
+  check(isDeepStrictEqual(categoryEnum, categories.map((c) => c.id)), 'category parameter enum differs from the data');
 }
 
 if (failures.length) {

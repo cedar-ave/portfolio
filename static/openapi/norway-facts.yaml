@@ -2,27 +2,29 @@ openapi: 3.1.0
 info:
   title: Norway Facts API
   version: 1.0.0
-  summary: Facts about Norway's geography, history, culture, nature, and economy.
   contact:
-    name: Marla Sowards
-    url: https://www.marlasowards.com
+    name: Report an issue
+    url: https://github.com/cedar-ave/portfolio/issues
   license:
     name: MIT
     identifier: MIT
+  # Every fenced json block below that follows a curl block is the exact
+  # response to that request. scripts/api-contract-test.mjs checks this, so
+  # update the example whenever the data or the API changes.
   description: |
-    The Norway Facts API returns short facts about Norway, grouped into
-    categories, plus reference data for Norway's 15 counties.
+    The Norway Facts API returns short facts about Norway and the places
+    they're about. It's a small, public, read-only API with no uptime or
+    support commitment.
 
-    This is a working sample API. It runs as a Netlify Function on this
-    site, so the code samples on this page return real responses. Select
-    **Test Request** on any endpoint to try it from your browser.
+    Every endpoint below has a **Test Request** button that calls the live
+    API from your browser.
 
     ## Quick start
 
-    No account or key is needed. Get a random fact:
+    No account or key is needed. Get fact 10:
 
     ```bash
-    curl https://www.marlasowards.com/api/norway-facts/v1/random-fact
+    curl https://www.marlasowards.com/api/norway-facts/v1/facts/10
     ```
 
     ```json
@@ -30,177 +32,281 @@ info:
       "id": 10,
       "category": "history",
       "title": "First to the South Pole",
-      "text": "Roald Amundsen's expedition was the first to reach the South Pole, on 14 December 1911."
+      "text": "Roald Amundsen's expedition was the first to reach the South Pole, on 14 December 1911.",
+      "placeIds": []
     }
     ```
 
-    `GET /` returns an index that links to every collection, so a client
-    can start there instead of building URLs by hand.
-
-    ## Versioning
-
-    The major version is part of the base URL:
-
-    ```
-    https://www.marlasowards.com/api/norway-facts/v1
-    ```
-
-    Within `v1`, changes are backward compatible only. New endpoints, new
-    optional query parameters, new response fields, and new enum values
-    (such as a new fact category) can appear at any time, so ignore fields
-    you don't recognize and handle unknown enum values gracefully. Anything
-    that would break an existing client, such as removing or renaming a
-    field, ships as `v2` at a new base URL, and `v1` keeps working.
+    Next, try `GET /random-fact` for a different fact each time, or start
+    at `GET /`, which links to every collection.
 
     ## Authentication
 
-    None. The API is public and read-only.
+    None. Send requests without credentials.
 
-    ## Rate limits
+    ## Data model
 
-    Each IP address can make **60 requests per 60 seconds**. Past that,
-    requests get `429 Too Many Requests` until the window resets.
+    The API has three resources:
 
-    The `429` response comes from Netlify's rate limiter, not from the API
-    itself, so its body isn't JSON problem details like the API's other
-    errors. Treat any `429` as a signal to wait at least a minute before
-    retrying.
+    - **Facts:** one or two sentences about Norway. Each fact belongs to one
+      category and lists the places it's about in `placeIds` (which can be
+      empty).
+    - **Categories:** the topics facts are grouped into.
+    - **Places:** locations in Norway that facts are about, such as a fjord,
+      mountain, or city.
 
-    Responses served from cache (see [Caching](#description/caching)) don't
-    count toward the limit.
+    A list of resources is called a **collection**, such as `/facts` or
+    `/places`.
 
-    ## Requests
+    IDs never change and are never reused:
 
-    - **Methods:** every endpoint supports `GET`, plus `HEAD` (same status
-      and headers as `GET`, no body) and `OPTIONS` (CORS preflight). Any
-      other method returns `405`.
-    - **Query parameters are strict.** Each endpoint accepts only the
-      parameters listed for it. An unknown parameter (such as a misspelled
-      `limt`), a parameter given more than once, or a value outside the
-      documented range returns `400` instead of being silently ignored.
-    - **Path parameters are canonical.** Fact IDs are positive integers
-      with no leading zeros (`/facts/10`, not `/facts/010`), so each
-      resource has exactly one URL.
-    - A trailing slash is optional.
+    - Fact IDs are positive integers, assigned in order.
+    - Category and place IDs are lowercase ASCII slugs of the name. For
+      example, the ID for Galdhøpiggen is `galdhopiggen`.
 
-    ## Responses
+    New facts, categories, and places can be added at any time. To get the
+    current count of anything, read `pagination.total` from its collection.
 
-    Successful responses are JSON (`application/json`), UTF-8 encoded, and
-    pretty-printed so they're easy to read in a terminal. Field names are
-    camelCase.
+    To get the facts about a place, filter by its ID:
 
-    The shape follows one rule:
-
-    - **Collections** return an object with a `data` array and a
-      `pagination` object.
-    - **Single resources** (one fact, one county, the API index) return the
-      object itself, with no wrapper.
-
-    ## Pagination
-
-    Every collection is paginated, even short ones, so one code path
-    handles them all. Use `limit` (1-50, default 10) and `offset` (0-10000,
-    default 0):
+    ```bash
+    curl "https://www.marlasowards.com/api/norway-facts/v1/facts?place=svalbard"
+    ```
 
     ```json
     {
-      "data": [ ... ],
+      "data": [
+        {
+          "id": 7,
+          "category": "geography",
+          "title": "An Arctic archipelago",
+          "text": "Svalbard, roughly halfway between mainland Norway and the North Pole, is part of Norway. Its largest settlement is Longyearbyen.",
+          "placeIds": [
+            "svalbard",
+            "longyearbyen"
+          ]
+        },
+        {
+          "id": 20,
+          "category": "nature",
+          "title": "Polar bears",
+          "text": "Polar bears live on Svalbard, where people leaving the settlements are required to carry protection against them.",
+          "placeIds": [
+            "svalbard"
+          ]
+        }
+      ],
       "pagination": {
-        "total": 27,
+        "total": 2,
         "limit": 10,
-        "offset": 10,
+        "offset": 0,
         "links": {
-          "first": "https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=0",
-          "prev": "https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=0",
-          "next": "https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=20",
-          "last": "https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=20"
+          "first": "https://www.marlasowards.com/api/norway-facts/v1/facts?place=svalbard&limit=10&offset=0",
+          "prev": null,
+          "next": null,
+          "last": "https://www.marlasowards.com/api/norway-facts/v1/facts?place=svalbard&limit=10&offset=0"
         }
       }
     }
     ```
 
-    Follow `pagination.links.next` until it's `null` rather than computing
-    offsets yourself. The links keep any filters from your request. The same
-    links are also in the standard `Link` response header
-    ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288)). An `offset` past
-    the end returns an empty `data` array, not an error.
+    ## Request rules
 
-    ## Caching
+    - **Base URL:** `https://www.marlasowards.com/api/norway-facts/v1`. A
+      trailing slash on any path is optional.
+    - **Methods:** every endpoint accepts `GET`, `HEAD`, and `OPTIONS`.
+      `HEAD` returns the same status and headers as `GET`, with no body.
+      `OPTIONS` answers browser CORS preflight requests. Any other method
+      returns an error with status `405`.
+    - **Query parameters:** each endpoint accepts only the parameters listed
+      for it. An unknown parameter (such as a misspelled `limt`), a
+      parameter given more than once, or a value that isn't allowed returns
+      an error with status `400`. The API never ignores a parameter
+      silently.
+    - **Path parameters:** each resource has exactly one URL. For example,
+      `/facts/010` returns `400`; use `/facts/10`.
+    - **Unknown paths:** a path that matches no endpoint returns `404`. This
+      includes a path with invalid percent-encoding, such as `/facts/%E0`.
+    - **Cross-origin requests (CORS):** any website can call the API from a
+      browser. Responses include `Access-Control-Allow-Origin: *`, and
+      scripts can read the `ETag` and `Link` headers.
 
-    The data changes only when the site is redeployed, so responses are
-    cacheable:
+    ## Response format
 
-    - Every `200` response, except `/random-fact`, has an `ETag` header and
-      `Cache-Control: public, max-age=3600`.
-    - Send the `ETag` back in an `If-None-Match` header and, if nothing has
-      changed, you get `304 Not Modified` with no body. Browsers do this
-      automatically.
-    - `/random-fact` responses are `Cache-Control: no-store`, since a cached
-      copy would stop being random.
-    - Error responses are never cached.
+    Responses are JSON, encoded as UTF-8. Field names use camelCase.
+    Responses are indented so they're readable in a terminal.
 
-    ## CORS
+    - A **collection** returns an object with a `data` array and a
+      `pagination` object. See [Pagination](#description/pagination).
+    - A **single resource**, such as one fact or one place, returns the
+      resource object itself.
+    - An **error** returns a problem details object. See
+      [Errors](#description/errors).
 
-    Any origin can call the API from a browser
-    (`Access-Control-Allow-Origin: *`). The `ETag` and `Link` headers are
-    exposed to scripts.
+    New fields can be added to any object, so ignore fields you don't
+    recognize. Category IDs and place types can also gain new values.
 
-    ## Errors
+    ## Pagination
 
-    Errors use [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem
-    details, with the `application/problem+json` media type:
+    Every collection is paginated the same way, even short ones. Two query
+    parameters control the page:
+
+    | Parameter | Values | Default |
+    | --- | --- | --- |
+    | `limit` | 1-50 | 10 |
+    | `offset` | 0-10000 | 0 |
+
+    Each page includes links to the first, previous, next, and last pages.
+    The links keep the request's filters:
+
+    ```bash
+    curl "https://www.marlasowards.com/api/norway-facts/v1/facts?category=history&limit=2&offset=2"
+    ```
 
     ```json
     {
-      "type": "https://www.marlasowards.com/api-reference#description/invalid-parameter",
+      "data": [
+        {
+          "id": 10,
+          "category": "history",
+          "title": "First to the South Pole",
+          "text": "Roald Amundsen's expedition was the first to reach the South Pole, on 14 December 1911.",
+          "placeIds": []
+        },
+        {
+          "id": 11,
+          "category": "history",
+          "title": "Two votes against the EU",
+          "text": "Norwegian voters rejected membership in the European Community in 1972 and in the European Union in 1994.",
+          "placeIds": []
+        }
+      ],
+      "pagination": {
+        "total": 5,
+        "limit": 2,
+        "offset": 2,
+        "links": {
+          "first": "https://www.marlasowards.com/api/norway-facts/v1/facts?category=history&limit=2&offset=0",
+          "prev": "https://www.marlasowards.com/api/norway-facts/v1/facts?category=history&limit=2&offset=0",
+          "next": "https://www.marlasowards.com/api/norway-facts/v1/facts?category=history&limit=2&offset=4",
+          "last": "https://www.marlasowards.com/api/norway-facts/v1/facts?category=history&limit=2&offset=4"
+        }
+      }
+    }
+    ```
+
+    To get every item, follow `pagination.links.next` until it's `null`.
+    The same links are also in the `Link` response header, in the
+    [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) format. An `offset`
+    past the end returns an empty `data` array.
+
+    ## Caching
+
+    Responses can be cached, except for `/random-fact`:
+
+    - Each `200` response includes an `ETag` header and
+      `Cache-Control: public, max-age=3600`, so clients can reuse it for an
+      hour.
+    - To check whether a cached response is still current, send its `ETag`
+      value in an `If-None-Match` header. If nothing changed, the API
+      returns `304 Not Modified` with no body. Browsers do this
+      automatically.
+    - `/random-fact` responses include `Cache-Control: no-store`, so every
+      request gets a new random fact.
+    - Error responses include `Cache-Control: no-store`.
+
+    Responses also include a `Netlify-CDN-Cache-Control` header. It
+    controls caching on the Netlify CDN that serves the API, and clients can
+    ignore it.
+
+    ## Rate limits
+
+    Each IP address can send 60 requests per 60 seconds. The window slides:
+    the limit counts the requests in the last 60 seconds at any moment, not
+    in fixed one-minute blocks.
+
+    A request over the limit gets status `429 Too Many Requests`. The
+    hosting platform sends this response, not the API, so it isn't in the
+    problem details format and has no `Retry-After` header. After a `429`,
+    wait 60 seconds before retrying.
+
+    ## Errors
+
+    Errors use the problem details format from
+    [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457), with the
+    `application/problem+json` media type. This request has two invalid
+    query parameters:
+
+    ```bash
+    curl "https://www.marlasowards.com/api/norway-facts/v1/facts?limit=0&limt=5"
+    ```
+
+    ```json
+    {
+      "type": "tag:marlasowards.com,2026:norway-facts/invalid-parameter",
       "title": "Invalid parameter",
       "status": 400,
       "detail": "2 query parameters are invalid. See errors for details.",
       "instance": "/api/norway-facts/v1/facts?limit=0&limt=5",
-      "requestId": "01M4PKVM6QZWW3P19ZK4ZEDZK9",
+      "requestId": "01JEXAMPLE0REQUEST0ID00000",
       "errors": [
-        { "parameter": "limt", "detail": "Unknown parameter. Allowed: category, limit, offset." },
-        { "parameter": "limit", "detail": "Must be an integer from 1 to 50." }
+        {
+          "parameter": "limt",
+          "detail": "Unknown parameter. Allowed: category, place, limit, offset."
+        },
+        {
+          "parameter": "limit",
+          "detail": "Must be an integer from 1 to 50."
+        }
       ]
     }
     ```
 
-    - Branch on `type`, not on `title` or `detail`. `type` is stable and
-      links to its description below; `detail` is written for people and
-      can change.
-    - `instance` is the request path that failed.
-    - `requestId` identifies the request in the server logs. Include it
-      when you report a problem.
-    - `errors` appears only on `400` responses and lists every invalid
-      parameter, not just the first one.
+    | Field | Description |
+    | --- | --- |
+    | `type` | Identifies the kind of error. Use this field in code to decide how to handle an error. It never changes for a given kind of error. |
+    | `title` | A short name for the kind of error. |
+    | `status` | The HTTP status code. |
+    | `detail` | An explanation of this specific error, for people to read. The wording can change, so don't use it in code. |
+    | `instance` | The request path and query string that caused the error. |
+    | `requestId` | A unique ID for the request. Include it when you [report an issue](https://github.com/cedar-ave/portfolio/issues). |
+    | `errors` | Only on `400` errors. Lists every invalid parameter, not just the first. |
 
-    The API returns these problem types:
+    The API returns these kinds of errors:
 
-    ### Invalid parameter
+    | Status | `type` | What to do |
+    | --- | --- | --- |
+    | `400` | `tag:marlasowards.com,2026:norway-facts/invalid-parameter` | Fix the parameters listed in `errors`, then retry. |
+    | `404` | `tag:marlasowards.com,2026:norway-facts/not-found` | Check the ID or path. Don't retry. |
+    | `405` | `tag:marlasowards.com,2026:norway-facts/method-not-allowed` | Use `GET`. The `Allow` header lists the supported methods. |
+    | `500` | `tag:marlasowards.com,2026:norway-facts/internal-error` | Retry later. If it keeps happening, report it with the `requestId`. |
 
-    `400`. A query or path parameter is unknown, repeated, or outside its
-    allowed values. Fix the parameters listed in `errors` and retry.
+    The `type` values are identifiers, not web addresses. They don't open a
+    page.
 
-    ### Not found
+    ## Versioning
 
-    `404`. No resource has that ID or code, or no endpoint matches the
-    path. Don't retry.
+    The major version is part of the base URL (`/v1`). Within `v1`, changes
+    are additive only: new endpoints, new optional query parameters, new
+    fields, and new values for category IDs and place types. A change that
+    could break an existing client would ship as `v2` at a new base URL,
+    with notice in the changelog.
 
-    ### Method not allowed
+    ## Changelog
 
-    `405`. The request used a method other than `GET`, `HEAD`, or
-    `OPTIONS`. The `Allow` response header lists the supported methods.
-
-    ### Internal error
-
-    `500`. Something failed on the server. Retry later, and include
-    `requestId` if you report it.
+    | Version | Date | Changes |
+    | --- | --- | --- |
+    | 1.0.0 | 11 October 2026 | First release. |
 
     ## About the data
 
-    The facts are short summaries written for this sample. Figures such as
-    lengths and percentages are rounded. Counties reflect the structure in
-    effect since 1 January 2024.
+    - The facts are short, general-knowledge summaries written for this API.
+      They aren't individually sourced, and numbers are rounded, so check a
+      primary source before you cite one.
+    - All text is in English. Place names use their Norwegian spelling.
+    - The data is available under the same MIT license as the API's code.
+    - To report an error in a fact or a bug in the API, open an issue in
+      the [site's GitHub repository](https://github.com/cedar-ave/portfolio/issues).
 servers:
   - url: https://www.marlasowards.com/api/norway-facts/v1
     description: Production
@@ -208,20 +314,20 @@ servers:
 security: []
 tags:
   - name: Index
-    description: Discover the API's collections.
+    description: The starting point, with links to each collection.
   - name: Facts
-    description: Facts about Norway, filterable by category.
+    description: Short facts about Norway. Filter by category or place.
   - name: Categories
-    description: The categories that facts belong to.
-  - name: Counties
-    description: Norway's 15 counties (fylker), in effect since 1 January 2024.
+    description: The topics that facts are grouped into.
+  - name: Places
+    description: Locations in Norway that facts are about.
 paths:
   /:
     get:
       tags: [Index]
       operationId: getIndex
       summary: Get the API index
-      description: Returns the API version and links to each collection, the documentation, and this spec.
+      description: Returns the API's name, version, and links to each collection, this reference page, and the OpenAPI document.
       responses:
         '200':
           description: The API index.
@@ -234,6 +340,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiIndex'
+              x-example-request: /
+              example:
+                name: Norway Facts API
+                version: v1
+                documentation: https://www.marlasowards.com/api-reference
+                openapi: https://www.marlasowards.com/openapi/norway-facts.yaml
+                links:
+                  facts: https://www.marlasowards.com/api/norway-facts/v1/facts
+                  randomFact: https://www.marlasowards.com/api/norway-facts/v1/random-fact
+                  categories: https://www.marlasowards.com/api/norway-facts/v1/categories
+                  places: https://www.marlasowards.com/api/norway-facts/v1/places
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -247,9 +364,10 @@ paths:
       tags: [Facts]
       operationId: listFacts
       summary: List facts
-      description: Returns facts in ID order, optionally filtered by category.
+      description: Returns facts in ID order. Filter by category, place, or both.
       parameters:
         - $ref: '#/components/parameters/Category'
+        - $ref: '#/components/parameters/Place'
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
       responses:
@@ -275,12 +393,14 @@ paths:
                       $ref: '#/components/schemas/Fact'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+              x-example-request: /facts?category=geography&limit=1&offset=1
               example:
                 data:
                   - id: 2
                     category: geography
                     title: The king of fjords
                     text: Sognefjord is the longest and deepest fjord in Norway, at about 205 km long and over 1,300 m deep.
+                    placeIds: [sognefjord]
                 pagination:
                   total: 7
                   limit: 1
@@ -303,12 +423,12 @@ paths:
       tags: [Facts]
       operationId: getFact
       summary: Get a fact
-      description: Returns a single fact by its ID.
+      description: Returns one fact.
       parameters:
         - name: id
           in: path
           required: true
-          description: The fact's ID, a positive integer with no leading zeros.
+          description: The fact's ID. Write it without leading zeros.
           schema:
             type: integer
             minimum: 1
@@ -325,6 +445,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fact'
+              x-example-request: /facts/3
+              example:
+                id: 3
+                category: geography
+                title: Highest peak in Northern Europe
+                text: Galdhøpiggen in Jotunheimen is 2,469 m tall, making it the highest mountain in Norway and in Northern Europe.
+                placeIds: [galdhopiggen, jotunheimen]
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -340,18 +467,15 @@ paths:
       tags: [Facts]
       operationId: getRandomFact
       summary: Get a random fact
-      description: |
-        Returns one fact chosen at random, optionally from a single
-        category. The response is never cached, so every request can return
-        a different fact.
+      description: Returns one fact chosen at random. To choose from one category, add `category`.
       parameters:
         - $ref: '#/components/parameters/Category'
       responses:
         '200':
-          description: A random fact.
+          description: A random fact. Yours will likely differ from this example.
           headers:
             Cache-Control:
-              description: Always `no-store`.
+              description: Always `no-store`. See [Caching](#description/caching).
               schema:
                 type: string
                 const: no-store
@@ -363,7 +487,8 @@ paths:
                 id: 21
                 category: nature
                 title: Wild reindeer
-                text: Southern Norway is home to most of Europe's remaining wild mountain reindeer.
+                text: Hardangervidda, a mountain plateau in southern Norway, has the largest herd of wild mountain reindeer in Europe.
+                placeIds: [hardangervidda]
         '400':
           $ref: '#/components/responses/BadRequest'
         '429':
@@ -375,7 +500,7 @@ paths:
       tags: [Categories]
       operationId: listCategories
       summary: List categories
-      description: Returns every category. Use a category's `id` as the `category` filter on the facts endpoints.
+      description: Returns categories. Use a category's `id` as the `category` filter on `/facts` and `/random-fact`.
       parameters:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
@@ -402,6 +527,24 @@ paths:
                       $ref: '#/components/schemas/Category'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+              x-example-request: /categories?limit=2
+              example:
+                data:
+                  - id: geography
+                    name: Geography
+                    description: Mountains, fjords, glaciers, lakes, and borders.
+                  - id: history
+                    name: History
+                    description: Independence, the constitution, exploration, and politics.
+                pagination:
+                  total: 5
+                  limit: 2
+                  offset: 0
+                  links:
+                    first: https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=0
+                    prev: null
+                    next: https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=2
+                    last: https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=4
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -410,18 +553,18 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalError'
-  /counties:
+  /places:
     get:
-      tags: [Counties]
-      operationId: listCounties
-      summary: List counties
-      description: Returns counties ordered by county code.
+      tags: [Places]
+      operationId: listPlaces
+      summary: List places
+      description: Returns places in ID order. Use a place's `id` as the `place` filter on `/facts`.
       parameters:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
       responses:
         '200':
-          description: A page of counties.
+          description: A page of places.
           headers:
             ETag:
               $ref: '#/components/headers/ETag'
@@ -439,9 +582,29 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/County'
+                      $ref: '#/components/schemas/Place'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+              x-example-request: /places?limit=2
+              example:
+                data:
+                  - id: dovrefjell
+                    name: Dovrefjell
+                    type: mountain-area
+                    description: Mountain range in central Norway, home to a herd of muskoxen.
+                  - id: eidsvoll
+                    name: Eidsvoll
+                    type: municipality
+                    description: Municipality north of Oslo where the constitution was signed in 1814.
+                pagination:
+                  total: 14
+                  limit: 2
+                  offset: 0
+                  links:
+                    first: https://www.marlasowards.com/api/norway-facts/v1/places?limit=2&offset=0
+                    prev: null
+                    next: https://www.marlasowards.com/api/norway-facts/v1/places?limit=2&offset=2
+                    last: https://www.marlasowards.com/api/norway-facts/v1/places?limit=2&offset=12
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -450,24 +613,23 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalError'
-  /counties/{code}:
+  /places/{id}:
     get:
-      tags: [Counties]
-      operationId: getCounty
-      summary: Get a county
-      description: Returns a single county by its two-digit county code.
+      tags: [Places]
+      operationId: getPlace
+      summary: Get a place
+      description: Returns one place. To get the facts about it, call `/facts?place={id}`.
       parameters:
-        - name: code
+        - name: id
           in: path
           required: true
-          description: The two-digit county code.
+          description: The place's ID.
           schema:
-            type: string
-            pattern: '^\d{2}$'
-          example: '46'
+            $ref: '#/components/schemas/PlaceId'
+          example: sognefjord
       responses:
         '200':
-          description: The county.
+          description: The place.
           headers:
             ETag:
               $ref: '#/components/headers/ETag'
@@ -476,7 +638,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/County'
+                $ref: '#/components/schemas/Place'
+              x-example-request: /places/sognefjord
+              example:
+                id: sognefjord
+                name: Sognefjord
+                type: fjord
+                description: Fjord in Vestland and the longest and deepest in Norway.
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -494,55 +662,71 @@ components:
       in: query
       description: Only return facts in this category.
       schema:
-        $ref: '#/components/schemas/CategoryId'
+        type: string
+        enum: [geography, history, culture, nature, economy]
+      example: history
+    Place:
+      name: place
+      in: query
+      description: Only return facts about this place. Get place IDs from `/places`.
+      schema:
+        $ref: '#/components/schemas/PlaceId'
+      example: svalbard
     Limit:
       name: limit
       in: query
-      description: Maximum number of items to return.
+      description: The maximum number of items to return. See [Pagination](#description/pagination).
       schema:
         type: integer
         minimum: 1
         maximum: 50
         default: 10
+      example: 2
     Offset:
       name: offset
       in: query
-      description: Number of items to skip before returning results.
+      description: The number of items to skip. See [Pagination](#description/pagination).
       schema:
         type: integer
         minimum: 0
         maximum: 10000
         default: 0
+      example: 2
   headers:
     ETag:
-      description: Identifies this exact representation. Send it in `If-None-Match` to get a `304` when nothing has changed.
+      description: An identifier for this version of the response. See [Caching](#description/caching).
       schema:
         type: string
         examples: ['"q1tC4kL0ZHr7n3U2pYbW8xM9aQe"']
     CacheControl:
-      description: Caching policy for this response.
+      description: See [Caching](#description/caching).
       schema:
         type: string
         const: public, max-age=3600
     Link:
-      description: Pagination links (RFC 8288), with the same URLs as `pagination.links`.
+      description: The same page links as `pagination.links`. See [Pagination](#description/pagination).
       schema:
         type: string
-        examples: ['<https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=0>; rel="first", <https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=10>; rel="next", <https://www.marlasowards.com/api/norway-facts/v1/facts?limit=10&offset=20>; rel="last"']
+        examples: ['<https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=0>; rel="first", <https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=2>; rel="next", <https://www.marlasowards.com/api/norway-facts/v1/categories?limit=2&offset=4>; rel="last"']
   schemas:
     CategoryId:
       type: string
-      description: A category ID. New categories can be added within `v1`, so handle unknown values.
-      enum: [geography, history, culture, nature, economy]
+      description: 'A category ID. Current values: `geography`, `history`, `culture`, `nature`, `economy`. More can be added, so handle values you don''t recognize.'
+      examples: [history]
+    PlaceId:
+      type: string
+      pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+      description: A place ID, a lowercase ASCII slug of the place's name.
+      examples: [sognefjord]
     Fact:
       type: object
       additionalProperties: false
-      required: [id, category, title, text]
+      required: [id, category, title, text, placeIds]
       properties:
         id:
           type: integer
           minimum: 1
-          description: Unique ID.
+          description: The fact's ID.
           examples: [10]
         category:
           $ref: '#/components/schemas/CategoryId'
@@ -552,8 +736,14 @@ components:
           examples: [First to the South Pole]
         text:
           type: string
-          description: The fact itself, in one or two sentences.
+          description: The fact, in one or two sentences.
           examples: ["Roald Amundsen's expedition was the first to reach the South Pole, on 14 December 1911."]
+        placeIds:
+          type: array
+          description: IDs of the places the fact is about, if any. Get details from `/places/{id}`.
+          items:
+            $ref: '#/components/schemas/PlaceId'
+          examples: [[galdhopiggen, jotunheimen]]
     Category:
       type: object
       additionalProperties: false
@@ -563,47 +753,52 @@ components:
           $ref: '#/components/schemas/CategoryId'
         name:
           type: string
-          examples: [Geography]
+          description: The category's display name.
+          examples: [History]
         description:
           type: string
-          examples: [Mountains, fjords, glaciers, lakes, and borders.]
-    County:
+          description: What the category covers.
+          examples: [Independence, the constitution, exploration, and politics.]
+    Place:
       type: object
       additionalProperties: false
-      required: [code, name, administrativeCenter]
+      required: [id, name, type, description]
       properties:
-        code:
-          type: string
-          pattern: '^\d{2}$'
-          description: Two-digit county code assigned by Statistics Norway.
-          examples: ['46']
+        id:
+          $ref: '#/components/schemas/PlaceId'
         name:
           type: string
-          examples: [Vestland]
-        administrativeCenter:
+          description: The place's name, in Norwegian spelling.
+          examples: [Galdhøpiggen]
+        type:
           type: string
-          description: The town where the county administration is based.
-          examples: [Bergen]
+          description: 'The kind of place. Current values: `archipelago`, `cape`, `city`, `fjord`, `glacier`, `lake`, `mountain`, `mountain-area`, `municipality`, `oil-field`, `plateau`, `settlement`. More can be added, so handle values you don''t recognize.'
+          examples: [mountain]
+        description:
+          type: string
+          description: One sentence about the place.
+          examples: [Mountain in Jotunheimen and the highest peak in Norway.]
     Pagination:
       type: object
       additionalProperties: false
       required: [total, limit, offset, links]
+      description: See [Pagination](#description/pagination).
       properties:
         total:
           type: integer
           minimum: 0
-          description: Total number of items that match the request.
+          description: The number of items that match the request, across all pages.
         limit:
           type: integer
-          description: The `limit` applied to this response.
+          description: The `limit` used for this page.
         offset:
           type: integer
-          description: The `offset` applied to this response.
+          description: The `offset` used for this page.
         links:
           type: object
           additionalProperties: false
           required: [first, prev, next, last]
-          description: Absolute URLs for other pages, keeping the request's filters. `prev` and `next` are `null` at either end.
+          description: URLs of other pages. `prev` is `null` on the first page, and `next` is `null` on the last page.
           properties:
             first:
               type: string
@@ -632,15 +827,16 @@ components:
         documentation:
           type: string
           format: uri
-          description: This reference page.
+          description: The URL of this reference page.
         openapi:
           type: string
           format: uri
-          description: This OpenAPI document.
+          description: The URL of the API's OpenAPI document.
         links:
           type: object
           additionalProperties: false
-          required: [facts, randomFact, categories, counties]
+          required: [facts, randomFact, categories, places]
+          description: The URL of each collection, plus `/random-fact`.
           properties:
             facts:
               type: string
@@ -651,27 +847,23 @@ components:
             categories:
               type: string
               format: uri
-            counties:
+            places:
               type: string
               format: uri
     Problem:
       type: object
-      description: RFC 9457 problem details.
+      description: An error, in the RFC 9457 problem details format. See [Errors](#description/errors).
       additionalProperties: false
       required: [type, title, status, detail, instance, requestId]
       properties:
         type:
           type: string
           format: uri
-          description: Identifies the problem type and links to its description. Branch on this value.
-          enum:
-            - https://www.marlasowards.com/api-reference#description/invalid-parameter
-            - https://www.marlasowards.com/api-reference#description/not-found
-            - https://www.marlasowards.com/api-reference#description/method-not-allowed
-            - https://www.marlasowards.com/api-reference#description/internal-error
+          description: Identifies the kind of error. Use this field in code.
+          examples: ['tag:marlasowards.com,2026:norway-facts/not-found']
         title:
           type: string
-          description: A short summary of the problem type. The same for every occurrence of a type.
+          description: A short name for the kind of error.
           examples: [Not found]
         status:
           type: integer
@@ -679,19 +871,19 @@ components:
           examples: [404]
         detail:
           type: string
-          description: What went wrong with this request, written for people. Don't parse it.
+          description: An explanation for people to read. Don't use it in code.
           examples: [No fact has the ID 99.]
         instance:
           type: string
-          description: The request path and query string that failed.
+          description: The request path and query string that caused the error.
           examples: [/api/norway-facts/v1/facts/99]
         requestId:
           type: string
-          description: Identifies this request in the server logs.
-          examples: [01M4PKVM6QZWW3P19ZK4ZEDZK9]
+          description: A unique ID for the request.
+          examples: [01JEXAMPLE0REQUEST0ID00000]
         errors:
           type: array
-          description: Present only on `400` responses. Every invalid parameter, not just the first.
+          description: Only on `400` errors. Every invalid parameter.
           items:
             $ref: '#/components/schemas/ParameterError'
     ParameterError:
@@ -701,64 +893,63 @@ components:
       properties:
         parameter:
           type: string
-          description: The query or path parameter's name.
+          description: The parameter's name.
           examples: [limit]
         detail:
           type: string
-          description: What's wrong with it.
+          description: What's wrong with its value.
           examples: [Must be an integer from 1 to 50.]
   responses:
     NotModified:
-      description: The representation matching your `If-None-Match` ETag is still current. No body.
+      description: The response matching your `If-None-Match` value is still current. There's no body. See [Caching](#description/caching).
       headers:
         ETag:
           $ref: '#/components/headers/ETag'
         Cache-Control:
           $ref: '#/components/headers/CacheControl'
     BadRequest:
-      description: A query or path parameter is unknown, repeated, or invalid.
+      description: A parameter is unknown, repeated, or has a value that isn't allowed. See [Errors](#description/errors).
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
+          x-example-request: /facts?category=food
           example:
-            type: https://www.marlasowards.com/api-reference#description/invalid-parameter
+            type: tag:marlasowards.com,2026:norway-facts/invalid-parameter
             title: Invalid parameter
             status: 400
             detail: A query parameter is invalid. See errors for details.
             instance: /api/norway-facts/v1/facts?category=food
-            requestId: 01M4PKVM6QZWW3P19ZK4ZEDZK9
+            requestId: 01JEXAMPLE0REQUEST0ID00000
             errors:
               - parameter: category
                 detail: 'Must be one of: geography, history, culture, nature, economy.'
     NotFound:
-      description: The requested resource doesn't exist.
+      description: No resource has that ID. See [Errors](#description/errors).
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
+          x-example-request: /facts/99
           example:
-            type: https://www.marlasowards.com/api-reference#description/not-found
+            type: tag:marlasowards.com,2026:norway-facts/not-found
             title: Not found
             status: 404
             detail: No fact has the ID 99.
             instance: /api/norway-facts/v1/facts/99
-            requestId: 01M4PKVM6QZWW3P19ZK4ZEDZK9
+            requestId: 01JEXAMPLE0REQUEST0ID00000
     TooManyRequests:
-      description: |
-        The client exceeded 60 requests in 60 seconds. Sent by Netlify's
-        rate limiter, so the body isn't problem details. Wait at least a
-        minute before retrying.
+      description: Too many requests from your IP address. See [Rate limits](#description/rate-limits).
     InternalError:
-      description: Something failed on the server.
+      description: The server hit an unexpected error. See [Errors](#description/errors).
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
           example:
-            type: https://www.marlasowards.com/api-reference#description/internal-error
+            type: tag:marlasowards.com,2026:norway-facts/internal-error
             title: Internal error
             status: 500
-            detail: Something went wrong on our side. Try again later.
+            detail: The server hit an unexpected error. Try again later.
             instance: /api/norway-facts/v1/facts
-            requestId: 01M4PKVM6QZWW3P19ZK4ZEDZK9
+            requestId: 01JEXAMPLE0REQUEST0ID00000
