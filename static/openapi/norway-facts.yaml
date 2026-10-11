@@ -1,0 +1,315 @@
+openapi: 3.1.0
+info:
+  title: Norway Facts API
+  version: 1.0.0
+  summary: Facts about Norway's geography, history, culture, nature, and economy.
+  description: |
+    The Norway Facts API returns short facts about Norway, grouped into
+    categories, plus reference data for Norway's 15 counties.
+
+    This is a working sample API. It runs as a Netlify Function on this
+    site, so the code samples on this page return real responses. Select
+    **Test Request** on any endpoint to try it from your browser.
+
+    ## Authentication
+
+    None. The API is public and read-only.
+
+    ## Pagination
+
+    List endpoints that can grow return a `data` array and a `pagination`
+    object. Use `limit` and `offset` to page through results:
+
+    ```json
+    {
+      "data": [ ... ],
+      "pagination": { "total": 27, "limit": 10, "offset": 0 }
+    }
+    ```
+
+    ## Errors
+
+    Errors use [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem
+    details with the `application/problem+json` media type.
+
+    | Status | When |
+    | --- | --- |
+    | `400` | A query parameter has an invalid value. |
+    | `404` | The resource or endpoint doesn't exist. |
+    | `405` | The request used a method other than `GET`. |
+# Public API: no authentication.
+security: []
+servers:
+  - url: https://www.marlasowards.com/api/norway-facts
+    description: Production
+tags:
+  - name: Facts
+    description: Facts about Norway, filterable by category.
+  - name: Categories
+    description: The categories that facts belong to.
+  - name: Counties
+    description: Norway's 15 counties (fylker), in effect since 1 January 2024.
+paths:
+  /facts:
+    get:
+      tags: [Facts]
+      operationId: listFacts
+      summary: List facts
+      description: Returns facts in ID order, optionally filtered by category.
+      parameters:
+        - $ref: '#/components/parameters/Category'
+        - name: limit
+          in: query
+          description: Maximum number of facts to return.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+        - name: offset
+          in: query
+          description: Number of facts to skip before returning results.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: A page of facts.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, pagination]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fact'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+              example:
+                data:
+                  - id: 2
+                    category: geography
+                    title: The king of fjords
+                    text: Sognefjord is the longest and deepest fjord in Norway, at about 205 km long and over 1,300 m deep.
+                pagination:
+                  total: 7
+                  limit: 1
+                  offset: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /facts/random:
+    get:
+      tags: [Facts]
+      operationId: getRandomFact
+      summary: Get a random fact
+      description: Returns one fact chosen at random, optionally from a single category.
+      parameters:
+        - $ref: '#/components/parameters/Category'
+      responses:
+        '200':
+          description: A random fact.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fact'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /facts/{id}:
+    get:
+      tags: [Facts]
+      operationId: getFact
+      summary: Get a fact
+      description: Returns a single fact by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The fact's ID.
+          schema:
+            type: integer
+            minimum: 1
+          example: 10
+      responses:
+        '200':
+          description: The fact.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fact'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /categories:
+    get:
+      tags: [Categories]
+      operationId: listCategories
+      summary: List categories
+      description: Returns every category. Use a category's `id` as the `category` filter on the facts endpoints.
+      responses:
+        '200':
+          description: All categories.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+  /counties:
+    get:
+      tags: [Counties]
+      operationId: listCounties
+      summary: List counties
+      description: Returns all 15 counties, ordered by county code.
+      responses:
+        '200':
+          description: All counties.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/County'
+  /counties/{code}:
+    get:
+      tags: [Counties]
+      operationId: getCounty
+      summary: Get a county
+      description: Returns a single county by its two-digit county code.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: The two-digit county code.
+          schema:
+            type: string
+            pattern: '^\d{2}$'
+          example: '46'
+      responses:
+        '200':
+          description: The county.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/County'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Category:
+      name: category
+      in: query
+      description: Only return facts in this category.
+      schema:
+        $ref: '#/components/schemas/CategoryId'
+  schemas:
+    CategoryId:
+      type: string
+      enum: [geography, history, culture, nature, economy]
+    Fact:
+      type: object
+      required: [id, category, title, text]
+      properties:
+        id:
+          type: integer
+          description: Unique ID.
+          example: 10
+        category:
+          $ref: '#/components/schemas/CategoryId'
+        title:
+          type: string
+          description: A short headline for the fact.
+          example: First to the South Pole
+        text:
+          type: string
+          description: The fact itself, in one or two sentences.
+          example: Roald Amundsen's expedition was the first to reach the South Pole, on 14 December 1911.
+    Category:
+      type: object
+      required: [id, name, description]
+      properties:
+        id:
+          $ref: '#/components/schemas/CategoryId'
+        name:
+          type: string
+          example: Geography
+        description:
+          type: string
+          example: Mountains, fjords, glaciers, lakes, and borders.
+    County:
+      type: object
+      required: [code, name, administrativeCenter]
+      properties:
+        code:
+          type: string
+          description: Two-digit county code assigned by Statistics Norway.
+          example: '46'
+        name:
+          type: string
+          example: Vestland
+        administrativeCenter:
+          type: string
+          description: The town where the county administration is based.
+          example: Bergen
+    Pagination:
+      type: object
+      required: [total, limit, offset]
+      properties:
+        total:
+          type: integer
+          description: Total number of results that match the request.
+        limit:
+          type: integer
+          description: The `limit` applied to this response.
+        offset:
+          type: integer
+          description: The `offset` applied to this response.
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Not found
+        status:
+          type: integer
+          example: 404
+        detail:
+          type: string
+          example: No fact has the ID 99.
+  responses:
+    BadRequest:
+      description: A query parameter has an invalid value.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: about:blank
+            title: Invalid parameter
+            status: 400
+            detail: 'category must be one of: geography, history, culture, nature, economy.'
+    NotFound:
+      description: The requested resource doesn't exist.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: about:blank
+            title: Not found
+            status: 404
+            detail: No fact has the ID 99.

@@ -1,0 +1,7 @@
+# Build settings (build command, publish directory) are still managed in the
+# Netlify UI. This file only tells Netlify where the site's serverless
+# functions live, for both Netlify's own builds and `netlify deploy` from the
+# GitHub Actions deploy job in .github/workflows/checks.yml.
+
+[functions]
+  directory = "netlify/functions"
