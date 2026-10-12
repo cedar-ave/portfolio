@@ -131,7 +131,7 @@ Reviewed as a top API security expert at a large tech company would. Three findi
 | **Rate limit bypass (proven).** `/_rate-limited` was public with no limit of its own: 155 direct requests all ran the function. | Its own rate limit. |
 | **Build supply chain.** Netlify's build downloaded Redocly with `npx`, unchecked by the lockfile, before bundling the deployed code. | Locked dev dependencies, and installs with `--ignore-scripts` in both repos. |
 | **Third-party viewer.** Scalar sent **Test Request** calls through `proxy.scalar.com` and had telemetry, an AI agent, and remote fonts on by default. | All four turned off on the reference page. |
-| No security headers on the API or this site | Headers on both, and a Content Security Policy here (partly report-only for now). See [Security headers](../site-config/security-headers). |
+| No security headers on the API or this site | Headers on both, and a Content Security Policy here, enforced after a report-only check in a browser. See [Security headers](../site-config/security-headers). |
 | Private vulnerability reporting off, though `SECURITY.md` pointed to it | Turned on in both repos, with Dependabot security updates, CodeQL, and a ruleset protecting `main`. See [Repository and CI security](../build-deploy/repository-security). |
 | Full query strings logged; echoed input unbounded | Only documented parameters logged; echoed values clipped. |
 | No CAA record, no usage alerts, deploy preview and 2FA settings unverified | Settings for you to make. See [Security](security#settings-to-make-by-hand). |

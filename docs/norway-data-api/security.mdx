@@ -77,6 +77,7 @@ These options were found by reading Scalar's bundled code, since its defaults ar
 - **No global rate limit.** A global cap would let one attacker block everyone. Usage alerts and caching cover cost instead.
 - **`'unsafe-inline'` styles in this site's CSP.** React and Scalar set inline styles, which can't be hashed. Scripts, the bigger risk, are limited to hashes and named domains.
 - **Google Analytics** runs on every page, including `/api-reference`.
+- **No DNSSEC.** Netlify DNS doesn't offer it for this domain. Without it, an attacker who can forge DNS answers could send some visitors to another server, but the site and API are HTTPS-only with HSTS, so browsers would reject that server's certificate, and the CAA record makes it harder to get a valid one. Getting DNSSEC would mean moving the domain's DNS away from Netlify, which isn't worth it for this site.
 
 ## Settings to make by hand
 
@@ -84,23 +85,23 @@ These can't be set from the repos. Check them off once, and again after any chan
 
 **Netlify**
 
-- [ ] **Two-factor authentication** on every account with access to the Netlify team, preferably with a security key or passkey.
+- [x] **Two-factor authentication** on every account with access to the Netlify team, preferably with a security key or passkey. On as of 11 October 2026.
 - [ ] **Usage notifications** for function invocations and bandwidth, in the team's billing and usage settings, so a flood on the `norway-data-api` site shows up before the bill.
 - [ ] **Deploy previews:** on both sites, in the deploy preview settings under continuous deployment, require approval before building pull requests from outside contributors, so strangers' code doesn't run in the build or get published.
 
 **DNS** (Netlify DNS, `marlasowards.com`)
 
-- [ ] A **CAA record**: name `marlasowards.com`, flag `0`, tag `issue`, value `letsencrypt.org`. It lets only Let's Encrypt, which Netlify uses, issue certificates for the domain.
-- [ ] **DNSSEC:** check whether Netlify DNS offers it for this zone, and turn it on if so.
+- [x] A **CAA record**: name `marlasowards.com`, flag `0`, tag `issue`, value `letsencrypt.org`. It lets only Let's Encrypt, which Netlify uses, issue certificates for the domain. Added 11 October 2026; it covers `www` and `api` too.
+- [x] **DNSSEC:** Netlify DNS doesn't offer it for this domain (checked 11 October 2026), so it's an accepted risk. See [Accepted risks](#accepted-risks).
 - [ ] If a Netlify site that uses a subdomain is ever deleted, delete its DNS record too, so nobody else can claim the subdomain.
 
 **GitHub**
 
-- [ ] **Two-factor authentication** on the `cedar-ave` account, preferably with a security key or passkey.
+- [x] **Two-factor authentication** on the `cedar-ave` account, preferably with a security key or passkey. On as of 11 October 2026.
 
 **This site's CSP**
 
-- [ ] Check the site for report-only CSP violations, then enforce the full policy. See [Turning on the full policy](../site-config/security-headers#turning-on-the-full-policy).
+- [x] Check the site for report-only CSP violations, then enforce the full policy. Enforced as of 11 October 2026. See [How it was turned on](../site-config/security-headers#how-it-was-turned-on).
 
 ## Reporting a problem
 

@@ -12,8 +12,9 @@ Every page on the site is served with security headers that tell browsers what t
 
 - `netlify.toml` sets HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy` on every page.
 - After each build, `plugins/csp-headers-plugin.mjs` hashes every inline script in the built HTML and writes the Content Security Policy into `build/_headers`, which Netlify reads at deploy time.
-- Part of the policy is enforced now. The full allowlist for scripts, styles, fonts, images, and connections is **report-only**: browsers log violations to the console without blocking anything. Once a check shows no violations, set `ENFORCE_FULL_POLICY` to `true` in the plugin to enforce it.
-- When the site starts loading something from a new domain, add that domain to `SOURCES` in the plugin, or the browser will report it (and block it, once the full policy is enforced).
+- The full policy is **enforced**: browsers block anything that isn't on the allowlist.
+- When the site starts loading something from a new domain, add that domain to `SOURCES` in the plugin, or the browser will block it. To test a change without risk, set `ENFORCE_FULL_POLICY` to `false` first (see [Testing a change to the policy](#testing-a-change-to-the-policy)).
+- One console error on `/api-reference` is expected: Scalar checks whether `eval` is allowed, and it isn't. See [Expected console message](#expected-console-message).
 
 </QuickReference>
 
@@ -53,17 +54,9 @@ A Content Security Policy (CSP) lists where a page may load scripts, styles, fon
 
 The site currently has three inline scripts: the color-mode script and the Google Analytics setup on every page, and a small banner script on the home page. Their hashes change whenever Docusaurus or the analytics snippet changes, which is why they're computed on every build instead of written by hand.
 
-### Enforced now
+### The policy
 
-```text
-frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
-```
-
-These can't break the site: it's never framed, has no plugins (`<object>`), uses no `<base>` tag, and has no forms that post elsewhere.
-
-### Report-only for now
-
-The full policy is sent as `Content-Security-Policy-Report-Only`:
+The policy is sent as `Content-Security-Policy`, so browsers enforce it:
 
 | Directive | Allows |
 | --- | --- |
@@ -74,15 +67,40 @@ The full policy is sent as `Content-Security-Policy-Report-Only`:
 | `img-src` | This site, `data:` URLs, and any HTTPS image |
 | `connect-src` | This site, `api.marlasowards.com`, Google Analytics, and the Iconify icon API (`@iconify/react` fetches icons that aren't bundled) |
 
-It's report-only because a wrong entry would break pages, and the policy hasn't been checked in a browser yet. Browsers log violations to the developer console as `[Report Only]` messages and block nothing.
+It also includes these, which can't break the site, since it's never framed, has no plugins (`<object>`), uses no `<base>` tag, and has no forms that post elsewhere:
 
-### Turning on the full policy
+```text
+frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+```
 
-1. Deploy, then open the site in a browser with the developer console open.
-2. Visit a few kinds of pages: the home page, a blog post, a docs page, the portfolio, and `/api-reference`. On `/api-reference`, also run a **Test Request**.
-3. Look for console messages that mention `Content-Security-Policy` and `Report Only`. Each one names the blocked URL and the directive.
-4. For each legitimate one, add its domain to `SOURCES` in `plugins/csp-headers-plugin.mjs`.
-5. When a full pass shows no reports, set `ENFORCE_FULL_POLICY = true` in the plugin, build, deploy, and check the same pages again.
+`'unsafe-eval'` is deliberately not allowed, so no script can run a string as code.
+
+### How it was turned on
+
+The full policy started as report-only, so browsers would log violations without blocking anything. A check of the home page, a blog post, a docs page, the portfolio, and `/api-reference` (with a **Test Request**) in October 2026 found two messages:
+
+- `'upgrade-insecure-requests' is ignored when delivered in a report-only policy`. Browsers don't apply that directive in report-only mode. The plugin now leaves the enforced directives out of a report-only policy.
+- The `eval` check described below, on `/api-reference` only.
+
+Neither needed an allowlist change, so `ENFORCE_FULL_POLICY` was set to `true`.
+
+### Expected console message
+
+On `/api-reference`, the browser console shows:
+
+```text
+Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src ..."
+```
+
+It's harmless. Scalar bundles the Zod validation library, which checks once at startup whether `eval` is allowed (`try { Function('') } catch {}`), so it can compile its validators for speed when it is. Under this policy the check fails, Zod uses its normal validation path, and the page works the same. Don't add `'unsafe-eval'` to silence it: blocking `eval` is part of what the policy is for.
+
+Any other `Refused to...` message is a real problem: something the site needs is blocked.
+
+### Testing a change to the policy
+
+1. In `plugins/csp-headers-plugin.mjs`, add the new source to `SOURCES` and set `ENFORCE_FULL_POLICY = false`.
+2. Deploy, open the site with the developer console open, and visit the affected pages. Violations show up as `[Report Only]` messages, and nothing is blocked.
+3. When the only message is the expected one above, set `ENFORCE_FULL_POLICY = true` again, deploy, and check the same pages once more.
 
 ## Third-party scripts
 

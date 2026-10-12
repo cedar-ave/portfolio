@@ -8,16 +8,16 @@
 // page, hashes each distinct inline script, and writes the policy with the
 // current hashes into build/_headers, which Netlify reads at deploy time.
 //
-// Two policies are sent:
+// With ENFORCE_FULL_POLICY on (the default since October 2026), the whole
+// policy is enforced: the allowlist for scripts, styles, fonts, images, and
+// connections, plus the ENFORCED directives (no framing, no plugins, no
+// <base> or form-target hijacking, HTTPS only).
 //
-// - ENFORCED: directives that can't break the site (no framing, no
-//   plugins, no <base> or form-target hijacking, HTTPS only). Browsers
-//   block violations.
-// - REPORT_ONLY: the full allowlist for scripts, styles, fonts, images, and
-//   connections. Browsers only log violations to the console, without
-//   blocking anything. Once a check of the site shows no violations, set
-//   ENFORCE_FULL_POLICY to true to enforce it. See
-//   docs/norway-data-api/security.mdx.
+// Setting ENFORCE_FULL_POLICY to false enforces only the ENFORCED
+// directives and sends the allowlist as Content-Security-Policy-Report-Only,
+// so browsers log violations without blocking anything. Use that to test a
+// change to SOURCES safely, then turn enforcement back on. See
+// docs/site-config/security-headers.mdx.
 //
 // Other security headers (HSTS, X-Frame-Options, and so on) are static, so
 // they're in netlify.toml instead.
@@ -26,7 +26,7 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const ENFORCE_FULL_POLICY = false;
+const ENFORCE_FULL_POLICY = true;
 
 // Where the site loads things from. Keep in sync with what the site uses:
 // Google Analytics and Google Fonts on every page, Scalar from jsDelivr and
@@ -85,10 +85,15 @@ export async function inlineScriptHashes(outDir) {
   return [...hashes].sort();
 }
 
-export function fullPolicy(hashes) {
+// The allowlist, plus the ENFORCED directives when it's the enforced policy.
+// The report-only policy leaves them out: they're already enforced, and
+// browsers warn about upgrade-insecure-requests in a report-only policy,
+// where it has no effect.
+export function fullPolicy(hashes, { withEnforced = true } = {}) {
   const directives = { 'default-src': ["'self'"], ...SOURCES };
   directives['script-src'] = [...directives['script-src'], ...hashes];
-  return [...Object.entries(directives).map(([name, values]) => `${name} ${values.join(' ')}`), ...ENFORCED].join('; ');
+  const allowlist = Object.entries(directives).map(([name, values]) => `${name} ${values.join(' ')}`);
+  return [...allowlist, ...(withEnforced ? ENFORCED : [])].join('; ');
 }
 
 export default function cspHeadersPlugin() {
@@ -96,13 +101,12 @@ export default function cspHeadersPlugin() {
     name: 'csp-headers-plugin',
     async postBuild({ outDir }) {
       const hashes = await inlineScriptHashes(outDir);
-      const full = fullPolicy(hashes);
       const lines = ['/*'];
       if (ENFORCE_FULL_POLICY) {
-        lines.push(`  Content-Security-Policy: ${full}`);
+        lines.push(`  Content-Security-Policy: ${fullPolicy(hashes)}`);
       } else {
         lines.push(`  Content-Security-Policy: ${ENFORCED.join('; ')}`);
-        lines.push(`  Content-Security-Policy-Report-Only: ${full}`);
+        lines.push(`  Content-Security-Policy-Report-Only: ${fullPolicy(hashes, { withEnforced: false })}`);
       }
       await writeFile(path.join(outDir, '_headers'), `${lines.join('\n')}\n`);
       console.log(`[csp-headers-plugin] Wrote _headers with ${hashes.length} inline script hash(es); full policy ${ENFORCE_FULL_POLICY ? 'enforced' : 'report-only'}.`);
