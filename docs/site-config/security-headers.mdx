@@ -65,7 +65,7 @@ The policy is sent as `Content-Security-Policy`, so browsers enforce it:
 | `style-src` | This site, inline styles (React and Scalar set them, and they can't be hashed), and Google Fonts' stylesheets |
 | `font-src` | This site, Google Fonts, and `data:` URLs |
 | `img-src` | This site, `data:` URLs, and any HTTPS image |
-| `connect-src` | This site, `api.marlasowards.com`, Scalar's source map, Google Analytics, and the Iconify icon API (`@iconify/react` fetches icons that aren't bundled) |
+| `connect-src` | This site, `api.marlasowards.com`, Scalar's source map, Google Analytics (see [Google Analytics hits](#google-analytics-hits)), and the Iconify icon API (`@iconify/react` fetches icons that aren't bundled) |
 
 It also includes these, which can't break the site, since it's never framed, has no plugins (`<object>`), uses no `<base>` tag, and has no forms that post elsewhere:
 
@@ -83,6 +83,14 @@ The full policy started as report-only, so browsers would log violations without
 - The `eval` check described below, on `/api-reference` only.
 
 Neither needed an allowlist change, so `ENFORCE_FULL_POLICY` was set to `true`.
+
+### Google Analytics hits
+
+Google Analytics sends each page view as a request to `/g/collect` on several hosts: `*.google-analytics.com`, `analytics.google.com`, and `www.google.com`. All of them have to be in `connect-src`. A wildcard such as `https://*.analytics.google.com` only matches subdomains, so `analytics.google.com` itself is listed separately.
+
+When the policy was first enforced in October 2026, `analytics.google.com` and `www.google.com` were missing. The browser blocked every hit, and Google Analytics reported that data collection wasn't active. To check that hits get through, open the Network tab in developer tools, filter for `collect`, and reload: the requests should return `204`, not `(blocked:csp)`. Your visit then shows up in the Realtime report within a minute.
+
+If Google Signals is ever turned on, also add `https://*.g.doubleclick.net` and `https://*.google.com`.
 
 ### Scalar on jsDelivr
 

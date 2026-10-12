@@ -38,6 +38,10 @@ const ENFORCE_FULL_POLICY = true;
 // serves every npm package, so allowing the whole host would let an injected
 // script tag load any of them. Its source map is allowed for connections,
 // because browsers fetch it when developer tools are open.
+//
+// Google Analytics sends hits to analytics.google.com and www.google.com as
+// well as *.google-analytics.com. A wildcard only matches subdomains, so
+// *.analytics.google.com doesn't cover analytics.google.com itself.
 const SOURCES = {
   'script-src': ["'self'", 'https://www.googletagmanager.com', SCALAR_SRC],
   // React and Scalar set inline styles, which can't be hashed.
@@ -50,7 +54,9 @@ const SOURCES = {
     SCALAR_SOURCE_MAP,
     'https://www.googletagmanager.com',
     'https://*.google-analytics.com',
+    'https://analytics.google.com',
     'https://*.analytics.google.com',
+    'https://www.google.com',
     'https://api.iconify.design',
     'https://api.simplesvg.com',
     'https://api.unisvg.com',
