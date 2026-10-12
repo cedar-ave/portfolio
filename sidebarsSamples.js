@@ -57,10 +57,12 @@ const sidebars = {
       collapsed: true,
       items: [
         'norway-data-api-guides/show-a-random-fact',
+        'norway-data-api-guides/explore-in-postman',
         'norway-data-api-guides/get-every-item',
         'norway-data-api-guides/handle-errors-and-retries',
         'norway-data-api-guides/cache-responses',
         'norway-data-api-guides/call-from-a-browser',
+        'norway-data-api-guides/fact-of-the-day',
       ],
     },
     {

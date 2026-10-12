@@ -74,7 +74,8 @@ The conceptual docs are in `info.description` in `public/openapi/norway-data.yam
 2. **Spec:** add the path with its parameters, every response it can return (`200`, `304` if it's cacheable, `400`, `404` if it has an ID, `429`, `500`), and an example with `x-example-request`.
 3. **Index:** if it's a new collection, add it to the index handler's `links` and to the `ApiIndex` schema.
 4. **Contract test:** add requests for each status code. The coverage check lists any you missed.
-5. **Release:** see [Release a change](#release-a-change). A new endpoint is a minor version.
+5. **Postman collection:** add a request with tests to `collections/norway-data-api.postman_collection.json`, in the folder for its tag. Run `npm run collection` after the release is live, since it tests production.
+6. **Release:** see [Release a change](#release-a-change). A new endpoint is a minor version.
 
 ## Release a change
 

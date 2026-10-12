@@ -1,0 +1,99 @@
+---
+title: "Explore the API in Postman"
+description: Import the Norway Data API's Postman collection to try every endpoint and error without writing code, and run its tests in Postman or with Newman.
+---
+
+import GuideFeedback from '@site/src/components/GuideFeedback';
+
+# Explore the API in Postman
+
+The Norway Data API has a Postman collection: a ready-made set of requests for every endpoint, plus one for each kind of error a client can cause. Use it to try the API without writing code, or run its tests to check that the API works as documented.
+
+You need [Postman](https://www.postman.com/downloads/), or Node.js 18 or later to run the tests with Newman instead. No API key is needed.
+
+## Import the collection
+
+The collection is a file in the API's GitHub repository:
+
+```text
+https://raw.githubusercontent.com/cedar-ave/norway-data-api/main/collections/norway-data-api.postman_collection.json
+```
+
+In Postman, select **Import**, then paste the link. The collection appears as **Norway Data API** in your workspace.
+
+## What's in it
+
+| Folder | Requests |
+| --- | --- |
+| Index | **Get the API index**, the starting point with links to each collection |
+| Facts | **List facts**, **Get a random fact**, and **Get a fact** |
+| Categories | **List categories** |
+| Places | **List places** and **Get a place** |
+| Errors | **Unknown parameter**, **Value not allowed**, **ID with leading zeros**, **Fact not found**, and **Method not allowed** |
+
+Each request's description says what it shows. To try other values, change the query parameters on the request's **Params** tab. **List facts** has an `offset` parameter that's turned off. Select its checkbox to use it.
+
+The requests in **Errors** fail on purpose. Each response is a problem details object. Its `type` says what kind of error it is, and its `detail` says what to fix. See [Errors](https://www.marlasowards.com/api-reference#description/errors) in the API reference.
+
+## Variables
+
+The collection has two variables:
+
+| Variable | Value | Used by |
+| --- | --- | --- |
+| `baseUrl` | `https://api.marlasowards.com/norway-data/v1` | Every request |
+| `factId` | `3` at first | **Get a fact** |
+
+**Get a random fact** sets `factId` to the ID of the fact it returns. Send it, then send **Get a fact**, and you get the same fact again by its ID. That's the usual way to save a fact and show it later.
+
+## Run the tests
+
+Every request has tests. They check the status code and that any website can call the API. Some check more, such as each error's `type`. Run the whole collection to check every endpoint at once.
+
+**In Postman,** run the collection with the Collection Runner. Run the requests in order, so **Get a random fact** sets `factId` before **Get a fact** uses it.
+
+**From a terminal,** use [Newman](https://www.npmjs.com/package/newman), Postman's command-line runner. It runs the collection straight from its link:
+
+```bash
+npx newman run https://raw.githubusercontent.com/cedar-ave/norway-data-api/main/collections/norway-data-api.postman_collection.json
+```
+
+Newman prints each request and test, then a summary. When everything passes, the `failed` column is all zeros:
+
+```text
+┌─────────────────────────┬────────────────────┬────────────────────┐
+│                         │           executed │             failed │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              iterations │                  1 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│                requests │                 12 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│            test-scripts │                 24 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│      prerequest-scripts │                  0 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              assertions │                 41 │                  0 │
+└─────────────────────────┴────────────────────┴────────────────────┘
+```
+
+A run makes 12 requests, well under the [rate limit](https://www.marlasowards.com/api-reference#description/rate-limits) of 60 per minute.
+
+## Tips
+
+- **Import the OpenAPI spec instead, for every parameter.** Postman can also import the API's [OpenAPI spec](https://api.marlasowards.com/openapi/norway-data.yaml) from its link. That gives you a request for each endpoint with every parameter, but no tests and no requests that cause errors.
+- **Use the API index to explore.** **Get the API index** returns a link to each collection. Copy one into a new request to follow it.
+- **Get a fact's places.** Copy an ID from a fact's `placeIds` into **Get a place**, in place of `sognefjord`.
+
+## How this page was tested
+
+The collection was run with Newman 6.2.3 against the live API, and every test passed. The steps in the Postman app weren't tested automatically.
+
+## Related
+
+- [Show a random fact with its places](./show-a-random-fact), the same requests in JavaScript and Python
+- [Handle errors and retries](./handle-errors-and-retries)
+- [Endpoints at a glance](https://www.marlasowards.com/api-reference#description/endpoints-at-a-glance) in the API reference
+
+## Feedback
+
+<GuideFeedback />

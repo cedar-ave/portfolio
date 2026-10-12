@@ -3,6 +3,8 @@ title: "Call the API from a browser"
 description: Call the Norway Data API from JavaScript in a web page, and learn which requests browsers allow across origins and what a page can read from the responses.
 ---
 
+import GuideFeedback from '@site/src/components/GuideFeedback';
+
 # Call the API from a browser
 
 Any web page can call the Norway Data API with `fetch`. There's no key to hide, and the API allows requests from every origin. This guide shows a complete page, then covers the browser rules that decide which requests work. Most of those rules are part of CORS (cross-origin resource sharing), and they're the usual reason a request that works in `curl` fails in a browser.
@@ -131,3 +133,7 @@ The page and the claims in this guide were tested in Chrome, loading the pages f
 - [Show a random fact with its places](./show-a-random-fact), the same program for Node.js and Python
 - [Cache responses with ETags](./cache-responses)
 - [Request rules](https://www.marlasowards.com/api-reference#description/request-rules) in the API reference, including CORS
+
+## Feedback
+
+<GuideFeedback />

@@ -1,0 +1,28 @@
+/* Card styling matches QuickReference (Docusaurus's doc card surface), so
+   the live demo reads as part of the page. */
+
+.card {
+  margin: 1.5rem 0;
+  background-color: #fdf7ec;
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+  padding: 1.5rem;
+}
+
+.date {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.heading {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: var(--ifm-heading-font-weight);
+}
+
+.text:last-child,
+.places {
+  margin-bottom: 0;
+}

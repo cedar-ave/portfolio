@@ -14,6 +14,8 @@ The Norway Data API's tutorial and how-to guides live in this repo, in the `/sam
 - Unlike the other samples, they aren't genericized: their code runs against the live API. Don't add the samples disclaimer to them.
 - The spec links to the tutorial from its **Quick start** section and from `externalDocs`. If the tutorial's URL changes, update both in the API repo.
 - The guides link to sections of the reference by anchor, such as `#description/errors`. If a heading in the spec is renamed, those links break, and the build can't catch it.
+- Every guide ends with a **Feedback** section: the `GuideFeedback` component links to the API repo's **Docs feedback** issue form (`.github/ISSUE_TEMPLATE/docs.yml`), with the page's URL filled in. Add it to new guides too.
+- The fact of the day guide shows a live demo, the `FactOfTheDay` component. Its logic is a copy of the page's code. If you change one, change the other.
 - **Nothing tests the guides' code automatically.** When the API changes, check the guides it affects (see [What the guides depend on](#what-the-guides-depend-on)) and re-run their code (see [Test the guides](#test-the-guides)).
 
 </QuickReference>
@@ -23,10 +25,12 @@ The Norway Data API's tutorial and how-to guides live in this repo, in the `/sam
 | Page | Type | What it covers |
 | --- | --- | --- |
 | [Show a random fact with its places](/samples/norway-data-api-guides/show-a-random-fact) | Tutorial | A first program: get a random fact, then each place in its `placeIds`. Built up step by step, with prerequisites and troubleshooting. |
+| [Explore the API in Postman](/samples/norway-data-api-guides/explore-in-postman) | How-to | Import the Postman collection from the API repo, what's in it, its variables, and running its tests in Postman or with Newman. |
 | [Get every item in a collection](/samples/norway-data-api-guides/get-every-item) | How-to | Follow `pagination.links.next` until it's `null`. |
 | [Handle errors and retries](/samples/norway-data-api-guides/handle-errors-and-retries) | How-to | Which errors to retry and how long to wait. Retry decisions use the status code, because some `429`s have no body and no `type`. Everything else uses `type`. |
 | [Cache responses with ETags](/samples/norway-data-api-guides/cache-responses) | How-to | `max-age`, `If-None-Match`, and `304` for server-side code. Browsers do this on their own. |
 | [Call the API from a browser](/samples/norway-data-api-guides/call-from-a-browser) | How-to | What a page can send and read across origins, why requests fail with "Failed to fetch", and Content Security Policy. |
+| [Build a fact of the day page](/samples/norway-data-api-guides/fact-of-the-day) | Sample app | A complete web page that picks a fact from the date, with a live demo on the page. |
 
 ## Conventions
 
@@ -42,10 +46,11 @@ The Norway Data API's tutorial and how-to guides live in this repo, in the `/sam
 | --- | --- |
 | Fields in facts, places, or pagination | Every guide |
 | A heading in the spec's introduction | Anchor links in every guide |
+| The Postman collection's requests, folders, variables, or test counts | Explore the API in Postman, including the Newman summary |
 | Error types, the problem details format, or `Retry-After` | Handle errors and retries |
-| Pagination, or the maximum `limit` (50) | Get every item in a collection |
+| Pagination, or the maximum `limit` (50) | Get every item in a collection, Build a fact of the day page |
 | `Cache-Control`, `ETag`, or `304` behavior | Cache responses with ETags, Call the API from a browser |
-| CORS headers, or the headers a preflight allows | Call the API from a browser |
+| CORS headers, or the headers a preflight allows | Call the API from a browser, Build a fact of the day page |
 | The rate limit (60 requests per 60 seconds) | The tutorial's troubleshooting, Handle errors and retries, Call the API from a browser |
 | The data, such as the number of facts or fact 14 | The tutorial's sample output, Get every item in a collection |
 
@@ -78,3 +83,4 @@ Some guides need more than running the code:
   ```
 
   A test page can write each result into the page, and `--dump-dom` prints it. Also open the guide's page from a `file://` URL.
+- **Build a fact of the day page:** load the page with `--dump-dom` as above, and check the fact against the rule: the day number (`Date.UTC` of today divided by 86,400,000) modulo the number of facts, plus one, is the fact's ID while IDs have no gaps. Also check a date whose fact has places, by temporarily changing `new Date()` to a fixed date, and an error, by temporarily pointing `BASE_URL` at a path that doesn't exist. Then check the live demo on the built site with `npm run build` and `npm run serve`.

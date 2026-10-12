@@ -4,6 +4,7 @@ sidebar_label: "Show a random fact with its places"
 description: Write a short program that gets a random fact about Norway from the Norway Data API, looks up the places it mentions, and prints both.
 ---
 
+import GuideFeedback from '@site/src/components/GuideFeedback';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -363,3 +364,7 @@ You sent more than 60 requests in a minute, such as by running the program in a 
 - **Choose a category:** add `?category=nature` to `/random-fact` to get only nature facts. To get every category, call `/categories`.
 - **Go the other way:** to get every fact about a place, call `/facts?place=karasjok`.
 - **Explore the API:** the [API reference](/api-reference) describes every endpoint, and its **Test Request** button sends requests from your browser.
+
+## Feedback
+
+<GuideFeedback />

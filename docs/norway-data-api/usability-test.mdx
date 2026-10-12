@@ -1,0 +1,88 @@
+---
+sidebar_position: 1.6
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Usability test plan
+
+A plan for watching 3–5 developers use the [API reference](/api-reference) and the [guides](/samples/norway-data-api-guides/show-a-random-fact) to do real tasks. The goal is to find where the docs slow people down or send them the wrong way, not to grade the participants.
+
+<QuickReference>
+
+- 3–5 developers who haven't used this API, 30–45 minutes each, over a video call with screen sharing.
+- Participants think aloud while doing six tasks. Don't help unless they're stuck for more than 5 minutes.
+- For each task, record whether they succeeded, how long it took, where they looked first, and any wrong turns.
+- Afterward, list each problem with how many people hit it, fix the docs, and note what changed in [The results](#the-results).
+
+</QuickReference>
+
+## Participants
+
+Five people find most of the problems a test like this can find, and three find many of them. Recruit developers who:
+
+- haven't used the Norway Data API or read its docs
+- write JavaScript or Python, so they can use the guides' code
+- include at least one person who rarely works with REST APIs, since the docs are also meant for learning
+
+Colleagues, bootcamp students, and developer friends all work. Tell them the docs are being tested, not them.
+
+## Setup
+
+- **Call:** any video call with screen sharing. Record it if the participant agrees.
+- **Their machine:** a browser, a terminal with `curl`, and Node.js 18 or later or Python 3.
+- **Starting point:** send the link to the [API reference](https://www.marlasowards.com/api-reference) when the session starts, not before.
+- **You:** this page, a timer, and a copy of the [results table](#record-each-session) for notes.
+
+## Session script
+
+Read this at the start, in your own words:
+
+> Thanks for helping. I'm testing the documentation for a small API, not you, so anything that's hard is the docs' fault. Please think aloud as you go: say what you're looking for, what you expect, and what surprises you. I'll mostly stay quiet, because I want to see what happens when I'm not there to explain. You can stop at any time.
+
+Then give one task at a time. Read it aloud and paste it into the chat.
+
+## Tasks
+
+| # | Task | Success looks like | What it tests |
+| --- | --- | --- | --- |
+| 1 | Find out how many places the API knows about. | Calls `/places` and reads `pagination.total`, or counts every page. | Data model, endpoints table, pagination |
+| 2 | Print the title of every fact about Svalbard. | Calls `/facts?place=svalbard` and prints both titles. | Filters, finding place IDs |
+| 3 | A teammate's request, `/facts?category=History`, returns an error. Find out why and fix it. | Reads the error and changes `History` to `history`. | Errors, troubleshooting |
+| 4 | Your script has to get every fact, even after more are added. Change it so it does. | Follows `pagination.links.next` until it's `null`, or uses `limit` and `offset` correctly. | Pagination, the Get every item guide |
+| 5 | Your app gets a `429` response. What should it do? | Waits for the seconds in `Retry-After`, then retries. | Rate limits, the errors guide |
+| 6 | Show a fact on a web page that stays the same all day. | Finds the fact of the day guide, or builds something similar that runs. | Guides, the sample app |
+
+Ask after each task: "On a scale of 1 to 7, how easy was that?" and "What, if anything, would have made it easier?"
+
+Ask at the end:
+
+- What was the most confusing part?
+- Was anything missing that you expected to find?
+- Where would you look first next time?
+
+## Record each session
+
+Copy this table for each participant:
+
+| Task | Result (yes, partly, no) | Time | Ease (1–7) | Where they looked first | Wrong turns and quotes |
+| --- | --- | --- | --- | --- | --- |
+| 1 | | | | | |
+| 2 | | | | | |
+| 3 | | | | | |
+| 4 | | | | | |
+| 5 | | | | | |
+| 6 | | | | | |
+
+Note the exact words people use when they search or describe what they want. If they search for a word the docs don't use, that word belongs in the docs.
+
+## After the sessions
+
+1. List each problem once, with the number of people who hit it and the task where it happened.
+2. Rate each problem: **blocks** (they couldn't finish), **slows** (they finished, with a wrong turn), or **annoys** (they noticed, but it didn't cost time).
+3. Fix the blocking problems first. A fix to the spec needs a version and a changelog row, like any spec change. See [Maintaining the API](maintenance).
+4. Fill in [The results](#the-results) below.
+
+## The results
+
+No sessions have been run yet. After a round, add its date, the number of participants, the main problems, and what changed in the docs because of them.

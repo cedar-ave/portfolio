@@ -1,0 +1,126 @@
+---
+title: "Build a fact of the day page"
+description: A small web page that shows the same Norway fact all day and a new one each day, built on the Norway Data API with plain JavaScript.
+---
+
+import GuideFeedback from '@site/src/components/GuideFeedback';
+import FactOfTheDay from '@site/src/components/FactOfTheDay';
+
+# Build a fact of the day page
+
+This sample app is a web page that shows one fact about Norway each day: the same fact all day, and a different one tomorrow. It uses plain JavaScript and no libraries, and runs against the live API. Here it is, running on this page:
+
+<FactOfTheDay />
+
+## How it works
+
+The page makes the same choice for everyone on the same date, without a server or a database:
+
+1. **Get every fact.** It requests `/facts?limit=50` and follows `pagination.links.next` until it's `null`. Today all the facts fit on one page, so that's one request.
+2. **Pick one from the date.** It turns today's date into a day number and uses the remainder after dividing by the number of facts as an index. Each day moves to the next fact, and the list starts over when it runs out.
+3. **Get the fact's places.** It calls `/places/{id}` for each ID in the fact's `placeIds`, which can be empty.
+
+**Why not `/random-fact`?** It returns a different fact on every request, so the page would change each time someone reloaded it. Choosing from the date keeps the fact the same all day.
+
+## The complete page
+
+Save this as `fact-of-the-day.html` and open it in a browser, either straight from your disk or from any web server:
+
+```html title="fact-of-the-day.html"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fact of the day</title>
+</head>
+<body>
+  <p id="date"></p>
+  <h1 id="title">Loading today's fact…</h1>
+  <p id="text"></p>
+  <ul id="places"></ul>
+
+  <script type="module">
+    const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+    // Calls the API and returns the parsed JSON response.
+    async function getJson(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        // Errors are problem details objects, whose detail says what went wrong.
+        const problem = await response.json().catch(() => null);
+        throw new Error(problem?.detail ?? `Request failed with status ${response.status}`);
+      }
+      return response.json();
+    }
+
+    // Gets every fact by following the page links until there are no more pages.
+    async function getAllFacts() {
+      const facts = [];
+      let url = `${BASE_URL}/facts?limit=50`;
+      while (url) {
+        const page = await getJson(url);
+        facts.push(...page.data);
+        url = page.pagination.links.next;
+      }
+      return facts;
+    }
+
+    // Picks a fact from the date, so the page shows the same fact all day
+    // and a different one the next day.
+    function factForDate(facts, date) {
+      const day = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000);
+      return facts[day % facts.length];
+    }
+
+    const today = new Date();
+    document.querySelector('#date').textContent = today.toLocaleDateString('en', { dateStyle: 'long' });
+    const title = document.querySelector('#title');
+    const text = document.querySelector('#text');
+    const list = document.querySelector('#places');
+
+    try {
+      const fact = factForDate(await getAllFacts(), today);
+      const places = await Promise.all(
+        fact.placeIds.map((id) => getJson(`${BASE_URL}/places/${encodeURIComponent(id)}`)),
+      );
+
+      // Use textContent, not innerHTML, so text from the API is always shown
+      // as text and never run as HTML.
+      title.textContent = fact.title;
+      text.textContent = fact.text;
+      for (const place of places) {
+        const item = document.createElement('li');
+        item.textContent = `${place.name}: ${place.description}`;
+        list.append(item);
+      }
+    } catch (error) {
+      title.textContent = "Couldn't load today's fact";
+      text.textContent = error.message;
+    }
+  </script>
+</body>
+</html>
+```
+
+The date uses the visitor's own time zone, so the fact changes at their midnight.
+
+## Tips
+
+- **Repeat visits are cheap.** The browser caches the API's responses for an hour, so reloading the page doesn't make new requests. See [Caching](./call-from-a-browser#caching).
+- **New facts change the order.** When a fact is added, the number of facts changes, so the remainder points at a different fact from then on. If a fact must stay fixed for a day, save its ID when you first show it.
+- **Show the same fact everywhere.** To show the fact of the day on several pages or in an app, use the same date-to-index rule in each one, and they'll agree.
+- **Keep it under the rate limit.** The page makes one request for the facts, plus one per place. That's well under 60 per minute, even for a visitor who reloads often.
+
+## How this page was tested
+
+The page was loaded in Microsoft Edge from a `file://` URL. It was tested with today's date, with a date whose fact has a place (Sognefjord), and with a base URL that returns a `404`, to check that the error message appears.
+
+## Related
+
+- [Call the API from a browser](./call-from-a-browser), for what browsers allow across origins
+- [Get every item in a collection](./get-every-item), for the page-following loop
+- [Endpoints at a glance](https://www.marlasowards.com/api-reference#description/endpoints-at-a-glance) in the API reference
+
+## Feedback
+
+<GuideFeedback />
