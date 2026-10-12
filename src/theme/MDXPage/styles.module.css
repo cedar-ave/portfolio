@@ -1,5 +1,6 @@
 .mdxPageWrapper {
   justify-content: center;
+  margin-bottom: 3rem;
 }
 
 /* Matches the "Back to portfolio" row at the top of the /samples sidebar
