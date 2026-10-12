@@ -17,7 +17,7 @@ The API and its docs went through three rounds. The first version worked but was
 
 ## Version 1: the first pass
 
-The first version had facts, categories, and Norway's 15 counties at unversioned URLs such as `/api/norway-facts/facts`, with a `/facts/random` endpoint and a bare-bones spec. Its first deploy failed because the function's `config.path` used a constant (see [Routing](netlify-function#routing)).
+The first version, then called the Norway Facts API, had facts, categories, and Norway's 15 counties at unversioned URLs such as `/api/norway-facts/facts`, with a `/facts/random` endpoint and a bare-bones spec. Its first deploy failed because the function's `config.path` used a constant (see [Routing](netlify-function#routing)).
 
 ## API developer review
 
@@ -32,7 +32,7 @@ The first version had facts, categories, and Norway's 15 counties at unversioned
 | Error titles were custom with `type: about:blank`, there was no `instance`, and bad parameters were only described in prose | Distinct problem types, `instance`, `requestId`, and an `errors` array that lists every bad parameter. |
 | Misspelled or repeated parameters were silently ignored | Strict parameters: each one returns a `400`. |
 | `HEAD` returned `405` | `HEAD` is supported on every endpoint. |
-| `/api/norway-facts` was a dead end | Returns an index with links to everything. |
+| The API root (`/api/norway-facts`) was a dead end | Returns an index with links to everything. |
 | The spec and code were synced by hand, and the spec wasn't linted | The contract test, plus `lint:api` in CI. |
 | The spec left out `304`, `429`, and `500` and response headers, and used the deprecated `example` keyword in schemas | Documented all of them, and switched to `examples`. |
 | A public, pay-per-call function had no rate limit | Netlify `rateLimit` config: 60 requests per 60 seconds per IP. |
@@ -63,6 +63,12 @@ Counties were reference data with no link to the facts. A reader couldn't do any
 Places are the locations facts are about: Sognefjord, Galdhøpiggen, Svalbard, and so on. Each fact lists its places in `placeIds`, `GET /facts?place={id}` returns the facts about a place, and `GET /places/{id}` describes one. All three resources now connect: a fact has a category and places, and both can filter facts.
 
 Place IDs are lowercase ASCII slugs of the name (`galdhopiggen` for Galdhøpiggen), so they're safe in URLs without percent-encoding.
+
+## Renamed to Norway Data API
+
+The API started as the Norway Facts API, with URLs under `/api/norway-facts`. It was renamed in October 2026, and everything changed with it: the URLs (now `/api/norway-data`), the function and spec file names, the error `type` identifiers, and these docs. Nothing outside this site used the old URLs, so no redirect was added.
+
+Because "Norway Data" could sound like an official government source, the About the data section of the spec says the API isn't affiliated with any official source of Norwegian data.
 
 ## Choices that stayed
 

@@ -1,6 +1,6 @@
-// Netlify Function behind the Norway Facts API sample. The reference page
+// Netlify Function behind the Norway Data API sample. The reference page
 // at /api-reference (rendered by @scalar/docusaurus from
-// static/openapi/norway-facts.yaml) sends its "Test Request" calls here, and
+// static/openapi/norway-data.yaml) sends its "Test Request" calls here, and
 // the generated code samples point here too, so they return real responses.
 //
 // The spec is the contract. scripts/api-contract-test.mjs calls every route
@@ -11,12 +11,12 @@
 import { createHash } from 'node:crypto';
 import { categories, facts, places } from './data.mjs';
 
-const ROOT_PATH = '/api/norway-facts';
+const ROOT_PATH = '/api/norway-data';
 const VERSION = 'v1';
 const BASE_PATH = `${ROOT_PATH}/${VERSION}`;
 const SITE = 'https://www.marlasowards.com';
 const DOCS_URL = `${SITE}/api-reference`;
-const SPEC_URL = `${SITE}/openapi/norway-facts.yaml`;
+const SPEC_URL = `${SITE}/openapi/norway-data.yaml`;
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -43,7 +43,7 @@ const ALLOWED_METHODS = 'GET, HEAD, OPTIONS';
 // Problem types. The type URI is a stable identifier clients branch on, so
 // it's a tag URI (RFC 4151) that doesn't depend on any page's headings or
 // URL - renaming docs can't change it. The spec's Errors section lists them.
-const PROBLEM_TYPE_PREFIX = 'tag:marlasowards.com,2026:norway-facts/';
+const PROBLEM_TYPE_PREFIX = 'tag:marlasowards.com,2026:norway-data/';
 const PROBLEMS = {
   'invalid-parameter': { status: 400, title: 'Invalid parameter' },
   'not-found': { status: 404, title: 'Not found' },
@@ -202,7 +202,7 @@ function index(req) {
   const { origin, searchParams } = new URL(req.url);
   parseQuery(searchParams, {});
   return jsonResponse(req, {
-    name: 'Norway Facts API',
+    name: 'Norway Data API',
     version: VERSION,
     documentation: DOCS_URL,
     openapi: SPEC_URL,
@@ -329,7 +329,7 @@ export default async (req, context) => {
 // more than 60 requests to one hostname within a sliding 60-second window.
 // The spec's Rate limits section describes this - update both together.
 export const config = {
-  path: ['/api/norway-facts', '/api/norway-facts/*'],
+  path: ['/api/norway-data', '/api/norway-data/*'],
   rateLimit: {
     windowLimit: 60,
     windowSize: 60,

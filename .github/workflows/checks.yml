@@ -1,4 +1,4 @@
-# Lints the site's prose and checks the Norway Facts API before it publishes.
+# Lints the site's prose and checks the Norway Data API before it publishes.
 #
 # - codespell checks for common misspellings. Add false positives to
 #   ignore-words-list in .codespellrc.
@@ -6,7 +6,7 @@
 # - Vale checks for defects such as repeated words and leftover merge conflict
 #   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
-# - The API job lints the Norway Facts OpenAPI spec with Redocly and runs the
+# - The API job lints the Norway Data OpenAPI spec with Redocly and runs the
 #   contract test (scripts/api-contract-test.mjs), which checks the Netlify
 #   Function's responses against that spec.
 #

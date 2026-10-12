@@ -6,7 +6,7 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # The OpenAPI spec and reference page
 
-The reference page at `/api-reference` is rendered by [Scalar](https://scalar.com/products/api-references/integrations/docusaurus) from one OpenAPI 3.1 file, `static/openapi/norway-facts.yaml`. Everything on the page comes from that file, including the conceptual docs.
+The reference page at `/api-reference` is rendered by [Scalar](https://scalar.com/products/api-references/integrations/docusaurus) from one OpenAPI 3.1 file, `static/openapi/norway-data.yaml`. Everything on the page comes from that file, including the conceptual docs.
 
 <QuickReference>
 
@@ -31,7 +31,7 @@ plugins: [
       // Pinned so a Scalar release can't change the page unannounced.
       cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1',
       configuration: {
-        url: '/openapi/norway-facts.yaml',
+        url: '/openapi/norway-data.yaml',
       },
     },
   ],
@@ -44,13 +44,13 @@ plugins: [
   ```js title="docusaurus.config.js"
   {
     to: '/api-reference',
-    label: 'Norway Facts API',
+    label: 'Norway Data API',
     position: 'left',
   },
   ```
 
 - **`cdn`** pins Scalar's script version. The plugin loads the latest version by default, which could change the page with no change in this repo. To upgrade, change the version number and check the page.
-- **`configuration.url`** points at the spec. Files in `static/` are served from the site root, so `static/openapi/norway-facts.yaml` is at `/openapi/norway-facts.yaml`.
+- **`configuration.url`** points at the spec. Files in `static/` are served from the site root, so `static/openapi/norway-data.yaml` is at `/openapi/norway-data.yaml`.
 
 :::note
 
@@ -67,7 +67,7 @@ The plugin hides Scalar's dark mode toggle, and the page follows the site's ligh
 | `info.description` | The conceptual docs (see [The introduction](#the-introduction)) |
 | `info.contact` | Links to the repo's GitHub Issues, so readers know where to report a problem |
 | `info.license` | MIT, the same as the repo |
-| `servers` | The production base URL, `https://www.marlasowards.com/api/norway-facts/v1`. Scalar's generated code samples use it, which is why they work as-is. |
+| `servers` | The production base URL, `https://www.marlasowards.com/api/norway-data/v1`. Scalar's generated code samples use it, which is why they work as-is. |
 | `security: []` | States that there's no authentication. Without it, Redocly's `security-defined` rule fails. |
 | `tags` | One per resource: Index, Facts, Categories, Places |
 | `paths` | One `get` per endpoint |
@@ -112,7 +112,7 @@ Every example in the spec is the exact response to a specific request, so the do
 
 ````markdown
 ```bash
-curl https://www.marlasowards.com/api/norway-facts/v1/facts/10
+curl https://www.marlasowards.com/api/norway-data/v1/facts/10
 ```
 
 ```json
@@ -125,7 +125,7 @@ curl https://www.marlasowards.com/api/norway-facts/v1/facts/10
 
 **Examples on endpoints and shared responses.** A media type with an `example` also has an `x-example-request` with the path that produces it:
 
-```yaml title="norway-facts.yaml"
+```yaml title="norway-data.yaml"
 content:
   application/json:
     schema:

@@ -1,6 +1,6 @@
-// Contract test for the Norway Facts API sample: calls the Netlify Function
+// Contract test for the Norway Data API sample: calls the Netlify Function
 // handler directly (no server or deploy needed) and checks every response
-// against static/openapi/norway-facts.yaml - status code documented for the
+// against static/openapi/norway-data.yaml - status code documented for the
 // operation, media type, body schema, and documented headers. It also
 // checks that:
 // - every documented status code is exercised
@@ -18,10 +18,10 @@ import { isDeepStrictEqual } from 'node:util';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import yaml from 'js-yaml';
-import handler from '../netlify/functions/norway-facts/norway-facts.mjs';
-import { categories, facts, places } from '../netlify/functions/norway-facts/data.mjs';
+import handler from '../netlify/functions/norway-data/norway-data.mjs';
+import { categories, facts, places } from '../netlify/functions/norway-data/data.mjs';
 
-const spec = yaml.load(readFileSync(new URL('../static/openapi/norway-facts.yaml', import.meta.url), 'utf8'));
+const spec = yaml.load(readFileSync(new URL('../static/openapi/norway-data.yaml', import.meta.url), 'utf8'));
 const serverUrl = new URL(spec.servers[0].url);
 const basePath = serverUrl.pathname;
 // The placeholder request ID used in every documented example.
@@ -67,7 +67,7 @@ function check(ok, message) {
 }
 
 // The unversioned root is an alias for the v1 index.
-const ROOT_ALIAS = '/api/norway-facts';
+const ROOT_ALIAS = '/api/norway-data';
 
 function findOperation(pathname) {
   const trimmed = pathname.replace(/\/+$/, '');
@@ -144,7 +144,7 @@ const v = (p) => `${basePath}${p}`;
 // Index (versioned and unversioned roots)
 await request(v(''), 200);
 await request(v('/'), 200);
-await request('/api/norway-facts', 200);
+await request('/api/norway-data', 200);
 await request(v('/?verbose=1'), 400);
 
 // Facts
@@ -188,7 +188,7 @@ for (const bad of ['Sognefjord', 'sogne_fjord', '-oslo', 'oslo-']) await request
 await request(v('/nope'), 404);
 await request(v('/facts/10/extra'), 404);
 await request(v('/facts/%E0'), 404);
-await request('/api/norway-facts/v2/facts', 404);
+await request('/api/norway-data/v2/facts', 404);
 await request(v('/facts'), 405, { method: 'POST' });
 await request(v('/facts/10'), 405, { method: 'DELETE' });
 

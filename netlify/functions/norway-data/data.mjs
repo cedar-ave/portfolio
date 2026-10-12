@@ -1,5 +1,5 @@
-// Dataset served by the Norway Facts API sample (see norway-facts.mjs and
-// static/openapi/norway-facts.yaml). Plain module data, so the function has
+// Dataset served by the Norway Data API sample (see norway-data.mjs and
+// static/openapi/norway-data.yaml). Plain module data, so the function has
 // no database or external calls and every response is deterministic.
 //
 // IDs are part of the API contract (the docs promise they never change or

@@ -115,10 +115,10 @@ const config = {
         numberPrefixParser: false,
       }),
     ],
-    // Norway Facts API sample: an interactive API reference rendered by
-    // Scalar from static/openapi/norway-facts.yaml. Its code samples and
-    // "Test Request" calls hit a real Netlify Function at /api/norway-facts -
-    // see netlify/functions/norway-facts/. showNavLink is off because the
+    // Norway Data API sample: an interactive API reference rendered by
+    // Scalar from static/openapi/norway-data.yaml. Its code samples and
+    // "Test Request" calls hit a real Netlify Function at /api/norway-data -
+    // see netlify/functions/norway-data/. showNavLink is off because the
     // plugin would append its link to the end of the navbar; the link is
     // added by hand in themeConfig.navbar.items instead.
     [
@@ -129,7 +129,7 @@ const config = {
         // Pinned so a Scalar release can't change the page unannounced.
         cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1',
         configuration: {
-          url: '/openapi/norway-facts.yaml',
+          url: '/openapi/norway-data.yaml',
         },
       },
     ],
@@ -267,7 +267,7 @@ const config = {
           },
           {
             to: '/api-reference',
-            label: 'Norway Facts API',
+            label: 'Norway Data API',
             position: 'left',
           },
           { to: '/blog', label: 'Blog', position: 'left' },

@@ -6,13 +6,13 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # Overview
 
-The Norway Facts API is a sample REST API with an interactive reference page at `/api-reference`. Unlike a static API docs sample, the API is real: it runs as a Netlify Function on this site, so the code samples and **Test Request** buttons on the reference page return live responses.
+The Norway Data API is a sample REST API with an interactive reference page at `/api-reference`. Unlike a static API docs sample, the API is real: it runs as a Netlify Function on this site, so the code samples and **Test Request** buttons on the reference page return live responses.
 
 <QuickReference>
 
-- **The API** is one Netlify Function in `netlify/functions/norway-facts/`. It serves `/api/norway-facts/*` with data from a plain JavaScript module, with no database. See [The Netlify Function](netlify-function).
-- **The spec** is `static/openapi/norway-facts.yaml` (OpenAPI 3.1). It's the contract, and it also holds all the conceptual docs in its `info.description`. See [The OpenAPI spec and reference page](openapi-spec).
-- **The reference page** is rendered by the `@scalar/docusaurus` plugin, configured in `docusaurus.config.js`. Its navbar link (**Norway Facts API**) is added by hand.
+- **The API** is one Netlify Function in `netlify/functions/norway-data/`. It serves `/api/norway-data/*` with data from a plain JavaScript module, with no database. See [The Netlify Function](netlify-function).
+- **The spec** is `static/openapi/norway-data.yaml` (OpenAPI 3.1). It's the contract, and it also holds all the conceptual docs in its `info.description`. See [The OpenAPI spec and reference page](openapi-spec).
+- **The reference page** is rendered by the `@scalar/docusaurus` plugin, configured in `docusaurus.config.js`. Its navbar link (**Norway Data API**) is added by hand.
 - **The contract test** (`npm run test:api`) runs the function locally and checks every response, header, status code, and documented example against the spec. CI runs it with a Redocly lint of the spec. See [The contract test](contract-test).
 - The design came out of two reviews, one from an API developer's view and one from an API technical writer's view. See [Design decisions](design-decisions).
 - For everyday changes such as adding a fact, see [Maintaining the API](maintenance).
@@ -24,8 +24,8 @@ The Norway Facts API is a sample REST API with an interactive reference page at 
 ```text
 Browser on /api-reference
    │  loads the page (Docusaurus route added by @scalar/docusaurus)
-   │  loads the spec   → /openapi/norway-facts.yaml   (static file)
-   │  Test Request     → /api/norway-facts/v1/...      (same origin)
+   │  loads the spec   → /openapi/norway-data.yaml   (static file)
+   │  Test Request     → /api/norway-data/v1/...      (same origin)
    ▼
 Netlify CDN ── cached response? ── yes → returns it (no function call)
    │ no
@@ -33,7 +33,7 @@ Netlify CDN ── cached response? ── yes → returns it (no function call)
 Rate limiter (60 requests / 60 s per IP) ── over → Netlify's own 429
    │
    ▼
-Netlify Function: netlify/functions/norway-facts/norway-facts.mjs
+Netlify Function: netlify/functions/norway-data/norway-data.mjs
    └── data.mjs (facts, categories, places)
 ```
 
@@ -43,10 +43,10 @@ The API and the site are served from the same domain, so the reference page's re
 
 | File | Purpose |
 | --- | --- |
-| `netlify/functions/norway-facts/norway-facts.mjs` | The function: routing, validation, pagination, caching, errors |
-| `netlify/functions/norway-facts/data.mjs` | The dataset: facts, categories, places |
+| `netlify/functions/norway-data/norway-data.mjs` | The function: routing, validation, pagination, caching, errors |
+| `netlify/functions/norway-data/data.mjs` | The dataset: facts, categories, places |
 | `netlify.toml` | Tells Netlify where functions live. Build settings stay in the Netlify UI. |
-| `static/openapi/norway-facts.yaml` | The OpenAPI spec, including the reference page's introduction |
+| `static/openapi/norway-data.yaml` | The OpenAPI spec, including the reference page's introduction |
 | `docusaurus.config.js` | The `@scalar/docusaurus` plugin entry and the navbar link |
 | `scripts/api-contract-test.mjs` | The contract test |
 | `package.json` | `test:api` and `lint:api` scripts; `ajv`, `ajv-formats`, and `js-yaml` dev dependencies |
@@ -55,7 +55,7 @@ The API and the site are served from the same domain, so the reference page's re
 
 ## Endpoints
 
-All paths are relative to `https://www.marlasowards.com/api/norway-facts/v1`.
+All paths are relative to `https://www.marlasowards.com/api/norway-data/v1`.
 
 | Endpoint | Returns |
 | --- | --- |
@@ -67,4 +67,4 @@ All paths are relative to `https://www.marlasowards.com/api/norway-facts/v1`.
 | `GET /places` | Places, paginated |
 | `GET /places/{id}` | One place |
 
-`GET /api/norway-facts` (no version) returns the same index as `GET /v1`.
+`GET /api/norway-data` (no version) returns the same index as `GET /v1`.

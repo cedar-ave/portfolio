@@ -9,7 +9,7 @@ import QuickReference from '@site/src/components/QuickReference';
 <QuickReference>
 
 - Edit items in `docusaurus.config.js` under `themeConfig.navbar.items`.
-- **Norway Facts API** links to `/api-reference`, a route added by the `@scalar/docusaurus` plugin. The plugin's own navbar link is turned off so this hand-added one can sit before Blog. See [The OpenAPI spec and reference page](../norway-facts-api/openapi-spec).
+- **Norway Data API** links to `/api-reference`, a route added by the `@scalar/docusaurus` plugin. The plugin's own navbar link is turned off so this hand-added one can sit before Blog. See [The OpenAPI spec and reference page](../norway-data-api/openapi-spec).
 - Every other item is a flat link to a standalone page in `src/pages/` (About/Portfolio/Resume) except "How I built this site", which uses `type: 'docSidebar'` to link straight to the first doc in `tutorialSidebar` — it follows `sidebars.js` automatically if that changes.
 - Logo/title spacing (`.navbar__logo`, `.navbar__brand`) and nav link font weight are set in `src/css/custom.css` — see [Global CSS overrides](global-css).
 - There's CSS in `custom.css` for a multi-level dropdown nav item, but the navbar currently has no nested dropdowns — see the dormant-dropdown note on [Global CSS overrides](global-css).
@@ -27,7 +27,7 @@ navbar: {
     { to: '/portfolio', label: 'Portfolio', position: 'left' },
     { to: '/resume', label: 'Resume', position: 'left' },
     { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'How I built this site' },
-    { to: '/api-reference', label: 'Norway Facts API', position: 'left' },
+    { to: '/api-reference', label: 'Norway Data API', position: 'left' },
     { to: '/blog', label: 'Blog', position: 'left' },
     { href: 'https://www.linkedin.com/in/marlasowards', label: 'LinkedIn', position: 'right' },
     { href: 'https://github.com/cedar-ave', label: 'GitHub', position: 'right' },

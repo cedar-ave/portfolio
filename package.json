@@ -13,7 +13,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "test:api": "node scripts/api-contract-test.mjs",
-    "lint:api": "npx --yes @redocly/cli@2.62.1 lint static/openapi/norway-facts.yaml"
+    "lint:api": "npx --yes @redocly/cli@2.62.1 lint static/openapi/norway-data.yaml"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",

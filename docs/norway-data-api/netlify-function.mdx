@@ -6,7 +6,7 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # The Netlify Function
 
-The whole API is one Netlify Function, `netlify/functions/norway-facts/norway-facts.mjs`, written in the modern Functions format: a default export that takes a standard `Request` and returns a `Response`.
+The whole API is one Netlify Function, `netlify/functions/norway-data/norway-data.mjs`, written in the modern Functions format: a default export that takes a standard `Request` and returns a `Response`.
 
 <QuickReference>
 
@@ -29,15 +29,15 @@ Nothing needs to be set up in the Netlify UI. Netlify looks for functions in `ne
 
 The file has no `[build]` section, so the build command and publish folder still come from the Netlify UI.
 
-Each subfolder of `netlify/functions/` is one function, named after the folder. Netlify bundles `norway-facts.mjs` and everything it imports (`data.mjs`) with esbuild.
+Each subfolder of `netlify/functions/` is one function, named after the folder. Netlify bundles `norway-data.mjs` and everything it imports (`data.mjs`) with esbuild.
 
 ## Routing
 
 The function claims its URLs in code:
 
-```js title="norway-facts.mjs"
+```js title="norway-data.mjs"
 export const config = {
-  path: ['/api/norway-facts', '/api/norway-facts/*'],
+  path: ['/api/norway-data', '/api/norway-data/*'],
   rateLimit: {
     windowLimit: 60,
     windowSize: 60,
@@ -48,14 +48,14 @@ export const config = {
 
 :::warning
 
-The first deploy of this API failed with `Function norway-facts has a configuration error on 'path': Must be a string or array of strings`. The path was written as ``[BASE_PATH, `${BASE_PATH}/*`]``. Netlify reads `config` statically at deploy time, so it can't evaluate a variable or a template string. Write every value in `config` as a literal and keep it in sync with the constants by hand.
+The first deploy of this API failed with `Function norway-data has a configuration error on 'path': Must be a string or array of strings`. The path was written as ``[BASE_PATH, `${BASE_PATH}/*`]``. Netlify reads `config` statically at deploy time, so it can't evaluate a variable or a template string. Write every value in `config` as a literal and keep it in sync with the constants by hand.
 
 :::
 
 Inside the function, `route()` maps the path to a handler:
 
-1. `/api/norway-facts` and `/api/norway-facts/v1` go to the index.
-2. Anything else must start with `/api/norway-facts/v1/`. The rest of the path is split into segments and decoded with `decodeURIComponent`.
+1. `/api/norway-data` and `/api/norway-data/v1` go to the index.
+2. Anything else must start with `/api/norway-data/v1/`. The rest of the path is split into segments and decoded with `decodeURIComponent`.
 3. The first segment picks the resource (`facts`, `random-fact`, `categories`, `places`) and the optional second segment is an ID. A third segment, or an unknown resource, returns `404`.
 
 `decodeURIComponent` throws a `URIError` on invalid percent-encoding such as `%E0`. The function catches that and returns a `404`, instead of crashing with a generic Netlify error page.
@@ -96,7 +96,7 @@ The links are built from the request's own URL (`new URL(req.url)`), so they kee
 
 The data only changes when the site deploys, and Netlify clears its CDN cache on every deploy. So cacheable responses get two headers:
 
-```js title="norway-facts.mjs"
+```js title="norway-data.mjs"
 const CACHEABLE = {
   'Cache-Control': 'public, max-age=3600',
   'Netlify-CDN-Cache-Control': 'public, durable, s-maxage=31536000',
@@ -116,11 +116,11 @@ Every error is thrown as a `ProblemError` with a slug and a message, and the top
 
 ```json
 {
-  "type": "tag:marlasowards.com,2026:norway-facts/not-found",
+  "type": "tag:marlasowards.com,2026:norway-data/not-found",
   "title": "Not found",
   "status": 404,
   "detail": "No fact has the ID 99.",
-  "instance": "/api/norway-facts/v1/facts/99",
+  "instance": "/api/norway-data/v1/facts/99",
   "requestId": "01JEXAMPLE0REQUEST0ID00000"
 }
 ```
@@ -141,7 +141,7 @@ Responses are pretty-printed on purpose so they're readable in a terminal and on
 
 ## Testing the function locally
 
-`npm start` only runs Docusaurus, so `/api/norway-facts` returns the site's 404 page. To run the function too, use the Netlify CLI from the repo root:
+`npm start` only runs Docusaurus, so `/api/norway-data` returns the site's 404 page. To run the function too, use the Netlify CLI from the repo root:
 
 ```bash
 npx netlify dev
