@@ -182,14 +182,14 @@ info:
         }
       ],
       "pagination": {
-        "total": 5,
+        "total": 7,
         "limit": 2,
         "offset": 2,
         "links": {
           "first": "https://www.marlasowards.com/api/norway-data/v1/facts?category=history&limit=2&offset=0",
           "prev": "https://www.marlasowards.com/api/norway-data/v1/facts?category=history&limit=2&offset=0",
           "next": "https://www.marlasowards.com/api/norway-data/v1/facts?category=history&limit=2&offset=4",
-          "last": "https://www.marlasowards.com/api/norway-data/v1/facts?category=history&limit=2&offset=4"
+          "last": "https://www.marlasowards.com/api/norway-data/v1/facts?category=history&limit=2&offset=6"
         }
       }
     }
@@ -599,14 +599,14 @@ paths:
                     type: municipality
                     description: Municipality north of Oslo where the constitution was signed in 1814.
                 pagination:
-                  total: 14
+                  total: 15
                   limit: 2
                   offset: 0
                   links:
                     first: https://www.marlasowards.com/api/norway-data/v1/places?limit=2&offset=0
                     prev: null
                     next: https://www.marlasowards.com/api/norway-data/v1/places?limit=2&offset=2
-                    last: https://www.marlasowards.com/api/norway-data/v1/places?limit=2&offset=12
+                    last: https://www.marlasowards.com/api/norway-data/v1/places?limit=2&offset=14
         '304':
           $ref: '#/components/responses/NotModified'
         '400':
@@ -774,7 +774,7 @@ components:
           examples: [Galdhøpiggen]
         type:
           type: string
-          description: 'The kind of place. Current values: `archipelago`, `cape`, `city`, `fjord`, `glacier`, `lake`, `mountain`, `mountain-area`, `municipality`, `oil-field`, `plateau`, `settlement`. More can be added, so handle values you don''t recognize.'
+          description: 'The kind of place. Current values: `archipelago`, `cape`, `city`, `fjord`, `glacier`, `lake`, `mountain`, `mountain-area`, `municipality`, `museum`, `oil-field`, `plateau`, `settlement`. More can be added, so handle values you don''t recognize.'
           examples: [mountain]
         description:
           type: string

@@ -43,6 +43,10 @@ export const facts = [
   { id: 25, category: 'economy', title: 'Oil fund', text: 'The Government Pension Fund Global, funded by petroleum revenue, is one of the largest sovereign wealth funds in the world.', placeIds: [] },
   { id: 26, category: 'economy', title: 'Farmed salmon', text: 'Norway is the world\'s largest producer of farmed Atlantic salmon.', placeIds: [] },
   { id: 27, category: 'economy', title: 'Ekofisk', text: 'The discovery of the Ekofisk field in the North Sea in 1969 started Norway\'s oil age.', placeIds: ['ekofisk'] },
+  { id: 28, category: 'history', title: 'The Kon-Tiki expedition', text: 'In 1947, Thor Heyerdahl and five crewmates, four Norwegians and a Swede, sailed the balsa wood raft Kon-Tiki about 8,000 km from Peru to French Polynesia in 101 days.', placeIds: [] },
+  { id: 29, category: 'history', title: 'Why Kon-Tiki sailed', text: 'Heyerdahl built Kon-Tiki from materials available in ancient South America to show that people from there could have reached Polynesia by raft.', placeIds: [] },
+  { id: 30, category: 'culture', title: 'The raft in Oslo', text: 'The original Kon-Tiki raft is on display at the Kon-Tiki Museet on the Bygdøy peninsula in Oslo.', placeIds: ['kon-tiki-museet', 'oslo'] },
+  { id: 31, category: 'culture', title: 'Kon-Tiki on screen', text: 'Heyerdahl\'s documentary about the voyage, Kon-Tiki, won an Academy Award. A Norwegian feature film about the expedition, released in 2012, was nominated for one.', placeIds: [] },
 ];
 
 // Places that facts are about, ordered by ID. IDs are lowercase ASCII slugs
@@ -56,6 +60,7 @@ export const places = [
   { id: 'jostedalsbreen', name: 'Jostedalsbreen', type: 'glacier', description: 'Glacier in Vestland, the largest in mainland Europe.' },
   { id: 'jotunheimen', name: 'Jotunheimen', type: 'mountain-area', description: 'Mountain area in southern Norway with the country\'s highest peaks.' },
   { id: 'karasjok', name: 'Karasjok', type: 'municipality', description: 'Municipality in Finnmark and seat of the Sámi Parliament.' },
+  { id: 'kon-tiki-museet', name: 'Kon-Tiki Museet', type: 'museum', description: 'Museum on the Bygdøy peninsula in Oslo that displays the Kon-Tiki raft and other vessels from Thor Heyerdahl\'s expeditions.' },
   { id: 'longyearbyen', name: 'Longyearbyen', type: 'settlement', description: 'The largest settlement on Svalbard.' },
   { id: 'mjosa', name: 'Mjøsa', type: 'lake', description: 'Lake north of Oslo and the largest in Norway.' },
   { id: 'nordkapp', name: 'Nordkapp', type: 'cape', description: 'Cliff on the island of Magerøya in Finnmark, often called the northernmost point of Europe.' },
