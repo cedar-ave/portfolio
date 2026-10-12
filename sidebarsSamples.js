@@ -49,6 +49,21 @@ const sidebars = {
   samplesSidebar: [
     'index',
     {
+      // Developer guides for the live Norway Data API (api.marlasowards.com),
+      // whose reference is at /api-reference. Unlike the other samples, these
+      // aren't genericized: the code samples run against the real API.
+      type: 'category',
+      label: 'Norway Data API Guides',
+      collapsed: true,
+      items: [
+        'norway-data-api-guides/show-a-random-fact',
+        'norway-data-api-guides/get-every-item',
+        'norway-data-api-guides/handle-errors-and-retries',
+        'norway-data-api-guides/cache-responses',
+        'norway-data-api-guides/call-from-a-browser',
+      ],
+    },
+    {
       type: 'category',
       label: 'Clearpath Roster User Guide',
       collapsed: true,

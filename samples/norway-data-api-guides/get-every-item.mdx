@@ -1,0 +1,160 @@
+---
+title: "Get every item in a collection"
+description: Get every fact, category, or place from the Norway Data API by following the page links until there are no more pages.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Get every item in a collection
+
+The Norway Data API returns collections such as `/facts`, `/categories`, and `/places` one page at a time, with up to 50 items per page. To get every item, request the first page, then follow each page's `next` link until it's `null`.
+
+This guide uses the same `getJson` function as the [random fact tutorial](./show-a-random-fact). If you're new to the API, start there.
+
+## The code
+
+`getAll` takes a collection's path and, optionally, its filters, and returns every item:
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js title="get-all.mjs"
+const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+// Calls the API and returns the parsed JSON response.
+async function getJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    // Errors are problem details objects, whose detail says what went wrong.
+    // A rare 429 has an empty body, so fall back to the status code.
+    const problem = await response.json().catch(() => null);
+    throw new Error(problem?.detail ?? `Request failed with status ${response.status}`);
+  }
+  return response.json();
+}
+
+// Returns every item in a collection, such as /facts, by following the
+// page links. params are the collection's filters, such as { category: 'history' }.
+async function getAll(path, params = {}) {
+  // 50 is the largest page size, so it takes the fewest requests.
+  const query = new URLSearchParams({ ...params, limit: '50' });
+  let url = `${BASE_URL}${path}?${query}`;
+  const items = [];
+  while (url) {
+    const page = await getJson(url);
+    items.push(...page.data);
+    // next is null on the last page, which ends the loop.
+    url = page.pagination.links.next;
+  }
+  return items;
+}
+
+const facts = await getAll('/facts');
+console.log(`${facts.length} facts`);
+
+const historyFacts = await getAll('/facts', { category: 'history' });
+console.log(`${historyFacts.length} history facts`);
+```
+
+Run it with `node get-all.mjs`.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="get_all.py"
+import json
+import urllib.error
+import urllib.parse
+import urllib.request
+
+BASE_URL = "https://api.marlasowards.com/norway-data/v1"
+
+
+def get_json(url):
+    """Calls the API and returns the parsed JSON response."""
+    try:
+        with urllib.request.urlopen(url) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as error:
+        # Errors are problem details objects, whose detail says what went wrong.
+        # A rare 429 has an empty body, so fall back to the status code.
+        try:
+            detail = json.load(error)["detail"]
+        except ValueError:
+            detail = f"Request failed with status {error.code}"
+        raise RuntimeError(detail) from None
+
+
+def get_all(path, **params):
+    """Returns every item in a collection, such as /facts, by following the
+    page links. params are the collection's filters, such as category="history"."""
+    # 50 is the largest page size, so it takes the fewest requests.
+    query = urllib.parse.urlencode({**params, "limit": 50})
+    url = f"{BASE_URL}{path}?{query}"
+    items = []
+    while url:
+        page = get_json(url)
+        items.extend(page["data"])
+        # next is None on the last page, which ends the loop.
+        url = page["pagination"]["links"]["next"]
+    return items
+
+
+facts = get_all("/facts")
+print(f"{len(facts)} facts")
+
+history_facts = get_all("/facts", category="history")
+print(f"{len(history_facts)} history facts")
+```
+
+Run it with `python get_all.py`.
+
+</TabItem>
+</Tabs>
+
+The output gives the number of items in each collection. More facts can be added at any time, so your numbers might be higher:
+
+```text
+31 facts
+7 history facts
+```
+
+`getAll` works the same way for every collection, such as `getAll('/places')` or `getAll('/categories')`.
+
+## How it works
+
+Every collection response has a `pagination` object. Here's the first page of history facts, two at a time:
+
+```json
+"pagination": {
+  "total": 7,
+  "limit": 2,
+  "offset": 0,
+  "links": {
+    "first": "https://api.marlasowards.com/norway-data/v1/facts?category=history&limit=2&offset=0",
+    "prev": null,
+    "next": "https://api.marlasowards.com/norway-data/v1/facts?category=history&limit=2&offset=2",
+    "last": "https://api.marlasowards.com/norway-data/v1/facts?category=history&limit=2&offset=6"
+  }
+}
+```
+
+- `next` is the URL of the next page, with your filters and page size already in it. `getAll` requests it as is.
+- On the last page, `next` is `null`, so the loop stops. An empty collection has one page, with an empty `data` array and a `null` `next`.
+- `total` is the number of items across all pages.
+
+Today, every collection fits on one page of 50, so `getAll` makes one request per collection. Write the loop anyway: collections can grow at any time, and code that reads only the first page would quietly miss the new items.
+
+## Tips
+
+- **Follow the links instead of calculating offsets.** You could add `limit` to `offset` yourself, but the links already have the right values and keep your filters, so there's less to get wrong.
+- **To test the loop, use small pages.** Change `limit` to `4`, and the loop requests several pages instead of one.
+- **To get only the count, request one item.** `/facts?limit=1` returns `pagination.total` with one request, however many facts there are.
+- **The links are also in the `Link` header.** If your HTTP library reads [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) `Link` headers, it can follow `rel="next"` the same way. Browser scripts can read this header too.
+- **Each page counts toward the rate limit.** The limit is 60 requests per minute. Pages of 50 keep the number of requests low, and if you get every item often, reuse the results instead of requesting them again. See [Rate limits](https://www.marlasowards.com/api-reference#description/rate-limits).
+
+## Related
+
+- [Pagination](https://www.marlasowards.com/api-reference#description/pagination) in the API reference
+- [Show a random fact with its places](./show-a-random-fact), which covers setup and common errors

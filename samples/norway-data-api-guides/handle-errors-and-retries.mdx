@@ -1,0 +1,223 @@
+---
+title: "Handle errors and retries"
+description: Decide which Norway Data API errors to retry and how long to wait, and handle the errors your app expects by their type.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Handle errors and retries
+
+The `getJson` function in the other guides throws an exception on any error. That's fine for a script, but an app usually needs to do more: wait and retry when the API is busy, stop when retrying can't help, and handle errors it expects, such as a fact that doesn't exist.
+
+This guide replaces `getJson` with a version that retries the errors worth retrying. If you're new to the API, start with the [random fact tutorial](./show-a-random-fact).
+
+## Which errors to retry
+
+| Status | Error | Retry? |
+| --- | --- | --- |
+| `400` | A parameter or path is invalid | No. Fix the request: the same request fails again. |
+| `404` | No resource has that ID | No. |
+| `405` | The method isn't `GET`, `HEAD`, or `OPTIONS` | No. |
+| `429` | Too many requests | Yes, after the number of seconds in the `Retry-After` header. If there's no header, wait 60 seconds. |
+| `500` | Unexpected server error | Yes, a few times, waiting longer each time. |
+
+The [Errors](https://www.marlasowards.com/api-reference#description/errors) section of the API reference lists every error the API returns.
+
+## The code
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js title="errors.mjs"
+const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+const NOT_FOUND = 'tag:marlasowards.com,2026:norway-data/not-found';
+const MAX_RETRIES = 3;
+
+// An error response from the API.
+class ApiError extends Error {
+  constructor(status, problem) {
+    super(problem?.detail ?? `Request failed with status ${status}`);
+    this.status = status;
+    // type and requestId are undefined when the response has no problem details body.
+    this.type = problem?.type;
+    this.requestId = problem?.requestId;
+  }
+}
+
+const sleep = (seconds) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+
+// Returns how many seconds to wait before retrying, or null if retrying won't help.
+function retryDelay(response, retry) {
+  if (response.status === 429) {
+    // A 429 without Retry-After means the same as one with 60.
+    return Number(response.headers.get('Retry-After')) || 60;
+  }
+  if (response.status >= 500) {
+    // Wait 1, 2, then 4 seconds, so a struggling server gets time to recover.
+    return 2 ** retry;
+  }
+  // 400, 404, and 405 mean the request itself is wrong, so it would fail again.
+  return null;
+}
+
+// Calls the API and returns the parsed JSON response, retrying when it helps.
+async function getJson(path) {
+  for (let retry = 0; ; retry++) {
+    const response = await fetch(`${BASE_URL}${path}`);
+    if (response.ok) return response.json();
+
+    // Error bodies are problem details, except a rare 429 with an empty body.
+    const problem = await response.json().catch(() => null);
+    const delay = retryDelay(response, retry);
+    if (delay === null || retry === MAX_RETRIES) throw new ApiError(response.status, problem);
+    await sleep(delay);
+  }
+}
+
+// Example: get a fact that doesn't exist.
+try {
+  const fact = await getJson('/facts/99');
+  console.log(fact.title);
+} catch (error) {
+  if (error.type === NOT_FOUND) {
+    // An error your app expects: handle it by its type.
+    console.log("There's no fact with that ID.");
+  } else {
+    // Anything else: show the message, plus the request ID for reporting the problem.
+    console.error(error.message);
+    if (error.requestId) console.error(`Request ID: ${error.requestId}`);
+  }
+}
+```
+
+Run it with `node errors.mjs`.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="errors.py"
+import json
+import time
+import urllib.error
+import urllib.request
+
+BASE_URL = "https://api.marlasowards.com/norway-data/v1"
+NOT_FOUND = "tag:marlasowards.com,2026:norway-data/not-found"
+MAX_RETRIES = 3
+
+
+class ApiError(Exception):
+    """An error response from the API."""
+
+    def __init__(self, status, problem):
+        super().__init__(problem.get("detail") or f"Request failed with status {status}")
+        self.status = status
+        # type and request_id are None when the response has no problem details body.
+        self.type = problem.get("type")
+        self.request_id = problem.get("requestId")
+
+
+def retry_delay(error, retry):
+    """Returns how many seconds to wait before retrying, or None if retrying won't help."""
+    if error.code == 429:
+        # A 429 without Retry-After means the same as one with 60.
+        retry_after = error.headers.get("Retry-After", "")
+        return int(retry_after) if retry_after.isdigit() else 60
+    if error.code >= 500:
+        # Wait 1, 2, then 4 seconds, so a struggling server gets time to recover.
+        return 2**retry
+    # 400, 404, and 405 mean the request itself is wrong, so it would fail again.
+    return None
+
+
+def get_json(path):
+    """Calls the API and returns the parsed JSON response, retrying when it helps."""
+    for retry in range(MAX_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(BASE_URL + path) as response:
+                return json.load(response)
+        except urllib.error.HTTPError as error:
+            # Error bodies are problem details, except a rare 429 with an empty body.
+            try:
+                problem = json.load(error)
+            except ValueError:
+                problem = {}
+            delay = retry_delay(error, retry)
+            if delay is None or retry == MAX_RETRIES:
+                raise ApiError(error.code, problem) from None
+            time.sleep(delay)
+
+
+# Example: get a fact that doesn't exist.
+try:
+    fact = get_json("/facts/99")
+    print(fact["title"])
+except ApiError as error:
+    if error.type == NOT_FOUND:
+        # An error your app expects: handle it by its type.
+        print("There's no fact with that ID.")
+    else:
+        # Anything else: show the message, plus the request ID for reporting the problem.
+        print(error)
+        if error.request_id:
+            print(f"Request ID: {error.request_id}")
+```
+
+Run it with `python errors.py`.
+
+</TabItem>
+</Tabs>
+
+The example asks for fact 99, which doesn't exist. The API returns a `404`, which isn't retried, so the program prints this right away:
+
+```text
+There's no fact with that ID.
+```
+
+## How it works
+
+### The status code decides whether to retry
+
+The API reference says to use an error's `type` field, not its message, to decide what to do. So why does `retryDelay` look at the status code instead?
+
+Because not every error response has a `type`. If a client keeps sending requests after a `429`, the API's host can answer with a `429` that has an empty body. A gateway error, such as a `502`, can also come from the host instead of the API. A retry rule based on `type` would miss these, and they're exactly the errors worth retrying. Every response has a status code, so the code uses it to decide whether to retry.
+
+### The type decides everything else
+
+Once you know the request failed for good, use `type` to decide what your app does. `type` is a fixed identifier, such as `tag:marlasowards.com,2026:norway-data/not-found`, that never changes for a given kind of error. The example shows a friendly message when a fact doesn't exist and treats everything else as unexpected.
+
+Don't make decisions based on `detail`. It's written for people, and its wording can change.
+
+### Waiting longer after each failure
+
+After a `500`, the code waits 1 second, then 2, then 4. This is called exponential backoff. If the server is struggling, quick retries from many clients make it worse. Waiting longer each time gives it a chance to recover. After three retries, the code gives up and throws the error, so a request can't keep retrying forever.
+
+For a `429`, the API tells you exactly how long to wait in the `Retry-After` header, so the code waits that long instead of guessing.
+
+### The request ID
+
+Every problem details response includes a `requestId`. If you see an error you don't expect, include its request ID when you [report an issue](https://github.com/cedar-ave/norway-data-api/issues). It identifies the request in the API's logs.
+
+## Tips
+
+- **Network errors aren't retried.** If the request never reaches the API, such as when you're offline, `fetch` throws a `TypeError` and Python's `urlopen` raises a `URLError`. The code above lets these through. To retry them too, give them the same backoff as a `500`.
+- **Tell people when you're waiting.** A `429` can mean waiting a full minute. In an app with a user interface, show a message instead of waiting silently.
+- **Handle types you don't recognize.** New error types can be added. Treat an unknown `type` by its status code, as the example does with its `else` branch.
+- **Avoid the `429` in the first place.** Reuse responses you already have instead of requesting them again. See [Rate limits](https://www.marlasowards.com/api-reference#description/rate-limits).
+
+## How this code was tested
+
+The API can't be made to fail on purpose, so the retry logic was tested with a fake `fetch` (and a fake `urlopen` in Python) that returns a set sequence of responses, and a fake timer that records each wait instead of waiting. The tests cover:
+
+- A `500` followed by a success, and a `500` every time (three retries, waiting 1, 2, and 4 seconds, then an error).
+- A `429` with `Retry-After`, and a `429` with an empty body and no header (a 60-second wait).
+- A `400` and a `404`, which aren't retried.
+- A `502` with an HTML body instead of problem details, which is retried.
+
+The JavaScript version was also tested against the live API: after a real `429`, it waited the 60 seconds in `Retry-After` and then succeeded.
+
+## Related
+
+- [Errors](https://www.marlasowards.com/api-reference#description/errors) and [Rate limits](https://www.marlasowards.com/api-reference#description/rate-limits) in the API reference
+- [Get every item in a collection](./get-every-item), where one failed page would otherwise stop the whole loop

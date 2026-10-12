@@ -1,0 +1,133 @@
+---
+title: "Call the API from a browser"
+description: Call the Norway Data API from JavaScript in a web page, and learn which requests browsers allow across origins and what a page can read from the responses.
+---
+
+# Call the API from a browser
+
+Any web page can call the Norway Data API with `fetch`. There's no key to hide, and the API allows requests from every origin. This guide shows a complete page, then covers the browser rules that decide which requests work. Most of those rules are part of CORS (cross-origin resource sharing), and they're the usual reason a request that works in `curl` fails in a browser.
+
+## A complete page
+
+This page shows a random fact and the places it's about. It's the same program as the [random fact tutorial](./show-a-random-fact), written for a browser. Save it as `fact.html` and open it in a browser, either straight from your disk or from any web server:
+
+```html title="fact.html"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>A fact about Norway</title>
+</head>
+<body>
+  <h1 id="title">Loading a fact…</h1>
+  <p id="text"></p>
+  <ul id="places"></ul>
+
+  <script type="module">
+    const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+    // Calls the API and returns the parsed JSON response.
+    async function getJson(path) {
+      const response = await fetch(`${BASE_URL}${path}`);
+      if (!response.ok) {
+        // Errors are problem details objects, whose detail says what went wrong.
+        const problem = await response.json().catch(() => null);
+        throw new Error(problem?.detail ?? `Request failed with status ${response.status}`);
+      }
+      return response.json();
+    }
+
+    const title = document.querySelector('#title');
+    const text = document.querySelector('#text');
+    const list = document.querySelector('#places');
+
+    try {
+      const fact = await getJson('/random-fact');
+      const places = await Promise.all(fact.placeIds.map((id) => getJson(`/places/${id}`)));
+
+      // Use textContent, not innerHTML, so text from the API is always shown
+      // as text and never run as HTML.
+      title.textContent = fact.title;
+      text.textContent = fact.text;
+      for (const place of places) {
+        const item = document.createElement('li');
+        item.textContent = `${place.name}: ${place.description}`;
+        list.append(item);
+      }
+    } catch (error) {
+      title.textContent = "Couldn't load a fact";
+      text.textContent = error.message;
+    }
+  </script>
+</body>
+</html>
+```
+
+`<script type="module">` lets the script use `await` outside a function, the same as an `.mjs` file in Node.js.
+
+**Why `textContent`:** text from any API should go on the page as text. If you put it in `innerHTML` and it ever contained HTML, the browser would run it. `textContent` is the simplest way to rule that out.
+
+## What works across origins
+
+Your page and the API are on different origins, so the browser applies CORS rules to every request. The API responds to every request with `Access-Control-Allow-Origin: *`, which allows any origin, but browsers still limit what a page can send and read:
+
+| What your page does | Works? |
+| --- | --- |
+| A `GET` with no extra headers, like the page above | Yes |
+| Read the body of an error response, such as a `404`'s problem details | Yes |
+| Read the `ETag`, `Link`, and `Retry-After` headers | Yes |
+| Read basic headers such as `Content-Type` and `Cache-Control` | Yes |
+| Read any other header, such as `X-Nf-Request-Id` | No: `headers.get()` returns `null`. The request ID is also in every error body as `requestId`. |
+| Send a request header other than `If-None-Match`, including `Content-Type` on a `GET` | No: the request fails |
+| Send cookies or other credentials with `credentials: 'include'` | No: the request fails |
+| Let the browser cache responses | Yes. See [Caching](#caching). |
+
+### When a request fails with "Failed to fetch"
+
+When the browser blocks a request for a CORS reason, `fetch` throws a `TypeError` with a vague message, such as `Failed to fetch` in Chrome. Your code can't see why. The browser's developer console shows the real reason.
+
+The most common cause is an extra request header. A `GET` with only basic headers is sent directly. Adding any other header makes the browser first send a preflight request, an `OPTIONS` request that asks whether that header is allowed. The API's preflight response allows only `If-None-Match`, so the browser blocks a request that sets anything else.
+
+A common way to hit this is adding `Content-Type: application/json` to every request out of habit. A `GET` has no body, so it doesn't need a `Content-Type`. Leave it out.
+
+### Rate limits in a browser
+
+A page can read a `429` response like any other error, including its `Retry-After` header and its problem details. That's only true for a request that's sent directly. If a request needs a preflight and you're over the [rate limit](https://www.marlasowards.com/api-reference#description/rate-limits), the preflight gets the `429`, and the browser reports a `Failed to fetch` instead. Keep your requests free of extra headers, and your page always sees the real error.
+
+## Caching
+
+The browser caches the API's responses for you. A second request for the same URL within an hour comes from the browser's cache, with no request to the API. After an hour, the browser checks with the API using the response's `ETag`, and reuses its copy if nothing changed.
+
+To make the browser check with the API right away instead of using its cache, add `cache: 'no-cache'`:
+
+```js
+const response = await fetch(`${BASE_URL}/categories`, { cache: 'no-cache' });
+```
+
+:::warning[Don't send If-None-Match yourself]
+
+In a browser, let the browser send `If-None-Match`. If you send it yourself, the API currently answers an unchanged response with a `304` that's missing its CORS header, so the request fails with `Failed to fetch`. Requests the browser checks on its own aren't affected.
+
+:::
+
+Outside a browser, you have to cache responses yourself. See [Cache responses with ETags](./cache-responses).
+
+## If your site has a Content Security Policy
+
+If your site sends a Content Security Policy header, it has to allow requests to the API, or the browser blocks them before they're sent. Add the API's origin to `connect-src`:
+
+```http
+Content-Security-Policy: connect-src 'self' https://api.marlasowards.com
+```
+
+If your policy has no `connect-src`, add the API to `default-src` instead, or add a `connect-src` that includes it.
+
+## How this guide was tested
+
+The page and the claims in this guide were tested in Chrome, loading the pages from `http://localhost:8000` (a different origin from the API) and from a `file://` URL. Each row of the table above, the rate limit behavior, and the caching behavior were checked with a request from a page, not just with `curl`.
+
+## Related
+
+- [Show a random fact with its places](./show-a-random-fact), the same program for Node.js and Python
+- [Cache responses with ETags](./cache-responses)
+- [Request rules](https://www.marlasowards.com/api-reference#description/request-rules) in the API reference, including CORS

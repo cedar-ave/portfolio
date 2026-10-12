@@ -1,0 +1,187 @@
+---
+title: "Cache responses with ETags"
+description: Reuse Norway Data API responses for up to an hour, then check whether they've changed with an ETag, so your code sends fewer requests and downloads less data.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Cache responses with ETags
+
+If your code requests the same data again and again, such as the list of categories on every page of a site, cache the responses. The Norway Data API tells you how long you can reuse each response, and gives it an `ETag` so you can check later whether it changed. Caching makes your code faster and keeps it well under the [rate limit](https://www.marlasowards.com/api-reference#description/rate-limits).
+
+:::note[In a browser, this is already done for you]
+
+Browsers cache API responses and send `If-None-Match` by themselves, so a browser's `fetch` gets all of this automatically. This guide is for server-side code: `fetch` in Node.js and `urllib` in Python don't cache at all.
+
+:::
+
+## How caching works in this API
+
+Every response that can be cached has two headers:
+
+```http
+Cache-Control: public, max-age=3600
+ETag: W/"0hDjXkK8WaD51P7KmjuSM-prOrA"
+```
+
+1. **For an hour**, reuse the response without sending a request. `max-age=3600` means 3,600 seconds.
+2. **After that**, send the request again with the `ETag` value in an `If-None-Match` header. If the response hasn't changed, the API returns `304 Not Modified` with no body, and you can reuse your copy for another hour. If it has changed, you get a `200` with the new response and a new `ETag`.
+
+`/random-fact` and error responses have no `ETag` and include `Cache-Control: no-store`, so they're never cached.
+
+## The code
+
+`getJson` keeps a cache of responses in memory, keyed by URL. The demo at the end requests the categories three times, pretending an hour passes before the third request.
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js title="cache.mjs"
+const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+// Cached responses, by URL: { body, etag, freshUntil }.
+const cache = new Map();
+
+// Returns the number of seconds in a response's Cache-Control max-age, or 0.
+function maxAge(response) {
+  const match = /max-age=(\d+)/.exec(response.headers.get('Cache-Control') ?? '');
+  return match ? Number(match[1]) : 0;
+}
+
+// Calls the API and returns the parsed JSON response, using the cache when it can.
+async function getJson(path) {
+  const url = `${BASE_URL}${path}`;
+  const cached = cache.get(url);
+
+  // 1. A cached response that's still fresh is reused without a request.
+  if (cached && Date.now() < cached.freshUntil) {
+    console.log(`${path}: reused the cached response, no request sent`);
+    return cached.body;
+  }
+
+  // 2. A stale one is checked with its ETag. If it hasn't changed, the API
+  // returns 304 Not Modified with no body, and the cached copy is fresh again.
+  const response = await fetch(url, { headers: cached ? { 'If-None-Match': cached.etag } : {} });
+  if (response.status === 304) {
+    cached.freshUntil = Date.now() + maxAge(response) * 1000;
+    console.log(`${path}: 304 Not Modified, reused the cached response`);
+    return cached.body;
+  }
+  if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+  // 3. Only responses with an ETag are cached. /random-fact and errors don't
+  // have one, so they're always requested again.
+  const body = await response.json();
+  const etag = response.headers.get('ETag');
+  if (etag) cache.set(url, { body, etag, freshUntil: Date.now() + maxAge(response) * 1000 });
+  console.log(`${path}: ${response.status}, ${etag ? `cached for ${maxAge(response)} seconds` : 'not cached'}`);
+  return body;
+}
+
+// Demo: get the categories three times.
+await getJson('/categories');
+await getJson('/categories');
+// Pretend an hour has passed, so the cached response is stale.
+cache.get(`${BASE_URL}/categories`).freshUntil = 0;
+await getJson('/categories');
+```
+
+Run it with `node cache.mjs`.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="cache.py"
+import json
+import re
+import time
+import urllib.error
+import urllib.request
+
+BASE_URL = "https://api.marlasowards.com/norway-data/v1"
+
+# Cached responses, by URL: {"body": ..., "etag": ..., "fresh_until": ...}.
+cache = {}
+
+
+def max_age(headers):
+    """Returns the number of seconds in a response's Cache-Control max-age, or 0."""
+    match = re.search(r"max-age=(\d+)", headers.get("Cache-Control", ""))
+    return int(match.group(1)) if match else 0
+
+
+def get_json(path):
+    """Calls the API and returns the parsed JSON response, using the cache when it can."""
+    url = BASE_URL + path
+    cached = cache.get(url)
+
+    # 1. A cached response that's still fresh is reused without a request.
+    if cached and time.monotonic() < cached["fresh_until"]:
+        print(f"{path}: reused the cached response, no request sent")
+        return cached["body"]
+
+    # 2. A stale one is checked with its ETag. If it hasn't changed, the API
+    # returns 304 Not Modified with no body, and the cached copy is fresh again.
+    request = urllib.request.Request(url, headers={"If-None-Match": cached["etag"]} if cached else {})
+    try:
+        with urllib.request.urlopen(request) as response:
+            body = json.load(response)
+            headers = response.headers
+            status = response.status
+    except urllib.error.HTTPError as error:
+        # urlopen raises an exception for 304, since it isn't a 2xx status.
+        if error.code != 304:
+            raise
+        cached["fresh_until"] = time.monotonic() + max_age(error.headers)
+        print(f"{path}: 304 Not Modified, reused the cached response")
+        return cached["body"]
+
+    # 3. Only responses with an ETag are cached. /random-fact and errors don't
+    # have one, so they're always requested again.
+    etag = headers.get("ETag")
+    if etag:
+        cache[url] = {"body": body, "etag": etag, "fresh_until": time.monotonic() + max_age(headers)}
+    print(f"{path}: {status}, " + (f"cached for {max_age(headers)} seconds" if etag else "not cached"))
+    return body
+
+
+# Demo: get the categories three times.
+get_json("/categories")
+get_json("/categories")
+# Pretend an hour has passed, so the cached response is stale.
+cache[BASE_URL + "/categories"]["fresh_until"] = 0
+get_json("/categories")
+```
+
+Run it with `python cache.py`.
+
+</TabItem>
+</Tabs>
+
+The output shows each of the three cases:
+
+```text
+/categories: 200, cached for 3600 seconds
+/categories: reused the cached response, no request sent
+/categories: 304 Not Modified, reused the cached response
+```
+
+The `console.log` and `print` lines are there to show what happens. Remove them in your own code.
+
+## Tips
+
+- **Reusing a fresh response is what saves requests.** A `304` is still a request, so it counts toward the rate limit. It saves downloading the response again, not the request itself.
+- **Send the `ETag` exactly as you received it,** including the `W/` at the start. `W/` marks it as a weak `ETag`, which the API uses because the same response can be compressed in different ways.
+- **Read `max-age` from the header instead of comparing the whole header.** The API sends `public, max-age=3600`, but caches between you and the API can rewrite it, for example to `public,max-age=3600` without a space.
+- **Limit the cache's size in long-running code.** This cache keeps every URL it has seen. That's fine for a script, but a server that requests many different URLs, such as every fact by ID, should remove old entries or use an HTTP caching library.
+- **An hour-old response is still current in practice.** The API's data only changes when a new version is deployed, so a cached response is rarely out of date, and never by more than an hour.
+
+## How this code was tested
+
+Both versions were run against the live API. The output above is the real output: a `200`, then no request, then a `304` after the cached copy was made stale. Calling `/random-fact` twice sent two requests, since its responses have no `ETag`.
+
+## Related
+
+- [Caching](https://www.marlasowards.com/api-reference#description/caching) in the API reference
+- [Handle errors and retries](./handle-errors-and-retries), which you can combine with this cache

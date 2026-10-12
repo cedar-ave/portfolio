@@ -1,0 +1,365 @@
+---
+title: "Tutorial: Show a random fact with its places"
+sidebar_label: "Show a random fact with its places"
+description: Write a short program that gets a random fact about Norway from the Norway Data API, looks up the places it mentions, and prints both.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Show a random fact with its places
+
+In this tutorial, you write a short program that gets a random fact about Norway from the [Norway Data API](/api-reference) and prints it with the places it mentions. It's the core of a "fact of the day" feature, and it shows how the API's resources connect: a fact lists its places by ID, and you use those IDs to get each place.
+
+When you run the program, it prints something like this:
+
+```text
+Sámi languages
+Sámi languages have official status in Norway, and the Sámi Parliament (Sámediggi) meets in Karasjok.
+- Karasjok (municipality): Municipality in Finnmark and seat of the Sámi Parliament.
+```
+
+## Before you start
+
+This tutorial is for developers who are new to the Norway Data API. It assumes you can run a script from a terminal. You don't need an account or an API key.
+
+You need:
+
+- **JavaScript:** [Node.js](https://nodejs.org/) 18 or later, which has `fetch` built in.
+- **Python:** [Python](https://www.python.org/) 3.8 or later. The program uses only the standard library, so there's nothing to install.
+- **Optional:** `curl`, to look at the API's responses in step 1. It comes with macOS, Windows 10 and later, and most Linux distributions.
+
+The tutorial takes about 15 minutes.
+
+## How it works
+
+The program makes two kinds of requests:
+
+```text
+GET /random-fact          → a fact, with placeIds: ["karasjok"]
+GET /places/karasjok      → the place's name, type, and description
+```
+
+A fact lists the places it's about in `placeIds`, which can have several IDs or none. The program gets the fact, then gets each place in `placeIds`, then prints them together.
+
+## Step 1: Look at the responses
+
+Before writing code, see what the API returns. Get a random fact:
+
+```bash
+curl https://api.marlasowards.com/norway-data/v1/random-fact
+```
+
+Your fact will be different, since it's random, but it has the same fields:
+
+```json
+{
+  "id": 14,
+  "category": "culture",
+  "title": "Sámi languages",
+  "text": "Sámi languages have official status in Norway, and the Sámi Parliament (Sámediggi) meets in Karasjok.",
+  "placeIds": [
+    "karasjok"
+  ]
+}
+```
+
+`placeIds` holds place IDs, not place names. Get a place by its ID:
+
+```bash
+curl https://api.marlasowards.com/norway-data/v1/places/karasjok
+```
+
+```json
+{
+  "id": "karasjok",
+  "name": "Karasjok",
+  "type": "municipality",
+  "description": "Municipality in Finnmark and seat of the Sámi Parliament."
+}
+```
+
+The program puts these two requests together.
+
+## Step 2: Write a function that calls the API
+
+Create a file and add a function that makes a request and returns the response as JSON. Every request in the program goes through this function, so errors are handled in one place.
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+Name the file `show-fact.mjs`. The `.mjs` extension tells Node.js that the file is a module, so you can use `await` outside a function in every Node.js version from 18.
+
+```js title="show-fact.mjs"
+const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+// Calls the API and returns the parsed JSON response.
+async function getJson(path) {
+  const response = await fetch(`${BASE_URL}${path}`);
+  if (!response.ok) {
+    // Errors are problem details objects, whose detail says what went wrong.
+    // A rare 429 has an empty body, so fall back to the status code.
+    const problem = await response.json().catch(() => null);
+    throw new Error(problem?.detail ?? `Request failed with status ${response.status}`);
+  }
+  return response.json();
+}
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+Name the file `show_fact.py`.
+
+```python title="show_fact.py"
+import json
+import urllib.error
+import urllib.request
+
+BASE_URL = "https://api.marlasowards.com/norway-data/v1"
+
+
+def get_json(path):
+    """Calls the API and returns the parsed JSON response."""
+    try:
+        with urllib.request.urlopen(BASE_URL + path) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as error:
+        # Errors are problem details objects, whose detail says what went wrong.
+        # A rare 429 has an empty body, so fall back to the status code.
+        try:
+            detail = json.load(error)["detail"]
+        except ValueError:
+            detail = f"Request failed with status {error.code}"
+        raise RuntimeError(detail) from None
+```
+
+</TabItem>
+</Tabs>
+
+**Why check for errors here:** without the check, an error response would be treated like data, and the program would fail later with a confusing message about a missing field. The API returns every error in the same [problem details](https://www.marlasowards.com/api-reference#description/errors) format, so one check covers them all. The `detail` field is written for people, which makes it the right thing to show here. To make decisions in code, such as whether to retry, use the `type` field instead, since its value never changes.
+
+## Step 3: Get a random fact
+
+Add a call to `/random-fact` at the end of the file:
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js
+// 1. Get a random fact.
+const fact = await getJson('/random-fact');
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python
+# 1. Get a random fact.
+fact = get_json("/random-fact")
+```
+
+</TabItem>
+</Tabs>
+
+`fact` now holds an object like the one in step 1.
+
+## Step 4: Get the fact's places
+
+Get each place listed in the fact's `placeIds`:
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js
+// 2. Get each place the fact is about. placeIds can be empty.
+const places = await Promise.all(fact.placeIds.map((id) => getJson(`/places/${id}`)));
+```
+
+`Promise.all` sends the requests at the same time and waits for all of them, so a fact with two places takes about as long as a fact with one. The places stay in the same order as `placeIds`.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python
+# 2. Get each place the fact is about. placeIds can be empty.
+places = [get_json(f"/places/{place_id}") for place_id in fact["placeIds"]]
+```
+
+</TabItem>
+</Tabs>
+
+About half the facts aren't about a specific place, so `placeIds` is often empty. In that case, `places` is an empty list and the program makes no extra requests. You don't need a special case for it.
+
+:::tip[Showing many facts at once]
+
+One request per place works well for a single fact. If you show a whole list of facts, get every place in one request with `/places?limit=50` and look places up by `id` instead. That keeps you well under the [rate limit](https://www.marlasowards.com/api-reference#description/rate-limits) of 60 requests per minute.
+
+:::
+
+## Step 5: Print the fact and its places
+
+Add the code that prints the result:
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js
+// 3. Show the fact and its places.
+console.log(fact.title);
+console.log(fact.text);
+for (const place of places) {
+  console.log(`- ${place.name} (${place.type}): ${place.description}`);
+}
+```
+
+Run the program:
+
+```bash
+node show-fact.mjs
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python
+# 3. Show the fact and its places.
+print(fact["title"])
+print(fact["text"])
+for place in places:
+    print(f"- {place['name']} ({place['type']}): {place['description']}")
+```
+
+Run the program:
+
+```bash
+python show_fact.py
+```
+
+</TabItem>
+</Tabs>
+
+You get a random fact, followed by a line for each of its places:
+
+```text
+The raft in Oslo
+The original Kon-Tiki raft is on display at the Kon-Tiki Museet on the Bygdøy peninsula in Oslo.
+- Kon-Tiki Museet (museum): Museum on the Bygdøy peninsula in Oslo that displays the Kon-Tiki raft and other vessels from Thor Heyerdahl's expeditions.
+- Oslo (city): Capital and largest city of Norway.
+```
+
+Run it again to get a different fact. A fact with no places prints only its title and text.
+
+:::tip[Getting the same output every time]
+
+A random result is hard to check. To test your code against a known result, temporarily change `/random-fact` to `/facts/14`. The program then prints the output shown at the top of this page.
+
+:::
+
+## The complete program
+
+<Tabs groupId="language">
+<TabItem value="js" label="JavaScript" default>
+
+```js title="show-fact.mjs"
+const BASE_URL = 'https://api.marlasowards.com/norway-data/v1';
+
+// Calls the API and returns the parsed JSON response.
+async function getJson(path) {
+  const response = await fetch(`${BASE_URL}${path}`);
+  if (!response.ok) {
+    // Errors are problem details objects, whose detail says what went wrong.
+    // A rare 429 has an empty body, so fall back to the status code.
+    const problem = await response.json().catch(() => null);
+    throw new Error(problem?.detail ?? `Request failed with status ${response.status}`);
+  }
+  return response.json();
+}
+
+// 1. Get a random fact.
+const fact = await getJson('/random-fact');
+
+// 2. Get each place the fact is about. placeIds can be empty.
+const places = await Promise.all(fact.placeIds.map((id) => getJson(`/places/${id}`)));
+
+// 3. Show the fact and its places.
+console.log(fact.title);
+console.log(fact.text);
+for (const place of places) {
+  console.log(`- ${place.name} (${place.type}): ${place.description}`);
+}
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="show_fact.py"
+import json
+import urllib.error
+import urllib.request
+
+BASE_URL = "https://api.marlasowards.com/norway-data/v1"
+
+
+def get_json(path):
+    """Calls the API and returns the parsed JSON response."""
+    try:
+        with urllib.request.urlopen(BASE_URL + path) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as error:
+        # Errors are problem details objects, whose detail says what went wrong.
+        # A rare 429 has an empty body, so fall back to the status code.
+        try:
+            detail = json.load(error)["detail"]
+        except ValueError:
+            detail = f"Request failed with status {error.code}"
+        raise RuntimeError(detail) from None
+
+
+# 1. Get a random fact.
+fact = get_json("/random-fact")
+
+# 2. Get each place the fact is about. placeIds can be empty.
+places = [get_json(f"/places/{place_id}") for place_id in fact["placeIds"]]
+
+# 3. Show the fact and its places.
+print(fact["title"])
+print(fact["text"])
+for place in places:
+    print(f"- {place['name']} ({place['type']}): {place['description']}")
+```
+
+</TabItem>
+</Tabs>
+
+## Troubleshooting
+
+### Python prints `S�mi` instead of `Sámi`
+
+On Windows, Python can write output in an older encoding that doesn't match your terminal, so Norwegian letters such as `å`, `ø`, and `á` show up wrong. Run Python in UTF-8 mode:
+
+```bash
+python -X utf8 show_fact.py
+```
+
+### `SyntaxError: await is only valid in async functions`
+
+Node.js ran the file as a script, not a module. Check that the file name ends in `.mjs`.
+
+### `ReferenceError: fetch is not defined`
+
+Your Node.js version is older than 18. Check it with `node --version`, and install a current version.
+
+### Python: `CERTIFICATE_VERIFY_FAILED`
+
+Python couldn't verify the API's HTTPS certificate. This happens most often with Python from python.org on macOS, which doesn't use the system's certificates. Run **Install Certificates.command** in your Python folder under `/Applications`, then try again.
+
+### `Too many requests from your IP address. Wait 60 seconds, then retry.`
+
+You sent more than 60 requests in a minute, such as by running the program in a loop. Wait a minute, then run it again. See [Rate limits](https://www.marlasowards.com/api-reference#description/rate-limits).
+
+## Next steps
+
+- **Choose a category:** add `?category=nature` to `/random-fact` to get only nature facts. To get every category, call `/categories`.
+- **Go the other way:** to get every fact about a place, call `/facts?place=karasjok`.
+- **Explore the API:** the [API reference](/api-reference) describes every endpoint, and its **Test Request** button sends requests from your browser.
