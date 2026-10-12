@@ -3,6 +3,6 @@
   "position": 16,
   "link": {
     "type": "generated-index",
-    "description": "The Norway Data API: how the /api-reference page is wired to it, how it was built and reviewed, and how it is secured."
+    "description": "The Norway Data API: how the /api-reference page is wired to it, how it was built and reviewed, how it is secured, and the API repo's own docs."
   }
 }
