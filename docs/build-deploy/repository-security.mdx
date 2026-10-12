@@ -51,6 +51,18 @@ The ruleset doesn't require pull requests or passing checks, so pushing straight
 
 Merge Dependabot's pull requests once their checks pass. For an Actions update, the pull request changes both the SHA and the version comment.
 
+## Known dependency alerts
+
+Turning on Dependabot alerts (October 2026) surfaced alerts that can't be fixed without breaking changes. `npm audit fix` patched what it could (`source-map-js`). The rest are accepted for now:
+
+| Package | Where | Why it's accepted |
+| --- | --- | --- |
+| `tinypool` (2 critical), `serialize-javascript`, `uuid`, `postcss-selector-parser` | Inside Docusaurus 3.10.2's build tooling | Each fix needs a major version of a package Docusaurus depends on, which could break the build. They only run at build time, on this repo's own content, so an attacker would need to control the build's input. Revisit when Docusaurus updates them; Dependabot will open a pull request. |
+| `braces`, `http-cache-semantics` | Docusaurus build tooling | No fixed version exists yet. Build time only. |
+| `sharp`, `node-forge` | `tools/netlify-cli/` | Only in the optional deploy job, which is off. `netlify deploy` doesn't use `sharp`'s image processing. Update `tools/netlify-cli` when a fixed Netlify CLI is released. |
+
+The site itself is static HTML, CSS, and JavaScript, so none of these run on a server that visitors reach. Check **Security** > **Dependabot** after Docusaurus or Netlify CLI updates, and update this table.
+
 ## Account security
 
 The settings above don't help if the GitHub or Netlify account itself is taken over. Use two-factor authentication on both, preferably with a security key or passkey, and review who has access to the Netlify team.
