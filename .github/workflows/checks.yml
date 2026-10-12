@@ -1,4 +1,4 @@
-# Lints the site's prose and checks the Norway Data API before it publishes.
+# Lints the site's prose before it publishes.
 #
 # - codespell checks for common misspellings. Add false positives to
 #   ignore-words-list in .codespellrc.
@@ -6,9 +6,6 @@
 # - Vale checks for defects such as repeated words and leftover merge conflict
 #   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
-# - The API job lints the Norway Data OpenAPI spec with Redocly and runs the
-#   contract test (scripts/api-contract-test.mjs), which checks the Netlify
-#   Function's responses against that spec.
 #
 # Netlify builds on every push no matter what this workflow reports. To make
 # these checks block publishing, either merge to main through pull requests
@@ -80,25 +77,6 @@ jobs:
       - name: Run Vale
         run: vale --output=.vale/github.tmpl docs blog samples src/pages README.md
 
-  api:
-    name: API (spec lint + contract test)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - name: Lint the OpenAPI spec
-        run: npm run lint:api
-
-      - name: Run the contract test
-        run: npm run test:api
-
   # Optional: publish to Netlify from here, only after all checks pass.
   # Off until the repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true".
   # Before turning it on, stop builds in Netlify (Site configuration > Build &
@@ -106,7 +84,7 @@ jobs:
   # and add the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets.
   deploy:
     name: Deploy to Netlify
-    needs: [spelling, links, style, api]
+    needs: [spelling, links, style]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.NETLIFY_DEPLOY_FROM_ACTIONS == 'true'
     runs-on: ubuntu-latest
     concurrency:

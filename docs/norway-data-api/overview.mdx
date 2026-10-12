@@ -4,67 +4,106 @@ sidebar_position: 1
 
 import QuickReference from '@site/src/components/QuickReference';
 
-# Overview
+# The API reference page
 
-The Norway Data API is a sample REST API with an interactive reference page at `/api-reference`. Unlike a static API docs sample, the API is real: it runs as a Netlify Function on this site, so the code samples and **Test Request** buttons on the reference page return live responses.
+The **Norway Data API** navbar link opens `/api-reference`, an interactive API reference rendered by [Scalar](https://scalar.com/products/api-references/integrations/docusaurus). The API itself, its OpenAPI spec, its contract test, and its docs live in their own repo, [cedar-ave/norway-data-api](https://github.com/cedar-ave/norway-data-api), which deploys to its own Netlify site. This page covers only how this site connects to it.
 
 <QuickReference>
 
-- **The API** is one Netlify Function in `netlify/functions/norway-data/`. It serves `/api/norway-data/*` with data from a plain JavaScript module, with no database. See [The Netlify Function](netlify-function).
-- **The spec** is `static/openapi/norway-data.yaml` (OpenAPI 3.1). It's the contract, and it also holds all the conceptual docs in its `info.description`. See [The OpenAPI spec and reference page](openapi-spec).
-- **The reference page** is rendered by the `@scalar/docusaurus` plugin, configured in `docusaurus.config.js`. Its navbar link (**Norway Data API**) is added by hand.
-- **The contract test** (`npm run test:api`) runs the function locally and checks every response, header, status code, and documented example against the spec. CI runs it with a Redocly lint of the spec. See [The contract test](contract-test).
-- The design came out of two reviews, one from an API developer's view and one from an API technical writer's view. See [Design decisions](design-decisions).
-- For everyday changes such as adding a fact, see [Maintaining the API](maintenance).
+- `@scalar/docusaurus` adds the `/api-reference` route and renders the spec. Its script version is pinned in `docusaurus.config.js`.
+- This site's `netlify.toml` proxies `/api/norway-data/*` and `/openapi/norway-data.yaml` to `norway-data-api.netlify.app`, so the API and its spec are served from `www.marlasowards.com`.
+- `npm start` doesn't apply Netlify proxy rules, so in development the page loads the spec straight from the API's site.
+- To change the API, its data, or the reference page's text, work in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api). The reference page picks up the change as soon as that site deploys, with no rebuild here.
 
 </QuickReference>
 
-## How the pieces fit
+## How a request flows
 
 ```text
-Browser on /api-reference
-   │  loads the page (Docusaurus route added by @scalar/docusaurus)
-   │  loads the spec   → /openapi/norway-data.yaml   (static file)
-   │  Test Request     → /api/norway-data/v1/...      (same origin)
+Browser on www.marlasowards.com/api-reference   (this repo)
+   │  loads the spec   → /openapi/norway-data.yaml
+   │  Test Request     → /api/norway-data/v1/...
    ▼
-Netlify CDN ── cached response? ── yes → returns it (no function call)
-   │ no
+www.marlasowards.com: proxy rules in netlify.toml   (this repo)
    ▼
-Rate limiter (60 requests / 60 s per IP) ── over → Netlify's own 429
-   │
-   ▼
-Netlify Function: netlify/functions/norway-data/norway-data.mjs
-   └── data.mjs (facts, categories, places)
+norway-data-api.netlify.app                      (norway-data-api repo)
+   ├── public/openapi/norway-data.yaml
+   └── Netlify Function: netlify/functions/norway-data/
 ```
 
-The API and the site are served from the same domain, so the reference page's requests never cross origins. The API still allows any origin (CORS `*`) so that deploy previews, `localhost`, and other sites can call it.
+## The proxy rules
 
-## Files
+```toml title="netlify.toml"
+[[redirects]]
+  from = "/api/norway-data/*"
+  to = "https://norway-data-api.netlify.app/api/norway-data/:splat"
+  status = 200
 
-| File | Purpose |
-| --- | --- |
-| `netlify/functions/norway-data/norway-data.mjs` | The function: routing, validation, pagination, caching, errors |
-| `netlify/functions/norway-data/data.mjs` | The dataset: facts, categories, places |
-| `netlify.toml` | Tells Netlify where functions live. Build settings stay in the Netlify UI. |
-| `static/openapi/norway-data.yaml` | The OpenAPI spec, including the reference page's introduction |
-| `docusaurus.config.js` | The `@scalar/docusaurus` plugin entry and the navbar link |
-| `scripts/api-contract-test.mjs` | The contract test |
-| `package.json` | `test:api` and `lint:api` scripts; `ajv`, `ajv-formats`, and `js-yaml` dev dependencies |
-| `.github/workflows/checks.yml` | The `api` job that runs the lint and the contract test |
-| `src/pages/portfolio.mdx` | The portfolio entry that links to the reference page |
+[[redirects]]
+  from = "/openapi/norway-data.yaml"
+  to = "https://norway-data-api.netlify.app/openapi/norway-data.yaml"
+  status = 200
+```
 
-## Endpoints
+A redirect with `status = 200` is a rewrite. The visitor's browser only ever talks to `www.marlasowards.com`, so:
 
-All paths are relative to `https://www.marlasowards.com/api/norway-data/v1`.
+- The API's public URLs and published code samples use this site's domain, not `netlify.app`.
+- The reference page and the API share an origin, so **Test Request** calls never run into CORS restrictions.
 
-| Endpoint | Returns |
-| --- | --- |
-| `GET /` | An index with links to each collection, the reference page, and the spec |
-| `GET /facts` | Facts, filterable by `category` and `place`, paginated |
-| `GET /facts/{id}` | One fact |
-| `GET /random-fact` | One random fact, optionally from one `category` |
-| `GET /categories` | Categories, paginated |
-| `GET /places` | Places, paginated |
-| `GET /places/{id}` | One place |
+The rules apply to deploy previews too.
 
-`GET /api/norway-data` (no version) returns the same index as `GET /v1`.
+## The plugin
+
+```js title="docusaurus.config.js"
+[
+  '@scalar/docusaurus',
+  {
+    route: '/api-reference',
+    showNavLink: false,
+    // Pinned so a Scalar release can't change the page unannounced.
+    cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1',
+    configuration: {
+      url:
+        process.env.NODE_ENV === 'development'
+          ? 'https://norway-data-api.netlify.app/openapi/norway-data.yaml'
+          : '/openapi/norway-data.yaml',
+    },
+  },
+],
+```
+
+- **`route`** is the page's URL.
+- **`showNavLink: false`** stops the plugin from adding its own navbar link, which it always puts at the end of the left side. The link is added by hand in `themeConfig.navbar.items` instead, before Blog. See [Navbar](../site-config/navbar).
+- **`cdn`** pins Scalar's script version. By default the plugin loads the latest version, which could change the page with no change in this repo.
+- **`configuration.url`** is where the page loads the spec from. In production it's the proxied path. In development it's the API's own site, because `npm start` doesn't apply the proxy rules. The API's site allows cross-origin requests for `/openapi/*` so this works.
+
+:::note
+
+The plugin adds Scalar's `<script>` tag to every page on the site, not only `/api-reference`. That's how the plugin is built. If page weight on other pages ever matters, replace the plugin with a custom page that loads Scalar only on its own route.
+
+:::
+
+The plugin hides Scalar's dark mode toggle, and the page follows the site's light or dark mode.
+
+## Local development
+
+With `npm start`, the reference page loads the spec from the live API site, and the page's code samples and **Test Request** calls go to the production API at `www.marlasowards.com` (the server URL in the spec). Nothing needs to run locally.
+
+To work on the API itself, clone the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api) and see its README.
+
+## Upgrade Scalar
+
+Change the version in the `cdn` URL, then check the reference page: the sidebar sections, the **Test Request** button, and the code samples. The spec's introduction mentions the **Test Request** label by name, so if a new version renames it, update the spec in the API repo.
+
+## Troubleshooting
+
+### The reference page is empty
+
+The page couldn't load the spec. Check each step of the path:
+
+1. `curl -I https://norway-data-api.netlify.app/openapi/norway-data.yaml` should return `200`. If it doesn't, the API site's latest deploy failed.
+2. `curl -I https://www.marlasowards.com/openapi/norway-data.yaml` should also return `200`. If step 1 works but this doesn't, check the proxy rules in `netlify.toml`.
+
+### Test Request shows "Failed to fetch"
+
+The request didn't reach the function. Run the same checks with `/api/norway-data/v1/facts/10` in place of the spec path. For problems inside the API, see the troubleshooting section of the [API repo's maintenance docs](https://github.com/cedar-ave/norway-data-api/blob/main/docs/maintenance.md).

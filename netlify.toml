@@ -1,7 +1,17 @@
 # Build settings (build command, publish directory) are still managed in the
-# Netlify UI. This file only tells Netlify where the site's serverless
-# functions live, for both Netlify's own builds and `netlify deploy` from the
-# GitHub Actions deploy job in .github/workflows/checks.yml.
+# Netlify UI. This file only holds the proxy rules below.
 
-[functions]
-  directory = "netlify/functions"
+# The Norway Data API lives in its own repo (cedar-ave/norway-data-api) and
+# deploys to its own Netlify site. These rules serve it, and its OpenAPI
+# spec, from this domain so the reference page at /api-reference and the
+# API share an origin and the API's public URLs stay on marlasowards.com.
+# Status 200 makes them rewrites (proxies), not redirects.
+[[redirects]]
+  from = "/api/norway-data/*"
+  to = "https://norway-data-api.netlify.app/api/norway-data/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/openapi/norway-data.yaml"
+  to = "https://norway-data-api.netlify.app/openapi/norway-data.yaml"
+  status = 200

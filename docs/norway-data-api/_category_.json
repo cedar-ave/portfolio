@@ -3,6 +3,6 @@
   "position": 16,
   "link": {
     "type": "generated-index",
-    "description": "The /api-reference sample: a live API on Netlify Functions, an OpenAPI spec rendered by Scalar, and a contract test that keeps them in sync."
+    "description": "How the /api-reference page is wired to the Norway Data API, which lives in its own repo."
   }
 }

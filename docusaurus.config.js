@@ -115,12 +115,13 @@ const config = {
         numberPrefixParser: false,
       }),
     ],
-    // Norway Data API sample: an interactive API reference rendered by
-    // Scalar from static/openapi/norway-data.yaml. Its code samples and
-    // "Test Request" calls hit a real Netlify Function at /api/norway-data -
-    // see netlify/functions/norway-data/. showNavLink is off because the
-    // plugin would append its link to the end of the navbar; the link is
-    // added by hand in themeConfig.navbar.items instead.
+    // Norway Data API reference, rendered by Scalar. The API and its spec
+    // live in their own repo (cedar-ave/norway-data-api) and Netlify site;
+    // netlify.toml proxies /api/norway-data/* and /openapi/norway-data.yaml
+    // to it. `npm start` doesn't apply those proxy rules, so in development
+    // the spec loads straight from the API's site (which allows CORS).
+    // showNavLink is off because the plugin would append its link to the end
+    // of the navbar; the link is added by hand in themeConfig.navbar.items.
     [
       '@scalar/docusaurus',
       {
@@ -129,7 +130,10 @@ const config = {
         // Pinned so a Scalar release can't change the page unannounced.
         cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1',
         configuration: {
-          url: '/openapi/norway-data.yaml',
+          url:
+            process.env.NODE_ENV === 'development'
+              ? 'https://norway-data-api.netlify.app/openapi/norway-data.yaml'
+              : '/openapi/norway-data.yaml',
         },
       },
     ],
