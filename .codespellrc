@@ -3,4 +3,4 @@
 # Add false positives to ignore-words-list (lowercase, comma-separated).
 [codespell]
 skip = ./.git,./node_modules,./build,./.docusaurus,./static,./_archive,./src/pages/portfolio/_archive,./Claude outputs,*.js,*.mjs,*.cjs,*.jsx,*.ts,*.tsx,*.css,*.json,*.svg
-ignore-words-list = categor,pre-selected,sme,wit
+ignore-words-list = categor,pre-selected,sme,wit,doubleclick
