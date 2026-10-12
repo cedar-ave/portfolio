@@ -44,12 +44,9 @@ The smoke test checks the headers, the `https` links (by sending `X-Forwarded-Pr
 
 ## The reference page
 
-`src/pages/api-reference.js` loads Scalar's script and points it at the spec. Its security settings:
+`src/pages/api-reference.js` loads Scalar's script (its URL and integrity hash are in `src/data/scalar.mjs`) and points it at the spec. Its security settings:
 
 ```js title="src/pages/api-reference.js"
-const SCALAR_SRC = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1/dist/browser/standalone.js';
-const SCALAR_INTEGRITY = 'sha384-kYDGzV91Jnn3TbHINV3nt54riK2uMJDfN5Al8dAkz4FssELTBWbD8rgw32sTKfOi';
-
 Scalar.createApiReference(container.current, {
   url: SPEC_URL,
   hideDarkModeToggle: true,
@@ -64,6 +61,7 @@ Scalar.createApiReference(container.current, {
 | --- | --- |
 | Pinned version and integrity hash | The browser refuses the script if the CDN's copy changes. The hash matches the file in Scalar's npm package. |
 | Loaded only on this page | The old plugin loaded the 4.5 MB script on every page of the site. |
+| Allowed as one exact file in the CSP | The Content Security Policy allows Scalar's exact URL, not all of `cdn.jsdelivr.net`, which serves every npm package. |
 | `proxyUrl: ''` | By default, every **Test Request** goes through `proxy.scalar.com`, so a third party sees visitors' requests and IP addresses. The API allows any origin, so the proxy isn't needed. Scalar skips the proxy when this is empty. |
 | `telemetry: false` | Scalar's usage telemetry is on by default. |
 | `agent: { disabled: true }` | Turns off Scalar's "Ask AI" agent, which sends the spec to Scalar's AI service. |

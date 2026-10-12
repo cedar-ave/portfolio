@@ -25,15 +25,21 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { SCALAR_SOURCE_MAP, SCALAR_SRC } from '../src/data/scalar.mjs';
 
 const ENFORCE_FULL_POLICY = true;
 
 // Where the site loads things from. Keep in sync with what the site uses:
-// Google Analytics and Google Fonts on every page, Scalar from jsDelivr and
-// the Norway Data API on /api-reference, and the Iconify icon API, which
+// Google Analytics and Google Fonts on every page, Scalar and the Norway
+// Data API on /api-reference, and the Iconify icon API, which
 // @iconify/react calls at runtime for icons that aren't bundled.
+//
+// Scalar is allowed as one exact file, not all of cdn.jsdelivr.net: the CDN
+// serves every npm package, so allowing the whole host would let an injected
+// script tag load any of them. Its source map is allowed for connections,
+// because browsers fetch it when developer tools are open.
 const SOURCES = {
-  'script-src': ["'self'", 'https://www.googletagmanager.com', 'https://cdn.jsdelivr.net'],
+  'script-src': ["'self'", 'https://www.googletagmanager.com', SCALAR_SRC],
   // React and Scalar set inline styles, which can't be hashed.
   'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
   'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
@@ -41,6 +47,7 @@ const SOURCES = {
   'connect-src': [
     "'self'",
     'https://api.marlasowards.com',
+    SCALAR_SOURCE_MAP,
     'https://www.googletagmanager.com',
     'https://*.google-analytics.com',
     'https://*.analytics.google.com',

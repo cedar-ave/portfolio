@@ -11,13 +11,10 @@
 import React, { useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
 import '../css/scalar-api-reference.css';
+import { SCALAR_INTEGRITY, SCALAR_SRC } from '../data/scalar.mjs';
 
 const SPEC_URL = 'https://api.marlasowards.com/openapi/norway-data.yaml';
 
-// To upgrade Scalar, change both: the version in the URL, and the hash of
-// that exact file (see the docs page above for the command).
-const SCALAR_SRC = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1/dist/browser/standalone.js';
-const SCALAR_INTEGRITY = 'sha384-kYDGzV91Jnn3TbHINV3nt54riK2uMJDfN5Al8dAkz4FssELTBWbD8rgw32sTKfOi';
 
 // Loads the script once per visit, however many times the page mounts.
 let scalarLoaded;
