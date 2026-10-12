@@ -96,6 +96,8 @@ On `/api-reference`, the browser console shows:
 Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src ..."
 ```
 
+Chrome's **Issues** panel reports the same thing as *Content Security Policy of your site blocks the use of 'eval' in JavaScript*, with the source location `util.js:157`. That's `zod/v4/core/util.js` in Scalar's bundle, which the panel can show because the source map is allowed.
+
 It's harmless. Scalar bundles the Zod validation library, which checks once at startup whether `eval` is allowed (`try { Function('') } catch {}`), so it can compile its validators for speed when it is. Under this policy the check fails, Zod uses its normal validation path, and the page works the same. Don't add `'unsafe-eval'` to silence it: blocking `eval` is part of what the policy is for.
 
 Any other `Refused to...` message is a real problem: something the site needs is blocked.
