@@ -1,17 +1,16 @@
 # Build settings (build command, publish directory) are still managed in the
-# Netlify UI. This file only holds the proxy rules below.
+# Netlify UI. This file only holds the redirects below.
 
-# The Norway Data API lives in its own repo (cedar-ave/norway-data-api) and
-# deploys to its own Netlify site. These rules serve it, and its OpenAPI
-# spec, from this domain so the reference page at /api-reference and the
-# API share an origin and the API's public URLs stay on marlasowards.com.
-# Status 200 makes them rewrites (proxies), not redirects.
+# The Norway Data API (cedar-ave/norway-data-api) used to be served from this
+# domain through proxy rules. It now has its own domain, api.marlasowards.com,
+# so these permanently redirect its old URLs there. The reference page,
+# src/pages/api-reference.js, stays on this site.
 [[redirects]]
   from = "/api/norway-data/*"
-  to = "https://norway-data-api.netlify.app/api/norway-data/:splat"
-  status = 200
+  to = "https://api.marlasowards.com/norway-data/:splat"
+  status = 301
 
 [[redirects]]
   from = "/openapi/norway-data.yaml"
-  to = "https://norway-data-api.netlify.app/openapi/norway-data.yaml"
-  status = 200
+  to = "https://api.marlasowards.com/openapi/norway-data.yaml"
+  status = 301

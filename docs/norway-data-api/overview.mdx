@@ -6,104 +6,108 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # The API reference page
 
-The **Norway Data API** navbar link opens `/api-reference`, an interactive API reference rendered by [Scalar](https://scalar.com/products/api-references/integrations/docusaurus). The API itself, its OpenAPI spec, its contract test, and its docs live in their own repo, [cedar-ave/norway-data-api](https://github.com/cedar-ave/norway-data-api), which deploys to its own Netlify site. This page covers only how this site connects to it.
+The **Norway Data API** navbar link opens `/api-reference`, an interactive API reference rendered by [Scalar](https://scalar.com). The API itself, its OpenAPI spec, its tests, and its docs live in their own repo, [cedar-ave/norway-data-api](https://github.com/cedar-ave/norway-data-api), and deploy to their own Netlify site at `api.marlasowards.com`. This page covers only how this site connects to it.
 
 <QuickReference>
 
-- `@scalar/docusaurus` adds the `/api-reference` route and renders the spec. Its script version is pinned in `docusaurus.config.js`.
-- This site's `netlify.toml` proxies `/api/norway-data/*` and `/openapi/norway-data.yaml` to `norway-data-api.netlify.app`, so the API and its spec are served from `www.marlasowards.com`.
-- `npm start` doesn't apply Netlify proxy rules, so in development the page loads the spec straight from the API's site.
+- `src/pages/api-reference.js` loads Scalar's script from jsDelivr, pinned to one version and checked with a [subresource integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash, and points it at the spec on `api.marlasowards.com`.
+- Scalar's script loads only on this page. `src/css/scalar-api-reference.css` matches its look to the site's theme.
+- `netlify.toml` permanently redirects the API's old URLs on this domain to `api.marlasowards.com`.
 - To change the API, its data, or the reference page's text, work in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api). The reference page picks up the change as soon as that site deploys, with no rebuild here.
 
 </QuickReference>
 
-## How a request flows
+## How it fits together
 
 ```text
-Browser on www.marlasowards.com/api-reference   (this repo)
-   │  loads the spec   → /openapi/norway-data.yaml
-   │  Test Request     → /api/norway-data/v1/...
+Browser on www.marlasowards.com/api-reference        (this repo)
+   │  loads Scalar      → cdn.jsdelivr.net (pinned version + integrity hash)
+   │  loads the spec    → api.marlasowards.com/openapi/norway-data.yaml
+   │  Test Request      → api.marlasowards.com/norway-data/v1/...
    ▼
-www.marlasowards.com: proxy rules in netlify.toml   (this repo)
-   ▼
-norway-data-api.netlify.app                      (norway-data-api repo)
+api.marlasowards.com                                  (norway-data-api repo)
    ├── public/openapi/norway-data.yaml
-   └── Netlify Function: netlify/functions/norway-data/
+   └── Netlify Functions: netlify/functions/
 ```
 
-## The proxy rules
+The page and the API are on different domains, so the browser makes cross-origin requests. The API allows any origin, for both the spec and the API responses, so no extra setup is needed. Because the spec URL is absolute, the page works the same under `npm start`, in deploy previews, and in production.
+
+## The page
+
+`src/pages/api-reference.js` is a regular Docusaurus page. When it mounts, it adds Scalar's script to the page once, then calls `Scalar.createApiReference()` with the spec URL:
+
+```js title="src/pages/api-reference.js"
+const SPEC_URL = 'https://api.marlasowards.com/openapi/norway-data.yaml';
+
+const SCALAR_SRC = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1/dist/browser/standalone.js';
+const SCALAR_INTEGRITY = 'sha384-kYDGzV91Jnn3TbHINV3nt54riK2uMJDfN5Al8dAkz4FssELTBWbD8rgw32sTKfOi';
+```
+
+- **The version is pinned** in the URL, so a Scalar release can't change the page without a change in this repo.
+- **The integrity hash** makes the browser refuse the script if the CDN ever serves different bytes for that URL. The hash matches the file in Scalar's npm package. If the script fails to load, the page shows a message instead of an empty page.
+- `hideDarkModeToggle: true` hides Scalar's own toggle, so the page follows the site's light or dark mode.
+
+### Why not the @scalar/docusaurus plugin
+
+The site used the `@scalar/docusaurus` plugin at first. It was replaced because the plugin:
+
+- Adds Scalar's 4.5 MB script to **every** page of the site, not only `/api-reference`.
+- Has no way to set an integrity hash, so a compromised CDN could run code on every page.
+
+The plugin's only other job was the theme stylesheet, which now lives in `src/css/scalar-api-reference.css` (MIT-licensed, with attribution in the file).
+
+The navbar link is a regular item in `themeConfig.navbar.items`. See [Navbar](../site-config/navbar).
+
+## Redirects for the old URLs
+
+The API used to be served from this domain through proxy rules. It moved to `api.marlasowards.com` because proxied requests skipped the API's rate limit. The old URLs still work through permanent redirects:
 
 ```toml title="netlify.toml"
 [[redirects]]
   from = "/api/norway-data/*"
-  to = "https://norway-data-api.netlify.app/api/norway-data/:splat"
-  status = 200
+  to = "https://api.marlasowards.com/norway-data/:splat"
+  status = 301
 
 [[redirects]]
   from = "/openapi/norway-data.yaml"
-  to = "https://norway-data-api.netlify.app/openapi/norway-data.yaml"
-  status = 200
+  to = "https://api.marlasowards.com/openapi/norway-data.yaml"
+  status = 301
 ```
 
-A redirect with `status = 200` is a rewrite. The visitor's browser only ever talks to `www.marlasowards.com`, so:
-
-- The API's public URLs and published code samples use this site's domain, not `netlify.app`.
-- The reference page and the API share an origin, so **Test Request** calls never run into CORS restrictions.
-
-The rules apply to deploy previews too.
-
-## The plugin
-
-```js title="docusaurus.config.js"
-[
-  '@scalar/docusaurus',
-  {
-    route: '/api-reference',
-    showNavLink: false,
-    // Pinned so a Scalar release can't change the page unannounced.
-    cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1',
-    configuration: {
-      url:
-        process.env.NODE_ENV === 'development'
-          ? 'https://norway-data-api.netlify.app/openapi/norway-data.yaml'
-          : '/openapi/norway-data.yaml',
-    },
-  },
-],
-```
-
-- **`route`** is the page's URL.
-- **`showNavLink: false`** stops the plugin from adding its own navbar link, which it always puts at the end of the left side. The link is added by hand in `themeConfig.navbar.items` instead, before Blog. See [Navbar](../site-config/navbar).
-- **`cdn`** pins Scalar's script version. By default the plugin loads the latest version, which could change the page with no change in this repo.
-- **`configuration.url`** is where the page loads the spec from. In production it's the proxied path. In development it's the API's own site, because `npm start` doesn't apply the proxy rules. The API's site allows cross-origin requests for `/openapi/*` so this works.
-
-:::note
-
-The plugin adds Scalar's `<script>` tag to every page on the site, not only `/api-reference`. That's how the plugin is built. If page weight on other pages ever matters, replace the plugin with a custom page that loads Scalar only on its own route.
-
-:::
-
-The plugin hides Scalar's dark mode toggle, and the page follows the site's light or dark mode.
-
-## Local development
-
-With `npm start`, the reference page loads the spec from the live API site, and the page's code samples and **Test Request** calls go to the production API at `www.marlasowards.com` (the server URL in the spec). Nothing needs to run locally.
-
-To work on the API itself, clone the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api) and see its README.
+The API repo's hourly smoke test checks these redirects, so a change here that breaks them shows up there.
 
 ## Upgrade Scalar
 
-Change the version in the `cdn` URL, then check the reference page: the sidebar sections, the **Test Request** button, and the code samples. The spec's introduction mentions the **Test Request** label by name, so if a new version renames it, update the spec in the API repo.
+1. Pick the new version, and get the integrity hash of its file. From a shell with `curl` and `openssl`:
+
+   ```bash
+   V=1.73.1   # the new version
+   curl -sL "https://cdn.jsdelivr.net/npm/@scalar/api-reference@$V/dist/browser/standalone.js" \
+     | openssl dgst -sha384 -binary | openssl base64 -A
+   ```
+
+2. In `src/pages/api-reference.js`, update the version in `SCALAR_SRC` and set `SCALAR_INTEGRITY` to `sha384-` followed by the hash.
+3. Run `npm start` and check the reference page: the sidebar sections, the **Test Request** button, and the code samples.
+4. If the theme looks off, compare `src/css/scalar-api-reference.css` with the `dist/theme.css` file in the matching `@scalar/docusaurus` release.
+
+The spec's introduction mentions the **Test Request** label by name, so if a new version renames it, update the spec in the API repo.
 
 ## Troubleshooting
 
-### The reference page is empty
+### The reference page says the viewer failed to load
 
-The page couldn't load the spec. Check each step of the path:
+The browser couldn't load Scalar's script, or refused it because it didn't match the integrity hash. Check the browser console. An integrity error after an upgrade means `SCALAR_INTEGRITY` doesn't match the file in `SCALAR_SRC`: recompute it with the command above.
 
-1. `curl -I https://norway-data-api.netlify.app/openapi/norway-data.yaml` should return `200`. If it doesn't, the API site's latest deploy failed.
-2. `curl -I https://www.marlasowards.com/openapi/norway-data.yaml` should also return `200`. If step 1 works but this doesn't, check the proxy rules in `netlify.toml`.
+### The reference page loads but shows no API
+
+The page couldn't load the spec. Run `curl -I https://api.marlasowards.com/openapi/norway-data.yaml`. It should return `200` with `Access-Control-Allow-Origin: *`. If it doesn't, check the API site's latest deploy.
 
 ### Test Request shows "Failed to fetch"
 
-The request didn't reach the function. Run the same checks with `/api/norway-data/v1/facts/10` in place of the spec path. For problems inside the API, see the troubleshooting section of the [API repo's maintenance docs](https://github.com/cedar-ave/norway-data-api/blob/main/docs/maintenance.md).
+The request didn't reach the API, or the response was missing its CORS headers. Run the API repo's smoke test against production:
+
+```bash
+npm run smoke -- https://api.marlasowards.com --redirects
+```
+
+For problems inside the API, see the troubleshooting section of the [API repo's maintenance docs](https://github.com/cedar-ave/norway-data-api/blob/main/docs/maintenance.md).

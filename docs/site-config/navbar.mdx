@@ -9,7 +9,7 @@ import QuickReference from '@site/src/components/QuickReference';
 <QuickReference>
 
 - Edit items in `docusaurus.config.js` under `themeConfig.navbar.items`.
-- **Norway Data API** links to `/api-reference`, a route added by the `@scalar/docusaurus` plugin. The plugin's own navbar link is turned off so this hand-added one can sit before Blog. See [The API reference page](../norway-data-api/overview).
+- **Norway Data API** links to `/api-reference`, a page in `src/pages/api-reference.js` that renders the API's reference with Scalar. See [The API reference page](../norway-data-api/overview).
 - Every other item is a flat link to a standalone page in `src/pages/` (About/Portfolio/Resume) except "How I built this site", which uses `type: 'docSidebar'` to link straight to the first doc in `tutorialSidebar` — it follows `sidebars.js` automatically if that changes.
 - Logo/title spacing (`.navbar__logo`, `.navbar__brand`) and nav link font weight are set in `src/css/custom.css` — see [Global CSS overrides](global-css).
 - There's CSS in `custom.css` for a multi-level dropdown nav item, but the navbar currently has no nested dropdowns — see the dormant-dropdown note on [Global CSS overrides](global-css).

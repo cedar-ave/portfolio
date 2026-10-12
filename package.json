@@ -25,7 +25,6 @@
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@iconify/react": "^6.0.2",
     "@mdx-js/react": "^3.0.0",
-    "@scalar/docusaurus": "^0.8.49",
     "clsx": "^2.0.0",
     "docusaurus-plugin-image-zoom": "^3.0.1",
     "docusaurus-theme-zoom-image": "^0.1.1",
