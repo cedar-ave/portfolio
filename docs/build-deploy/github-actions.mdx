@@ -6,13 +6,14 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # GitHub Actions checks
 
-The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github/workflows/checks.yml) lints the site's prose on every push to `main`, on every pull request, and when run by hand from the Actions tab. It runs three checks as separate jobs, so one failing doesn't hide the others.
+The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github/workflows/checks.yml) lints the site's prose and checks the Norway Facts API on every push to `main`, on every pull request, and when run by hand from the Actions tab. It runs four checks as separate jobs, so one failing doesn't hide the others.
 
 <QuickReference>
 
 - **codespell**: spelling. Settings are in `.codespellrc`. To allow a word, add it to `ignore-words-list`.
 - **lychee**: links to other sites. Settings are in `lychee.toml`. To skip a link, add a regex for it to `exclude`.
 - **Vale**: style defects such as repeated words and leftover merge conflict markers. Settings are in `.vale.ini`, and the custom rules are in `.vale/styles/Portfolio`. Only error-level alerts fail the run.
+- **API**: lints the Norway Facts API's OpenAPI spec with Redocly and runs its contract test. See [The contract test](../norway-facts-api/contract-test).
 - Netlify builds on every push no matter what these checks report. A failing check doesn't block publishing unless you turn on the optional deploy job.
 
 </QuickReference>
@@ -24,6 +25,7 @@ The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github
 | codespell | Everything in the repo except code, generated folders, and archives (see `skip` in `.codespellrc`) |
 | lychee | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src` |
 | Vale | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src/pages` |
+| API | `static/openapi/norway-facts.yaml` and `netlify/functions/norway-facts/` |
 
 ## Spelling: codespell
 
@@ -31,7 +33,7 @@ codespell looks for common misspellings. It doesn't use a dictionary, so it does
 
 ```ini title=".codespellrc"
 [codespell]
-skip = ./.git,./node_modules,./build,./.docusaurus,./static,./_archive,./src/pages/portfolio/_archive,./Claude outputs,*.js,*.jsx,*.ts,*.tsx,*.css,*.json,*.svg
+skip = ./.git,./node_modules,./build,./.docusaurus,./static,./_archive,./src/pages/portfolio/_archive,./Claude outputs,*.js,*.mjs,*.cjs,*.jsx,*.ts,*.tsx,*.css,*.json,*.svg
 ignore-words-list = categor,pre-selected,sme,wit
 ```
 
@@ -156,7 +158,11 @@ Each tool reads the same config file locally as it does in the workflow, so you 
 codespell
 lychee --no-progress README.md 'docs/**/*.md*' 'blog/**/*.md*' 'samples/**/*.md*' 'src/**/*.md*'
 vale docs blog samples src/pages README.md
+npm run lint:api
+npm run test:api
 ```
+
+The API checks need no extra install beyond `npm install`.
 
 ## Making checks block publishing
 
@@ -164,11 +170,11 @@ Netlify builds and publishes on every push, whatever the checks report. There ar
 
 ### Option 1: Require the checks on pull requests
 
-Protect the `main` branch in the repo settings so that changes go through pull requests and the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks must pass before a pull request can be merged. Netlify still builds on every push, but only changes that passed reach `main`.
+Protect the `main` branch in the repo settings so that changes go through pull requests and the `Spelling (codespell)`, `Links (lychee)`, `Style (Vale)`, and `API (spec lint + contract test)` checks must pass before a pull request can be merged. Netlify still builds on every push, but only changes that passed reach `main`.
 
 ### Option 2: Deploy from the workflow
 
-The workflow has a `deploy` job that builds the site and publishes it to Netlify, but only after all three checks pass. It's off until you turn it on. To turn it on:
+The workflow has a `deploy` job that builds the site and publishes it to Netlify, but only after all four checks pass. It's off until you turn it on. To turn it on:
 
 1. Stop builds in Netlify (**Site configuration** > **Build & deploy** > **Continuous deployment** > **Stop builds**) so that pushes don't also deploy from Netlify.
 2. Add the `NETLIFY_AUTH_TOKEN` and `NETLIFY_SITE_ID` repository secrets.

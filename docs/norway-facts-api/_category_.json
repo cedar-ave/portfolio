@@ -1,0 +1,8 @@
+{
+  "label": "Norway Facts API",
+  "position": 16,
+  "link": {
+    "type": "generated-index",
+    "description": "The /api-reference sample: a live API on Netlify Functions, an OpenAPI spec rendered by Scalar, and a contract test that keeps them in sync."
+  }
+}
