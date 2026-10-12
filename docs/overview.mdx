@@ -32,3 +32,5 @@ This section documents everything that has been customized beyond a stock Docusa
 | `{@include: path}` content reuse across docs, blog, samples, and pages | `plugins/remark-includes.mjs` | [Content includes across sections](site-config/content-includes) |
 | Site search (local index, no external service) | `docusaurus.config.js` | [Search](site-config/search) |
 | Norway Data API reference page (Scalar, loaded only on that page; redirects for the API's old URLs) | `src/pages/api-reference.js`, `src/css/scalar-api-reference.css`, `netlify.toml` | [The API reference page](norway-data-api/overview) |
+| Security headers and Content Security Policy (with inline script hashes, generated each build) | `netlify.toml`, `plugins/csp-headers-plugin.mjs` | [Security headers](site-config/security-headers) |
+| Repo and CI hardening (rulesets, Dependabot, CodeQL, SHA-pinned Actions, no install scripts) | GitHub settings, `.github/`, `netlify.toml`, `tools/netlify-cli/` | [Repository and CI security](build-deploy/repository-security) |

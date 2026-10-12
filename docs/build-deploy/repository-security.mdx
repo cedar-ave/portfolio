@@ -1,0 +1,56 @@
+---
+sidebar_position: 16
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Repository and CI security
+
+How this repo, its GitHub Actions workflows, and its Netlify build are protected against tampering. The same setup is used in the [Norway Data API repo](https://github.com/cedar-ave/norway-data-api), which documents its own in `docs/security.md`.
+
+<QuickReference>
+
+- GitHub settings: private vulnerability reporting, Dependabot alerts and security updates, secret scanning with push protection, and CodeQL code scanning are on. A ruleset blocks force-pushes and deleting `main`.
+- Every GitHub Action is pinned to a commit SHA, checkouts don't keep the GitHub token, and workflows only get read access.
+- Netlify installs dependencies with `--ignore-scripts`, so no package can run code just by being installed.
+- Tools that CI downloads are pinned to exact versions. The Netlify CLI, which the optional deploy job runs with the Netlify token, installs from its own lockfile.
+- Dependabot opens weekly update pull requests for npm packages and GitHub Actions.
+
+</QuickReference>
+
+## GitHub settings
+
+These live in the repo's settings, not in files. They were turned on with the GitHub CLI, for example `gh api -X PUT repos/cedar-ave/portfolio/private-vulnerability-reporting`.
+
+| Setting | What it does |
+| --- | --- |
+| Private vulnerability reporting | Lets someone report a security problem privately, from the **Security** tab, instead of in a public issue. |
+| Dependabot alerts | Flags dependencies with known vulnerabilities. |
+| Dependabot security updates | Opens a pull request as soon as a fix for a flagged dependency is available. |
+| Secret scanning and push protection | Detects committed credentials, and blocks pushes that contain them. |
+| CodeQL (default setup) | Scans the JavaScript on every push and pull request for security bugs. Results are in **Security** > **Code scanning**. |
+| `Protect main` ruleset | Blocks force-pushes to `main` and deleting it. Direct pushes are still allowed. |
+
+The ruleset doesn't require pull requests or passing checks, so pushing straight to `main` still works. To make checks block publishing, see [Making checks block publishing](github-actions#making-checks-block-publishing).
+
+## Workflows
+
+- **Actions pinned to commit SHAs.** A tag such as `@v7` can be moved to different code; a SHA can't. Each `uses:` line has the version as a comment, such as `# v7.0.1`, and Dependabot updates the SHA and the comment together.
+- **`persist-credentials: false`** on every checkout, so the GitHub token isn't left in the working copy for later steps to read.
+- **`permissions: contents: read`** at the top of the workflow, so jobs can't write to the repo.
+- **Exact tool versions.** `mdx2vast` is installed at an exact version with `--ignore-scripts`, and Vale's version is pinned by `VALE_VERSION`.
+- **The deploy job's Netlify CLI** comes from `tools/netlify-cli/package-lock.json`, installed with `npm ci --ignore-scripts`. That job is the only one with a secret (the Netlify token), so it's the one where an unverified download would matter most. `tools/*/node_modules` is in `.gitignore`.
+
+## Netlify build
+
+`netlify.toml` sets `NPM_FLAGS = "--ignore-scripts"`, so Netlify's `npm` install doesn't run any package's install scripts. The site doesn't need them: a clean `npm ci --ignore-scripts` followed by `npm run build` produces the same site. If a future dependency does need its install script, the build fails clearly rather than silently running code.
+
+## Dependabot
+
+`.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions. Security updates (above) arrive as soon as an advisory affects a dependency, separately from the weekly schedule.
+
+Merge Dependabot's pull requests once their checks pass. For an Actions update, the pull request changes both the SHA and the version comment.
+
+## Account security
+
+The settings above don't help if the GitHub or Netlify account itself is taken over. Use two-factor authentication on both, preferably with a security key or passkey, and review who has access to the Netlify team.

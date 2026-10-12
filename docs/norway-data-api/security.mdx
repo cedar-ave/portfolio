@@ -1,0 +1,107 @@
+---
+sidebar_position: 3
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Security
+
+How the Norway Data API and its reference page are protected, and the settings that have to be made by hand. The API repo has the full threat model and every control in [docs/security.md](https://github.com/cedar-ave/norway-data-api/blob/main/docs/security.md). This page summarizes it and covers this site's side.
+
+<QuickReference>
+
+- **The API** (in its own repo): `https`-only links, a cache key limited to documented parameters, security headers on every response, rate limits on both functions, minimal logging, and a locked build. The contract and smoke tests check all of it.
+- **The reference page** (this repo): Scalar is pinned with an integrity hash, loads only on `/api-reference`, and has its proxy, telemetry, AI agent, and remote fonts turned off.
+- **This site:** security headers and a Content Security Policy on every page, and hardened CI. See [Security headers](../site-config/security-headers) and [Repository and CI security](../build-deploy/repository-security).
+- **By hand:** a few Netlify and DNS settings, listed under [Settings to make by hand](#settings-to-make-by-hand).
+
+</QuickReference>
+
+## What's being protected
+
+The API is public and read-only, with no accounts or user data, so the risks aren't data theft. They're:
+
+- **The Netlify bill:** floods of requests that run functions.
+- **Response integrity:** tampered responses served to other clients from the cache.
+- **Visitors' browsers:** the reference page runs a large third-party script and renders content from another domain.
+- **The deployed code:** a compromised dependency or CI step changing what goes live.
+- **The accounts and domain:** GitHub, Netlify, and DNS, which control everything else.
+
+## The API
+
+| Control | What it stops |
+| --- | --- |
+| Links always use `https` (except on `localhost`), never the request's scheme | Cache poisoning through the `X-Forwarded-Proto` header |
+| `Netlify-Vary: query=category\|place\|limit\|offset` | Ignored parameters creating cache entries or bypassing the cache |
+| Rate limit on the API function (60 per minute per IP), rewritten to a problem details `429` | Floods from one IP address |
+| Separate rate limit on the `429` function | Calling `/_rate-limited` directly to run a function without limit |
+| CSP `default-src 'none'; frame-ancestors 'none'`, `nosniff`, `Referrer-Policy`, CORP, HSTS on every response and the spec | Responses used as a page, framed, or sniffed as script |
+| Strict validation, clipped echoes, generic `500`s | Malformed input, oversized responses, leaked internals |
+| Logs with only documented parameters, no IP addresses | Personal data or tokens stored from URLs |
+| Lockfile installs with `--ignore-scripts`, exact build tools, SHA-pinned Actions, a deploy gate | Tampered dependencies or CI steps reaching production |
+
+The smoke test checks the headers, the `https` links (by sending `X-Forwarded-Proto: http` to a unique URL), and both rate limits against production after every push.
+
+## The reference page
+
+`src/pages/api-reference.js` loads Scalar's script and points it at the spec. Its security settings:
+
+```js title="src/pages/api-reference.js"
+const SCALAR_SRC = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.73.1/dist/browser/standalone.js';
+const SCALAR_INTEGRITY = 'sha384-kYDGzV91Jnn3TbHINV3nt54riK2uMJDfN5Al8dAkz4FssELTBWbD8rgw32sTKfOi';
+
+Scalar.createApiReference(container.current, {
+  url: SPEC_URL,
+  hideDarkModeToggle: true,
+  proxyUrl: '',
+  telemetry: false,
+  agent: { disabled: true },
+  withDefaultFonts: false,
+});
+```
+
+| Setting | Why |
+| --- | --- |
+| Pinned version and integrity hash | The browser refuses the script if the CDN's copy changes. The hash matches the file in Scalar's npm package. |
+| Loaded only on this page | The old plugin loaded the 4.5 MB script on every page of the site. |
+| `proxyUrl: ''` | By default, every **Test Request** goes through `proxy.scalar.com`, so a third party sees visitors' requests and IP addresses. The API allows any origin, so the proxy isn't needed. Scalar skips the proxy when this is empty. |
+| `telemetry: false` | Scalar's usage telemetry is on by default. |
+| `agent: { disabled: true }` | Turns off Scalar's "Ask AI" agent, which sends the spec to Scalar's AI service. |
+| `withDefaultFonts: false` | Stops loading fonts from `fonts.scalar.com`. The site's own fonts are used. |
+
+These options were found by reading Scalar's bundled code, since its defaults aren't all obvious from its docs. When upgrading Scalar, check that the options still exist (see [Upgrade Scalar](overview#upgrade-scalar)).
+
+## Accepted risks
+
+- **`npm audit` alerts in the API repo** (4 high, all the same `braces` issue in Netlify's bundler). The bundler only processes the repo's own fixed patterns at build time, and npm's only fix is a seven-major-version downgrade.
+- **No global rate limit.** A global cap would let one attacker block everyone. Usage alerts and caching cover cost instead.
+- **`'unsafe-inline'` styles in this site's CSP.** React and Scalar set inline styles, which can't be hashed. Scripts, the bigger risk, are limited to hashes and named domains.
+- **Google Analytics** runs on every page, including `/api-reference`.
+
+## Settings to make by hand
+
+These can't be set from the repos. Check them off once, and again after any change to the accounts or domain.
+
+**Netlify**
+
+- [ ] **Two-factor authentication** on every account with access to the Netlify team, preferably with a security key or passkey.
+- [ ] **Usage notifications** for function invocations and bandwidth, in the team's billing and usage settings, so a flood on the `norway-data-api` site shows up before the bill.
+- [ ] **Deploy previews:** on both sites, in the deploy preview settings under continuous deployment, require approval before building pull requests from outside contributors, so strangers' code doesn't run in the build or get published.
+
+**DNS** (Netlify DNS, `marlasowards.com`)
+
+- [ ] A **CAA record**: name `marlasowards.com`, flag `0`, tag `issue`, value `letsencrypt.org`. It lets only Let's Encrypt, which Netlify uses, issue certificates for the domain.
+- [ ] **DNSSEC:** check whether Netlify DNS offers it for this zone, and turn it on if so.
+- [ ] If a Netlify site that uses a subdomain is ever deleted, delete its DNS record too, so nobody else can claim the subdomain.
+
+**GitHub**
+
+- [ ] **Two-factor authentication** on the `cedar-ave` account, preferably with a security key or passkey.
+
+**This site's CSP**
+
+- [ ] Check the site for report-only CSP violations, then enforce the full policy. See [Turning on the full policy](../site-config/security-headers#turning-on-the-full-policy).
+
+## Reporting a problem
+
+Both repos have private vulnerability reporting turned on: use **Security** > **Report a vulnerability** in [the API repo](https://github.com/cedar-ave/norway-data-api/security) or [this one](https://github.com/cedar-ave/portfolio/security).

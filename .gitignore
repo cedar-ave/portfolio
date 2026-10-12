@@ -21,3 +21,5 @@ yarn-error.log*
 
 _archive/
 Claude outputs
+# Netlify CLI for the deploy job (installed in CI only)
+/tools/*/node_modules

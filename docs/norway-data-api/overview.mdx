@@ -10,10 +10,11 @@ The **Norway Data API** navbar link opens `/api-reference`, an interactive API r
 
 <QuickReference>
 
-- `src/pages/api-reference.js` loads Scalar's script from jsDelivr, pinned to one version and checked with a [subresource integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash, and points it at the spec on `api.marlasowards.com`.
+- `src/pages/api-reference.js` loads Scalar's script from jsDelivr, pinned to one version and checked with a [subresource integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash, and points it at the spec on `api.marlasowards.com`. Scalar's proxy, telemetry, AI agent, and remote fonts are turned off (see [Security](security#the-reference-page)).
 - Scalar's script loads only on this page. `src/css/scalar-api-reference.css` matches its look to the site's theme.
 - `netlify.toml` permanently redirects the API's old URLs on this domain to `api.marlasowards.com`.
 - To change the API, its data, or the reference page's text, work in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api). The reference page picks up the change as soon as that site deploys, with no rebuild here.
+- For how the API got here, see [How the API was built](history). For security, see [Security](security).
 
 </QuickReference>
 
@@ -46,6 +47,7 @@ const SCALAR_INTEGRITY = 'sha384-kYDGzV91Jnn3TbHINV3nt54riK2uMJDfN5Al8dAkz4FssEL
 - **The version is pinned** in the URL, so a Scalar release can't change the page without a change in this repo.
 - **The integrity hash** makes the browser refuse the script if the CDN ever serves different bytes for that URL. The hash matches the file in Scalar's npm package. If the script fails to load, the page shows a message instead of an empty page.
 - `hideDarkModeToggle: true` hides Scalar's own toggle, so the page follows the site's light or dark mode.
+- `proxyUrl: ''`, `telemetry: false`, `agent: { disabled: true }`, and `withDefaultFonts: false` stop Scalar from contacting its own servers. See [Security](security#the-reference-page).
 
 ### Why not the @scalar/docusaurus plugin
 
@@ -88,7 +90,8 @@ The API repo's hourly smoke test checks these redirects, so a change here that b
 
 2. In `src/pages/api-reference.js`, update the version in `SCALAR_SRC` and set `SCALAR_INTEGRITY` to `sha384-` followed by the hash.
 3. Run `npm start` and check the reference page: the sidebar sections, the **Test Request** button, and the code samples.
-4. If the theme looks off, compare `src/css/scalar-api-reference.css` with the `dist/theme.css` file in the matching `@scalar/docusaurus` release.
+4. Check that the security options in `createApiReference()` still exist in the new version (search its bundle for `proxyUrl`, `telemetry`, `agent`, and `withDefaultFonts`), and that **Test Request** calls go straight to `api.marlasowards.com`, not `proxy.scalar.com`, in the browser's network tab.
+5. If the theme looks off, compare `src/css/scalar-api-reference.css` with the `dist/theme.css` file in the matching `@scalar/docusaurus` release.
 
 The spec's introduction mentions the **Test Request** label by name, so if a new version renames it, update the spec in the API repo.
 

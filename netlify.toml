@@ -1,5 +1,10 @@
 # Build settings (build command, publish directory) are still managed in the
-# Netlify UI. This file only holds the redirects below.
+# Netlify UI. This file holds the build environment, redirects, and headers.
+
+# Install dependencies with install scripts off, so no package can run code
+# just by being installed. The site builds without them.
+[build.environment]
+  NPM_FLAGS = "--ignore-scripts"
 
 # The Norway Data API (cedar-ave/norway-data-api) used to be served from this
 # domain through proxy rules. It now has its own domain, api.marlasowards.com,
@@ -14,3 +19,15 @@
   from = "/openapi/norway-data.yaml"
   to = "https://api.marlasowards.com/openapi/norway-data.yaml"
   status = 301
+
+# Security headers for every page. The Content Security Policy is separate:
+# it needs hashes of the site's inline scripts, so a build plugin writes it
+# into build/_headers (see plugins/csp-headers-plugin.mjs).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"

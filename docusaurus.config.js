@@ -11,6 +11,7 @@ import remarkImageSize from './plugins/remark-image-size.mjs';
 import remarkPanelToc from './plugins/remark-panel-toc.mjs';
 import remarkIncludesPlugin from './plugins/remark-includes.mjs';
 import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
+import cspHeadersPlugin from './plugins/csp-headers-plugin.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -88,6 +89,9 @@ const config = {
 
   plugins: [
     blogSeriesPlugin,
+    // Writes the Content Security Policy, with hashes of the site's inline
+    // scripts, into build/_headers. See plugins/csp-headers-plugin.mjs.
+    cspHeadersPlugin,
     // A second, standalone docs instance for the "Product user guide" demo
     // linked from /portfolio. It's deliberately not in the navbar - it's a
     // sample guide, not a real section of this site. See

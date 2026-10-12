@@ -15,6 +15,7 @@ The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github
 - **Vale**: style defects such as repeated words and leftover merge conflict markers. Settings are in `.vale.ini`, and the custom rules are in `.vale/styles/Portfolio`. Only error-level alerts fail the run.
 - The Norway Data API has its own checks in its own repo. See [The API reference page](../norway-data-api/overview).
 - Netlify builds on every push no matter what these checks report. A failing check doesn't block publishing unless you turn on the optional deploy job.
+- Every action is pinned to a commit SHA, and checkouts don't keep the GitHub token. See [Repository and CI security](repository-security).
 
 </QuickReference>
 
@@ -103,7 +104,7 @@ Add a path to `exclude_path`.
 
 ## Style: Vale
 
-Vale checks for style defects. The job installs Vale (the version is pinned by `VALE_VERSION` at the top of the workflow) and [`mdx2vast`](https://www.npmjs.com/package/mdx2vast), which Vale needs to parse `.mdx` files.
+Vale checks for style defects. The job installs Vale (the version is pinned by `VALE_VERSION` at the top of the workflow) and [`mdx2vast`](https://www.npmjs.com/package/mdx2vast), which Vale needs to parse `.mdx` files. `mdx2vast` is pinned to an exact version and installed with `--ignore-scripts`.
 
 ```ini title=".vale.ini"
 StylesPath = .vale/styles
@@ -165,7 +166,7 @@ Netlify builds and publishes on every push, whatever the checks report. There ar
 
 ### Option 1: Require the checks on pull requests
 
-Protect the `main` branch in the repo settings so that changes go through pull requests and the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks must pass before a pull request can be merged. Netlify still builds on every push, but only changes that passed reach `main`.
+Add a **Require status checks to pass** rule to the `Protect main` ruleset in the repo settings (**Settings** > **Rules** > **Rulesets**), with the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks, and a rule that requires pull requests. Changes then go through pull requests, and the checks must pass before one can be merged. The ruleset already blocks force-pushes and deleting `main`. Netlify still builds on every push, but only changes that passed reach `main`.
 
 ### Option 2: Deploy from the workflow
 
@@ -176,3 +177,5 @@ The workflow has a `deploy` job that builds the site and publishes it to Netlify
 3. Set the repository variable `NETLIFY_DEPLOY_FROM_ACTIONS` to `true`.
 
 The job runs only for pushes to `main`. It never runs for pull requests.
+
+The job is the only one with a secret (the Netlify token), so it doesn't fetch the Netlify CLI with `npx`. The CLI installs from its own lockfile in `tools/netlify-cli/`, with exact versions, integrity hashes, and install scripts off. To update it, change the version in `tools/netlify-cli/package.json` and run `npm install --package-lock-only --ignore-scripts` in that folder.

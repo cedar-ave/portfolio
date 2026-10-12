@@ -50,6 +50,20 @@ export default function ApiReference() {
           url: SPEC_URL,
           // The page follows the site's light or dark mode instead.
           hideDarkModeToggle: true,
+          // Scalar's defaults contact Scalar's own servers. None of that is
+          // needed here, so it's all off:
+          // - Test Request goes through https://proxy.scalar.com by default.
+          //   The API allows any origin, so requests go straight to it, and
+          //   no third party sees visitors' requests. An empty string turns
+          //   the proxy off.
+          proxyUrl: '',
+          // Usage telemetry to Scalar.
+          telemetry: false,
+          // The "Ask AI" agent, which sends the spec to Scalar's AI service.
+          agent: { disabled: true },
+          // Fonts from fonts.scalar.com. The site's own fonts are used
+          // instead (see src/css/scalar-api-reference.css).
+          withDefaultFonts: false,
         });
       })
       .catch((err) => {

@@ -1,0 +1,92 @@
+---
+sidebar_position: 15
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Security headers
+
+Every page on the site is served with security headers that tell browsers what the page is allowed to do. Most are fixed values in `netlify.toml`. The Content Security Policy is generated at build time by `plugins/csp-headers-plugin.mjs`, because it has to list the site's inline scripts by hash.
+
+<QuickReference>
+
+- `netlify.toml` sets HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy` on every page.
+- After each build, `plugins/csp-headers-plugin.mjs` hashes every inline script in the built HTML and writes the Content Security Policy into `build/_headers`, which Netlify reads at deploy time.
+- Part of the policy is enforced now. The full allowlist for scripts, styles, fonts, images, and connections is **report-only**: browsers log violations to the console without blocking anything. Once a check shows no violations, set `ENFORCE_FULL_POLICY` to `true` in the plugin to enforce it.
+- When the site starts loading something from a new domain, add that domain to `SOURCES` in the plugin, or the browser will report it (and block it, once the full policy is enforced).
+
+</QuickReference>
+
+## Headers in netlify.toml
+
+```toml title="netlify.toml"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+```
+
+| Header | Effect |
+| --- | --- |
+| `Strict-Transport-Security` | Browsers only use HTTPS for `www.marlasowards.com` (and any subdomains of `www`, of which there are none) for a year. |
+| `X-Frame-Options: DENY` | No other site can show these pages in a frame, which prevents clickjacking. The CSP's `frame-ancestors 'none'` does the same for newer browsers. |
+| `X-Content-Type-Options: nosniff` | Browsers use each file's declared type instead of guessing, so a text file can't be run as a script. |
+| `Referrer-Policy` | Links to other sites only send `https://www.marlasowards.com` as the referrer, not the full page URL. |
+| `Permissions-Policy` | The pages can't use the camera, microphone, location, payments, or USB devices. |
+
+## The Content Security Policy
+
+A Content Security Policy (CSP) lists where a page may load scripts, styles, fonts, images, and data from. If an attacker ever got a script into a page, through a compromised dependency or a content mistake, the browser would refuse to run it unless it matched the policy.
+
+### What the plugin writes
+
+`plugins/csp-headers-plugin.mjs` is registered in `docusaurus.config.js` and runs after `docusaurus build`. It:
+
+1. Reads every `.html` file in `build/`.
+2. Finds each inline `<script>` that runs as JavaScript, and skips data blocks such as JSON-LD (`type="application/ld+json"`).
+3. Hashes each distinct script with SHA-256.
+4. Writes `build/_headers` with the policy. The build log shows a line such as `[csp-headers-plugin] Wrote _headers with 3 inline script hash(es)`.
+
+The site currently has three inline scripts: the color-mode script and the Google Analytics setup on every page, and a small banner script on the home page. Their hashes change whenever Docusaurus or the analytics snippet changes, which is why they're computed on every build instead of written by hand.
+
+### Enforced now
+
+```text
+frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+```
+
+These can't break the site: it's never framed, has no plugins (`<object>`), uses no `<base>` tag, and has no forms that post elsewhere.
+
+### Report-only for now
+
+The full policy is sent as `Content-Security-Policy-Report-Only`:
+
+| Directive | Allows |
+| --- | --- |
+| `default-src` | This site only |
+| `script-src` | This site, Google Tag Manager, jsDelivr (Scalar, on `/api-reference`), and the inline scripts by hash |
+| `style-src` | This site, inline styles (React and Scalar set them, and they can't be hashed), and Google Fonts' stylesheets |
+| `font-src` | This site, Google Fonts, and `data:` URLs |
+| `img-src` | This site, `data:` URLs, and any HTTPS image |
+| `connect-src` | This site, `api.marlasowards.com`, Google Analytics, and the Iconify icon API (`@iconify/react` fetches icons that aren't bundled) |
+
+It's report-only because a wrong entry would break pages, and the policy hasn't been checked in a browser yet. Browsers log violations to the developer console as `[Report Only]` messages and block nothing.
+
+### Turning on the full policy
+
+1. Deploy, then open the site in a browser with the developer console open.
+2. Visit a few kinds of pages: the home page, a blog post, a docs page, the portfolio, and `/api-reference`. On `/api-reference`, also run a **Test Request**.
+3. Look for console messages that mention `Content-Security-Policy` and `Report Only`. Each one names the blocked URL and the directive.
+4. For each legitimate one, add its domain to `SOURCES` in `plugins/csp-headers-plugin.mjs`.
+5. When a full pass shows no reports, set `ENFORCE_FULL_POLICY = true` in the plugin, build, deploy, and check the same pages again.
+
+## Third-party scripts
+
+Two third-party scripts run on the site, and the policy allows both:
+
+- **Google Analytics** (`googletagmanager.com`), on every page.
+- **Scalar** (`cdn.jsdelivr.net`), only on `/api-reference`. It's pinned to one version and loaded with a subresource integrity hash, so the browser refuses it if the CDN's copy changes. See [The API reference page](../norway-data-api/overview).

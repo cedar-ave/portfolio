@@ -1,0 +1,146 @@
+---
+sidebar_position: 2
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# How the API was built
+
+The Norway Data API started as a quick API documentation sample and went through four expert-perspective reviews: an API developer's, an API technical writer's, a principal API developer's production-readiness review, and an API security review. This page records each step, what each review found, and what changed, so the reasons behind the current design aren't lost.
+
+The API's own repo has more detail on the code: see [design decisions](https://github.com/cedar-ave/norway-data-api/blob/main/docs/design-decisions.md) and [security](https://github.com/cedar-ave/norway-data-api/blob/main/docs/security.md).
+
+<QuickReference>
+
+- **Goal:** an API reference sample whose code samples actually work, using Scalar for the reference page and Netlify Functions for the API.
+- **Version 1** (Norway Facts API) lived in this repo: a function, a spec, and the `@scalar/docusaurus` plugin.
+- **Reviews:** each one was a request to look at everything "as an expert would," then fix every finding.
+- **Today:** the API is its own repo and Netlify site at `api.marlasowards.com`, version 1.1.1, with a contract test, smoke tests, and security controls. This site keeps only the reference page.
+- **Deferred:** agent-focused improvements (an MCP server, `llms.txt`, compact responses, sources on facts, search, and a higher rate limit).
+
+</QuickReference>
+
+## Timeline
+
+| Step | What happened |
+| --- | --- |
+| 1. First version | Function, spec, and Scalar plugin, all in this repo. Facts, categories, and Norway's 15 counties. |
+| 2. First deploy | Failed: Netlify couldn't read the function's `config.path`. |
+| 3. API developer review | 14 findings. Added versioning, caching, strict validation, problem details errors, a rate limit, and a contract test. |
+| 4. Technical writer review | 17 findings. Restructured the docs, made every example a tested real response, and replaced counties with places. |
+| 5. Docs in this site | Added the `docs/norway-data-api/` section. |
+| 6. Spelling check failure | codespell flagged an intentional misspelling in test code. |
+| 7. Rename | Norway Facts API became Norway Data API. |
+| 8. Kon-Tiki facts | Four facts and a new place, Kon-Tiki Museet. |
+| 9. Own repo | Moved to `cedar-ave/norway-data-api` and its own Netlify site, proxied from this domain. |
+| 10. Production readiness review | Found the proxy skipped the rate limit. Moved the API to `api.marlasowards.com` and added a deploy gate, smoke tests, and supply-chain controls. |
+| 11. Security review | Found cache poisoning and a rate limit bypass in production. Fixed both, added security headers, locked down the build, and hardened this site. |
+
+## 1. The first version
+
+The request was an API documentation sample with working code samples, using Scalar's Docusaurus integration and a new API spec called Norway Facts.
+
+- **The API:** a Netlify Function at `/api/norway-facts/*` serving facts, categories, and counties from a JavaScript module, with no database.
+- **The spec:** OpenAPI 3.1, in `static/openapi/`, with the production server URL so Scalar's generated code samples call the real API.
+- **The page:** the `@scalar/docusaurus` plugin at `/api-reference`. Its automatic navbar link always lands at the end of the navbar, so it was turned off and a link was added by hand (later relabeled **Norway Facts API**, then **Norway Data API**).
+
+## 2. The first deploy failed
+
+Netlify's deploy log said `Function norway-facts has a configuration error on 'path': Must be a string or array of strings`. The function's `config.path` used a constant and a template string. Netlify reads `config` without running the code, so every value must be a literal.
+
+Until that deploy succeeded, **Test Request** showed "Failed to fetch": the request got the site's HTML 404 page, which has no CORS headers, so the browser reported it as a network error.
+
+## 3. API developer review
+
+Reviewed as a principal API developer would. The findings and fixes:
+
+| Finding | Fix |
+| --- | --- |
+| Invalid percent-encoding crashed the function | Top-level error handling |
+| `/facts/abc` returned `404`; `/facts/010` was an alias for fact 10 | Strict ID validation, `400` |
+| No version in the URL | Moved under `/v1` |
+| `/facts/random` sat where an ID belongs | Renamed to `/random-fact` |
+| No caching | `ETag`, `304`, `Cache-Control`, and a long CDN cache |
+| Only some collections were paginated | Every collection paginated the same way, with page links |
+| Weak error responses | RFC 9457 problem details with stable types, `instance`, `requestId`, and an `errors` list |
+| Misspelled or repeated parameters were ignored | Rejected with `400` |
+| `HEAD` returned `405` | Supported everywhere |
+| The API root was a dead end | An index with links |
+| Spec and code synced by hand, spec not linted | A contract test, and Redocly linting in CI |
+| Responses missing from the spec | Documented every status and header |
+| No rate limit on a pay-per-call function | Netlify rate limit: 60 requests per minute per IP |
+
+The conceptual docs went into the spec's introduction, so they appear on the reference page.
+
+## 4. Technical writer review
+
+Reviewed as a principal API technical writer would. The biggest findings:
+
+- **Error types depended on heading anchors**, so renaming a docs heading would change a value clients branch on. They became `tag:` URIs, which are identifiers rather than links.
+- **Examples contradicted each other** (a random endpoint in the quick start, a real request ID reused, invalid JSON). Every example became the exact response to a known request, and the contract test now compares each one with the real response.
+- **One long introduction** became a short overview plus one section per topic.
+- **Two audiences on one page.** The reference now speaks only to developers. The portfolio framing moved to the portfolio page.
+- **Counties didn't relate to anything.** They were replaced with **places**: the locations facts are about. Facts list their `placeIds`, and `/facts?place=` filters by them.
+- Also: open string types instead of closed enums for values that can grow, a data model section, a changelog, a statement that facts aren't individually sourced, consistent terminology, and links instead of repeated rules.
+
+## 5–8. Smaller changes
+
+- **Docs in this site.** The `docs/norway-data-api/` section was added to document the work.
+- **Spelling check failure.** CI's codespell job flagged a deliberately misspelled parameter name (a typo of `limit`) in the contract test. `.codespellrc` skipped `*.js` but not `*.mjs`. Adding `*.mjs` and `*.cjs` fixed it, and the docs kept their misspelled-parameter example.
+- **Audience check.** Everything developers see was confirmed to be written for developers. The one leak was issue links pointing at a repo named *portfolio*, which led to the repo move.
+- **Rename.** Options included Fakta API, Fjord API, and Norway Atlas API. The choice was **Norway Data API**. Because "Data" can sound official, the spec says the API isn't affiliated with the Norwegian government, Statistics Norway, or any other official source.
+- **Kon-Tiki.** Four facts about the 1947 expedition, and a new place, Kon-Tiki Museet (Norwegian spelling, following the docs' rule for place names).
+
+## 9. Its own repo
+
+To make the reference page read as a standalone product, the API, spec, contract test, CI, and most of the docs moved to [cedar-ave/norway-data-api](https://github.com/cedar-ave/norway-data-api) and their own Netlify site. This site proxied `/api/norway-data/*` and the spec to it, so URLs didn't change.
+
+Testing through the proxy found a bug right away: the function saw the `netlify.app` host, so pagination links pointed there. A workaround hardcoded the public hostname into the function.
+
+## 10. Production readiness review
+
+Reviewed as a principal API developer who also leads AI work at a large tech company. Two findings were proven against production:
+
+- **The proxy skipped the rate limit.** 70 quick requests through `www.marlasowards.com` all returned `200`; the same burst sent directly to the API's site got a `429`.
+- **The proxy caused the link workaround** and added a network hop to every request.
+
+The fix was a custom domain, `api.marlasowards.com`, with no proxy. This site's proxy rules became `301` redirects from the old URLs. Released as API version 1.1.0, with:
+
+- A **deploy gate:** Netlify's build command runs the spec lint and contract test, so a failing push never deploys.
+- **Smoke tests** against the live API after every push and every hour, including the rate limit and the redirects. The hourly run doubles as an uptime alert.
+- A **version check** in CI: any API change needs a new version and changelog row.
+- A **problem details `429`** with `Retry-After`, through Netlify's rate limit rewrite.
+- `utm_*` and `_` parameters ignored instead of rejected, weak `ETag`s, `400` for malformed paths, and the unversioned root redirecting to `/v1`.
+- Request logging, Actions pinned to commit SHAs, Dependabot, `SECURITY.md`, `CONTRIBUTING.md`, `CODEOWNERS`, and issue templates.
+- This site replaced the Scalar plugin with its own page, which loads Scalar's 4.5 MB script only on `/api-reference` and checks it with an integrity hash.
+
+Rollout lessons:
+
+- Netlify doesn't report production deploys to GitHub, so a smoke test triggered by deploy events never ran. Instead, the workflow runs on push and waits until production serves the pushed spec's version.
+- `netlify.app` didn't redirect to the custom domain on its own, so a redirect rule in the API's `netlify.toml` does it.
+
+The review's agent-focused recommendations were deliberately deferred: an MCP server generated from the spec, `llms.txt`, compact JSON by default, sources and review dates on facts, search, a reproducible random seed, and a higher rate limit for agents behind shared IP addresses.
+
+## 11. Security review
+
+Reviewed as a top API security expert at a large tech company would. Three findings were proven against production and the rest confirmed from code and settings.
+
+| Finding | Fix |
+| --- | --- |
+| **Cache poisoning (proven).** Links took their scheme from the request, which Netlify builds from the client-controlled `X-Forwarded-Proto` header. One request could cache `http://` links for everyone. | Links always use `https`. The CDN cache key only includes documented parameters (`Netlify-Vary`). |
+| **Rate limit bypass (proven).** `/_rate-limited` was public with no limit of its own: 155 direct requests all ran the function. | Its own rate limit. |
+| **Build supply chain.** Netlify's build downloaded Redocly with `npx`, unchecked by the lockfile, before bundling the deployed code. | Locked dev dependencies, and installs with `--ignore-scripts` in both repos. |
+| **Third-party viewer.** Scalar sent **Test Request** calls through `proxy.scalar.com` and had telemetry, an AI agent, and remote fonts on by default. | All four turned off on the reference page. |
+| No security headers on the API or this site | Headers on both, and a Content Security Policy here (partly report-only for now). See [Security headers](../site-config/security-headers). |
+| Private vulnerability reporting off, though `SECURITY.md` pointed to it | Turned on in both repos, with Dependabot security updates, CodeQL, and a ruleset protecting `main`. See [Repository and CI security](../build-deploy/repository-security). |
+| Full query strings logged; echoed input unbounded | Only documented parameters logged; echoed values clipped. |
+| No CAA record, no usage alerts, deploy preview and 2FA settings unverified | Settings for you to make. See [Security](security#settings-to-make-by-hand). |
+
+Released as API version 1.1.1. Every fix has a check in the contract test or smoke test, and the smoke test passed all 42 checks against production.
+
+## What this shows
+
+- **Test in production, not only in memory.** Five significant bugs only existed once deployed: the config error, the `netlify.app` links, the proxy rate limit bypass, the cache poisoning, and the unlimited `/_rate-limited`. The in-memory contract test couldn't see any of them. The smoke tests now cover each one.
+- **Proxies change behavior.** Rate limits, hosts, and schemes all behaved differently behind the proxy.
+- **Defaults of third-party tools deserve a review.** Scalar's defaults sent visitors' requests to a third party; the plugin loaded a 4.5 MB script on every page.
+- **Docs and tests reinforce each other.** Because examples are checked against real responses, data changes (such as the Kon-Tiki facts) immediately point to every example they affect.
