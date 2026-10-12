@@ -6,8 +6,6 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # The OpenAPI spec
 
-_Mirrored from [`docs/spec.md`](https://github.com/cedar-ave/norway-data-api/blob/main/docs/spec.md) in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api), which is the source of truth. When one changes, update the other._
-
 `public/openapi/norway-data.yaml` (OpenAPI 3.1) is the API's contract and the content of its reference page. The reference page at https://www.marlasowards.com/api-reference is rendered by [Scalar](https://scalar.com) from this file, loaded from https://api.marlasowards.com/openapi/norway-data.yaml, so everything on the page comes from here, including the conceptual docs.
 
 <QuickReference>
@@ -84,7 +82,7 @@ curl https://api.marlasowards.com/norway-data/v1/facts/10
 ```
 ````
 
-**Examples on endpoints and shared responses.** A media type with an `example` also has an `x-example-request` with the path that produces it:
+**Examples on endpoints and shared responses.** Every example has an `x-example-request` with the path that produces it. A response with one example puts it next to `example`:
 
 ```yaml
 content:
@@ -97,6 +95,25 @@ content:
       name: Sognefjord
       ...
 ```
+
+A response with several examples uses named `examples` instead. Each has a `summary` (the name the reference page shows for it), a `description` that starts with the request, and its own `x-example-request`:
+
+```yaml
+content:
+  application/json:
+    schema:
+      ...
+    examples:
+      noMatch:
+        summary: No facts match
+        description: '`GET /facts?category=nature&place=oslo`. No nature facts are about Oslo, so `data` is empty. This isn''t an error.'
+        x-example-request: /facts?category=nature&place=oslo
+        value:
+          data: []
+          ...
+```
+
+Add a named example for each case a developer has to handle differently, such as a filter with no matches, the last page, an `offset` past the end, and each kind of `400`. A media type can't have both `example` and `examples`; the contract test fails if it does.
 
 Scalar ignores `x-` extensions unless it's configured to show them, so `x-example-request` doesn't appear on the page.
 

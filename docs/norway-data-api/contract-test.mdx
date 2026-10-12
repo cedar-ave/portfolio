@@ -6,8 +6,6 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # The contract test
 
-_Mirrored from [`docs/contract-test.md`](https://github.com/cedar-ave/norway-data-api/blob/main/docs/contract-test.md) in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api), which is the source of truth. When one changes, update the other._
-
 `scripts/contract-test.mjs` checks that the API does exactly what the spec says. It imports the function's handler and calls it with standard `Request` objects, so it needs no server, no deploy, and no network.
 
 <QuickReference>
@@ -62,7 +60,7 @@ After the requests, the test checks that every status code documented for every 
 ### Examples
 
 - Every `example` in the spec must match its schema.
-- Every media type example with an `x-example-request` must equal the real response to that request.
+- Every media type example with an `x-example-request`, whether a single `example` or one of several named `examples`, must equal the real response to that request, including its status code.
 - Every `json` block in the introduction that follows a `bash` block with a `curl` command must equal the real response to that command. The test also requires at least four of these, so a formatting change can't make it quietly skip them all.
 
 See [Examples are real responses](openapi-spec#examples-are-real-responses) for how to write examples the test can find.

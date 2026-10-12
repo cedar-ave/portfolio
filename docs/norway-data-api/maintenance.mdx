@@ -6,8 +6,6 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # Maintaining the API
 
-_Mirrored from [`docs/maintenance.md`](https://github.com/cedar-ave/norway-data-api/blob/main/docs/maintenance.md) in the [norway-data-api repo](https://github.com/cedar-ave/norway-data-api), which is the source of truth. When one changes, update the other._
-
 How to make common changes, and what to check afterward. In every case, run the checks before you push:
 
 ```bash
@@ -67,7 +65,7 @@ The conceptual docs are in `info.description` in `public/openapi/norway-data.yam
 
 - **Renaming a `##` heading changes its anchor.** Search the spec for `#description/` plus the old heading's anchor, and update each link.
 - **Adding a curl example:** put a `bash` block with the `curl` command directly before a `json` block with the exact response. The contract test checks the pair. To get the exact response, run the contract test with your best guess and copy the actual output, or call the function with `npm run dev` running.
-- **Adding an endpoint example:** add `x-example-request` with the request path next to the `example`.
+- **Adding an endpoint example:** if the response has one `example`, change it to named `examples`. Give the new example a `summary`, a `description` that starts with the request, an `x-example-request`, and a `value` copied from the real response. See [Examples are real responses](openapi-spec#examples-are-real-responses).
 - Don't put an example in the docs that the test can't check, unless the response is random or can't be produced on purpose.
 
 ## Add an endpoint
