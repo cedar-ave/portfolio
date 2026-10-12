@@ -12,6 +12,7 @@ How the `/samples` demo area was built: a second, standalone docs instance that 
 
 - `/samples` is a **second `@docusaurus/plugin-content-docs` instance** (`id: 'userGuide'`), configured in `docusaurus.config.js` alongside the main `docs` preset — not a page under the main docs sidebar.
 - Content lives in `samples/` at the repo root: `samples/index.mdx` is the generic `/samples` landing page, and each guide lives in its own sibling folder of `.mdx` files — `samples/clearpath-roster-guide/` and `samples/clearpath-collect-guide/`.
+- `samples/norway-data-api-guides/` holds real developer guides for the live Norway Data API, not genericized samples. See [The tutorial and guides](../norway-data-api/guides).
 - Its sidebar is hand-written at `sidebarsSamples.js` in the repo root (the main site's sidebar is `sidebars.js`, also in the root; see [Sidebar file locations](#sidebar-file-locations) below).
 - It's reachable only via the "Product user guide" link on `/portfolio` — nothing registers it in `themeConfig.navbar`.
 - **Direct link vs. category:** a doc id string in `items` (e.g. `'clearpath-roster-guide/get-started'`) is just a sidebar row that links straight to that page. A `{ type: 'category', ... }` object is a separate, expandable heading with its own `items`. Pages don't have to be nested inside a category — a bare string can sit as a sibling of category objects in the same `items` array. See [Mixing pages and categories](#mixing-pages-and-categories) below.

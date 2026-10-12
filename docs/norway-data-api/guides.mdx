@@ -1,0 +1,80 @@
+---
+sidebar_position: 1.5
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# The tutorial and guides
+
+The Norway Data API's tutorial and how-to guides live in this repo, in the `/samples` section, not in the API repo. The [API reference](/api-reference) explains how the API works, and the guides explain how to get things done with it. This page covers how the guides connect to the API, and what to check when the API changes.
+
+<QuickReference>
+
+- The guides are in `samples/norway-data-api-guides/`, under the **Norway Data API Guides** category in `sidebarsSamples.js`, and listed on `samples/index.mdx`.
+- Unlike the other samples, they aren't genericized: their code runs against the live API. Don't add the samples disclaimer to them.
+- The spec links to the tutorial from its **Quick start** section and from `externalDocs`. If the tutorial's URL changes, update both in the API repo.
+- The guides link to sections of the reference by anchor, such as `#description/errors`. If a heading in the spec is renamed, those links break, and the build can't catch it.
+- **Nothing tests the guides' code automatically.** When the API changes, check the guides it affects (see [What the guides depend on](#what-the-guides-depend-on)) and re-run their code (see [Test the guides](#test-the-guides)).
+
+</QuickReference>
+
+## The pages
+
+| Page | Type | What it covers |
+| --- | --- | --- |
+| [Show a random fact with its places](/samples/norway-data-api-guides/show-a-random-fact) | Tutorial | A first program: get a random fact, then each place in its `placeIds`. Built up step by step, with prerequisites and troubleshooting. |
+| [Get every item in a collection](/samples/norway-data-api-guides/get-every-item) | How-to | Follow `pagination.links.next` until it's `null`. |
+| [Handle errors and retries](/samples/norway-data-api-guides/handle-errors-and-retries) | How-to | Which errors to retry and how long to wait. Retry decisions use the status code, because some `429`s have no body and no `type`. Everything else uses `type`. |
+| [Cache responses with ETags](/samples/norway-data-api-guides/cache-responses) | How-to | `max-age`, `If-None-Match`, and `304` for server-side code. Browsers do this on their own. |
+| [Call the API from a browser](/samples/norway-data-api-guides/call-from-a-browser) | How-to | What a page can send and read across origins, why requests fail with "Failed to fetch", and Content Security Policy. |
+
+## Conventions
+
+- **Every program runs as copied.** Each page has the complete code, not fragments that only work together.
+- **JavaScript and Python in tabs.** The tabs use `groupId="language"`, so a reader's choice carries across the page and the other guides.
+- **Few requirements.** JavaScript needs Node.js 18 or later and uses `.mjs` files. Python uses only the standard library.
+- **Output shown is real output.** Any output on a page comes from running that page's code against the live API.
+- **Absolute links to the reference.** Links to a section of the reference use the full URL, such as `https://www.marlasowards.com/api-reference#description/errors`. Scalar creates those anchors in the browser, so the build's link checker would report a relative link as a broken anchor.
+
+## What the guides depend on
+
+| If this changes in the API | Check |
+| --- | --- |
+| Fields in facts, places, or pagination | Every guide |
+| A heading in the spec's introduction | Anchor links in every guide |
+| Error types, the problem details format, or `Retry-After` | Handle errors and retries |
+| Pagination, or the maximum `limit` (50) | Get every item in a collection |
+| `Cache-Control`, `ETag`, or `304` behavior | Cache responses with ETags, Call the API from a browser |
+| CORS headers, or the headers a preflight allows | Call the API from a browser |
+| The rate limit (60 requests per 60 seconds) | The tutorial's troubleshooting, Handle errors and retries, Call the API from a browser |
+| The data, such as the number of facts or fact 14 | The tutorial's sample output, Get every item in a collection |
+
+**A known limitation:** the browser guide warns against sending `If-None-Match` from browser code, because `304`s from the CDN have no CORS headers (see [Design decisions](design-decisions#known-limitation-cdn-304s-without-cors-headers)). If that's ever fixed, remove the warning.
+
+## Test the guides
+
+Copy each program from the page into a file and run it. Then compare its output with the page.
+
+- **JavaScript:** `node <file>.mjs`
+- **Python:** `python <file>.py`. On Windows, use `python -X utf8 <file>.py`, or Norwegian letters such as `á` can print wrong.
+
+Some guides need more than running the code:
+
+- **The tutorial:** its output is random. To get the exact output at the top of the page, temporarily change `/random-fact` to `/facts/14`.
+- **Get every item:** at the default page size, every collection fits on one page, so the loop runs only once. Change `limit` to `4` so it follows several pages, and check that the counts match each collection's `pagination.total`.
+- **Handle errors and retries:** the API can't return a `500` on demand. Replace `fetch` (or Python's `urlopen`) with a fake that returns a set sequence of responses, and replace the timer (`setTimeout` or `time.sleep`) with one that records each wait instead of waiting. Check these cases:
+  - a `500` then success
+  - a `500` every time (three retries, then an error)
+  - a `429` with `Retry-After`
+  - a `429` with an empty body and no header (a 60-second wait)
+  - a `400` and a `404` (not retried)
+  - a `502` with an HTML body (retried)
+
+  To test against a real `429`, send about 70 requests to `/random-fact`, which is never cached. This uses up your IP address's limit for a minute.
+- **Call the API from a browser:** only a browser enforces CORS, so `curl` can't test this guide. Serve the pages from another origin, such as `python -m http.server 8000`, and load them in headless Chrome with a throwaway profile:
+
+  ```bash
+  chrome --headless=new --user-data-dir=<temp-folder> --virtual-time-budget=20000 --dump-dom http://localhost:8000/page.html
+  ```
+
+  A test page can write each result into the page, and `--dump-dom` prints it. Also open the guide's page from a `file://` URL.
