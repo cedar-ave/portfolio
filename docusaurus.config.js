@@ -220,8 +220,9 @@ const config = {
       // Social card shown when links to this site are shared (LinkedIn, Twitter, etc.)
       image: 'img/social-card.jpg',
       colorMode: {
+        defaultMode: 'light',
         disableSwitch: true,
-        respectPrefersColorScheme: true,
+        respectPrefersColorScheme: false,
       },
       navbar: {
         title: 'Home',
