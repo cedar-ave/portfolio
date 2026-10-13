@@ -111,10 +111,6 @@ The date uses the visitor's own time zone, so the fact changes at their midnight
 - **Show the same fact everywhere.** To show the fact of the day on several pages or in an app, use the same date-to-index rule in each one, and they'll agree.
 - **Keep it under the rate limit.** The page makes one request for the facts, plus one per place. That's well under 60 per minute, even for a visitor who reloads often.
 
-## How this page was tested
-
-The page was loaded in Microsoft Edge from a `file://` URL. It was tested with today's date, with a date whose fact has a place (Sognefjord), and with a base URL that returns a `404`, to check that the error message appears.
-
 ## Related
 
 - [Call the API from a browser](./call-from-a-browser), for what browsers allow across origins

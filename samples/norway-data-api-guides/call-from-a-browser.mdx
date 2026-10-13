@@ -124,10 +124,6 @@ Content-Security-Policy: connect-src 'self' https://api.marlasowards.com
 
 If your policy has no `connect-src`, add the API to `default-src` instead, or add a `connect-src` that includes it.
 
-## How this guide was tested
-
-The page and the claims in this guide were tested in Chrome, loading the pages from `http://localhost:8000` (a different origin from the API) and from a `file://` URL. Each row of the table above, the rate limit behavior, and the caching behavior were checked with a request from a page, not just with `curl`.
-
 ## Related
 
 - [Show a random fact with its places](./show-a-random-fact), the same program for Node.js and Python
