@@ -85,7 +85,7 @@ export function TwoApiTypes() {
       title="Two kinds of API docs with different sources, tools, and readers"
       desc="REST API docs start from Swagger JSON files pulled from 13 web services. The specs are converted, given descriptions, and tagged, then DocFX and two plugins split them into endpoint reference pages for integrators who call the services over HTTP. .NET API docs start from C# projects and their XML comments. docfx metadata compiles them with .NET build tools into YAML models in obj/api, which are never checked in, and DocFX renders SDK reference pages for developers writing plugins for the processing engine. Both sets publish to one help site under a developer menu."
       viewBox="0 0 1000 340"
-      caption="The two sets share a help site and nothing else: different sources, different toolchains, different readers, and different ways to break.">
+      caption="">
       <defs>
         <ArrowMarker id="types-arrow" />
       </defs>
@@ -143,7 +143,7 @@ export function RestApiPipeline() {
       title="How a REST API spec becomes reference pages"
       desc="Step 1: get the Swagger JSON from the running service. Step 2: if the spec is OpenAPI 3, convert it to Swagger 2. Step 3: add a description to the spec's info object. Step 4: run the scripts that add a tags object with jq and generate landing pages with Python. Step 5: DocFX builds the site and two plugins split each spec into pages. Step 6: the output is a reference page for every tag and every operation. The menu order in restapi/toc.yml and the conceptual articles also feed into the build."
       viewBox="0 0 1090 300"
-      caption="Steps 2 through 4 fill gaps in DocFX. I added the conversion step and wrote the scripts in step 4.">
+      caption="">
       <defs>
         <ArrowMarker id="rest-arrow" />
       </defs>
@@ -186,7 +186,7 @@ export function EngineApiPipeline() {
       title="How the engine's C# code becomes .NET API reference"
       desc="The engine repo has one branch per edition: release/6.0 for the classic edition and main for the cloud edition. Each branch's docfx.json has a metadata section that points to the .csproj files. docfx metadata compiles the projects, which requires Visual Studio Build Tools with the .NET desktop workload, and writes YAML models to obj/api. Those files are never checked in. DocFX renders them as SDK reference pages with one page per member."
       viewBox="0 0 1090 320"
-      caption="Each edition builds from its own branch, so the reference always matches the code customers run.">
+      caption="">
       <defs>
         <ArrowMarker id="dotnet-arrow" />
       </defs>
@@ -247,7 +247,7 @@ export function EditionSources() {
       title="Which sources each product edition's API docs build from"
       desc="REST overview pages, meaning the landing page and conceptual articles, come from one set of classic edition source files shared by both editions. REST reference for the classic edition comes from the specs in the platform repo, and for the cloud edition from specs in the cloud edition's docs repo. .NET API reference for the classic edition builds from the engine repo's release/6.0 branch, and for the cloud edition from its main branch."
       viewBox="0 0 960 370"
-      caption="Shared where the APIs matched, separate where they didn't.">
+      caption="">
       <defs>
         <ArrowMarker id="ed-arrow" />
       </defs>

@@ -208,7 +208,7 @@ export function TieredReading() {
       title="Source librarian builds an index once; the drafter reads in three tiers"
       desc="Support tickets, call transcripts, guides, and Jira and Slack content flow into the source librarian, which tags, summarizes, and builds three index layers. On every drafting run, the Diátaxis drafter scans the index files, then reads metadata headers to shortlist candidates, then, after I confirm, fully reads only the confirmed files before drafting."
       viewBox="0 0 800 290"
-      caption="The expensive reading happens once. Each drafting run narrows from the whole library to a handful of confirmed files, so drafts stay traceable and cheap to produce.">
+      caption="">
       <defs>
         <ArrowMarker id="tr-arrow" />
         <ArrowMarker id="tr-arrow-gate" variant="gate" />
@@ -320,7 +320,7 @@ export function SubagentFanOut() {
       title="Release notes from Jira fix versions using subagents that save to disk"
       desc="The main session dispatches several subagents in parallel. Each subagent fetches tickets and their linked specs, decks, and pages, writes everything to files on disk, and returns only a short confirmation. The main session then drafts from the files and produces release notes plus an audit log showing, for every ticket and link, whether it was read and used."
       viewBox="0 0 800 290"
-      caption="Dozens of tickets and their linked docs are gathered in parallel, but the main conversation only ever holds confirmations, so long releases don't overflow context or lose tickets.">
+      caption="">
       <defs>
         <ArrowMarker id="fo-arrow" />
         <ArrowMarker id="fo-arrow-gate" variant="gate" />
@@ -441,7 +441,7 @@ export function DocToPaligo() {
       title="Google Doc to Paligo pipeline in paligo-pal"
       desc="An approved Google Doc is converted to DocBook 5.1 XML using Paligo's structure rules, its images are uploaded, and Help Center links are rewritten as Paligo cross-references. Just before writing, the skill fetches the latest XML so it never overwrites edits made in the Paligo editor, then updates the Paligo topic."
       viewBox="0 0 800 176"
-      caption="A manual copy-and-reformat job becomes one request, and a fresh fetch before every write means edits made in the Paligo editor are never overwritten.">
+      caption="">
       <defs>
         <ArrowMarker id="dp-arrow" />
       </defs>
@@ -505,7 +505,7 @@ export function SafeWrites() {
       title="How zendesk-guide-pal decides where to read and write"
       desc="A two-by-two grid. Reading from sandbox is allowed on request. Reading from production is the default, so work uses real data. Writing to sandbox is the default, so mistakes can be undone. Writing to production needs my explicit confirmation every time. Guardrails: tags are added beside existing ones, bulk writes are rate-limited with automatic back-off, Help-Center-wide deletes need a confirmed name and ID, and theme imports check the 10-theme limit and never delete the base theme."
       viewBox="0 0 800 236"
-      caption="Read real data, write where mistakes are cheap, and make production changes a deliberate, confirmed step.">
+      caption="">
       <text x={colX[0] + cw / 2} y="24" textAnchor="middle" className={styles.heading}>Sandbox</text>
       <text x={colX[1] + cw / 2} y="24" textAnchor="middle" className={styles.heading}>Production</text>
       {['Read', 'Write'].map((r, ri) => (
@@ -553,7 +553,7 @@ export function ReviewStack() {
       title="Three independent review skills feeding one approval step"
       desc="A draft article goes to three separate review skills: AI optimizer for 25 AI-readiness criteria, vocabulary pal for controlled vocabulary, and style pal for house style with a fallback guide. Each returns a numbered, prioritized report with exact fix text. I approve fixes by number, such as 'fix 1, 3, 5', before the article is ready to publish."
       viewBox="0 0 800 220"
-      caption="Each reviewer does one job and can run on any document, from any writer or any AI draft. Fixes are applied only when I approve them by number.">
+      caption="">
       <defs>
         <ArrowMarker id="rs-arrow" />
       </defs>

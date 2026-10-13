@@ -88,7 +88,7 @@ export function EvidenceToDecisions() {
       title="How stakeholder feedback and usage data led to decisions"
       desc="Feedback from support agents, customer-facing teams, product managers, and writers, and usage data from search terms, article views, navigation paths, and support contacts, both feed a synthesis step. The synthesis produces four decisions: a search-first home page, product badges and filters, related articles, and a path to support on every page."
       viewBox="0 0 900 450"
-      caption="Every major change had to be supported by what people told me, what the data showed, or both.">
+      caption="">
       <defs>
         <ArrowMarker id="ev-arrow" />
       </defs>
@@ -178,7 +178,7 @@ export function HomeBeforeAfter() {
       title="Help site home page before and after the relaunch"
       desc="Before: a grid of 17 tiles with overlapping titles such as Guides, User Guides, Help, and Resources, and no search bar. After: a large search bar at the top, a row of promoted search terms, and five entry points by product and topic: Getting started, CRM app, Web app, Source integrations, and APIs, followed by popular articles and a contact support link."
       viewBox="0 0 970 460"
-      caption="Illustrative wireframes. Tile titles are examples of the overlap readers faced, not the original labels.">
+      caption="">
       <text x={bx} y={40} className={styles.heading}>Before</text>
       <text x={bx} y={60} className={styles.sub}>17 tiles, no clear place to start</text>
       <rect x={bx - 10} y={by - 10} width={cols * tw + (cols - 1) * gap + 20} height={5 * (th + gap) + 10} rx={10} className={styles.frame} />

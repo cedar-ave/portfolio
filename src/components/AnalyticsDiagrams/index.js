@@ -155,7 +155,7 @@ export function SourceMap() {
       title="Six data sources joined into one model that feeds three dashboards"
       desc="Six sources (help center analytics, the help center API, a web analytics platform, support ticket analytics, the support ticketing API, and a CRM platform) feed a joined data model keyed on user ID, article ID, and organization. The joined model feeds three dashboards: site awareness, ticket deflection, and article performance."
       viewBox="0 0 830 430"
-      caption="No single source could answer the business questions. Joined on three keys, they could.">
+      caption="">
       <defs>
         <ArrowMarker id="an-src-arrow" />
       </defs>
@@ -286,7 +286,7 @@ export function JoinModel() {
       title="Join model connecting analytics events, users, articles, tickets, and customer accounts"
       desc="Web analytics events join to support platform users on user ID and to help center articles on article ID, which is parsed from the page path. Tickets join to support platform users on requester ID. Support platform users join to CRM accounts on organization. A custom analytics event fired by the tag manager marks the moment a reader leaves an article to submit a request."
       viewBox="0 0 850 370"
-      caption="Key fields are highlighted. The user ID is the linchpin: it lets a page view, a person, their organization, and the ticket they opened be read as one story.">
+      caption="">
       <Table
         x={cEvents}
         y={top1}

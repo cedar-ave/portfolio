@@ -227,7 +227,7 @@ export function MappingInterfaceMockup() {
       title="Field-mapping grid for the Person source table"
       desc="A field-mapping interface. A toolbar offers New source, Connections, Compare, Document, Spell check, and Advanced actions. Below, a grid maps the Person table's columns - PersonID, AddressLine1, City, StateProvinceID, PostalCode, and ModifiedDate - from their source column and type to a destination column and type, with a Null indicator and a sensitivity badge (None or PII) for each row."
       viewBox={`0 0 780 ${cardH + 40}`}
-      caption="Intake Mart Designer's easy-to-use interface helps data analysts maintain enterprise-wide consistency.">
+      caption="">
       <rect width="780" height={cardH + 40} className={styles.page} />
       <rect x="12" y="20" width="756" height={cardH} rx="16" className={styles.cardShadow} />
 

@@ -68,7 +68,7 @@ export function HelpSiteWorkflow() {
       title="How the docs-as-code help site works, end to end"
       desc="Contributors write in VS Code with a live local preview, or in the Azure DevOps browser editor with no setup. Everything is plain text in a Git repo: Markdown articles with YAML front matter, toc.yml navigation, docfx.json metadata, Swagger files for API reference, and a pipeline variables file. Changes go on a feature branch, through a pull request with review and a conflict check, and merge to main. The merge triggers a build pipeline that installs the shared theme package and runs npm, Gulp, and DocFX to turn Markdown and Swagger into HTML. The pipeline publishes to a development site on demand and to the production site on merge. Every published page has an Edit this page link and a feedback form, which send readers back into the browser editor so the loop starts again."
       viewBox="0 0 1000 435"
-      caption="Content is treated like code: versioned, reviewed, built, and deployed automatically, with every published page linking back to its own source.">
+      caption="">
       <defs>
         <ArrowMarker id="dch-flow-arrow" />
         <ArrowMarker id="dch-flow-accent" accent />
@@ -187,7 +187,7 @@ export function HelpSitePipelines() {
       title="The automated pipelines behind every docs site"
       desc="Two triggers start a site's build pipeline: a merge to main runs automatically and always publishes to production, and a manual run lets the user pick any branch and check PROD, DEV, both, or neither. On the Azure Pipelines build agent, the shared publish.yaml template reads the site's variables file, installs Node, npm packages, the shared theme package, and the latest DocFX, optionally generates API metadata from .NET projects, builds the site with Gulp and DocFX, turning Markdown into HTML and Swagger into API reference, and stages the output as an artifact. The artifact deploys to production, to development, or is offered as a downloadable zip when no environment is checked. A separate theme pipeline publishes the shared theme as an npm package that every site installs on its next build. Benefits: zero manual deploy steps, one pipeline template, one theme change reaching every site, and per-task build logs."
       viewBox="0 0 1000 500"
-      caption="Writers never touch a server: a merge or a two-click manual run handles the build, the theme, the API reference, and the deployment.">
+      caption="">
       <defs>
         <ArrowMarker id="dch-pipe-arrow" />
         <ArrowMarker id="dch-pipe-accent" accent />
