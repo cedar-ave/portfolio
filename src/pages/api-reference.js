@@ -47,6 +47,9 @@ export default function ApiReference() {
           url: SPEC_URL,
           // The page follows the site's light or dark mode instead.
           hideDarkModeToggle: true,
+          // Scalar expands the first tag (Index) when the URL has no
+          // section in it. Off, so the page opens on the Introduction.
+          defaultOpenFirstTag: false,
           // Scalar's defaults contact Scalar's own servers. None of that is
           // needed here, so it's all off:
           // - Test Request goes through https://proxy.scalar.com by default.
