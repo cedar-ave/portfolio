@@ -247,12 +247,6 @@ const config = {
             position: 'left',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: 'How I built this site',
-          },
-          {
             to: '/api-reference',
             label: 'Norway Data API',
             position: 'left',
