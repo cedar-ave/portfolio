@@ -2,7 +2,7 @@
 title: Docs-as-code workflow
 description: Docs-as-code workflow sample
 hide_table_of_contents: false
-table_of_contents_levels: 2
+table_of_contents_levels: 2,3
 back_to_portfolio: true
 ---
 
@@ -10,14 +10,22 @@ import { HelpSiteWorkflow, HelpSitePipelines } from '@site/src/components/DocsAs
 
 # Docs-as-code workflow
 
-\{@include: /src/includes/disclaimer.md\}
+I set up a docs-as-code workflow from scratch for an organization's help content ecosystem. I managed content as Markdown in a Git repo, built the site using the DocFX static-site generator, and deployed to production with an automated pipeline. 
+
+## Content development workflow
 
 <HelpSiteWorkflow />
+
+### Linting
+
+The workflow used the Vale linting tool to check style, grammar, and spelling. Vale checked content against [a custom house style of 96 rules](https://github.com/cedar-ave/sample-linting/tree/main/vale-rules), including rules drawn from Microsoft, GitLab, and other public style guides. The markdownlint tool, with a config tuned for DocFX, checked Markdown formatting. For what neither tool could catch, such as broken links, images without alt text, and page titles that didn't match their headings, I wrote [custom scripts](https://github.com/cedar-ave/sample-linting/tree/main/linting-scripts).
+
+### Contributions
+
+Article pages included an **Edit this page** link, which let contributors submit changes as pull requests. A **Contributor reference** link went to the [Docs-as-Code Contributor Guide](/samples/contributor-guide/02-prerequisites), which walked contributors through the steps.
 
 ## Automated deployment pipelines
 
 <HelpSitePipelines />
 
-## Contributions
 
-Article pages included an **Edit this page** link, which let contributors submit changes as pull requests. A **Contributor reference** link went to the [Docs-as-Code Contributor Guide](/samples/contributor-guide/02-prerequisites), which walked contributors through the steps.
