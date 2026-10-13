@@ -12,6 +12,9 @@
   --scalar-font: var(--ifm-font-family-base);
   --scalar-font-code: var(--ifm-font-family-monospace);
   --scalar-border-width: 1px;
+  /* Not one of Scalar's sizes (its smallest named one is --scalar-micro,
+     12px). Used by the sidebar's "Reference" label. */
+  --scalar-xsmall: 11px;
 }
 .scalar-api-reference {
   --refs-header-height: var(--ifm-navbar-height);
@@ -87,6 +90,25 @@ html[data-theme="dark"] body,
   --scalar-button-1-hover: rgba(255, 255, 255, 0.9);
   --scalar-button-1-color: black;
 }
+/* "REFERENCE" label in the sidebar between the description's heading groups
+   (Introduction, Concepts, ...) and the endpoint tags. Scalar gives each
+   sidebar entry a data-sidebar-id: headings end in /description/<slug>,
+   tags contain /tag/<name>. This matches the first tag after a non-tag entry,
+   so it follows whichever tag comes first in the spec. Added by this site,
+   not part of the copied Scalar theme. */
+.t-doc__sidebar [data-sidebar-id]:not([data-sidebar-id*="/tag/"]) + [data-sidebar-id*="/tag/"]::before {
+  content: "Reference";
+  display: block;
+  margin-top: 1.25rem;
+  /* 8px left matches the sidebar buttons' padding (Scalar's p-2). */
+  padding: 0 8px 6px;
+  font-size: var(--scalar-xsmall);
+  font-weight: var(--scalar-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--scalar-color-1);
+}
+
 .sidebar-group-item:has(.active_page) .sidebar-group-item__folder {
   color: var(--scalar-color-accent);
 }
@@ -510,6 +532,15 @@ html[data-theme="light"] body .api-client-drawer {
     line-height: 1.45;
   }
 
+/* Added by this site: a little space below the ## headings in the spec's
+   description (Introduction, Concepts, ...), not in endpoint or tag
+   descriptions. Scalar renders each description heading alone in its own
+   .markdown div, so Infima's `.markdown > :last-child { margin-bottom: 0 !important }`
+   removes any margin on the h2. The space goes on that div instead. */
+.scalar-app .introduction-description .markdown:has(> h2:only-child) {
+    padding-bottom: 0.625rem;
+  }
+
 .scalar-app .markdown b,
   .scalar-app .markdown strong {
     font-weight: var(--scalar-bold);
@@ -677,6 +708,22 @@ html[data-theme="light"] body .api-client-drawer {
 .scalar-app .markdown td:last-of-type,
   .scalar-app .markdown th:last-of-type {
     border-right: none;
+  }
+
+/* Added by this site, not part of the copied Scalar theme. In a table whose
+   last column is long prose (Changelog, Troubleshooting), the browser gives
+   that column nearly all the width and wraps the short columns one word per
+   line. The other columns get a usable minimum width. Long unbroken text,
+   such as the error type URIs, can break anywhere, so tables fit the
+   content column instead of scrolling sideways. */
+.scalar-app .markdown td:not(:last-of-type),
+  .scalar-app .markdown th:not(:last-of-type) {
+    min-width: 8em;
+  }
+
+.scalar-app .markdown td,
+  .scalar-app .markdown th {
+    overflow-wrap: anywhere;
   }
 
 .scalar-app .markdown tr:last-of-type td {
