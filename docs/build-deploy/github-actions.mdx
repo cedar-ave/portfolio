@@ -14,7 +14,7 @@ The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github
 - **lychee**: links to other sites. Settings are in `lychee.toml`. To skip a link, add a regex for it to `exclude`.
 - **Vale**: style defects such as repeated words and leftover merge conflict markers. Settings are in `.vale.ini`, and the custom rules are in `.vale/styles/Portfolio`. Only error-level alerts fail the run.
 - The Norway Data API has its own checks in its own repo. See [The API reference page](../norway-data-api/overview).
-- Netlify builds on every push no matter what these checks report. A failing check doesn't block publishing unless you turn on the optional deploy job.
+- The `deploy` job publishes the site to Netlify only after all three checks pass. A failing check stops the deploy, and the live site stays as it was.
 - Every action is pinned to a commit SHA, and checkouts don't keep the GitHub token. See [Repository and CI security](repository-security).
 
 </QuickReference>
@@ -160,23 +160,22 @@ lychee --no-progress README.md 'docs/**/*.md*' 'blog/**/*.md*' 'samples/**/*.md*
 vale docs blog samples src/pages README.md
 ```
 
-## Making checks block publishing
+## Publishing to Netlify
 
-Netlify builds and publishes on every push, whatever the checks report. There are two ways to make a failing check stop a bad change from going live.
+The `deploy` job builds the site and publishes it to Netlify, but only after all three checks pass. Netlify still hosts the site (domain, HTTPS, redirects, and headers). It no longer builds it: builds are stopped in Netlify, and deploys there show as CLI deploys from GitHub Actions.
 
-### Option 1: Require the checks on pull requests
+The job runs only for pushes to `main`, never for pull requests. It depends on these settings:
 
-Add a **Require status checks to pass** rule to the `Protect main` ruleset in the repo settings (**Settings** > **Rules** > **Rulesets**), with the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks, and a rule that requires pull requests. Changes then go through pull requests, and the checks must pass before one can be merged. The ruleset already blocks force-pushes and deleting `main`. Netlify still builds on every push, but only changes that passed reach `main`.
+| Setting | Where | Value |
+| --- | --- | --- |
+| `NETLIFY_DEPLOY_FROM_ACTIONS` | Repository variable | `true`. Set it to anything else to turn the job off. |
+| `NETLIFY_AUTH_TOKEN` | Repository secret | A Netlify personal access token (**User settings** > **Applications** > **Personal access tokens**). When it expires, make a new one and run `gh secret set NETLIFY_AUTH_TOKEN --repo cedar-ave/portfolio`. |
+| `NETLIFY_SITE_ID` | Repository secret | The `marlasowards` site's ID. |
+| Stop builds | Netlify (**Site configuration** > **Build & deploy** > **Continuous deployment**) | On, so pushes don't also deploy from Netlify. If you turn the job off, turn Netlify builds back on. |
 
-### Option 2: Deploy from the workflow
+The publish step runs `netlify deploy --prod --no-build --dir=build`. Keep `--no-build`: without it, the CLI runs its own `npm run build`, which replaces the `build` folder and drops the resume PDF.
 
-The workflow has a `deploy` job that builds the site and publishes it to Netlify, but only after all three checks pass. It's off until you turn it on. To turn it on:
-
-1. Stop builds in Netlify (**Site configuration** > **Build & deploy** > **Continuous deployment** > **Stop builds**) so that pushes don't also deploy from Netlify.
-2. Add the `NETLIFY_AUTH_TOKEN` and `NETLIFY_SITE_ID` repository secrets.
-3. Set the repository variable `NETLIFY_DEPLOY_FROM_ACTIONS` to `true`.
-
-The job runs only for pushes to `main`. It never runs for pull requests.
+To make the checks also block merges, add a **Require status checks to pass** rule to the `Protect main` ruleset (**Settings** > **Rules** > **Rulesets**), with the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks, and a rule that requires pull requests.
 
 After `npm run build`, the job also makes the resume PDF from the built `/resume` page, so the PDF is never out of date. See [Resume PDF](resume-pdf).
 

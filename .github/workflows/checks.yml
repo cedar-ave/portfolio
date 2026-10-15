@@ -7,9 +7,8 @@
 #   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
 #
-# Netlify builds on every push no matter what this workflow reports. To make
-# these checks block publishing, either merge to main through pull requests
-# with these checks required, or turn on the deploy job below.
+# The deploy job below publishes the site to Netlify, only after all checks
+# pass. Netlify's own builds are stopped.
 name: Checks
 
 on:
@@ -83,11 +82,11 @@ jobs:
       - name: Run Vale
         run: vale --output=.vale/github.tmpl docs blog samples src/pages README.md
 
-  # Optional: publish to Netlify from here, only after all checks pass.
-  # Off until the repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true".
-  # Before turning it on, stop builds in Netlify (Site configuration > Build &
-  # deploy > Continuous deployment > Stop builds) so pushes don't also deploy,
-  # and add the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets.
+  # Publishes to Netlify, only after all checks pass. Runs while the
+  # repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true", and needs the
+  # NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets. Builds in
+  # Netlify are stopped (Site configuration > Build & deploy > Continuous
+  # deployment), so pushes don't also deploy from there.
   deploy:
     name: Deploy to Netlify
     needs: [spelling, links, style]
@@ -124,8 +123,10 @@ jobs:
       # integrity-checked packages, with install scripts off.
       - run: npm ci --ignore-scripts --prefix tools/netlify-cli
 
+      # --no-build: the site is already built above. Without it, the CLI runs
+      # its own build, which replaces build/ and drops the resume PDF.
       - name: Publish
-        run: tools/netlify-cli/node_modules/.bin/netlify deploy --prod --dir=build --message "Deploy ${GITHUB_SHA::7} from GitHub Actions"
+        run: tools/netlify-cli/node_modules/.bin/netlify deploy --prod --no-build --dir=build --message "Deploy ${GITHUB_SHA::7} from GitHub Actions"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

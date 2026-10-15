@@ -14,7 +14,7 @@ The **Download PDF** button on [/resume](/resume) links to `/pdf/resume.pdf`. Th
 - The PDF's layout comes from the `@media print` rules in `src/pages/resume.module.css`.
 - The contact line at the top of the PDF is in `resume.mdx`. It's hidden on screen and shows only in print.
 - The script is `tools/resume-pdf/make-pdf.mjs`. It uses Playwright, pinned in `tools/resume-pdf/package.json`.
-- The PDF only exists if the deploy job is on. See [Making checks block publishing](github-actions#option-2-deploy-from-the-workflow).
+- The PDF only exists on the live site because the deploy job makes it. See [Publishing to Netlify](github-actions#publishing-to-netlify).
 
 </QuickReference>
 

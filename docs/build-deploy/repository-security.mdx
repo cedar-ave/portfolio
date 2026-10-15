@@ -13,7 +13,7 @@ How this repo, its GitHub Actions workflows, and its Netlify build are protected
 - GitHub settings: private vulnerability reporting, Dependabot alerts and security updates, secret scanning with push protection, and CodeQL code scanning are on. A ruleset blocks force-pushes and deleting `main`.
 - Every GitHub Action is pinned to a commit SHA, checkouts don't keep the GitHub token, and workflows only get read access.
 - Netlify installs dependencies with `--ignore-scripts`, so no package can run code just by being installed.
-- Tools that CI downloads are pinned to exact versions. The Netlify CLI and Playwright, which the optional deploy job runs, install from their own lockfiles.
+- Tools that CI downloads are pinned to exact versions. The Netlify CLI and Playwright, which the deploy job runs, install from their own lockfiles.
 - Dependabot opens weekly update pull requests for npm packages and GitHub Actions.
 
 </QuickReference>
@@ -31,7 +31,7 @@ These live in the repo's settings, not in files. They were turned on with the Gi
 | CodeQL (default setup) | Scans the JavaScript on every push and pull request for security bugs. Results are in **Security** > **Code scanning**. |
 | `Protect main` ruleset | Blocks force-pushes to `main` and deleting it. Direct pushes are still allowed. |
 
-The ruleset doesn't require pull requests or passing checks, so pushing straight to `main` still works. To make checks block publishing, see [Making checks block publishing](github-actions#making-checks-block-publishing).
+The ruleset doesn't require pull requests or passing checks, so pushing straight to `main` still works. Failing checks still stop the deploy. See [Publishing to Netlify](github-actions#publishing-to-netlify).
 
 ## Workflows
 
@@ -59,7 +59,7 @@ Turning on Dependabot alerts (October 2026) surfaced alerts that can't be fixed 
 | --- | --- | --- |
 | `tinypool` (2 critical), `serialize-javascript`, `uuid`, `postcss-selector-parser` | Inside Docusaurus 3.10.2's build tooling | Each fix needs a major version of a package Docusaurus depends on, which could break the build. They only run at build time, on this repo's own content, so an attacker would need to control the build's input. Revisit when Docusaurus updates them; Dependabot will open a pull request. |
 | `braces`, `http-cache-semantics` | Docusaurus build tooling | No fixed version exists yet. Build time only. |
-| `sharp`, `node-forge` | `tools/netlify-cli/` | Only in the optional deploy job, which is off. `netlify deploy` doesn't use `sharp`'s image processing. Update `tools/netlify-cli` when a fixed Netlify CLI is released. |
+| `sharp`, `node-forge` | `tools/netlify-cli/` | Only in the deploy job, and `netlify deploy` doesn't load `sharp` (the CLI uses it for local image processing in `netlify dev`). No fix yet: as of Netlify CLI 27.12.1, the CLI's `ipx` dependency still requires `sharp` 0.34, so Dependabot's security update for `sharp` fails with `security_update_not_possible`. Update `tools/netlify-cli` when a Netlify CLI release moves to `sharp` 0.35.5 or later. |
 
 The site itself is static HTML, CSS, and JavaScript, so none of these run on a server that visitors reach. Check **Security** > **Dependabot** after Docusaurus or Netlify CLI updates, and update this table.
 
