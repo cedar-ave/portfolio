@@ -11,10 +11,15 @@ The **Download PDF** button on [/resume](/resume) links to `/pdf/resume.pdf`. Th
 <QuickReference>
 
 - To change the resume, edit `src/pages/resume.mdx`. The PDF updates on the next deploy.
+- The PDF is served at `/pdf/resume.pdf` but saves as **Resume - Marla Sowards.pdf**, and its title is **Resume - Marla Sowards**. See [File name and title](#file-name-and-title).
 - The PDF's layout comes from the `@media print` rules in `src/pages/resume.module.css`.
 - The contact line at the top of the PDF is in `resume.mdx`. It's hidden on screen and shows only in print.
 - The script is `tools/resume-pdf/make-pdf.mjs`. It uses Playwright, pinned in `tools/resume-pdf/package.json`.
 - The PDF only exists on the live site because the deploy job makes it. See [Publishing to Netlify](github-actions#publishing-to-netlify).
+- To preview the PDF locally (see [Previewing the PDF locally](#previewing-the-pdf-locally)):
+  - [Live, in the browser](#live-in-the-browser): run `npm run start`, then in Chrome DevTools set **Rendering** > **Emulate CSS media type** to **print**. Updates on save, but shows no page breaks.
+  - [PDF from the dev server](#pdf-from-the-dev-server): with `npm run start` running, run `node tools/resume-pdf/make-pdf.mjs http://localhost:3000`. Writes `tools/resume-pdf/preview.pdf` in a few seconds.
+  - [PDF from a build](#pdf-from-a-build): run `npm run build`, then `node tools/resume-pdf/make-pdf.mjs`. Writes `build/pdf/resume.pdf`, exactly what the deploy job makes.
 
 </QuickReference>
 
@@ -27,6 +32,15 @@ The `Make the resume PDF` step in the deploy job (`.github/workflows/checks.yml`
 3. Runs `tools/resume-pdf/make-pdf.mjs`, which serves the `build` folder on a local port, opens `/resume` in headless Chromium, and prints it to `build/pdf/resume.pdf` on US Letter paper.
 
 The publish step then uploads the `build` folder, PDF included.
+
+## File name and title
+
+The PDF's address stays `/pdf/resume.pdf`, so existing links keep working and the URL has no spaces. Two other settings control the name people see:
+
+- **Saved file name:** the `download="Resume - Marla Sowards.pdf"` attribute on the **Download PDF** link in `resume.mdx`. Browsers use it as the file name when the PDF is saved from that button.
+- **PDF title:** `make-pdf.mjs` sets the page title to `Resume - Marla Sowards` before printing. Chromium stores the page title as the PDF's title, which PDF viewers and browser tabs show. The script sets it after switching to print mode, because the switch re-renders the page and puts the site's own title (`Resume | Marla Sowards`) back.
+
+To rename the PDF, change both.
 
 ## Print styles
 
@@ -42,16 +56,41 @@ The PDF starts with a contact line (email, city, LinkedIn, and portfolio). The p
 
 ## Previewing the PDF locally
 
-Run these from the repo root:
+There are three ways to preview, from fastest to most exact. For the second and third, install Playwright and Chromium once (and again after updating Playwright), from the repo root:
+
+```bash
+npm ci --ignore-scripts --prefix tools/resume-pdf
+tools/resume-pdf/node_modules/.bin/playwright install chromium
+```
+
+### Live, in the browser
+
+Use this while you adjust the print styles. It updates every time you save, but it doesn't show page breaks or the PDF's margins.
+
+1. Run `npm run start` and open `/resume` in Chrome.
+2. Open DevTools (F12), press **Ctrl+Shift+P**, and run **Show Rendering**.
+3. Set **Emulate CSS media type** to **print**.
+
+### PDF from the dev server
+
+Use this to check page breaks. It takes a few seconds and doesn't need a build. With `npm run start` running, in a second terminal:
+
+```bash
+node tools/resume-pdf/make-pdf.mjs http://localhost:3000
+```
+
+The PDF is written to `tools/resume-pdf/preview.pdf`, which is in `.gitignore`. Run the command again after each change. If the dev server is on a different port, use that port in the URL.
+
+### PDF from a build
+
+This is exactly what the deploy job makes:
 
 ```bash
 npm run build
-npm ci --ignore-scripts --prefix tools/resume-pdf
-tools/resume-pdf/node_modules/.bin/playwright install chromium
 node tools/resume-pdf/make-pdf.mjs
 ```
 
-The PDF is written to `build/pdf/resume.pdf`. The second and third commands are only needed the first time, and after updating Playwright.
+The PDF is written to `build/pdf/resume.pdf`.
 
 `npm run start` doesn't make the PDF, so **Download PDF** returns a 404 on the dev server.
 
