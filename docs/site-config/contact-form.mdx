@@ -1,0 +1,55 @@
+---
+sidebar_position: 16
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Contact form
+
+The [/contact](/contact) page has a form that visitors use to send a message, so no email address appears anywhere on the site or in the resume PDF. Netlify Forms handles the submissions: there's no server code, function, or email API key to maintain.
+
+<QuickReference>
+
+- The page is `src/pages/contact.js`, styled by `src/pages/contact.module.css`. **Contact** is in the navbar, and the resume's print-only contact line links to it.
+- Netlify finds the form in the built HTML at deploy time, because of its `data-netlify="true"` attribute. Submissions show up in the Netlify UI under **Forms** > **contact**.
+- One-time Netlify setup: turn on form detection, and add an email notification. See [Netlify setup](#netlify-setup).
+- Spam: a hidden honeypot field catches simple bots, and Netlify also filters submissions with Akismet. Flagged ones go to the **Spam submissions** list.
+- To add a field, add an input with a `name` to the form. Netlify picks it up on the next deploy.
+- No Content Security Policy change was needed: the form posts to this site, which `form-action 'self'` and `connect-src 'self'` already allow. See [Security headers](security-headers).
+
+</QuickReference>
+
+## How it works
+
+Docusaurus renders `contact.js` to static HTML at build time, so the built `build/contact/index.html` contains a plain `<form>`. When the deploy job publishes the site, Netlify scans the HTML, finds the form by its `data-netlify="true"` attribute, and registers a form named `contact` with the fields `name`, `email`, and `message`. Netlify registers only the fields that are in the HTML at deploy time, so it ignores any field added later by JavaScript.
+
+When a visitor submits the form:
+
+1. The page's `handleSubmit` sends the fields to `/` as a URL-encoded `POST`, including the hidden `form-name` field, which tells Netlify which form the data belongs to.
+2. Netlify stores the submission and sends the notification email.
+3. The page shows **Thanks! Your message was sent.**, or an error message if the request fails.
+
+Without JavaScript, the browser posts the form normally, and Netlify shows its own confirmation page.
+
+The form works only on the deployed site. On `npm run start` or `npm run serve`, the `POST` fails and the page shows the error message.
+
+## Netlify setup
+
+Do these once in the Netlify UI:
+
+1. **Turn on form detection:** **Forms** > **Enable form detection**. Then redeploy (rerun the deploy job, or push), because Netlify only finds forms in deploys made after detection is on.
+2. **Check that the form was found:** **Forms** should list a form named **contact**.
+3. **Get notified:** **Site configuration** > **Notifications** > **Emails and webhooks** > **Form submission notifications** > **Add notification** > **Email notification**. Choose the **contact** form and enter the address that should receive messages. That address stays in Netlify and is never published.
+
+Netlify's free plan includes 100 form submissions a month.
+
+## Spam protection
+
+- **Honeypot:** the form has a `bot-field` input that's moved off-screen and hidden from screen readers. People never fill it out, but simple bots fill every field. The form's `data-netlify-honeypot="bot-field"` attribute tells Netlify to drop any submission where it has a value.
+- **Akismet:** Netlify runs every submission through Akismet. Ones it flags go to **Spam submissions** on the form's page instead of the verified list, and don't send a notification.
+
+If spam still gets through, Netlify also supports a reCAPTCHA challenge (`data-netlify-recaptcha="true"`). That would need Google's reCAPTCHA domains added to the Content Security Policy.
+
+## Testing
+
+After a deploy, submit the form on [/contact](/contact). The submission should show up under **Forms** > **contact**, and the notification email should arrive within a minute or two. Delete the test submission afterward.

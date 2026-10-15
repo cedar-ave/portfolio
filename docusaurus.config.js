@@ -252,6 +252,7 @@ const config = {
             position: 'left',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
+          { to: '/contact', label: 'Contact', position: 'left' },
           {
             href: 'https://www.linkedin.com/in/marlasowards',
             label: 'LinkedIn',
