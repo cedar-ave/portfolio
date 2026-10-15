@@ -237,13 +237,13 @@ const config = {
             position: 'left',
           },
           {
-            to: '/portfolio',
-            label: 'Portfolio',
+            to: '/resume',
+            label: 'Resume',
             position: 'left',
           },
           {
-            to: '/resume',
-            label: 'Resume',
+            to: '/portfolio',
+            label: 'Portfolio',
             position: 'left',
           },
           {
