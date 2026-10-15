@@ -1,0 +1,60 @@
+---
+sidebar_position: 17
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Resume PDF
+
+The **Download PDF** button on [/resume](/resume) links to `/pdf/resume.pdf`. That file isn't in the repo. The deploy job makes it from the built `/resume` page on every deploy, so the PDF always matches the page.
+
+<QuickReference>
+
+- To change the resume, edit `src/pages/resume.mdx`. The PDF updates on the next deploy.
+- The PDF's layout comes from the `@media print` rules in `src/pages/resume.module.css`.
+- The contact line at the top of the PDF is in `resume.mdx`. It's hidden on screen and shows only in print.
+- The script is `tools/resume-pdf/make-pdf.mjs`. It uses Playwright, pinned in `tools/resume-pdf/package.json`.
+- The PDF only exists if the deploy job is on. See [Making checks block publishing](github-actions#option-2-deploy-from-the-workflow).
+
+</QuickReference>
+
+## How it works
+
+The `Make the resume PDF` step in the deploy job (`.github/workflows/checks.yml`) runs after `npm run build`:
+
+1. Installs Playwright from `tools/resume-pdf/package-lock.json` with `--ignore-scripts`.
+2. Installs Chromium and the system libraries it needs.
+3. Runs `tools/resume-pdf/make-pdf.mjs`, which serves the `build` folder on a local port, opens `/resume` in headless Chromium, and prints it to `build/pdf/resume.pdf` on US Letter paper.
+
+The publish step then uploads the `build` folder, PDF included.
+
+## Print styles
+
+The PDF is the page as Chromium prints it, so its layout is set by the `@media print` block in `src/pages/resume.module.css`. Those rules hide the navbar, footer, table of contents, and **Download PDF** button, widen the content to the full page, and tighten the type and spacing.
+
+The rules are scoped to `html.resume-page`. That class comes from `wrapperClassName: resume-page` in the front matter of `resume.mdx`. Docusaurus bundles all CSS into one file in production, so without the scope, the rules would apply to every page that's printed.
+
+The same rules apply when someone prints `/resume` from their browser.
+
+## Contact line
+
+The PDF starts with a contact line (email, city, LinkedIn, and portfolio). The paragraph with the `resume-contact` class in `resume.mdx` holds it. It's hidden on screen, because the navbar and footer already link to LinkedIn and the portfolio. It's still in the page's HTML, so don't put anything there that shouldn't be public.
+
+## Previewing the PDF locally
+
+Run these from the repo root:
+
+```bash
+npm run build
+npm ci --ignore-scripts --prefix tools/resume-pdf
+tools/resume-pdf/node_modules/.bin/playwright install chromium
+node tools/resume-pdf/make-pdf.mjs
+```
+
+The PDF is written to `build/pdf/resume.pdf`. The second and third commands are only needed the first time, and after updating Playwright.
+
+`npm run start` doesn't make the PDF, so **Download PDF** returns a 404 on the dev server.
+
+## Updating Playwright
+
+Change the version in `tools/resume-pdf/package.json`, then run `npm install --package-lock-only --ignore-scripts` in that folder. Dependabot also opens pull requests for it.

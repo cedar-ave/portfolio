@@ -7,3 +7,99 @@
   letter-spacing: -.3px;
   line-height: 1.4;
 }
+
+/* The contact line is for the PDF only; the navbar and footer already link
+   to LinkedIn and the portfolio on screen. */
+.resume-contact {
+  display: none;
+}
+
+/* Print styles, used by tools/resume-pdf to make /pdf/resume.pdf and by
+   the browser's own Print. Scoped to this page through its
+   wrapperClassName (resume-page), since Docusaurus bundles all CSS into one
+   file in production. */
+@media print {
+  :global(html.resume-page) {
+    --ifm-font-size-base: 10.5pt;
+    --ifm-line-height-base: 1.4;
+    --ifm-list-item-margin: 0.15rem;
+    --ifm-leading: 0.6rem;
+  }
+
+  /* Site chrome */
+  :global(.resume-page .navbar),
+  :global(.resume-page .footer),
+  :global(.resume-page [class*='skipToContent']),
+  :global(.resume-page main .col--2),
+  .resume-download {
+    display: none !important;
+  }
+
+  /* With the TOC column hidden, let the content use the full page width. */
+  :global(.resume-page main.container) {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none;
+  }
+
+  :global(.resume-page main .row) {
+    margin: 0;
+  }
+
+  :global(.resume-page main .col--8) {
+    --ifm-col-width: 100%;
+    max-width: 100%;
+    flex-basis: 100%;
+    padding: 0;
+  }
+
+  :global(.resume-page .main-wrapper) {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  :global(.resume-page article h1) {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    font-size: 2rem;
+  }
+
+  .resume-subtitle {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    font-size: 1.15rem;
+  }
+
+  .resume-contact {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  :global(.resume-page article h2) {
+    margin-top: 1.25rem;
+    margin-bottom: 0.4rem;
+    font-size: 1.45rem;
+  }
+
+  :global(.resume-page article h3) {
+    margin-top: 0.9rem;
+    margin-bottom: 0.3rem;
+    font-size: 1.2rem;
+  }
+
+  :global(.resume-page article h4) {
+    margin-top: 0.6rem;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+  }
+
+  /* Keep headings with what follows them, and don't split a bullet across
+     pages. */
+  :global(.resume-page article :is(h1, h2, h3, h4)) {
+    break-after: avoid;
+  }
+
+  :global(.resume-page article li) {
+    break-inside: avoid;
+  }
+}

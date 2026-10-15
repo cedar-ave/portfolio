@@ -2,6 +2,8 @@
 title: Resume
 description: Marla Sowards — AI-fluent documentation engineer
 table_of_contents_levels: 2
+# Lets resume.module.css scope its print styles to this page.
+wrapperClassName: resume-page
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -9,7 +11,7 @@ import styles from './resume.module.css';
 
 export const DownloadPdf = () => (
   <a
-    className="button button--primary button--lg"
+    className={`button button--primary button--lg ${styles['resume-download']}`}
     href={useBaseUrl('/pdf/resume.pdf')}
     target="_blank"
     rel="noopener noreferrer"
@@ -21,6 +23,9 @@ export const DownloadPdf = () => (
 # Marla Sowards
 
 <p className={styles['resume-subtitle']}>AI-fluent documentation engineer</p>
+
+{/* Shows only in print and in the generated PDF (see resume.module.css). */}
+<p className={styles['resume-contact']}>[marlasowards@gmail.com](mailto:marlasowards@gmail.com) | Salt Lake City, Utah | [LinkedIn](https://www.linkedin.com/in/marlasowards) | [Portfolio](https://www.marlasowards.com)</p>
 
 <DownloadPdf />
 

@@ -4,7 +4,11 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /
+    # The tools/ folders pin CI tools with their own lockfiles.
+    directories:
+      - /
+      - /tools/netlify-cli
+      - /tools/resume-pdf
     schedule:
       interval: weekly
   - package-ecosystem: github-actions

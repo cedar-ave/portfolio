@@ -110,6 +110,15 @@ jobs:
 
       - run: npm run build
 
+      # Prints the built /resume page to build/pdf/resume.pdf, so the PDF
+      # always matches the page. Playwright installs from its own lockfile
+      # (tools/resume-pdf), like the Netlify CLI below.
+      - name: Make the resume PDF
+        run: |
+          npm ci --ignore-scripts --prefix tools/resume-pdf
+          tools/resume-pdf/node_modules/.bin/playwright install --with-deps chromium
+          node tools/resume-pdf/make-pdf.mjs
+
       # The Netlify CLI installs from its own lockfile (tools/netlify-cli),
       # so the job that holds the Netlify token only runs exact,
       # integrity-checked packages, with install scripts off.

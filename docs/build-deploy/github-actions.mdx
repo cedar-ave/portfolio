@@ -178,4 +178,6 @@ The workflow has a `deploy` job that builds the site and publishes it to Netlify
 
 The job runs only for pushes to `main`. It never runs for pull requests.
 
+After `npm run build`, the job also makes the resume PDF from the built `/resume` page, so the PDF is never out of date. See [Resume PDF](resume-pdf).
+
 The job is the only one with a secret (the Netlify token), so it doesn't fetch the Netlify CLI with `npx`. The CLI installs from its own lockfile in `tools/netlify-cli/`, with exact versions, integrity hashes, and install scripts off. To update it, change the version in `tools/netlify-cli/package.json` and run `npm install --package-lock-only --ignore-scripts` in that folder.
