@@ -83,6 +83,7 @@ const config = {
         indexBlog: true,
         indexPages: true,
         highlightSearchTermsOnTargetPage: true,
+        searchBarShortcutHint: false,
         ignoreFiles: [/markdown-page/],
         // The "Copy page" bar (src/components/PageActions) isn't content.
         ignoreCssSelectors: ['.page-actions'],

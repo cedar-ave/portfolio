@@ -565,3 +565,8 @@ li .alert {
 .mdx-page article ul ul ul {
   list-style-type: '-  ';
 }
+
+.navbar__search-input {
+  font-size: 0.9rem;
+  font-weight: 400;
+}

@@ -13,6 +13,7 @@ import QuickReference from '@site/src/components/QuickReference';
 - Search is provided by [`@easyops-cn/docusaurus-search-local`](https://github.com/easyops-cn/docusaurus-search-local), configured in `docusaurus.config.js` under `themes`.
 - It's a local/offline index built at **build time** — no external service (e.g. Algolia) is involved, and there's nothing to provision or pay for.
 - `docsRouteBasePath` lists every route the indexer should crawl: `docs`, `samples`, `portfolio`, `resume`, `about`. Blog and standalone pages are included via `indexBlog`/`indexPages`, not this list.
+- The "Ctrl K" hint in the navbar search box is turned off with `searchBarShortcutHint: false`. The shortcut still works.
 - Search does not work under `npm start` — it only builds in a production build (`npm run build`). Use `npm run build && npm run serve` to test it locally.
 
 </QuickReference>
@@ -32,6 +33,8 @@ themes: [
       indexPages: true, // about, portfolio, resume
       highlightSearchTermsOnTargetPage: true,
       ignoreFiles: [/markdown-page/],
+      ignoreCssSelectors: ['.page-actions'],
+      searchBarShortcutHint: false,
     },
   ],
 ],
@@ -44,6 +47,8 @@ themes: [
 - `indexPages: true` indexes standalone pages in `src/pages/` (About, Portfolio, Resume) — this is what actually makes those pages searchable, in combination with their routes being listed in `docsRouteBasePath`.
 - `highlightSearchTermsOnTargetPage: true` highlights the matched term on the page you land on after clicking a search result.
 - `ignoreFiles: [/markdown-page/]` excludes `src/pages/markdown-page.mdx` (a leftover Docusaurus boilerplate page) from the index.
+- `ignoreCssSelectors: ['.page-actions']` keeps the "Copy page" bar out of the index, since it isn't page content.
+- `searchBarShortcutHint: false` hides the "Ctrl K" key hint inside the navbar search box. The keyboard shortcut itself still works. The plugin's CSS class names are hashed, so hiding the hint with a CSS rule in `custom.css` doesn't work reliably; use this option instead.
 
 ## Why this plugin instead of Algolia DocSearch
 
