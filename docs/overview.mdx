@@ -15,7 +15,7 @@ This section documents everything that has been customized beyond a stock Docusa
 | Homepage features row | `src/components/HomepageFeatures/index.js` | [Homepage features](home-page/homepage-features) |
 | Page diagrams (per-experience-page SVG figures) | `src/components/*Diagrams` folders | [Page diagrams](visuals/page-diagrams) |
 | Release notes page mockups (text/content of each sample) | `src/components/*Mockup` folders used by the three `release-notes-*.mdx` pages | [Release notes page mockups](visuals/release-notes-mockups) |
-| Deployment | `npm run deploy`, env vars `USE_SSH` / `GIT_USER` | [Deployment](build-deploy/deployment) |
+| Deployment (push to `main`; GitHub Actions builds and publishes to Netlify) | `.github/workflows/checks.yml`, `netlify.toml` | [Deployment](build-deploy/deployment) |
 | Known build issues | n/a | [Troubleshooting](troubleshooting/panic-occurred-at-runtime) |
 | Navbar items | `docusaurus.config.js` | [Navbar](site-config/navbar) |
 | Footer links and color | `docusaurus.config.js`, `src/css/custom.css` | [Footer](site-config/footer) |

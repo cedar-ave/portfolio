@@ -169,19 +169,9 @@ Full details: [Release notes page mockups](docs/visuals/release-notes-mockups.md
 
 ## Deployment
 
-Using SSH:
+Push to `main`. The `Checks` workflow (`.github/workflows/checks.yml`) runs the prose checks, then builds the site and publishes it to Netlify. Don't use `npm run deploy`: it's the Docusaurus template's GitHub Pages script, and this site isn't on GitHub Pages.
 
-```bash
-USE_SSH=true npm run deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> npm run deploy
-```
-
-If you are using GitHub Pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+Full details: [Deployment](docs/build-deploy/deployment.mdx).
 
 ## Error: Panic occurred at runtime. react-router-config.js not found
 

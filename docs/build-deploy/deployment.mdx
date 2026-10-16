@@ -1,32 +1,68 @@
 ---
 sidebar_position: 5
+description: "How to run and build the site locally, and how a push to main publishes it to Netlify through GitHub Actions."
+copy_page: true
 ---
 
 import QuickReference from '@site/src/components/QuickReference';
 
 # Deployment
 
+The site is hosted on Netlify. Pushing to `main` publishes it: the `Checks` workflow in GitHub Actions runs the prose checks, then builds the site and deploys `build/` to Netlify. Netlify doesn't build the site itself.
+
 <QuickReference>
 
-- Build the static site: `npm run build`, output goes to the `build` directory.
-- Deploy over SSH: `USE_SSH=true npm run deploy`.
-- Deploy without SSH: `GIT_USER=<your GitHub username> npm run deploy`.
-- Deploying is only relevant if you are using GitHub Pages for hosting; it builds the site and pushes to the `gh-pages` branch.
+- Run the site locally: `npm start`. Most changes show without restarting; new swizzled theme files need a restart.
+- Build it: `npm run build`, which writes the static site to `build/`. Preview the build with `npm run serve`.
+- Publish: push to `main`. The `deploy` job in `.github/workflows/checks.yml` runs after the checks pass. See [Publishing to Netlify](github-actions#publishing-to-netlify).
+- Don't use `npm run deploy`. It's the Docusaurus template's GitHub Pages script, and this site isn't on GitHub Pages.
+- To roll back, publish an earlier deploy from the Netlify UI (**Deploys**, open the deploy, **Publish deploy**).
 
 </QuickReference>
 
 ## Local development
 
 ```bash
-npm run start
+npm start
 ```
 
-Starts a local development server and opens a browser window. Most changes are reflected live without restarting the server.
+Starts a development server at `http://localhost:3000` and opens it in a browser. Most changes show up without a restart. Restart it after adding a swizzled file under `src/theme/`, since Docusaurus only finds those when it starts.
+
+The development server doesn't run postBuild plugins, so some things only exist in a build: the Markdown copies and `llms.txt` (see [llms.txt and Markdown copies](../site-config/llms-txt)), and `build/_headers` with the Content Security Policy (see [Security headers](../site-config/security-headers)).
 
 ## Build
 
 ```bash
 npm run build
+npm run serve
 ```
 
-Generates static content into the `build` directory. It can be served using any static content hosting service, not just GitHub Pages.
+`npm run build` writes the static site to `build/`, replacing what's there. `npm run serve` serves `build/` at `http://localhost:3000`, which is the closest local match to production. Netlify's headers from `netlify.toml` don't apply locally.
+
+To check a build without replacing `build/` (for example, while a resume PDF you just made is in it), build somewhere else:
+
+```bash
+npx docusaurus build --out-dir ../portfolio-build-check
+```
+
+## Publishing
+
+Every push to `main` runs the `Checks` workflow. Its `deploy` job waits for codespell, lychee, and Vale to pass, then:
+
+1. Runs `npm ci` and `npm run build`.
+2. Makes the resume PDF from the built `/resume` page (see [Resume PDF](resume-pdf)).
+3. Publishes `build/` to production with the Netlify CLI (`netlify deploy --prod --no-build`).
+
+If a check fails, nothing is published and the live site stays as it was. Pull requests run the checks but never deploy. The settings and secrets the job needs are in [Publishing to Netlify](github-actions#publishing-to-netlify).
+
+Netlify still serves the site: the domain, HTTPS, redirects, and headers. Its own builds are stopped, so deploys show in Netlify as CLI deploys from GitHub Actions.
+
+| What | Set in |
+| --- | --- |
+| Redirects, content types, and fixed security headers | `netlify.toml` |
+| Content Security Policy | `build/_headers`, written each build by `plugins/csp-headers-plugin.mjs` |
+| Domain and HTTPS | The Netlify UI |
+
+## Rolling back
+
+Netlify keeps every deploy. To go back to an earlier version, open **Deploys** in the Netlify UI, open the deploy you want, and select **Publish deploy**. The next push to `main` publishes over it, so also revert or fix the commit that caused the problem.
