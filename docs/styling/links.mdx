@@ -8,7 +8,8 @@ import QuickReference from '@site/src/components/QuickReference';
 
 <QuickReference>
 
-- Link colors are set once, as `--site-link-color` (`#407ab5`) and `--site-link-hover-color` (`#305c88`), in the `:root` block of `src/css/custom.css`.
+- Link colors are set once, as `--site-link-color` (`#3b70a6`) and `--site-link-hover-color` (`#305c88`), in the `:root` block of `src/css/custom.css`.
+- Both meet WCAG AA contrast (4.5:1) on every background links appear on. Check a new link color against the admonition background, not just white (see [Contrast](#contrast)).
 - Infima's `--ifm-link-color` and `--ifm-link-hover-color` point at those two variables, and so do the navbar's active and hover link colors.
 - Links inside admonitions (`:::note`, `:::tip`, `:::caution`, and so on) use the same colors as links everywhere else. Infima normally recolors them to match the admonition's text.
 - To change the site's link color, edit only `--site-link-color` and `--site-link-hover-color`. Everything else, including links in admonitions, follows.
@@ -21,7 +22,7 @@ import QuickReference from '@site/src/components/QuickReference';
 :root {
   /* Stored separately so components that redefine --ifm-link-color
      locally (e.g. Infima's .alert) can point back at the site values. */
-  --site-link-color: #407ab5;
+  --site-link-color: #3b70a6;
   --site-link-hover-color: #305c88;
   --ifm-link-color: var(--site-link-color);
   --ifm-link-hover-color: var(--site-link-hover-color);
@@ -34,6 +35,19 @@ import QuickReference from '@site/src/components/QuickReference';
 The link color is set separately from `--ifm-color-primary`. Infima's default ties links to the primary color, but this site sets them independently. Buttons and active sidebar items still use the primary color (see [Colors](./colors)).
 
 The `[data-theme='dark']` block doesn't override `--site-link-color`, so links use the same colors in both themes.
+
+## Contrast
+
+WCAG AA requires a contrast ratio of at least 4.5:1 between link text and its background. The link color used to be `#407ab5`, which is 4.49:1 on white and only 3.9:1 to 4.3:1 on the tinted backgrounds, so it failed everywhere. `#3b70a6` is the same hue, slightly darker:
+
+| Background | Where | `#3b70a6` | `#305c88` (hover) |
+|---|---|---|---|
+| `#ffffff` | Page | 5.18:1 | 6.97:1 |
+| `#f0f5f9` | Admonitions (`--palette-alice-blue`) | 4.72:1 | 6.35:1 |
+| `#f5f6f8` | Panels and blog post cards | 4.79:1 | 6.45:1 |
+| `#f6f8fa` | Code blocks | 4.87:1 | 6.55:1 |
+
+The admonition background is the hardest one, so check a new link color against `#f0f5f9`. The axe browser extension, or any WCAG contrast checker, reports the ratio.
 
 ## Why links in admonitions needed a fix
 

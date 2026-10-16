@@ -37,7 +37,7 @@
 
   /* Stored separately so components that redefine --ifm-link-color
      locally (e.g. Infima's .alert) can point back at the site values. */
-  --site-link-color: #407ab5;
+  --site-link-color: #3b70a6;
   --site-link-hover-color: #305c88;
   --ifm-link-color: var(--site-link-color);
   --ifm-link-hover-color: var(--site-link-hover-color);
