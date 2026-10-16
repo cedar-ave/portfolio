@@ -38,7 +38,7 @@ export default function Contact() {
       <main className={`container margin-vert--xl ${styles.contact}`}>
         <h1>Contact</h1>
         <h2>LinkedIn</h2>
-        <p>Find me on <a href="https://www.linkedin.com/in/marla-sowards/">LinkedIn</a>.</p>
+        <p>Find me on <a href="https://www.linkedin.com/in/marlasowards/">LinkedIn</a>.</p>
         <h2>Email</h2>
         <p>Send me a message and I'll get back to you by email.</p>
 
