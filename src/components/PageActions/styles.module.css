@@ -1,0 +1,97 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.caret {
+  font-size: 0.7em;
+}
+
+.menu {
+  position: absolute;
+  z-index: var(--ifm-z-index-dropdown);
+  top: calc(100% + 0.25rem);
+  min-width: min(18rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--ifm-dropdown-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+/* Open toward the side with room: from the button's left edge when the bar
+   is at the start of a line (blog posts), from its right edge when it's at
+   the end (docs breadcrumb row). */
+.menuStart {
+  left: 0;
+}
+
+.menuEnd {
+  right: 0;
+}
+
+.menu li {
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 0;
+  border-radius: calc(var(--ifm-global-radius) - 2px);
+  background: none;
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover,
+.item:focus {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.itemTitle {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.itemDescription {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
+.status {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
+@media print {
+  .bar {
+    display: none;
+  }
+}

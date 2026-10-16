@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 description: "An index of everything customized beyond a stock Docusaurus install on this site, with where to change each one and a link to its details."
+copy_page: true
 ---
 
 # Overview
@@ -35,4 +36,5 @@ This section documents everything that has been customized beyond a stock Docusa
 | Norway Data API reference page (Scalar, loaded only on that page; redirects for the API's old URLs) | `src/pages/api-reference.js`, `src/css/scalar-api-reference.css`, `netlify.toml` | [The API reference page](norway-data-api/overview) |
 | Security headers and Content Security Policy (with inline script hashes, generated each build) | `netlify.toml`, `plugins/csp-headers-plugin.mjs` | [Security headers](site-config/security-headers) |
 | Contact form (Netlify Forms, no email address on the site) | `src/pages/contact.js`, Netlify UI | [Contact form](site-config/contact-form) |
+| `llms.txt`, a Markdown copy of each page, and the Copy page menu for AI tools | `plugins/llms-txt-plugin.mjs`, `src/data/llms.mjs`, `src/components/PageActions/`, `netlify.toml` | [llms.txt and Markdown copies](site-config/llms-txt) |
 | Repo and CI hardening (rulesets, Dependabot, CodeQL, SHA-pinned Actions, no install scripts) | GitHub settings, `.github/`, `netlify.toml`, `tools/netlify-cli/` | [Repository and CI security](build-deploy/repository-security) |

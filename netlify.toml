@@ -31,3 +31,16 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+# The Markdown copy of each page, and llms.txt / llms-full.txt, for AI agents
+# (written at build time by plugins/llms-txt-plugin.mjs). Declaring UTF-8
+# keeps characters like "·" and "—" intact.
+[[headers]]
+  for = "/*.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
+  for = "/llms*.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"

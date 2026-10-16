@@ -12,6 +12,7 @@ import remarkPanelToc from './plugins/remark-panel-toc.mjs';
 import remarkIncludesPlugin from './plugins/remark-includes.mjs';
 import blogSeriesPlugin from './plugins/blog-series-plugin.mjs';
 import cspHeadersPlugin from './plugins/csp-headers-plugin.mjs';
+import llmsTxtPlugin from './plugins/llms-txt-plugin.mjs';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -83,6 +84,8 @@ const config = {
         indexPages: true,
         highlightSearchTermsOnTargetPage: true,
         ignoreFiles: [/markdown-page/],
+        // The "Copy page" bar (src/components/PageActions) isn't content.
+        ignoreCssSelectors: ['.page-actions'],
       },
     ]
   ],
@@ -92,6 +95,10 @@ const config = {
     // Writes the Content Security Policy, with hashes of the site's inline
     // scripts, into build/_headers. See plugins/csp-headers-plugin.mjs.
     cspHeadersPlugin,
+    // Writes a Markdown copy of every built page (/about -> /about.md), plus
+    // llms.txt and llms-full.txt, for AI agents. Writes only .md and .txt
+    // files, never HTML. See plugins/llms-txt-plugin.mjs.
+    llmsTxtPlugin,
     // A second, standalone docs instance for the "Product user guide" demo
     // linked from /portfolio. It's deliberately not in the navbar - it's a
     // sample guide, not a real section of this site. See
@@ -209,6 +216,13 @@ const config = {
         gtag: {
           trackingID: 'G-8S1BSK4F9Q',
           anonymizeIP: true,
+        },
+        // Blog tag, author, and archive pages only list posts, so they're
+        // left out of the sitemap, as they are out of llms.txt (see
+        // plugins/llms-txt-plugin.mjs). That keeps the sitemap to pages that
+        // have a Markdown copy.
+        sitemap: {
+          ignorePatterns: ['/blog/tags/**', '/blog/authors', '/blog/archive'],
         },
       }),
     ],

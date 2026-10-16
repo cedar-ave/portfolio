@@ -4,6 +4,7 @@ slug: knowledge-ingestion-generative-ai
 title: Ingesting and classifying knowledge for Generative AI
 authors: [marla]
 tags: [Generative AI, Knowledge classification, AI agent skills]
+copy_page: true
 ---
 
 # Drafting new content with generative AI

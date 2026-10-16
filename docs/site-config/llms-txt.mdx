@@ -1,0 +1,109 @@
+---
+sidebar_position: 17
+description: "How a build plugin writes llms.txt and a Markdown copy of each page for AI tools, which pages are listed, and how to leave a page out."
+copy_page: true
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# llms.txt and Markdown copies
+
+The site serves [`/llms.txt`](https://llmstxt.org), an index of its pages for AI tools, and a Markdown copy of each page, such as `/about.md`. `plugins/llms-txt-plugin.mjs` writes them into `build/` after each build. They aren't in the source, and they don't exist in `npm start`.
+
+<QuickReference>
+
+- After each build, `plugins/llms-txt-plugin.mjs` writes a `.md` copy of almost every page, plus `llms.txt` and `llms-full.txt`, into `build/`.
+- `llms.txt` lists the About and Resume pages, the portfolio, the blog, these docs, and the Norway Data API guides with the OpenAPI spec. The other samples get `.md` copies but aren't listed, so the file stays well under 50K characters.
+- To leave a page out entirely, add its path to `EXCLUDED` in `src/data/llms.mjs`. To give it a `.md` copy but leave it out of `llms.txt`, add it to `UNLISTED` in the plugin.
+- Every page with a `.md` copy shows a **Copy page** menu that copies or links to it (`src/components/PageActions`). To turn it off for a page, set `copy_page: false` in its front matter; `/about`, `/portfolio`, and `/resume` do. No page links to `llms.txt`; AI tools look for it at the site root.
+- To check the output, run `npm run build`, then `npm run serve` and open `http://localhost:3000/llms.txt`.
+
+</QuickReference>
+
+## What the plugin writes
+
+| File | Contents |
+| --- | --- |
+| `/<page>.md` | The page's content as Markdown. `/about` becomes `/about.md`; a URL ending in `/` (the home page, `/samples/`) becomes `index.md`. |
+| `/llms.txt` | A short summary of the site, then a link to each listed page's `.md` copy with its description, in sections. |
+| `/llms-full.txt` | Every page listed in `llms.txt`, in one file. `llms.txt` links to it under "Optional". |
+
+The plugin converts the built HTML, not the MDX source, so includes, components, and tabs are already resolved. Images, figures, and diagrams are left out. Every link becomes an absolute URL, and links to other pages point at their `.md` copies.
+
+Each `.md` file starts with front matter (title, URL, description, and author), then a line pointing to `llms.txt`. The genericized sample guides also start with the disclaimer from `src/includes/disclaimer.md`.
+
+The plugin writes only `.md` and `.txt` files and never changes the HTML, so the script hashes in the Content Security Policy stay valid (see [Security headers](./security-headers.mdx)). If a `.md` file already exists in `build/`, for example from a file in `static/`, the build fails rather than overwriting it.
+
+## Which pages are listed
+
+`llms.txt` has these sections, in this order:
+
+1. **About and Resume:** the home page, `/about`, and `/resume`
+2. **Portfolio:** `/portfolio`, then its pages in the order it links to them
+3. **Blog:** posts, newest first
+4. **Site docs:** these docs, in sidebar order
+5. **Norway Data API:** the guides in sidebar order, then a link to the OpenAPI spec on `api.marlasowards.com`
+
+A new page is added automatically, at the end of its section. The page's `description` front matter becomes its description in `llms.txt`, so give every new page one.
+
+Pages are left out in two ways:
+
+| List | Where | Effect | Current entries |
+| --- | --- | --- | --- |
+| `EXCLUDED` | `src/data/llms.mjs` | No `.md` copy, no Copy page menu, not in `llms.txt` | `/contact`, `/markdown-page`, `/search`, `/api-reference` (Scalar renders it in the browser, so its HTML is empty), and the blog's list, tag, author, and archive pages |
+| `UNLISTED` | `plugins/llms-txt-plugin.mjs` | Has a `.md` copy, but isn't in `llms.txt` | Docs category pages, and the samples other than the Norway Data API guides |
+
+## The Copy page menu
+
+Every page with a `.md` copy shows a **Copy page** menu unless its front matter turns it off. It copies the page's Markdown, opens the `.md` copy, or opens Claude or ChatGPT with a prompt to read the `.md` URL.
+
+| Where | File |
+| --- | --- |
+| Docs and samples, next to the breadcrumbs | `src/theme/DocBreadcrumbs` |
+| Blog posts, under the title | `src/theme/BlogPostItem/Header` |
+| Standalone pages, above the title (next to **Back to portfolio** when the page has it) | `src/theme/MDXPage` |
+
+Every docs, samples, blog, and standalone page has a `copy_page` line in its front matter, so the setting is visible on each page:
+
+```yaml
+---
+title: Get started
+description: "..."
+copy_page: true
+---
+```
+
+| Value | Effect |
+| --- | --- |
+| `true`, or no `copy_page` line | The page shows the menu. Generated docs category pages have no front matter, so they always show it. |
+| `false` | No menu. `/about`, `/portfolio`, `/resume`, and `/markdown-page` set it. |
+
+The setting only controls the menu. Either way, the page still gets a `.md` copy and stays in `llms.txt`; to change that, see [Which pages are listed](#which-pages-are-listed). The home page is a React page, not Markdown, so it has no front matter and no menu.
+
+Every page that shows the menu also gets `<link rel="alternate" type="text/markdown">` in its `<head>`. The menu is kept out of the search index and hidden when printing.
+
+In `npm start`, the `.md` files don't exist, so **Copy page** says Markdown is only available in production builds.
+
+:::note
+
+**Open in Claude** shows a "Use caution before running this prompt" warning. Claude shows it for every prompt that a link fills in, so the person reads the prompt before sending it. It isn't caused by anything on this site.
+
+:::
+
+## How Netlify serves the files
+
+`netlify.toml` declares the content types, with UTF-8 so characters like "·" and "—" display correctly:
+
+```toml title="netlify.toml"
+[[headers]]
+  for = "/*.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+[[headers]]
+  for = "/llms*.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+```
+
+The site doesn't track how often the `.md` and `.txt` files are requested.

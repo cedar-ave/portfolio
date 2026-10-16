@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+/* Breadcrumbs keep their own bottom margin; line the bar up with them. */
+.actions {
+  margin-left: auto;
+  margin-bottom: 0.8rem;
+}

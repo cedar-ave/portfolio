@@ -3,6 +3,24 @@
   margin-bottom: 3rem;
 }
 
+/* The "Back to portfolio" link on the left, "Copy page" on the right. */
+.topRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.actions {
+  margin-left: auto;
+}
+
+/* Without a "Back to portfolio" link, the row is just the button. */
+.topRow:not(.backToPortfolio) {
+  margin-bottom: 0.5rem;
+}
+
 /* Matches the "Back to portfolio" row at the top of the /samples sidebar
    (src/theme/DocSidebar/Desktop/Content/styles.module.css). */
 .backToPortfolio {

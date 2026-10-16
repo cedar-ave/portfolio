@@ -1,4 +1,4 @@
-// Ejected from @docusaurus/theme-classic's MDXPage (3.10.2). Two changes:
+// Ejected from @docusaurus/theme-classic's MDXPage (3.10.2). Three changes:
 // - The optional "Back to portfolio" link above the article, shown when a
 //   page sets `back_to_portfolio: true` in its frontmatter - the standalone-page
 //   equivalent of the link at the top of the /samples sidebar (see
@@ -6,6 +6,11 @@
 // - The optional `table_of_contents_levels` frontmatter field (for example
 //   `table_of_contents_levels: 2,4`), which lists the heading levels to show in
 //   the table of contents.
+// - The "Copy page" menu at the top right, linking to the page's Markdown
+//   copy for AI tools (see src/components/PageActions). It shares a row with
+//   the "Back to portfolio" link. A page turns it off with
+//   `copy_page: false` in its frontmatter (the page still gets a Markdown
+//   copy).
 import React from 'react';
 import clsx from 'clsx';
 import {
@@ -19,6 +24,7 @@ import MDXContent from '@theme/MDXContent';
 import TOC from '@theme/TOC';
 import ContentVisibility from '@theme/ContentVisibility';
 import EditMetaRow from '@theme/EditMetaRow';
+import PageActions from '@site/src/components/PageActions';
 import styles from './styles.module.css';
 
 // Parses `table_of_contents_levels` - a comma-separated string ("2,3,4"), a
@@ -56,6 +62,7 @@ export default function MDXPage(props) {
     wrapperClassName,
     hide_table_of_contents: hideTableOfContents,
     back_to_portfolio: backToPortfolio,
+    copy_page: copyPage,
     table_of_contents_levels: tableOfContentsLevels,
   } = frontMatter;
   // The full TOC from the MDX loader, narrowed to the requested levels. The
@@ -83,10 +90,17 @@ export default function MDXPage(props) {
           <div className={clsx('row', styles.mdxPageWrapper)}>
             <div className={clsx('col', !hideTableOfContents && 'col--8')}>
               <ContentVisibility metadata={metadata} />
-              {backToPortfolio && (
-                <nav aria-label="Breadcrumbs" className={styles.backToPortfolio}>
-                  <Link to="/portfolio">← Back to portfolio</Link>
-                </nav>
+              {(backToPortfolio || copyPage !== false) && (
+                <div className={clsx(styles.topRow, backToPortfolio && styles.backToPortfolio)}>
+                  {backToPortfolio && (
+                    <nav aria-label="Breadcrumbs">
+                      <Link to="/portfolio">← Back to portfolio</Link>
+                    </nav>
+                  )}
+                  {copyPage !== false && (
+                    <PageActions permalink={metadata.permalink} menuAlign="end" className={styles.actions} />
+                  )}
+                </div>
               )}
               <article>
                 <MDXContent>
