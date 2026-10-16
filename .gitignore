@@ -24,3 +24,6 @@ Claude outputs
 # Netlify CLI for the deploy job (installed in CI only)
 /tools/*/node_modules
 *.pdf
+
+# Playwright MCP screenshots and page snapshots
+.playwright-mcp/
