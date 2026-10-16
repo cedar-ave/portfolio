@@ -397,6 +397,11 @@ article h3 {
   font-size: 1.1rem;
 }
 
+.button--sm {
+  font-weight: 500;
+  font-size: .9rem;
+}
+
 .hero .container {
   max-width: 900px;
 }
