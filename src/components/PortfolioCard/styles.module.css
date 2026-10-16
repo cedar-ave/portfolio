@@ -1,0 +1,95 @@
+/* Left-aligned grid so cards start flush under their section heading. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Same gray, radius, and hover lift as the blog post cards
+   (.blogPostCard in src/css/custom.css). */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: #f5f6f8;
+  border-radius: 16px;
+  padding: 1.5rem;
+  color: var(--ifm-font-color-base);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 6px 18px rgba(94, 120, 147, 0.28);
+  transform: translateY(-2px);
+}
+
+[data-theme='dark'] .card {
+  background: #212429;
+}
+
+[data-theme='dark'] .card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+/* Icon badge: the tag-pill blue-gray from the tags page. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  background: #e2eaf2;
+  color: var(--palette-slate-blue);
+  font-size: 1.25rem;
+}
+
+[data-theme='dark'] .badge {
+  background: #1a1d21;
+  color: var(--palette-sky-blue);
+}
+
+/* Overrides the global `.container img` border. */
+.badgeImage {
+  width: 1.6rem;
+  height: 1.6rem;
+  object-fit: contain;
+  border: none !important;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: var(--ifm-link-color);
+}
+
+.card:hover .title {
+  color: var(--ifm-link-hover-color);
+}
+
+/* Company / "Personal project" pill. align-self keeps it sized to its
+   text instead of stretching across the flex column. */
+.tag {
+  align-self: flex-start;
+  margin-top: -0.2rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: #e2eaf2;
+  color: var(--palette-slate-blue);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+[data-theme='dark'] .tag {
+  background: #1a1d21;
+  color: var(--palette-pale-blue);
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}

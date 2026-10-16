@@ -3,44 +3,50 @@ title: Portfolio
 hide_table_of_contents: true
 ---
 
-import styles from './portfolio.module.css';
+import PortfolioCard, {PortfolioCards} from '@site/src/components/PortfolioCard';
 
 # Portfolio
 
-<div className={styles.portfolioList}>
-
 ## AI workflows
 
-- [**Custom MCP servers**](/portfolio/custom-mcp-servers) <span className={styles.separator}>•</span> API wrappers for CCMS, CMS, and Google tools
-- [**AI agent skills**](/portfolio/ai-agent-skills) <span className={styles.separator}>•</span> Generative and agentic AI skills to run an end-to-end content pipeline 
+<PortfolioCards>
+  <PortfolioCard to="/portfolio/custom-mcp-servers" icon="plug" title="Custom MCP servers" tag="Created for employer">API wrappers for CCMS, CMS, and Google tools</PortfolioCard>
+  <PortfolioCard to="/portfolio/ai-agent-skills" icon="robot" title="AI agent skills" tag="Created for employer">Generative and agentic AI skills to run an end-to-end content pipeline</PortfolioCard>
+</PortfolioCards>
 
 ## API documentation
 
-- [**Norway Data API reference**](/api-reference) <span className={styles.separator}>•</span> An interactive OpenAPI reference for my live API
-- [**Developer portal**](/portfolio/api-documentation) <span className={styles.separator}>•</span> Central location for documentation and resources supporting a series of REST APIs
-- [**API release notes**](/portfolio/release-notes-api) <span className={styles.separator}>•</span> Sprint-aligned REST API release notes for developers
+<PortfolioCards>
+  <PortfolioCard to="/api-reference" icon="code" title="Norway Data API reference" tag="Personal project">An interactive OpenAPI reference for my live API</PortfolioCard>
+  <PortfolioCard to="/portfolio/api-documentation" icon="book-open" title="Developer portal" tag="Created for employer">Central location for documentation and resources supporting a series of REST APIs</PortfolioCard>
+  <PortfolioCard to="/portfolio/release-notes-api" icon="code-branch" title="API release notes" tag="Created for employer">Sprint-aligned REST API release notes for developers</PortfolioCard>
+</PortfolioCards>
 
 ## Help sites
 
-- [**Zendesk + Paligo site**](/portfolio/zendesk-help-site) <span className={styles.separator}>•</span> Structured XML content pushed to a Zendesk help site with custom features
-- [**Docs-as-code site**](/portfolio/docs-as-code-help-site) <span className={styles.separator}>•</span> Help site built on Markdown, a static-site generator, and automated deployment pipelines
+<PortfolioCards>
+  <PortfolioCard to="/portfolio/zendesk-help-site" icon="headset" title="Zendesk + Paligo site" tag="Created for employer">Structured XML content pushed to a Zendesk help site with custom features</PortfolioCard>
+  <PortfolioCard to="/portfolio/docs-as-code-help-site" icon="file-code" title="Docs-as-code site" tag="Created for employer">Help site built on Markdown, a static-site generator, and automated deployment pipelines</PortfolioCard>
+</PortfolioCards>
 
 ## Methods
 
-- [**Structured XML authoring in Paligo**](/portfolio/paligo-structured-authoring) <span className={styles.separator}>•</span> Six levels of structured reuse in a Paligo library of ~750 topics and reusable components behind ~20 guides
-- [**Docs-as-code workflows**](/portfolio/docs-as-code-workflow) <span className={styles.separator}>•</span> Platforms, tools, and workflows for managing a company's help content in a docs-as-code ecosystem
+<PortfolioCards>
+  <PortfolioCard to="/portfolio/paligo-structured-authoring" icon="sitemap" title="Structured XML authoring in Paligo" tag="Created for employer">Six levels of structured reuse in a Paligo library of ~750 topics and reusable components behind ~20 guides</PortfolioCard>
+  <PortfolioCard to="/portfolio/docs-as-code-workflow" icon="diagram-project" title="Docs-as-code workflows" tag="Created for employer">Platforms, tools, and workflows for managing a company's help content in a docs-as-code ecosystem</PortfolioCard>
+</PortfolioCards>
 
 ## Guides
 
-- [**Clearpath Roster User Guide**](/samples/clearpath-roster-guide/get-started) <span className={styles.separator}>•</span> Task-based, customer-facing documentation for end users
-- [**Clearpath Collect User Guide**](/samples/clearpath-collect-guide/01-overview) <span className={styles.separator}>•</span> More task-based, customer-facing documentation for end users
+<PortfolioCards>
+  <PortfolioCard to="/samples/clearpath-roster-guide/get-started" icon="users" title="Clearpath Roster User Guide" tag="Created for employer">Task-based, customer-facing documentation for end users</PortfolioCard>
+  <PortfolioCard to="/samples/clearpath-collect-guide/01-overview" icon="clipboard-list" title="Clearpath Collect User Guide" tag="Created for employer">More task-based, customer-facing documentation for end users</PortfolioCard>
+</PortfolioCards>
 
 ## Release notes
 
-- [**Sprint-aligned release notes**](/portfolio/release-notes-sprint-aligned) <span className={styles.separator}>•</span> Customer-facing release notes published with shipped software
-- [**Release overview**](/portfolio/release-notes-customer-facing) <span className={styles.separator}>•</span> Summaries of new features emphasizing value to end users for a non-technical audience
-- [**Release Notes Automation Guide**](/samples/release-notes-automation-guide/26-types-of-publications) <span className={styles.separator}>•</span> System for automatically translating information in work-tracking systems into release notes
-
-
-
-</div>
+<PortfolioCards>
+  <PortfolioCard to="/portfolio/release-notes-sprint-aligned" icon="rocket" title="Sprint-aligned release notes" tag="Created for employer">Customer-facing release notes published with shipped software</PortfolioCard>
+  <PortfolioCard to="/portfolio/release-notes-customer-facing" icon="bullhorn" title="Release overview" tag="Created for employer">Summaries of new features emphasizing value to end users for a non-technical audience</PortfolioCard>
+  <PortfolioCard to="/samples/release-notes-automation-guide/26-types-of-publications" icon="gears" title="Release Notes Automation Guide" tag="Created for employer">System for automatically translating information in work-tracking systems into release notes</PortfolioCard>
+</PortfolioCards>

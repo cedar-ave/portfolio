@@ -1,0 +1,56 @@
+---
+sidebar_position: 3.5
+---
+
+import QuickReference from '@site/src/components/QuickReference';
+
+# Portfolio cards
+
+<QuickReference>
+
+- To add an item to `/portfolio`: add a `<PortfolioCard to="..." icon="..." title="...">Summary</PortfolioCard>` inside the section's `<PortfolioCards>` in `src/pages/portfolio.mdx`.
+- To change an icon: set `icon` to any Font Awesome free solid icon name, e.g. `icon="robot"`. Find names on the [Font Awesome icon search](https://fontawesome.com/search?ic=free&s=solid).
+- To show who the work was for: set `tag` to the company name or `"Personal project"`, e.g. `tag="Acme Corp"`. It shows as a pill under the title. Leave it as `tag=""` to hide the pill.
+- To show an image instead of an icon: pass `image="/img/..."` (a path under `static/`) in place of `icon`.
+- To change card styling (background, radius, hover, badge colors, grid width): edit `src/components/PortfolioCard/styles.module.css`.
+- To add a new section: add an `##` heading followed by its own `<PortfolioCards>` wrapper.
+
+</QuickReference>
+
+## What it does
+
+The `/portfolio` index page shows each sample as a clickable rounded card with an icon badge, a title, an optional pill naming who the work was for (a company or a personal project), and a one-line summary. The whole card is the link. Each section's cards sit in a grid that starts flush with the section's heading. The grid fits as many 240px-minimum columns as the page width allows and drops to one column on phones.
+
+Cards use the same style as the blog list cards (`.blogPostCard` in `src/css/custom.css`): a `#F5F6F8` background (`#212429` in dark mode), a 16px radius, and the same shadow and 2px lift on hover. The icon badge uses the tag-pill blue-gray (`#E2EAF2`, or `#1A1D21` in dark mode) from the tags page. The icon is slate blue in light mode and sky blue in dark mode.
+
+## Usage
+
+The component isn't registered globally, so `portfolio.mdx` imports it:
+
+```mdx title="src/pages/portfolio.mdx"
+import PortfolioCard, {PortfolioCards} from '@site/src/components/PortfolioCard';
+
+## AI workflows
+
+<PortfolioCards>
+  <PortfolioCard to="/portfolio/custom-mcp-servers" icon="plug" title="Custom MCP servers" tag="Personal project">API wrappers for CCMS, CMS, and Google tools</PortfolioCard>
+  <PortfolioCard to="/portfolio/ai-agent-skills" icon="robot" title="AI agent skills">Generative and agentic AI skills to run an end-to-end content pipeline</PortfolioCard>
+</PortfolioCards>
+```
+
+Keep each card's summary on the same line as its opening and closing `<PortfolioCard>` tags. If the text goes on its own line, MDX wraps it in a `<p>`, which adds extra margin inside the card.
+
+## Props
+
+| Prop | Description |
+|---|---|
+| `to` | Link target. Internal paths go through Docusaurus's `Link`, so the build checks them for broken links. |
+| `icon` | A Font Awesome solid icon name. Font Awesome icons are bundled at build time and registered in `src/theme/MDXComponents.js`, so they show up without waiting on a network request. |
+| `image` | Optional. An image path or URL to show in the badge in place of `icon`. Its global `.container img` border is turned off. |
+| `title` | Card heading, shown in the site link color. |
+| `tag` | Optional. Who the work was for: a company name or `Personal project`. Shown as a pill under the title, using the same blue-gray as the icon badge. When empty or missing, no pill shows. |
+| children | The one-line summary. |
+
+## History
+
+The page used to be a plain bulleted list of bold links with a `•` separator, styled by `src/pages/portfolio.module.css`. That file was deleted when the cards replaced the list.

@@ -37,6 +37,9 @@ export default function Contact() {
     <Layout title="Contact" description="Send Marla Sowards a message">
       <main className={`container margin-vert--xl ${styles.contact}`}>
         <h1>Contact</h1>
+        <h2>LinkedIn</h2>
+        <p>Find me on <a href="https://www.linkedin.com/in/marla-sowards/">LinkedIn</a>.</p>
+        <h2>Email</h2>
         <p>Send me a message and I'll get back to you by email.</p>
 
         <form
