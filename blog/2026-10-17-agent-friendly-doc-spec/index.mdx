@@ -1,0 +1,86 @@
+---
+draft: true
+slug: agent-friendly-doc-spec
+title: How I made my site easier for AI agents to discover and consume using the Agent-Friendly Doc Spec
+authors: marla
+tags: []
+copy_page: true
+---
+
+# How I made my site easier for AI agents to discover and consume using the Agent-Friendly Doc Spec
+
+Serving a docs site with Markdown URLs and an `llms.txt` file is a great way to make docs easier for AI agents to find and process, but testing and research by Dachary Carey found that some ways of doing it are more effective than others. Dachary turned those findings into the [Agent-Friendly Documentation Spec](https://agentdocsspec.com). Here's how I applied the spec to my own site, then ran the companion [AFDocs](https://afdocs.dev) tool to get a scorecard on how well agents can find and consume my content.
+
+<!-- truncate -->
+
+## A few of the best first steps
+
+According to Dachary, there are [a few things that help the most](https://agentdocsspec.com/#quick-start-for-documentarians). That's where I started.
+
+**Serve an `llms.txt` file.** An `llms.txt` file is a Markdown file stored at or near the root of a site that acts like a table of contents agents use to find the most meaningful information. That means agents don't have to parse through JavaScript, layout markup, and content that isn't relevant, so responses are faster and better quality. I had Claude add a plugin to my site that generates an `llms.txt` file when the site is built and serves it with the site. The `llms.txt` file is formatted according to the spec, including:
+
+- Putting the project name at the top
+- Listing each page as a Markdown link that points to a Markdown URL (more on that in a second) with short descriptions
+- Separating the links into sections with headings
+- Keeping it under 50K characters (to avoid agent truncation limits)
+
+**Serve Markdown versions of each page.** My site's source content is stored as Markdown files, and the static-site generator serves them as HTML. The spec says that agents work better with Markdown than HTML and says to serve Markdown files (with `.md` URL endings) alongside the HTML files. My plugin also builds the site with Markdown files. For example, the URL to my HTML blog page is `.../blog/build-mcps`. The URL to the Markdown version, `.../blog/build-mcps.md`, shows the raw contents of the Markdown file. The `llms.txt` file points to the Markdown URL.
+
+**Keep Markdown pages under 50K characters.** Agent truncation limits can mean long pages aren't fully read. Instead, the spec recommends breaking dows large pages into smaller ones, and to make sure any content stored in tabs is counted when looking at page length.
+
+**Point agents to the `llms.txt` file.** Agents need to be told to look for an `llms.txt` file in the first place. I added directions in the HTML DOM and published Markdown files that link agents there. For example, each Markdown file includes: `> For an index of every page on this site, see [llms.txt](https://www.marlasowards.com/llms.txt).`
+
+**Keep the `llms.txt` file up to date. Especially links.** The 
+
+## And more
+
+The spec offers a lot more than what I covered here, like how agents process HTML content (some agents default to HTML instead of Markdown), 
+
+## Testing my site against the spec
+
+I got a few things right, and I failed some things. Here's a sample output of the test to show what it looks like:
+
+```txt
+content-discoverability
+  ✓ llms-txt-exists: llms.txt found at https://www.marlasowards.com/llms.txt
+  ✓ llms-txt-valid: llms.txt follows the proposed structure (H1, blockquote, heading-delimited link sections)
+  ✓ llms-txt-size: llms.txt is 19,810 characters (under 50,000 threshold)
+  ✓ llms-txt-links-resolve: All 50 same-origin sampled links resolve (89 total links)
+  ✓ llms-txt-links-markdown: 50/50 same-origin sampled links point to markdown content (100%) (1 external link excluded)
+  ⚠ llms-txt-directive-html: llms.txt directive found in HTML of 1 of 50 sampled pages (49 missing)
+      Learn more: https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-html
+  ✓ llms-txt-directive-md: llms.txt directive found in markdown of all 49 sampled pages, near the top of content; 1 had no markdown version
+
+  page-size
+  ✓ rendering-strategy: All 50 sampled pages contain server-rendered content
+  ✓ page-size-markdown: All 49 pages under 50K chars (median 5K, max 18K)
+  ✓ page-size-html: All 50 sampled pages under 50K chars (median 32K HTML → 7K markdown (75% boilerplate))
+  ✓ page-size-transfer: All 50 sampled pages serve under 1MB (median 32KB served → 6KB content (~6:1))
+  ⚠ content-start-position: 40 of 50 sampled pages have content starting at 10–50% (worst 50%)
+      Learn more: https://agentdocsspec.com/spec/web/page-size/#content-start-position
+  ✓ single-fetch-completeness: All 49 sampled markdown pages deliver complete content in one fetch (no pagination detected)
+
+  observability
+  ✗ llms-txt-coverage: llms.txt covers 77/164 sitemap doc pages (47%); 87 missing
+      Learn more: https://agentdocsspec.com/spec/web/observability/#llms-txt-coverage
+  ✗ markdown-content-parity: 12 of 49 pages have substantive content differences between markdown and HTML (avg 14% missing)
+      Learn more: https://agentdocsspec.com/spec/web/observability/#markdown-content-parity
+  ✓ cache-header-hygiene: All 51 endpoints have appropriate cache headers
+```
+
+The spec tells me exactly what went wrong and what to do next:
+
+- My HTML pages don't direct agents to the `llms.txt` file. Agents won't know it even exists.
+- I have too much boilerplate in my HTML pages, like inline CSS and JavaScript. By the time agents get through it all, they've reached their truncation limit and won't read the actual content.
+- Some site pages aren't in my `llms.txt`. Agents using the `llms.txt` to discover content won't see them.
+- My HTML and Markdown output don't have the same content. I may be sharing old versions of content with agents if my pipeline is updating one format but not the other.
+
+## Next steps
+
+An automated validation step in my deployment pipeline can catch broken links in the served-up Markdown files, since those can exist even though the HTML links are working.
+
+
+
+## Interesting reading
+
+This article from GitBook talks about using an `llms.txt` to emphasize newer releases over older ones. [What is llms.txt? Why it's important and how to create it for your docs](https://www.gitbook.com/blog/what-is-llms-txt)
