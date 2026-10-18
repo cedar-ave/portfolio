@@ -1,0 +1,70 @@
+---
+title: How I built this site
+description: "Record of how this portfolio site was built with a focus on automated tests."
+hide_table_of_contents: false
+table_of_contents_levels: 2
+copy_page: false
+---
+
+# How I built this site
+
+Most of my professional work is under NDA, so this site is my portfolio. I built, deployed, and run it with automated pipelines and AI tools. Following are details about how I built it and decisions I made along the way.
+
+## Site infrastructure
+
+This site is managed with a docs-as-code methodology.
+
+- Content stored as Markdown files (MDX) in Git
+- Static-site generator builds the site
+- GitHub actions run automated tests and build the site
+- Netlify hosts
+
+### Static-site generator
+
+[Docusaurus](https://docusaurus.io/) is a popular static-site generator for documentation websites and is used by companies like React Native, Electron, and Algolia DocSearch for their documentation sites. Docusaurus features include:
+
+- **MDX file support**: Docusaurus supports MXD files instead of just regular Markdown, which lets me embed React components like the interactive samples I share on my [Portfolio](/portfolio/) page.
+- **Plugin support**: Docusaurus also includes a number of plugins that support features like Google Analytics tracking, search functionality, a blog, and more. It also let me build custom plugins - for example, a plugin that generates `llms.txt` and `llms-full.txt` files on build.
+
+### Source code in Git
+
+Source code is managed in two GitHub repos:
+
+- Site infrastructure and most content: <FAIcon icon={['fab', 'github']} /> [portfolio](https://github.com/cedar-ave/portfolio)
+- REST API section: <FAIcon icon={['fab', 'github']} /> [norway-data-api](https://github.com/cedar-ave/norway-data-api)
+
+## AI agent optimization
+
+### Agent discoverability and consumption
+
+This site follows the [Agent-Friendly Documentation Spec](https://agentdocsspec.com), which provides tested and proven standards for serving a documentation site that agents can find and process. Examples include:
+
+- Serving an `llms.txt` file under 50K characters, formatted according to the [llmstxt.org](https://llmstxt.org) standardization proposal
+- Serving `.md` URLs for each article
+- Pointing agents to the `llms.txt` file via the HTML DOM and served `.md` files
+- Enabling `Accept: text/markdown` content negotiation for AI agents that prefer Markdown over HTML, via a Netlify function
+- Served Markdown files deliver all content with one fetch
+- Proper code fences and error codes
+- Content matches between HTML and served Markdown files
+- Many more
+
+This site also passes the [AFDocs](https://afdocs.dev) companion test on how well agents can consume this site. 
+
+See [How I made my site easier for AI agents to discover and consume using the Agent-Friendly Documentation Spec](/blog/agent-friendly-docs-spec) for details on how I align my site to the spec and run the tests as a validation step in the deployment pipeline.
+
+### Agent queries
+
+- Button that lets users copy a page as Markdown
+- Button that automatically opens Claude or ChatGPT with a prompt that references a site page 
+
+### AI readiness of content
+
+Samples show the following principles of AI readiness:
+
+- Version numbers
+- One question, one answer, one topic
+- Clear relationships between topics ()
+- Consistent terminology
+- Metadata
+- Clear heading hierarchies, lists, and table headers
+- Correctness section (what changed so LLMs don't go to outdated information)
