@@ -26,7 +26,7 @@ According to Dachary, there are [a few things that help the most](https://agentd
 
 **Serve Markdown versions of each page.** My site's source content is stored as Markdown files, and the static-site generator serves them as HTML. The spec says that agents work better with Markdown than HTML and says to serve Markdown files (with `.md` URL endings) alongside the HTML files. My plugin also builds the site with Markdown files. For example, the URL to my HTML blog page is `.../blog/build-mcps`. The URL to the Markdown version, `.../blog/build-mcps.md`, shows the raw contents of the Markdown file. The `llms.txt` file points to the Markdown URL.
 
-**Keep Markdown pages under 50K characters.** Agent truncation limits can mean long pages aren't fully read. Instead, the spec recommends breaking dows large pages into smaller ones, and to make sure any content stored in tabs is counted when looking at page length.
+**Keep Markdown pages under 50K characters.** Agent truncation limits can mean long pages aren't fully read. Instead, the spec recommends breaking down large pages into smaller ones, and to make sure any content stored in tabs is counted when looking at page length.
 
 **Point agents to the `llms.txt` file.** Agents need to be told to look for an `llms.txt` file in the first place. I added directions in the HTML DOM and published Markdown files that link agents there. For example, each Markdown file includes: `> For an index of every page on this site, see [llms.txt](https://www.marlasowards.com/llms.txt).`
 
