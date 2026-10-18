@@ -61,10 +61,19 @@ This site also passes the [AFDocs](https://afdocs.dev) companion test on how wel
 
 Samples show the following principles of AI readiness:
 
-- Version numbers
-- One question, one answer, one topic
-- Clear relationships between topics ()
 - Consistent terminology
-- Metadata
+- One question, one answer, one topic
+- Clear relationships between topics (role, dependencies, versions, etc.)
+- Metadata 
 - Clear heading hierarchies, lists, and table headers
 - Correctness section (what changed so LLMs don't go to outdated information)
+
+## Deployment pipeline
+
+### Linting
+
+The pipeline fails if issues are detected with any of the following:
+
+- Style deviations (Vale)
+- Broken links (Lychee)
+- Spelling errors (codespell)
