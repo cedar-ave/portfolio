@@ -69,7 +69,7 @@ export function IntegrationArchitecture() {
   const frameMid = frameX + frameW / 2;
 
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}

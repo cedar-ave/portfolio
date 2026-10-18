@@ -13,6 +13,7 @@ import QuickReference from '@site/src/components/QuickReference';
 - To change a figure used on an experience page: edit the matching `*Diagrams` folder under `src/components`, not the `.mdx` page (the page only imports and places the figure).
 - To change shared visual style within a folder (spacing, colors, frame look): edit that folder's `styles.module.css` and its shared helpers (`Figure`, `Box`, `DashFrame`, `Segmented`, etc.) in that folder's `index.js`.
 - To add a new figure: export a new component from the relevant folder's `index.js`, then import and place it in the target `.mdx` page.
+- Every figure's outer element (usually the `<figure>` in the folder's `Figure` helper, plus the `<section>` in `DashFrame` and the intake form mockup) has `data-markdown-ignore`, so agent checkers skip it like the `.md` copies do. Keep it, and add it to any new folder's outer element (see [Visuals and content parity](../site-config/llms-txt.mdx#visuals-and-content-parity)).
 - Dashboard mockup data (for example in `AwarenessDashboard`, `DeflectionDashboard`, `WorkItemSimulator`) is illustrative, not real company data. Check the constants near the top of each file before assuming otherwise.
 
 </QuickReference>

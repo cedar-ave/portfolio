@@ -185,7 +185,7 @@ function RailLinks() {
 
 function SiteFrame({ url, crumb, sideNav, current, layoutClassName, children }) {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.browser}>
         <div className={styles.chrome} aria-hidden="true">
           <span className={styles.dot} />

@@ -42,7 +42,7 @@ function ArrowMarker({ id }) {
 
 function Figure({ titleId, title, desc, viewBox, caption, minWidth, children }) {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}
@@ -105,7 +105,7 @@ function CheckGroup({ label, options, selected, onToggle }) {
 
 function DashFrame({ badge, question, metric, children, foot }) {
   return (
-    <section className={styles.dash} aria-label={`Dashboard mockup: ${question}`}>
+    <section data-markdown-ignore className={styles.dash} aria-label={`Dashboard mockup: ${question}`}>
       <div className={styles.dashBadge}>
         <span>Dashboard mockup</span>
         <span>{badge}</span>

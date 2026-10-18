@@ -62,7 +62,7 @@ function RelevanceDots({ x, y, filledCount }) {
 
 export function SanctionsReviewMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}

@@ -42,7 +42,7 @@ function ArrowMarker({ id, kind = 'arrow' }) {
 
 function Figure({ titleId, title, desc, viewBox, caption, minWidth, children }) {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}
@@ -339,7 +339,7 @@ export function RequestFormMockup() {
   const triaged = view === 'triaged';
 
   return (
-    <section className={styles.mock} aria-label="Mockup: request for new content form and the Jira story it creates">
+    <section data-markdown-ignore className={styles.mock} aria-label="Mockup: request for new content form and the Jira story it creates">
       <div className={styles.mockBadge}>
         <span>Form mockup</span>
         <span>Illustrative content · try editing the fields</span>

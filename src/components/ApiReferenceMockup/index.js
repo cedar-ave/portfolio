@@ -577,7 +577,7 @@ export function ApiReferenceMockup() {
   };
 
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.page}>
         <div className={styles.browser}>
           <span className={styles.dots} aria-hidden="true">

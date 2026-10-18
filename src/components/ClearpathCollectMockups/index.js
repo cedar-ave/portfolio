@@ -13,7 +13,7 @@ import styles from './styles.module.css';
 
 function Figure({ children, caption }) {
   return (
-    <figure className={clsx(styles.mockup)}>
+    <figure data-markdown-ignore className={clsx(styles.mockup)}>
       {children}
       {caption && <figcaption className={styles.caption}>{caption}</figcaption>}
     </figure>

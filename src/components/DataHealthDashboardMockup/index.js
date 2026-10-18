@@ -91,7 +91,7 @@ export function DataHealthDashboardMockup() {
   const footerY = tableBottom + 24;
 
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}

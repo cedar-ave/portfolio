@@ -349,7 +349,7 @@ const RECENT_ARTICLES = [
 
 export function ClearpathHelpCenterMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.browser} role="img" aria-label="Mockup of the Clearpath Support help center home page">
         <div className={styles.chrome} aria-hidden="true">
           <span className={styles.dot} />
@@ -529,7 +529,7 @@ function ArticleDiagram({ children }) {
 
 export function ClearpathArticleMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.browser}>
         <div className={styles.chrome} aria-hidden="true">
           <span className={styles.dot} />
@@ -971,7 +971,7 @@ export function ClearpathSearchResultsMockup() {
   const activeFilters = [app, audit].filter(Boolean);
 
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.browser}>
         <div className={styles.chrome} aria-hidden="true">
           <span className={styles.dot} />

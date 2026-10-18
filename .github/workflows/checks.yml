@@ -123,6 +123,13 @@ jobs:
       # integrity-checked packages, with install scripts off.
       - run: npm ci --ignore-scripts --prefix tools/netlify-cli
 
+      # The CLI bundles the Edge Function (netlify/edge-functions) with Deno.
+      # With no Deno on the PATH, it downloads the latest release without a
+      # checksum, so this installs a pinned version first.
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: 2.9.7
+
       # --no-build: the site is already built above. Without it, the CLI runs
       # its own build, which replaces build/ and drops the resume PDF.
       - name: Publish

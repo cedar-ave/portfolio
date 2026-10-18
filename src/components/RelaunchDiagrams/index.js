@@ -31,7 +31,7 @@ function ArrowMarker({ id }) {
 
 function Figure({ titleId, title, desc, viewBox, caption, minWidth, children }) {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg
           className={styles.svg}

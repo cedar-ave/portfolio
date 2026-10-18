@@ -35,7 +35,7 @@ function ArrowMarker({ id }) {
 
 function Figure({ titleId, title, desc, viewBox, caption, children }) {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.scroll}>
         <svg className={styles.svg} viewBox={viewBox} role="img" aria-labelledby={`${titleId}-t ${titleId}-d`}>
           <title id={`${titleId}-t`}>{title}</title>

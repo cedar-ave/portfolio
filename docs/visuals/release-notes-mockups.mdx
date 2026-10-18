@@ -15,6 +15,7 @@ import QuickReference from '@site/src/components/QuickReference';
 - To add inline code or a link-styled reference inside a sentence, title, or bullet: turn that string into an array of parts and insert a `{ code: '...' }` or `{ link: '...' }` object — see [Writing mixed text](#writing-mixed-text-code-and-link-parts) below.
 - To add a new dated release: copy an entry object in `ENTRIES` and give it a unique `date`/`version`; the sidebar index is generated from this automatically.
 - Shared visual style (colors, spacing, light/dark tokens) lives in each folder's `styles.module.css`.
+- Each mockup's outer `<figure>` has `data-markdown-ignore`, so agent checkers skip it like the `.md` copies do. Keep it, and add it to any new mockup (see [Visuals and content parity](../site-config/llms-txt.mdx#visuals-and-content-parity)).
 
 </QuickReference>
 

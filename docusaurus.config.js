@@ -58,6 +58,13 @@ const config = {
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    // v4 turns on every Docusaurus Faster option. The SWC HTML minifier
+    // leaves out optional closing tags (</p>, </li>, </td>, </tr>), which
+    // browsers handle but simpler HTML parsers don't: afdocs's
+    // markdown-content-parity check then can't find <main> and compares
+    // the whole page, scripts included, with the .md copy. The default
+    // minifier (html-minifier-terser) keeps those tags.
+    faster: { swcHtmlMinimizer: false },
   },
 
   // Set the production url of your site here
@@ -220,10 +227,17 @@ const config = {
         },
         // Blog tag, author, and archive pages only list posts, so they're
         // left out of the sitemap, as they are out of llms.txt (see
-        // plugins/llms-txt-plugin.mjs). That keeps the sitemap to pages that
-        // have a Markdown copy.
+        // plugins/llms-txt-plugin.mjs). So are the search page and the demo
+        // Markdown page. That keeps the sitemap to pages that have a
+        // Markdown copy.
         sitemap: {
-          ignorePatterns: ['/blog/tags/**', '/blog/authors', '/blog/archive'],
+          ignorePatterns: [
+            '/blog/tags/**',
+            '/blog/authors',
+            '/blog/archive',
+            '/search',
+            '/markdown-page',
+          ],
         },
       }),
     ],
@@ -259,6 +273,11 @@ const config = {
           {
             to: '/portfolio',
             label: 'Portfolio',
+            position: 'left',
+          },
+          {
+            to: '/how-i-built-this-site',
+            label: 'How I built this site',
             position: 'left',
           },
           {

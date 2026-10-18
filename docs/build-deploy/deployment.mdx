@@ -51,7 +51,8 @@ Every push to `main` runs the `Checks` workflow. Its `deploy` job waits for code
 
 1. Runs `npm ci` and `npm run build`.
 2. Makes the resume PDF from the built `/resume` page (see [Resume PDF](resume-pdf)).
-3. Publishes `build/` to production with the Netlify CLI (`netlify deploy --prod --no-build`).
+3. Installs a pinned Deno, which the Netlify CLI uses to bundle the Edge Function in `netlify/edge-functions/`.
+4. Publishes `build/` to production with the Netlify CLI (`netlify deploy --prod --no-build`).
 
 If a check fails, nothing is published and the live site stays as it was. Pull requests run the checks but never deploy. The settings and secrets the job needs are in [Publishing to Netlify](github-actions#publishing-to-netlify).
 
@@ -61,6 +62,7 @@ Netlify still serves the site: the domain, HTTPS, redirects, and headers. Its ow
 | --- | --- |
 | Redirects, content types, and fixed security headers | `netlify.toml` |
 | Content Security Policy | `build/_headers`, written each build by `plugins/csp-headers-plugin.mjs` |
+| Markdown for `Accept: text/markdown` requests | `netlify/edge-functions/markdown.js` (see [llms.txt and Markdown copies](../site-config/llms-txt#serving-markdown-for-accept-textmarkdown)) |
 | Domain and HTTPS | The Netlify UI |
 
 ## Rolling back

@@ -16,23 +16,30 @@
 // llms.txt lists every page's .md URL in sections, in reading order: the
 // docs and samples sidebars (read from the loaded content, since collapsed
 // sidebar categories aren't in the HTML), the blog newest first, and the
-// portfolio in the order /portfolio links to it. Of the samples, only the
-// Norway Data API guides are listed; the rest get .md files but aren't
-// listed (see UNLISTED). llms-full.txt is every listed page in one file.
+// portfolio in the order /portfolio links to it. The Norway Data API guides
+// get their own section, and the other samples follow under "Writing
+// samples". Docs category pages get .md files but aren't listed (see
+// UNLISTED). llms-full.txt is every listed page in one file.
 //
-// It writes only .md and .txt files and never changes HTML. That keeps the inline
-// script hashes in build/_headers valid (see plugins/csp-headers-plugin.mjs,
-// the only writer of _headers).
+// Every HTML page also points agents to llms.txt: a visually hidden line at
+// the top of <body> and a <link rel="llms-txt"> in <head> (see
+// injectHtmlTags). They're added when Docusaurus renders the page, not
+// afterward, and include no script.
+//
+// After the build, it writes only .md and .txt files and never changes HTML.
+// That keeps the inline script hashes in build/_headers valid (see
+// plugins/csp-headers-plugin.mjs, the only writer of _headers).
 //
 // Before converting, it fixes the Docusaurus markup that doesn't convert
 // cleanly on its own (see cleanUp):
 // - Heading "#" links (which contain a zero-width space) are removed.
 // - Code blocks are rebuilt from Prism's per-line markup, keeping the
-//   language and title.
+//   language and title (in the fence and on a line above it).
 // - Tabs become a bold label followed by that tab's content.
 // - Admonitions become blockquotes that start with their title.
 // - Visuals are left out: every <figure> (all mockup and diagram
-//   components render as one), image, and SVG.
+//   components render as one, marked data-markdown-ignore), image, and
+//   SVG.
 // - React's empty <!-- --> comments, form controls, and anything marked
 //   aria-hidden or data-markdown-ignore are dropped too.
 // - Links become absolute URLs; links to pages point at their .md copy.
@@ -72,17 +79,17 @@ const DROP = [
 // The blockquote at the top of llms.txt and llms-full.txt.
 const SUMMARY = [
   'Portfolio site of Marla Sowards, an AI-fluent documentation engineer: her resume,',
-  'portfolio write-ups, blog posts, documentation for the site itself, and the guides and',
-  'OpenAPI spec for the Norway Data API. The portfolio write-ups describe work done for',
-  'employers, genericized with fictional company and product names (such as Clearpath);',
-  'the Norway Data API is real.',
+  'portfolio write-ups, blog posts, documentation for the site itself, the guides and',
+  'OpenAPI spec for the Norway Data API, and writing samples. The portfolio write-ups and',
+  'most writing samples describe work done for employers, genericized with fictional',
+  'company and product names (such as Clearpath); the Norway Data API is real.',
 ];
 
 // Pages that get a .md file (other pages link to them) but aren't listed in
-// llms.txt: docs category pages, which only list links to pages that are,
-// and the samples other than the Norway Data API guides, which would push
-// llms.txt past 50K characters.
-const UNLISTED = [/^\/docs\/category\//, /^\/samples(\/(?!norway-data-api-guides\/)|$)/];
+// llms.txt: docs category pages, which only list links to pages that are.
+// Everything else in the sitemap is listed, so checkers that compare the
+// two (such as afdocs's llms-txt-coverage) find every page.
+const UNLISTED = [/^\/docs\/category\//];
 
 const NORWAY = '/samples/norway-data-api-guides/';
 
@@ -156,9 +163,14 @@ function codeBlock(node) {
     : textOf(select('code', node) ?? node);
   // A real <pre>, so rehype-remark keeps its whitespace. The title goes in
   // a data attribute for the pre handler in toMarkdown below.
-  return element('pre', { dataTitle: titleNode ? textOf(titleNode).trim() : undefined }, [
+  const title = titleNode ? textOf(titleNode).trim() : '';
+  const pre = element('pre', { dataTitle: title || undefined }, [
     element('code', { className: lang ? [`language-${lang}`] : [] }, [text(value)]),
   ]);
+  // The fence's title="..." is only metadata, which Markdown readers (and
+  // afdocs's markdown-content-parity check) don't show as text, so the
+  // title also goes on its own line above the block.
+  return title ? [element('p', {}, [element('code', {}, [text(title)])]), pre] : [pre];
 }
 
 // Tabs: a list of tab labels, then one tabpanel per label (only the first
@@ -222,7 +234,7 @@ function cleanUp(content, { pageUrl, mdUrlFor }) {
     }
     if (node.type !== 'element') return undefined;
     const classes = classList(node);
-    if (classes.includes('theme-code-block')) return [codeBlock(node)];
+    if (classes.includes('theme-code-block')) return codeBlock(node);
     if (classes.includes('tabs-container')) return tabs(node);
     if (classes.includes('theme-admonition')) return admonition(node);
     return undefined;
@@ -421,12 +433,14 @@ function buildIndex(results, order, site) {
   const rest = (prefix) => take(results.map((page) => page.pathname).filter((pathname) => pathname.startsWith(prefix)).sort());
 
   const sections = [
-    ['About and Resume', [...take(['/', '/about', '/resume'])]],
+    ['About and Resume and How I built this site', [...take(['/', '/about', '/resume', '/how-i-built-this-site']), ...rest('/')]],
     ['Portfolio', [...take(['/portfolio', ...order.portfolio]), ...rest('/portfolio/')]],
     ['Blog', [...take(order.blog), ...rest('/blog/')]],
     ['Site docs', [...take(order.docs.flat()), ...rest('/docs/')]],
     // The OpenAPI spec goes right after the guides.
-    ['Norway Data API', [...take(order.samples.flat()), ...rest(NORWAY), { openapi: true }]],
+    ['Norway Data API', [...take(order.samples.flat().filter((pathname) => pathname.startsWith(NORWAY))), ...rest(NORWAY), { openapi: true }]],
+    // The /samples landing page and the genericized samples, in sidebar order.
+    ['Writing samples', [...take(order.samples.flat()), ...rest('/samples')]],
   ];
 
   const leftOver = results.filter((page) => !placed.has(page.pathname));
@@ -446,6 +460,19 @@ export default function llmsTxtPlugin(context) {
   const order = { docs: [], samples: [], blog: [], portfolio: [] };
   return {
     name: 'llms-txt-plugin',
+    // The same pointer as at the top of each .md file, first in <body> so
+    // agents reading the HTML see it before anything else. Visually hidden,
+    // but not aria-hidden, since some agents read the accessibility tree.
+    // Inline styles are allowed by the CSP (style-src 'unsafe-inline').
+    injectHtmlTags() {
+      const llmsUrl = `${site.url}/llms.txt`;
+      return {
+        headTags: [{ tagName: 'link', attributes: { rel: 'llms-txt', href: llmsUrl } }],
+        preBodyTags: [
+          `<p data-llms-txt style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">For an index of every page on this site, see <a href="${llmsUrl}">llms.txt</a>.</p>`,
+        ],
+      };
+    },
     async allContentLoaded({ allContent }) {
       const docs = allContent['docusaurus-plugin-content-docs'] ?? {};
       order.docs = docsOrder(docs.default);

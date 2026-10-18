@@ -358,7 +358,7 @@ function ListHead({ label }) {
 
 export function ClearpathCommunityMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div
         className={styles.browser}
         role="img"
@@ -746,7 +746,7 @@ function NavTree({ items, depth = 0 }) {
 
 export function ClearpathReleasesMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div
         className={styles.browser}
         role="img"

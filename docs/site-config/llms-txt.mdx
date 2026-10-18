@@ -13,9 +13,12 @@ The site serves [`/llms.txt`](https://llmstxt.org), an index of its pages for AI
 <QuickReference>
 
 - After each build, `plugins/llms-txt-plugin.mjs` writes a `.md` copy of almost every page, plus `llms.txt` and `llms-full.txt`, into `build/`.
-- `llms.txt` lists the About and Resume pages, the portfolio, the blog, these docs, and the Norway Data API guides with the OpenAPI spec. The other samples get `.md` copies but aren't listed, so the file stays well under 50K characters.
+- `llms.txt` lists every page in the sitemap except the docs category pages: the About and Resume pages, the portfolio, the blog, these docs, the Norway Data API guides with the OpenAPI spec, and the other writing samples. It stays under 50K characters.
 - To leave a page out entirely, add its path to `EXCLUDED` in `src/data/llms.mjs`. To give it a `.md` copy but leave it out of `llms.txt`, add it to `UNLISTED` in the plugin.
-- Every page with a `.md` copy shows a **Copy page** menu that copies or links to it (`src/components/PageActions`). To turn it off for a page, set `copy_page: false` in its front matter; `/about`, `/portfolio`, and `/resume` do. No page links to `llms.txt`; AI tools look for it at the site root.
+- Every page with a `.md` copy shows a **Copy page** menu that copies or links to it (`src/components/PageActions`). To turn it off for a page, set `copy_page: false` in its front matter; `/about`, `/portfolio`, and `/resume` do.
+- A request for a page with `Accept: text/markdown` gets the page's `.md` copy at the same URL, through the Edge Function in `netlify/edge-functions/markdown.js`. Browsers always get HTML.
+- Every HTML page and every `.md` copy points agents to `llms.txt`. On HTML pages, it's a visually hidden line at the top of `<body>` and a `<link rel="llms-txt">` in `<head>`.
+- Mockups and diagrams are left out of the `.md` copies. Each component marks its outer element with `data-markdown-ignore`, so checkers that compare HTML with Markdown skip them too. Add it to any new visual component.
 - To check the output, run `npm run build`, then `npm run serve` and open `http://localhost:3000/llms.txt`.
 
 </QuickReference>
@@ -28,11 +31,37 @@ The site serves [`/llms.txt`](https://llmstxt.org), an index of its pages for AI
 | `/llms.txt` | A short summary of the site, then a link to each listed page's `.md` copy with its description, in sections. |
 | `/llms-full.txt` | Every page listed in `llms.txt`, in one file. `llms.txt` links to it under "Optional". |
 
-The plugin converts the built HTML, not the MDX source, so includes, components, and tabs are already resolved. Images, figures, and diagrams are left out. Every link becomes an absolute URL, and links to other pages point at their `.md` copies.
+The plugin converts the built HTML, not the MDX source, so includes, components, and tabs are already resolved. Images, figures, and diagrams are left out. Every link becomes an absolute URL, and links to other pages point at their `.md` copies. A code block's title goes in the fence (`title="..."`) and on its own line above the block, since many Markdown readers don't show fence metadata.
+
+### Visuals and content parity
+
+Checkers like afdocs's `markdown-content-parity` compare each page's HTML text with its `.md` copy and fail pages where the HTML has text the Markdown doesn't. Mockups and diagrams have plenty of text (fake app screens, labels, table cells) that the `.md` copy leaves out on purpose, so they're marked as visuals for humans only with `data-markdown-ignore`, which the [spec](https://agentdocsspec.com/spec/web/observability/#markdown-content-parity) defines for exactly this. Checkers strip those elements from the HTML before comparing, and the plugin drops them from the Markdown.
+
+Every mockup and diagram component in `src/components` puts it on its outer element, usually the `<figure>`:
+
+```jsx
+<figure data-markdown-ignore className={styles.figure}>
+```
+
+When you add a component that's a visual, add `data-markdown-ignore` to its outer element. Don't put it on content that only exists in the HTML, such as an explanation inside a mockup: move that text outside the visual instead, so agents get it too.
+
+The check also depends on the build's HTML keeping its optional closing tags (see [Build flags and edit links](../build-deploy/build-flags-and-edit-links.mdx#future-flags)).
 
 Each `.md` file starts with front matter (title, URL, description, and author), then a line pointing to `llms.txt`. The genericized sample guides also start with the disclaimer from `src/includes/disclaimer.md`.
 
 The plugin writes only `.md` and `.txt` files and never changes the HTML, so the script hashes in the Content Security Policy stay valid (see [Security headers](./security-headers.mdx)). If a `.md` file already exists in `build/`, for example from a file in `static/`, the build fails rather than overwriting it.
+
+## How pages point to llms.txt
+
+Agents don't look for `llms.txt` unless something tells them it's there, so every page points to it:
+
+| Where | What |
+| --- | --- |
+| Each `.md` copy | `> For an index of every page on this site, see [llms.txt](https://www.marlasowards.com/llms.txt).`, right after the front matter |
+| Each HTML page, first in `<body>` | The same sentence and link, in a `<p data-llms-txt>` that's visually hidden. It isn't `aria-hidden`, so screen readers and agents that read the accessibility tree still get it. |
+| Each HTML page, in `<head>` | `<link rel="llms-txt" href="https://www.marlasowards.com/llms.txt">` |
+
+The plugin adds the HTML tags with `injectHtmlTags`, so Docusaurus renders them into every page, including the 404 page. They aren't in the content area, so they don't show up in the `.md` copies or the search index. To check, run `npm run build` and search `build/` for `data-llms-txt`.
 
 ## Which pages are listed
 
@@ -43,6 +72,7 @@ The plugin writes only `.md` and `.txt` files and never changes the HTML, so the
 3. **Blog:** posts, newest first
 4. **Site docs:** these docs, in sidebar order
 5. **Norway Data API:** the guides in sidebar order, then a link to the OpenAPI spec on `api.marlasowards.com`
+6. **Writing samples:** `/samples/`, then the other sample guides in sidebar order
 
 A new page is added automatically, at the end of its section. The page's `description` front matter becomes its description in `llms.txt`, so give every new page one.
 
@@ -50,8 +80,12 @@ Pages are left out in two ways:
 
 | List | Where | Effect | Current entries |
 | --- | --- | --- | --- |
-| `EXCLUDED` | `src/data/llms.mjs` | No `.md` copy, no Copy page menu, not in `llms.txt` | `/contact`, `/markdown-page`, `/search`, `/api-reference` (Scalar renders it in the browser, so its HTML is empty), and the blog's list, tag, author, and archive pages |
-| `UNLISTED` | `plugins/llms-txt-plugin.mjs` | Has a `.md` copy, but isn't in `llms.txt` | Docs category pages, and the samples other than the Norway Data API guides |
+| `EXCLUDED` | `src/data/llms.mjs` | No `.md` copy, no Copy page menu, not in `llms.txt`, and `Accept: text/markdown` gets the HTML | `/contact`, `/markdown-page`, `/search`, `/api-reference` (Scalar renders it in the browser, so its HTML is empty), and the blog's list, tag, author, and archive pages |
+| `UNLISTED` | `plugins/llms-txt-plugin.mjs` | Has a `.md` copy, but isn't in `llms.txt` | Docs category pages, which only link to pages that are listed |
+
+The sitemap leaves out the blog's tag, author, and archive pages, `/search`, and `/markdown-page` (`sitemap.ignorePatterns` in `docusaurus.config.js`), so almost every page in it has a `.md` copy. Checkers like [afdocs](https://afdocs.dev) sample sitemap pages and request their `.md` URLs. If you exclude another page that doesn't belong in the sitemap, add it there too.
+
+Checkers also compare the sitemap with `llms.txt`: afdocs's `llms-txt-coverage` check fails when sitemap pages are missing from `llms.txt`. Only the docs category pages are left out, so before you add an entry to `UNLISTED`, consider whether the page should stay in the sitemap.
 
 ## The Copy page menu
 
@@ -107,3 +141,34 @@ In `npm start`, the `.md` files don't exist, so **Copy page** says Markdown is o
 ```
 
 The site doesn't track how often the `.md` and `.txt` files are requested.
+
+### Serving Markdown for Accept: text/markdown
+
+Some agents, such as Claude Code, Cursor, and OpenCode, ask for Markdown with an `Accept: text/markdown` header instead of adding `.md` to the URL. The Netlify Edge Function in `netlify/edge-functions/markdown.js` answers them:
+
+1. It runs for every page URL. Paths with a dot (assets, images, `.md`, `.txt`, `.xml`) skip it.
+2. If the `Accept` header prefers `text/markdown` over `text/html`, it rewrites the request to the page's `.md` copy, so Netlify serves that file at the page's URL with `Content-Type: text/markdown`. Otherwise, including every browser request, it does nothing and the HTML is served.
+3. Pages in `EXCLUDED` always get HTML.
+
+"Prefers" means `text/markdown` has a higher q value than `text/html`, or the same value and is listed first. `*/*` and `text/*` never select Markdown.
+
+| Accept header | Response |
+| --- | --- |
+| `text/markdown` | Markdown |
+| `text/markdown, text/html, */*` | Markdown |
+| `text/html;q=0.9, text/markdown` | Markdown |
+| `text/html, text/markdown` | HTML |
+| A browser's default, or `*/*` | HTML |
+
+Edge Functions run before Netlify's cache, so the cached HTML and `.md` files never get mixed up. If the function fails, `onError: "bypass"` serves the page as if it weren't there. A URL with a trailing slash that isn't an index route, such as `/about/`, gets a 404 for Markdown; the sitemap and `llms.txt` never use those URLs.
+
+The function doesn't run in `npm start` or `npm run serve`. To check it in production:
+
+```bash
+curl -sI -H "Accept: text/markdown" https://www.marlasowards.com/about
+curl -sI https://www.marlasowards.com/about
+```
+
+The first should return `content-type: text/markdown; charset=utf-8`, and the second `text/html`.
+
+The deploy job installs a pinned Deno (`denoland/setup-deno`) before `netlify deploy`, because the Netlify CLI bundles Edge Functions with Deno. Without a Deno on the PATH, the CLI downloads the latest one without checking it. To turn the function off, delete `netlify/edge-functions/markdown.js`; the `.md` URLs keep working.

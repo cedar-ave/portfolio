@@ -12,6 +12,7 @@ import QuickReference from '@site/src/components/QuickReference';
 
 - `onBrokenLinks: 'throw'` — a broken internal link fails the build instead of just warning. Keep this; it's what catches renamed/moved pages before deploy.
 - `future.v4: true` — opts into v4-compatible behaviors ahead of the actual v4 upgrade, so that upgrade is smaller when it happens.
+- `future.faster.swcHtmlMinimizer: false` — keeps every other Docusaurus Faster option that `v4` turns on, but minifies HTML with html-minifier-terser, which keeps optional closing tags. Without it, afdocs's `markdown-content-parity` check fails most pages.
 - `editUrl` (set separately for `docs` and `blog`) still points at `facebook/docusaurus`'s own template repo — this is a **leftover default from the template, not fixed for this site**. See below.
 
 </QuickReference>
@@ -30,10 +31,21 @@ The classic template also ships `'throw'` by default, so this isn't a deviation 
 ```js title="docusaurus.config.js"
 future: {
   v4: true, // Improve compatibility with the upcoming Docusaurus v4
+  faster: { swcHtmlMinimizer: false },
 },
 ```
 
-Not set in the template. Enables the subset of Docusaurus v4's behavior changes that 3.x already supports opting into, so that whenever this site is upgraded to v4 proper, fewer things change at once.
+Not set in the template. `v4` enables the subset of Docusaurus v4's behavior changes that 3.x already supports opting into, so that whenever this site is upgraded to v4 proper, fewer things change at once.
+
+`v4` also turns on every [Docusaurus Faster](https://docusaurus.io/docs/api/docusaurus-config#future) option. One of them, the SWC HTML minifier, leaves out closing tags that HTML makes optional (`</p>`, `</li>`, `</td>`, `</tr>`, `</tbody>`). Browsers handle that, but simpler HTML parsers don't. afdocs's parser loses track of `<main>` and `<body>`, so its `markdown-content-parity` check compares the whole page, scripts and JSON-LD included, with the `.md` copy and fails it. `swcHtmlMinimizer: false` switches only the HTML minifier back to the default, html-minifier-terser, which keeps those tags. The other Faster options stay on.
+
+If you upgrade Docusaurus or remove this line, check that the built HTML still has its closing tags:
+
+```bash
+grep -o '<th>Swatch.\{0,40\}' build/docs/styling/colors/index.html | head -1
+```
+
+It should show `</th>` after each header cell.
 
 ## `editUrl` — needs fixing
 

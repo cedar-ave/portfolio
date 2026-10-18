@@ -258,7 +258,7 @@ function EntryItem({ item }) {
 
 export function ApiReleaseNotesMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.page}>
         <div className={styles.topbar}>
           <span className={styles.logoWordmark}>Platform API</span>

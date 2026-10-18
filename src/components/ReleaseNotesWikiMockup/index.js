@@ -325,7 +325,7 @@ function ReleaseNoteRow({ row }) {
 
 export function ReleaseNotesWikiMockup() {
   return (
-    <figure className={styles.figure}>
+    <figure data-markdown-ignore className={styles.figure}>
       <div className={styles.page}>
         {/* ---------- Top bar ---------- */}
         <div className={styles.topbar}>
