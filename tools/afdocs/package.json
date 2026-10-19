@@ -1,0 +1,8 @@
+{
+  "name": "portfolio-afdocs",
+  "private": true,
+  "description": "Pins afdocs, with a lockfile, for the agent-friendly docs checks in .github/workflows/checks.yml. Kept separate from the site's own dependencies so builds don't install it.",
+  "devDependencies": {
+    "afdocs": "0.22.2"
+  }
+}

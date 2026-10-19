@@ -1,0 +1,11 @@
+# afdocs settings for the live site, checked after each deploy.
+# See https://afdocs.dev/ci-integration.
+url: https://www.marlasowards.com
+
+options:
+  # Test the same pages every run, so results don't change from run to run.
+  samplingStrategy: deterministic
+
+skipChecks:
+  # Skipped on purpose for this site.
+  - content-start-position

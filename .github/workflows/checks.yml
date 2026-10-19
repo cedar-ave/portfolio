@@ -1,4 +1,4 @@
-# Lints the site's prose before it publishes.
+# Checks the site before it publishes.
 #
 # - codespell checks for common misspellings. Add false positives to
 #   ignore-words-list in .codespellrc.
@@ -6,6 +6,8 @@
 # - Vale checks for defects such as repeated words and leftover merge conflict
 #   markers. Rules live in .vale/styles. Only error-level alerts fail
 #   the run; warnings and suggestions show up as annotations.
+# - afdocs checks that AI agents can read the built site (llms.txt, the
+#   Markdown copy of each page, page sizes). Settings are in tools/afdocs.
 #
 # The deploy job below publishes the site to Netlify, only after all checks
 # pass. Netlify's own builds are stopped.
@@ -82,6 +84,39 @@ jobs:
       - name: Run Vale
         run: vale --output=.vale/github.tmpl docs blog samples src/pages README.md
 
+  # Builds the site and runs afdocs against it on a local server. Checks that
+  # only Netlify can answer are skipped here and run in agent-docs-live.
+  agent-docs:
+    name: Agent-friendly docs (afdocs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # afdocs installs from its own lockfile (tools/afdocs), with install
+      # scripts off.
+      - run: npm ci --ignore-scripts --prefix tools/afdocs
+
+      # Settings are in tools/afdocs/local.yml. Fails if any check fails;
+      # warnings don't fail the run.
+      - name: Run afdocs on the build
+        run: |
+          npx docusaurus serve --port 4173 --no-open > /dev/null 2>&1 &
+          curl --silent --fail --retry 30 --retry-delay 1 --retry-connrefused \
+            --output /dev/null http://localhost:4173/llms.txt
+          tools/afdocs/node_modules/.bin/afdocs check --config tools/afdocs/local.yml --fixes
+
   # Publishes to Netlify, only after all checks pass. Runs while the
   # repository variable NETLIFY_DEPLOY_FROM_ACTIONS is "true", and needs the
   # NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets. Builds in
@@ -89,7 +124,7 @@ jobs:
   # deployment), so pushes don't also deploy from there.
   deploy:
     name: Deploy to Netlify
-    needs: [spelling, links, style]
+    needs: [spelling, links, style, agent-docs]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.NETLIFY_DEPLOY_FROM_ACTIONS == 'true'
     runs-on: ubuntu-latest
     concurrency:
@@ -137,3 +172,27 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+  # Runs afdocs against the live site after each deploy, including the checks
+  # only Netlify can answer: Markdown for Accept: text/markdown (the Edge
+  # Function), cache headers, and redirects. Settings are in
+  # tools/afdocs/production.yml. The site is already live by then, so a
+  # failure here means fix and redeploy.
+  agent-docs-live:
+    name: Agent-friendly docs, live site (afdocs)
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - run: npm ci --ignore-scripts --prefix tools/afdocs
+
+      - name: Run afdocs on the live site
+        run: tools/afdocs/node_modules/.bin/afdocs check --config tools/afdocs/production.yml --fixes

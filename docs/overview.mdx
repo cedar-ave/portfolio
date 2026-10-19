@@ -16,6 +16,7 @@ This section documents everything that has been customized beyond a stock Docusa
 | Page diagrams (per-experience-page SVG figures) | `src/components/*Diagrams` folders | [Page diagrams](visuals/page-diagrams) |
 | Release notes page mockups (text/content of each sample) | `src/components/*Mockup` folders used by the three `release-notes-*.mdx` pages | [Release notes page mockups](visuals/release-notes-mockups) |
 | Deployment (push to `main`; GitHub Actions builds and publishes to Netlify) | `.github/workflows/checks.yml`, `netlify.toml` | [Deployment](build-deploy/deployment) |
+| CI checks (spelling, links, style, and afdocs agent-friendly docs checks before and after each deploy) | `.github/workflows/checks.yml`, `tools/afdocs/` | [GitHub Actions checks](build-deploy/github-actions) |
 | Known build issues | n/a | [Troubleshooting](troubleshooting/panic-occurred-at-runtime) |
 | Navbar items | `docusaurus.config.js` | [Navbar](site-config/navbar) |
 | Footer links and color | `docusaurus.config.js`, `src/css/custom.css` | [Footer](site-config/footer) |
@@ -37,4 +38,4 @@ This section documents everything that has been customized beyond a stock Docusa
 | Security headers and Content Security Policy (with inline script hashes, generated each build) | `netlify.toml`, `plugins/csp-headers-plugin.mjs` | [Security headers](site-config/security-headers) |
 | Contact form (Netlify Forms, no email address on the site) | `src/pages/contact.js`, Netlify UI | [Contact form](site-config/contact-form) |
 | `llms.txt`, a Markdown copy of each page, and the Copy page menu for AI tools | `plugins/llms-txt-plugin.mjs`, `src/data/llms.mjs`, `src/components/PageActions/`, `netlify/edge-functions/markdown.js`, `netlify.toml` | [llms.txt and Markdown copies](site-config/llms-txt) |
-| Repo and CI hardening (rulesets, Dependabot, CodeQL, SHA-pinned Actions, no install scripts) | GitHub settings, `.github/`, `netlify.toml`, `tools/netlify-cli/` | [Repository and CI security](build-deploy/repository-security) |
+| Repo and CI hardening (rulesets, Dependabot, CodeQL, SHA-pinned Actions, no install scripts) | GitHub settings, `.github/`, `netlify.toml`, `tools/` | [Repository and CI security](build-deploy/repository-security) |

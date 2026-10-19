@@ -47,14 +47,14 @@ npx docusaurus build --out-dir ../portfolio-build-check
 
 ## Publishing
 
-Every push to `main` runs the `Checks` workflow. Its `deploy` job waits for codespell, lychee, and Vale to pass, then:
+Every push to `main` runs the `Checks` workflow. Its `deploy` job waits for codespell, lychee, Vale, and afdocs to pass, then:
 
 1. Runs `npm ci` and `npm run build`.
 2. Makes the resume PDF from the built `/resume` page (see [Resume PDF](resume-pdf)).
 3. Installs a pinned Deno, which the Netlify CLI uses to bundle the Edge Function in `netlify/edge-functions/`.
 4. Publishes `build/` to production with the Netlify CLI (`netlify deploy --prod --no-build`).
 
-If a check fails, nothing is published and the live site stays as it was. Pull requests run the checks but never deploy. The settings and secrets the job needs are in [Publishing to Netlify](github-actions#publishing-to-netlify).
+If a check fails, nothing is published and the live site stays as it was. After the deploy, the `agent-docs-live` job runs afdocs against the live site (see [Agent-friendly docs: afdocs](github-actions#agent-friendly-docs-afdocs)). Pull requests run the checks but never deploy. The settings and secrets the job needs are in [Publishing to Netlify](github-actions#publishing-to-netlify).
 
 Netlify still serves the site: the domain, HTTPS, redirects, and headers. Its own builds are stopped, so deploys show in Netlify as CLI deploys from GitHub Actions.
 

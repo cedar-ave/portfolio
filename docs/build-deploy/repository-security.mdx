@@ -41,7 +41,7 @@ The ruleset doesn't require pull requests or passing checks, so pushing straight
 - **`persist-credentials: false`** on every checkout, so the GitHub token isn't left in the working copy for later steps to read.
 - **`permissions: contents: read`** at the top of the workflow, so jobs can't write to the repo.
 - **Exact tool versions.** `mdx2vast` is installed at an exact version with `--ignore-scripts`, and Vale's version is pinned by `VALE_VERSION`.
-- **The deploy job's Netlify CLI** comes from `tools/netlify-cli/package-lock.json`, installed with `npm ci --ignore-scripts`. That job is the only one with a secret (the Netlify token), so it's the one where an unverified download would matter most. Playwright, which the same job uses to make the resume PDF, installs the same way from `tools/resume-pdf/package-lock.json`. `tools/*/node_modules` is in `.gitignore`.
+- **The deploy job's Netlify CLI** comes from `tools/netlify-cli/package-lock.json`, installed with `npm ci --ignore-scripts`. That job is the only one with a secret (the Netlify token), so it's the one where an unverified download would matter most. Playwright, which the same job uses to make the resume PDF, installs the same way from `tools/resume-pdf/package-lock.json`, and so does afdocs, for the agent-friendly docs checks, from `tools/afdocs/package-lock.json`. `tools/*/node_modules` is in `.gitignore`.
 
 ## Netlify build
 
@@ -49,7 +49,7 @@ The ruleset doesn't require pull requests or passing checks, so pushing straight
 
 ## Dependabot
 
-`.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions. It checks the site's own packages and the tools pinned in `tools/netlify-cli` and `tools/resume-pdf`. Security updates (above) arrive as soon as an advisory affects a dependency, separately from the weekly schedule.
+`.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions. It checks the site's own packages and the tools pinned in `tools/afdocs`, `tools/netlify-cli`, and `tools/resume-pdf`. Security updates (above) arrive as soon as an advisory affects a dependency, separately from the weekly schedule.
 
 Merge Dependabot's pull requests once their checks pass. For an Actions update, the pull request changes both the SHA and the version comment.
 

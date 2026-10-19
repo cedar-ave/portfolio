@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-description: "The GitHub Actions workflow that checks spelling, external links, and style with codespell, lychee, and Vale on every push and pull request."
+description: "The GitHub Actions workflow that checks spelling, external links, style, and agent-friendliness with codespell, lychee, Vale, and afdocs."
 copy_page: true
 ---
 
@@ -8,15 +8,16 @@ import QuickReference from '@site/src/components/QuickReference';
 
 # GitHub Actions checks
 
-The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github/workflows/checks.yml) lints the site's prose on every push to `main`, on every pull request, and when run by hand from the Actions tab. It runs three checks as separate jobs, so one failing doesn't hide the others.
+The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github/workflows/checks.yml) checks the site on every push to `main`, on every pull request, and when run by hand from the Actions tab. It runs four checks as separate jobs, so one failing doesn't hide the others.
 
 <QuickReference>
 
 - **codespell**: spelling. Settings are in `.codespellrc`. To allow a word, add it to `ignore-words-list`.
 - **lychee**: links to other sites. Settings are in `lychee.toml`. To skip a link, add a regex for it to `exclude`.
 - **Vale**: style defects such as repeated words and leftover merge conflict markers. Settings are in `.vale.ini`, and the custom rules are in `.vale/styles/Portfolio`. Only error-level alerts fail the run.
+- **afdocs**: whether AI agents can read the built site (`llms.txt`, the `.md` copies, page sizes). Settings are in `tools/afdocs/local.yml`. To skip a check, add its ID to `skipChecks`. Another job runs afdocs against the live site after each deploy, with `tools/afdocs/production.yml`.
 - The Norway Data API has its own checks in its own repo. See [The API reference page](../norway-data-api/overview).
-- The `deploy` job publishes the site to Netlify only after all three checks pass. A failing check stops the deploy, and the live site stays as it was.
+- The `deploy` job publishes the site to Netlify only after all four checks pass. A failing check stops the deploy, and the live site stays as it was.
 - Every action is pinned to a commit SHA, and checkouts don't keep the GitHub token. See [Repository and CI security](repository-security).
 
 </QuickReference>
@@ -28,6 +29,7 @@ The [`Checks` workflow](https://github.com/cedar-ave/portfolio/blob/main/.github
 | codespell | Everything in the repo except code, generated folders, and archives (see `skip` in `.codespellrc`) |
 | lychee | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src` |
 | Vale | `README.md` and Markdown/MDX under `docs`, `blog`, `samples`, and `src/pages` |
+| afdocs | The built site, served locally: `llms.txt`, the sitemap, and a sample of pages and their `.md` copies |
 
 ## Spelling: codespell
 
@@ -152,6 +154,44 @@ Text that Vale skips.
 
 To turn off a single rule, name it, as in `{/* vale Vale.Repetition = NO */}`, and turn it back on afterward with `{/* vale Vale.Repetition = YES */}`.
 
+## Agent-friendly docs: afdocs
+
+[afdocs](https://afdocs.dev) checks the site against the [Agent-Friendly Documentation Spec](https://agentdocsspec.com/spec/web/): whether `llms.txt` exists and its links work, whether each page has a `.md` copy that matches the HTML, and whether pages are small enough for an agent to read in one fetch. For what the site serves to agents, see [llms.txt and Markdown copies](../site-config/llms-txt).
+
+afdocs runs in two jobs, because some checks need the real server:
+
+| Job | Runs | Checks | Settings |
+| --- | --- | --- | --- |
+| `agent-docs` | On every push and pull request. `deploy` waits for it. | The new build, served by `docusaurus serve` on port 4173 | `tools/afdocs/local.yml` |
+| `agent-docs-live` | After each deploy | The live site, including the checks only Netlify can answer | `tools/afdocs/production.yml` |
+
+`docusaurus serve` doesn't run the Edge Function or set Netlify's headers, so `local.yml` skips `content-negotiation` (Markdown for `Accept: text/markdown`) and `cache-header-hygiene`. The built `llms.txt` and `.md` files link to `https://www.marlasowards.com`; `canonicalOrigin` rewrites those links to the local server, so the job checks the new build and not the live site.
+
+`agent-docs-live` runs after the site is published, so it can't stop a deploy. If it fails, fix the problem and push again.
+
+Both files skip `content-start-position` on purpose, and both use `samplingStrategy: deterministic`, so every run tests the same pages. A failing check fails the job. A warning doesn't. The job log lists each check with a suggested fix.
+
+```yaml title="tools/afdocs/local.yml"
+url: http://localhost:4173
+
+options:
+  canonicalOrigin: https://www.marlasowards.com
+  samplingStrategy: deterministic
+
+skipChecks:
+  - content-start-position
+  - content-negotiation
+  - cache-header-hygiene
+```
+
+### Skipping a check
+
+Add the check's ID to `skipChecks` in `local.yml`, `production.yml`, or both, with a comment that says why. The IDs are in the job log and in the [checks reference](https://afdocs.dev/checks/).
+
+### Updating afdocs
+
+afdocs installs from its own lockfile in `tools/afdocs/`, with install scripts off, and Dependabot opens pull requests for it. To update it by hand, change the version in `tools/afdocs/package.json` and run `npm install --package-lock-only --ignore-scripts` in that folder. afdocs is still at 0.x, so check IDs can change between minor versions. If a `skipChecks` ID no longer exists, update it.
+
 ## Running the checks locally
 
 Each tool reads the same config file locally as it does in the workflow, so you can run them from the repo root before you push. Install them first (for example, `pip install codespell`, and the [lychee](https://lychee.cli.rs/guides/getting-started/) and [Vale](https://docs.vale.sh/topics/installation) installers). Vale also needs `npm install --global mdx2vast`.
@@ -162,9 +202,20 @@ lychee --no-progress README.md 'docs/**/*.md*' 'blog/**/*.md*' 'samples/**/*.md*
 vale docs blog samples src/pages README.md
 ```
 
+To run afdocs, install it from its lockfile, build and serve the site on port 4173, and then run it from a second terminal:
+
+```bash
+npm ci --ignore-scripts --prefix tools/afdocs
+npm run build
+npx docusaurus serve --port 4173
+tools/afdocs/node_modules/.bin/afdocs check --config tools/afdocs/local.yml --fixes
+```
+
+To check the live site instead, use `--config tools/afdocs/production.yml`. You don't need a build for that.
+
 ## Publishing to Netlify
 
-The `deploy` job builds the site and publishes it to Netlify, but only after all three checks pass. Netlify still hosts the site (domain, HTTPS, redirects, and headers). It no longer builds it: builds are stopped in Netlify, and deploys there show as CLI deploys from GitHub Actions.
+The `deploy` job builds the site and publishes it to Netlify, but only after all four checks pass. Netlify still hosts the site (domain, HTTPS, redirects, and headers). It no longer builds it: builds are stopped in Netlify, and deploys there show as CLI deploys from GitHub Actions.
 
 The job runs only for pushes to `main`, never for pull requests. It depends on these settings:
 
@@ -177,7 +228,7 @@ The job runs only for pushes to `main`, never for pull requests. It depends on t
 
 The publish step runs `netlify deploy --prod --no-build --dir=build`. Keep `--no-build`: without it, the CLI runs its own `npm run build`, which replaces the `build` folder and drops the resume PDF.
 
-To make the checks also block merges, add a **Require status checks to pass** rule to the `Protect main` ruleset (**Settings** > **Rules** > **Rulesets**), with the `Spelling (codespell)`, `Links (lychee)`, and `Style (Vale)` checks, and a rule that requires pull requests.
+To make the checks also block merges, add a **Require status checks to pass** rule to the `Protect main` ruleset (**Settings** > **Rules** > **Rulesets**), with the `Spelling (codespell)`, `Links (lychee)`, `Style (Vale)`, and `Agent-friendly docs (afdocs)` checks, and a rule that requires pull requests.
 
 After `npm run build`, the job also makes the resume PDF from the built `/resume` page, so the PDF is never out of date. See [Resume PDF](resume-pdf).
 

@@ -1,0 +1,19 @@
+# afdocs settings for the built site, served by `docusaurus serve` in CI.
+# See https://afdocs.dev/ci-integration.
+url: http://localhost:4173
+
+options:
+  # The built llms.txt and .md files link to the production domain. This
+  # rewrites those links to the local server, so afdocs checks the new build.
+  canonicalOrigin: https://www.marlasowards.com
+  # Test the same pages every run, so results don't change from run to run.
+  samplingStrategy: deterministic
+
+skipChecks:
+  # Skipped on purpose for this site.
+  - content-start-position
+  # Only Netlify can answer these: the Edge Function serves Markdown for
+  # Accept: text/markdown, and Netlify sets the cache headers. production.yml
+  # runs them after each deploy.
+  - content-negotiation
+  - cache-header-hygiene
