@@ -30,7 +30,7 @@
     "docusaurus-theme-zoom-image": "^0.1.1",
     "hast-util-select": "6.0.4",
     "prism-react-renderer": "^2.3.0",
-    "react": "^19.0.0",
+    "react": "^19.3.1",
     "react-dom": "^19.0.0",
     "rehype-parse": "9.0.1",
     "rehype-remark": "10.0.1",
