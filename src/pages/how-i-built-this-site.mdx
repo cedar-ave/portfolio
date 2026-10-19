@@ -8,11 +8,11 @@ copy_page: false
 
 # How I built this site
 
-Most of my professional work is under NDA, so this site is my portfolio. I built, deployed, and run it with automated pipelines and AI tools. Following are details about how I built it and decisions I made along the way.
+Most of my professional work is under non-disclosure agreements, so this site is my portfolio.  Following are details about how I built, deployed, and run it with automated pipelines and AI tools.
 
 ## Site infrastructure
 
-This site is managed with a docs-as-code methodology.
+This site is managed with a docs-as-code methodology:
 
 - Content stored as Markdown files (MDX) in Git
 - Static-site generator builds the site
@@ -21,10 +21,12 @@ This site is managed with a docs-as-code methodology.
 
 ### Static-site generator
 
-[Docusaurus](https://docusaurus.io/) is a popular static-site generator for documentation websites and is used by companies like React Native, Electron, and Algolia DocSearch for their documentation sites. Docusaurus features include:
+The site is built with [Docusaurus](https://docusaurus.io/), a popular static-site generator for documentation websites used by companies like React Native, Electron, and Algolia DocSearch. Desirable Docusaurus features include:
 
-- **MDX file support**: Docusaurus supports MXD files instead of just regular Markdown, which lets me embed React components like the interactive samples I share on my [Portfolio](/portfolio/) page.
-- **Plugin support**: Docusaurus also includes a number of plugins that support features like Google Analytics tracking, search functionality, a blog, and more. It also let me build custom plugins - for example, a plugin that generates `llms.txt` and `llms-full.txt` files on build.
+- **MDX file support**: Docusaurus supports MXD files instead of just regular Markdown, which lets me embed React components like the interactive samples I share on my [Portfolio](/portfolio/) pages.
+- **Plugin support**: Docusaurus supports plugins to easily implement features like Google Analytics tracking, search functionality, a blog, documentation layouts, diagrams, and AI optimization.
+- **Customization**: I can easily swizzle any theme component to customize it, which lets me customize portfolio sample pages.
+- **Credibility and maintenance**: Meta maintains it.
 
 ### Source code in Git
 
@@ -52,21 +54,22 @@ This site also passes the [AFDocs](https://afdocs.dev) companion test on how wel
 
 {/* See [How I made my site easier for AI agents to discover and consume using the Agent-Friendly Documentation Spec](/blog/agent-friendly-docs-spec/) for details on how I align my site to the spec and run the tests as a validation step in the deployment pipeline. */}
 
-### Agent queries
+### Agent interaction
 
 - Button that lets users copy a page as Markdown
 - Button that automatically opens Claude or ChatGPT with a prompt that references a site page 
 
-### AI readiness of content
+{/* See ### RAG AI readiness
 
-Samples show the following principles of AI readiness:
+Samples show the following principles of RAG AI readiness:
 
 - Consistent terminology
-- One question, one answer, one topic
+- Scoped topics instead of one long page
+- Purposeful topic types (concept, task, troubleshooting, reference)
 - Clear relationships between topics (role, dependencies, versions, etc.)
-- Metadata 
-- Clear heading hierarchies, lists, and table headers
-- Correctness section (what changed so LLMs don't go to outdated information)
+- Metadata (product, version, required permissions, prerequisites, related articles)
+- Formatting with clear heading hierarchies, lists, and table headers
+- Correctness section (noting what changed so LLMs don't go to outdated information) */}
 
 ## Deployment pipeline
 
