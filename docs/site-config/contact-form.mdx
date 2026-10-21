@@ -17,6 +17,7 @@ The [/contact](/contact) page has a form that visitors use to send a message, so
 - One-time Netlify setup: turn on form detection, and add an email notification. See [Netlify setup](#netlify-setup).
 - Spam: a hidden honeypot field catches simple bots, and Netlify also filters submissions with Akismet. Flagged ones go to the **Spam submissions** list.
 - To add a field, add an input with a `name` to the form. Netlify picks it up on the next deploy.
+- Each successful submission also sends a `generate_lead` event to Google Analytics, unless the visitor's browser blocks analytics. See [Analytics](#analytics).
 - No Content Security Policy change was needed: the form posts to this site, which `form-action 'self'` and `connect-src 'self'` already allow. See [Security headers](security-headers).
 
 </QuickReference>
@@ -30,6 +31,7 @@ When a visitor submits the form:
 1. The page's `handleSubmit` sends the fields to `/` as a URL-encoded `POST`, including the hidden `form-name` field, which tells Netlify which form the data belongs to.
 2. Netlify stores the submission and sends the notification email.
 3. The page shows **Thanks! Your message was sent.**, or an error message if the request fails.
+4. If the request succeeded, the page sends a `generate_lead` event to Google Analytics.
 
 Without JavaScript, the browser posts the form normally, and Netlify shows its own confirmation page.
 
@@ -52,6 +54,14 @@ Netlify's free plan includes 100 form submissions a month.
 
 If spam still gets through, Netlify also supports a reCAPTCHA challenge (`data-netlify-recaptcha="true"`). That would need Google's reCAPTCHA domains added to the Content Security Policy.
 
+## Analytics
+
+After a successful submission, `handleSubmit` calls `gtag('event', 'generate_lead', { form_name: 'contact' })`. `generate_lead` is one of Google Analytics' recommended events, so GA recognizes it as a lead without any custom setup. The event carries only the form name, never what the visitor typed.
+
+The call is skipped when `window.gtag` doesn't exist: in local dev, where the gtag plugin doesn't load, and when a browser or extension blocks analytics. Netlify still receives and emails those submissions, so the Netlify **Forms** list is the full count, and GA's `generate_lead` count can be lower.
+
+To see submissions in GA, go to **Reports** > **Engagement** > **Events** and look for `generate_lead`. To count them as conversions, mark the event as a key event under **Admin** > **Data display** > **Events**.
+
 ## Testing
 
-After a deploy, submit the form on [/contact](/contact). The submission should show up under **Forms** > **contact**, and the notification email should arrive within a minute or two. Delete the test submission afterward.
+After a deploy, submit the form on [/contact](/contact). The submission should show up under **Forms** > **contact**, and the notification email should arrive within a minute or two. In Google Analytics, **Reports** > **Realtime** should show a `generate_lead` event within a few minutes, unless your browser blocks analytics. Delete the test submission afterward.

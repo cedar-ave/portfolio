@@ -28,6 +28,13 @@ export default function Contact() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       form.reset();
       setStatus('sent');
+      // Count the submission in Google Analytics as a lead. Only the event is
+      // sent, never what the visitor typed. gtag is missing in local dev
+      // (the plugin only loads in production builds) and when a browser
+      // blocks analytics, so check for it first.
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', { form_name: FORM_NAME });
+      }
     } catch {
       setStatus('error');
     }
