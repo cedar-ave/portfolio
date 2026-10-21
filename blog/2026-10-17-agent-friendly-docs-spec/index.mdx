@@ -1,36 +1,38 @@
 ---
 slug: agent-friendly-docs-spec
-title: How I made my site easier for AI agents to find and read with the Agent-Friendly Documentation Spec
+title: Can AI agents find and read your docs site? Get a scorecard (with recommended remedies) in one command
 authors: marla
 tags: [AFDocs, AI optimization, CI pipelines]
 copy_page: true
 ---
 
-# How I made my site easier for AI agents to find and read with the Agent-Friendly Documentation Spec
+# Can AI agents find and read your docs site? Get a scorecard (with recommended remedies) in one command
 
-"Can agents read your documentation?" This is the question Dachary Carey asks those of us who build and manage docs sites. Dachary's [Agent-Friendly Documentation Spec](https://agentdocsspec.com) defines 28 standards docs sites need to meet to serve AI agents well. I put the spec up against my own site by running it through Dachary's companion [AFDocs](https://afdocs.dev) tool, which gave me a scorecard on where my site stands and what I should fix. Here's what I learned from Dachary's crystal-clear spec and why I think every docs site owner should run AFDocs as part of a CI pipeline.
+"Can agents read your documentation?" This is the question Dachary Carey asks those of us who operate docs sites. Dachary's [Agent-Friendly Documentation Spec](https://agentdocsspec.com) defines 28 checks docs sites should pass to serve AI agents well. I put the spec up against my own site by running it through the companion [AFDocs](https://afdocs.dev) tool, which gave me a scorecard on where my site stands and what I can fix. Here's what I learned from the crystal-clear spec and why I think every docs site owner should run AFDocs as part of a CI pipeline.
 
 {/* truncate */}
 
+![Illustration: a robot presents the Agent-Friendly Documentation Spec, checked for discoverable and consumable, with an arrow labeled Test with AFDocs pointing to an AFDocs scorecard that shows a score of 72/100 (C) and a list of pass, warn, and fail results](./afdocs-scorecard.png)
+
 ## The spec
 
-First, a look at the spec. Dachary's testing and research pointed to factors in several categories that determine if a site is optimized for agents, but to get a taste of the spec, here are some examples from the content discoverability category.
+Dachary's [research](https://agentdocsspec.com/#background) led to 28 checks that show if a docs site is discoverable and consumable by agents. Here are a few examples.
 
 ### Serve an `llms.txt` file
 
-An `llms.txt` file is a Markdown file stored at or near the root of a site that acts like a table of contents agents use to find the most meaningful information. That means agents don't have to parse through JavaScript, layout markup, and content that isn't relevant, so responses are faster and better quality.
+An `llms.txt` file is a Markdown file that acts like a table of contents agents use to find meaningful information throughout a site. It lets agents skip parsing through JavaScript, layout markup, and content that isn't relevant, so responses are faster and better quality. See [MongoDB's `llms.txt`](https://www.mongodb.com/docs/llms.txt) for an example.
 
-According to the spec, the file should exist in certain path patterns. For example:
+The [`llms-txt-exists`](https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-exists) check looks for an `llms.txt` file stored at or near the root of a docs site. For example:
 
 ```
 docs.example.com/llms.txt
 example.com/docs/llms.txt
-Etc.
+example.com/llms.txt
 ```
 
 ### Format the `llms.txt` file properly
 
-The `llms.txt` file should follow the structure defined in the [llmstxt.org proposal](https://llmstxt.org). For example:
+The [`llms-txt-valid`](https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-valid) check validates that the `llms.txt` file follows the structure defined in the [llmstxt.org](https://llmstxt.org) proposal. For example:
 
 ```markdown
 # Title
@@ -42,19 +44,31 @@ Details go here
 ## Section name
 
 - [Link title](https://link_url): Link details
+- [Link title](https://link_url): Link details
+- [Link title](https://link_url): Link details
 
 ## Optional
 
+- [Link title](https://link_url)
+- [Link title](https://link_url)
 - [Link title](https://link_url)
 ```
 
 ### Limit the size of the `llms.txt` file
 
-If the `llms.txt` file is too long, agents won't read it all. Keep it under 50K characters to avoid agent truncation limits.
+The [`llms-txt-size`](https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-size) check validates the `llms.txt` file is under 50K characters. If the `llms.txt` file is too long, agents may not read it all.
 
-### Serve Markdown versions of each page
+### Point agents to the `llms.txt` file
 
-Agents like Claude Code, Cursor, and OpenCode ask websites for Markdown first when they fetch a page. Serve articles as Markdown files (with `.md` URL endings) alongside the HTML files. For example:
+Agents need to be told to look for an `llms.txt` file in the first place. The [`llms-txt-directive-html`](https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-html) and [`llms-txt-directive-md`](https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-md) checks look in the code of the HTML and Markdown files for agent directives like:
+
+```
+> For the complete documentation index, see docs.example.com/llms.txt.
+```
+
+### Serve raw Markdown versions of each page
+
+According to the spec, agents work better with Markdown than HTML because converting HTML to Markdown is lossy and unpredictable. Agents like Claude Code and Cursor even ask websites for Markdown when they fetch a page. The [`markdown-url-support`](https://agentdocsspec.com/spec/web/markdown-availability/#markdown-url-support) check makes sure articles are published as Markdown files with `.md` URL endings alongside the HTML files. For example:
 
 ```
 docs.example.com/add-a-file.html
@@ -63,34 +77,26 @@ docs.example.com/add-a-file.md
 
 ### Keep Markdown pages under 50K characters
 
-Agent truncation limits can mean long Markdown pages aren't fully read in a single agent fetch. Break down large pages into smaller ones so that no single page is more than 50K characters.
-
-### Point agents to the `llms.txt` file
-
-Agents need to be told to look for an `llms.txt` file in the first place. Add directives for agents in the code of the HTML and Markdown files. The spec recommended something like:
-
-```
-For AI agents: a documentation index is available at /llms.txt
-```
+Agent truncation limits can mean long Markdown pages aren't fully read in a single agent fetch. The [`page-size-markdown`](https://agentdocsspec.com/spec/web/page-size/#page-size-markdown) check recommends no single page is more than 50K.
 
 ## The test
 
-I ran the [AFDocs](https://afdocs.dev) test to get a scorecard on how well my site matched up to the spec. AFDocs couldn't be easier to set up and couldn't run more smoothly. If you have Node.js 22, no install is necessary. Just run:
+I ran the [AFDocs](https://afdocs.dev) test to get a scorecard on how well my site matched up to the spec. AFDocs couldn't be easier to use. If you have Node.js 22+, no install needed. Just run:
 
 ```
 npx afdocs check https://docs.example.com --format scorecard
 ```
 
-The first time I ran it I got this warning in the content discoverability category:
+The first time I ran it, AFDocs threw some errors and warnings. For example:
 
 ```
   ⚠ llms-txt-directive-html: llms.txt directive found in HTML of 1 of 50 sampled pages (49 missing)
       Learn more: https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-html
 ```
 
-This is a problem for AI agents that ask for HTML instead of Markdown (like OpenAPI Codex and GitHub Copilot). Thanks to the test results, I knew I needed to add a directive in `<head>` in each HTML page.
+This is a problem for AI agents that ask for HTML instead of Markdown (like OpenAI Codex and GitHub Copilot). Thanks to the results, I knew I needed to add a directive near the top of the content on each HTML page.
 
-My site had other deficiencies in other categories, which took time to work out. But after a lot of work, I was so proud to get this scorecard. Still working toward all As!
+After I fixed that and worked out other issues, I was proud to get this scorecard. Still working toward all A+s!
 
 ```
   Overall Score: 98 / 100 (A)
@@ -107,8 +113,10 @@ My site had other deficiencies in other categories, which took time to work out.
 
 ## The CI pipeline check
 
-Finally, I [added AFDocs checks in my CI pipeline](https://afdocs.dev/ci-integration) alongside [Vale](https://vale.sh), [lychee](https://lychee.cli.rs), and [codespell](https://github.com/codespell-project/codespell). If any single AFDocs check comes back as a failure, the job fails. I need to know if agents will have issues finding and reading my content, and this lets me know.
+Finally, I [added AFDocs checks in my CI pipeline](https://afdocs.dev/ci-integration) alongside [Vale](https://vale.sh), [lychee](https://lychee.cli.rs), and [codespell](https://github.com/codespell-project/codespell). If any single AFDocs check comes back as a failure, the job fails. I need to know immediately if agents will have issues finding and reading site content.
 
-## Coming up
+## Next up
 
-Some [cool things](https://agentdocsspec.com/spec/#planned) are on Dachary's agent-friendliness roadmap, like companion specifications around what documentation itself should contain. Looking forward to learning more from Dachary on that front as well!
+Some [cool things are on the agent-friendliness roadmap](https://agentdocsspec.com/spec/#planned), like companion specifications around content composition (factual consistency across pages, structure, and density).
+
+Grateful to Dachary for sharing the spec and AFDocs with the tech writing community! Learn about [Dachary's other work](https://dacharycarey.com/). Let me know if you've run AFDocs on your docs site!
