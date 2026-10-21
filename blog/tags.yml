@@ -42,3 +42,18 @@ Zendesk:
   label: Zendesk
   permalink: /zendesk
   description: An enterprise support tool that supports ticket management and a help site
+
+AFDocs:
+  label: AFDocs
+  permalink: /afdocs
+  description: A tool to test documentation against the Agent-Friendly Documentation Spec
+
+AI optimization:
+  label: AI optimization
+  permalink: /ai-optimization
+  description: Techniques and strategies for optimizing AI models and systems
+
+CI pipelines:
+  label: CI pipelines
+  permalink: /ci-pipelines
+  description: Continuous integration pipelines for automating testing and deployment of documentation

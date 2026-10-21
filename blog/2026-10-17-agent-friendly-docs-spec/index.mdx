@@ -1,9 +1,8 @@
 ---
-draft: true
 slug: agent-friendly-docs-spec
 title: How I made my site easier for AI agents to find and read with the Agent-Friendly Documentation Spec
 authors: marla
-tags: []
+tags: [AFDocs, AI optimization, CI pipelines]
 copy_page: true
 ---
 
@@ -108,7 +107,8 @@ My site had other deficiencies in other categories, which took time to work out.
 
 ## The CI pipeline check
 
-Finally, I [added AFDocs checks in my CI pipeline](https://afdocs.dev/ci-integration) alongside [Vale](https://vale.sh), [lychee](https://lychee.cli.rs), and [codespell](https://github.com/codespell-project/codespell). If any single check comes back as a failure, the job fails. I need to know if agents will have issues finding and reading my content, and this lets me know.
+Finally, I [added AFDocs checks in my CI pipeline](https://afdocs.dev/ci-integration) alongside [Vale](https://vale.sh), [lychee](https://lychee.cli.rs), and [codespell](https://github.com/codespell-project/codespell). If any single AFDocs check comes back as a failure, the job fails. I need to know if agents will have issues finding and reading my content, and this lets me know.
 
-## Try it!
+## Coming up
 
+Some [cool things](https://agentdocsspec.com/spec/#planned) are on Dachary's agent-friendliness roadmap, like companion specifications around what documentation itself should contain. Looking forward to learning more from Dachary on that front as well!
