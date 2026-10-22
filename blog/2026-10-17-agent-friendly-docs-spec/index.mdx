@@ -90,8 +90,9 @@ npx afdocs check https://docs.example.com --format scorecard
 The first time I ran it, AFDocs threw some errors and warnings. For example:
 
 ```
-  ⚠ llms-txt-directive-html: llms.txt directive found in HTML of 1 of 50 sampled pages (49 missing)
-      Learn more: https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-html
+⚠ llms-txt-directive-html: llms.txt directive found in HTML of 1 of 50 sampled pages (49 missing)
+
+  Learn more: https://agentdocsspec.com/spec/web/content-discoverability/#llms-txt-directive-html
 ```
 
 This is a problem for AI agents that ask for HTML instead of Markdown (like OpenAI Codex and GitHub Copilot). Thanks to the results, I knew I needed to add a directive near the top of the content on each HTML page.
@@ -99,16 +100,16 @@ This is a problem for AI agents that ask for HTML instead of Markdown (like Open
 After I fixed that and worked out other issues, I was proud to get this scorecard. Still working toward all A+s!
 
 ```
-  Overall Score: 98 / 100 (A)
+Overall Score: 98 / 100 (A)
 
-  Category Scores:
-    Content Discoverability              100 / 100 (A+)
-    Markdown Availability                 96 / 100 (A)
-    Page Size and Truncation Risk         94 / 100 (A)
-    Content Structure                    100 / 100 (A+)
-    URL Stability and Redirects          100 / 100 (A+)
-    Observability and Content Health      99 / 100 (A)
-    Authentication and Access            100 / 100 (A+)
+Category Scores:
+  Content Discoverability              100 / 100 (A+)
+  Markdown Availability                 96 / 100 (A)
+  Page Size and Truncation Risk         94 / 100 (A)
+  Content Structure                    100 / 100 (A+)
+  URL Stability and Redirects          100 / 100 (A+)
+  Observability and Content Health      99 / 100 (A)
+  Authentication and Access            100 / 100 (A+)
 ```
 
 ## The CI pipeline check
