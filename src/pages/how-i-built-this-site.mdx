@@ -28,6 +28,8 @@ The site is built with [Docusaurus](https://docusaurus.io/), a popular static-si
 - **Customization**: I can swizzle any theme component to customize it, which lets me customize portfolio sample pages.
 - **Credibility and maintenance**: Meta maintains it.
 
+See [everything I look for when I evaluate static-site generators](/blog/2026-09-23-how-to-choose-open-source-ssgs/).
+
 ### Source code in Git
 
 Source code is managed in two GitHub repos:
@@ -50,7 +52,7 @@ This site follows the [Agent-Friendly Documentation Spec](https://agentdocsspec.
 - Content matches between HTML and served Markdown files
 - Many more
 
-This site also passes the [AFDocs](https://afdocs.dev) companion test on how well agents can consume this site. 
+This site also earns an A score on the [AFDocs](https://afdocs.dev) companion test, which evaluates how well agents can consume this site. 
 
 {/* See [How I made my site easier for AI agents to discover and consume using the Agent-Friendly Documentation Spec](/blog/agent-friendly-docs-spec/) for details on how I align my site to the spec and run the tests as a validation step in the deployment pipeline. */}
 
@@ -73,12 +75,11 @@ Samples show the following principles of RAG AI readiness:
 
 ## Deployment pipeline
 
-### 
 ### Linting
 
 The pipeline fails if issues are detected with any of the following:
 
 - AI agent friendliness ([AFDocs](https://afdocs.dev) CI test to verify the site aligns with the [Agent-Friendly Documentation Spec](https://agentdocsspec.com/))
-- Style deviations (Vale)
-- Broken links (Lychee)
-- Spelling errors (codespell)
+- Style deviations ([Vale](https://vale.sh))
+- Broken links ([lychee](https://lychee.cli.rs))
+- Spelling errors ([codespell](https://github.com/codespell-project/codespell))

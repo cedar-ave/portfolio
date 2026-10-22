@@ -1,19 +1,98 @@
 ---
 draft: true
 slug: build-an-api
-title: How I built a REST API so I could document it
+title: How I built a REST API so I could build and orchestrate API docs
 authors: marla
 tags: []
 copy_page: true
 ---
 
-# How I built a REST API so I could document it
+# How I built a REST API so I could build and orchestrate API docs
 
-Claude and I built a REST API -- because who doesn't need a programmatic way to get facts about Norway? (Norway is dear to my heart because I served a mission there for the Church of Jesus Christ of Latter-day Saints.) I've built developer portals, edited content in OpenAPI and Swagger YAML files, submitted bugs when samples don't work, and used a lot of REST API documentation, but I've never had the chance to fully document one and add working samples. Here's how I used Claude to build the Norway Data API.
+Claude and I built a REST API -- because who doesn't need a programmatic way to get facts about Norway? I've built developer portals, edited content in OpenAPI and Swagger YAML files, submitted bugs when samples don't work, and sure used a lot of REST API documentation, but I've never had the chance to fully document one, create working samples, or set up a pipeline for self-healing API documentation. Here's how I used Claude to build the public Norway Data API.
 
 {/* truncate */}
 
+## The strategy
+
+Claude helped me define and execute a strategy. I used a prompt like this:
+
+```txt
+I want a small, public, read-only REST API as a portfolio sample for API documentation. Visitors must be able to run the code samples against a live server. My site is Docusaurus on Netlify. Propose an architecture before building anything.
+```
+
+I asked Claude to review the architecture from three perspectives and get their criticisms and recommendations:
+
+- Principal API engineer
+- Principal API tech writer
+- Principal SecOps engineer
+
+Claude provided detailed reports from each perspective, which helped me understand what . That helped me settle on a simple architecture:
+
+- **Live backend**: A [Netlify Function](https://docs.netlify.com/build/functions/overview) serves a small, fixed dataset.
+- **Spec**: An [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html) file describes the endpoints.
+- **API docs on my site**: [Scalar](https://scalar.com) (an open-source, interactive API documentation platform) renders the spec.
+
+## The guts
+
+Based on Claude's technical recommendations, I prompted Claude to build the API with something like:
+
+```txt
+Create a Netlify Function that serves a fixed dataset of facts about Norway from a JS module. No database. Version it under /norway-data/v1, with list and detail endpoints, pagination, and RFC 9457 errors.
+```
+
+The Netlify Function contains the data about Norway and routes requests, paginates them, and sends responses.
+
+## The deployment
+
+I already owned the domain marlasowards.com, so I deployed the API on api.marlasowards.com.
+
+
+
+Key for the API documentation is [norway-data.yaml](https://github.com/cedar-ave/norway-data-api/blob/main/public/openapi/norway-data.yaml), which documents each endpoint and provides sample URLs.
+
+## The enhancements
+
+Claude recommended a rate limiter, 
+
+## The API documentation
+
+## Versioning
+
+## The tests
+
+## The Postman collection
+
+## Up next
+
+Next is implementing a system that updates the API docs automatically, and tests the samples, whenever the API changes. For that, I'll be relying on 
+
+
+## How the samples work
+
+Each endpoint documented in my API reference includes a working sample. It works like this:
+
+  - URL points to the Neltify function.
+  - Scalar generates curl, JS and Python snippets.
+  - A **Test Request** button in the API reference documentation calls a live server and returns a response.
+
+
+
+
 ## The model
+
+First, Claude helped me create a simple API model with read-only endpoints:
+
+- `GET /facts`
+- `GET /random-fact`
+- `GET /categories`
+- `GET /places`
+
+## The prompts
+
+
+Claude returned detailed analyses that 
+
 
 I asked Claude to create an OpenAPI 3 spec with three collections: `facts`, `categories`, and `places`. 
 
@@ -39,7 +118,6 @@ I used the Scalar API documentation platform to build the site.
 
 ## The back end
 
-## The Postman collection
 
 ## The experience
 
