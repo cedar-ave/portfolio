@@ -18,6 +18,7 @@ import QuickReference from '@site/src/components/QuickReference';
 - Table styling (colored header row, striped rows, no outer border): the `table` / `thead` / `table th` / `table td` block.
 - Table of contents no longer scrolls independently once long — grows with the page instead: `.col--2 > .thin-scrollbar, .theme-doc-toc-desktop .thin-scrollbar`.
 - Page-type top margin (blog/docs/mdx pages pushed down from under a presumably-fixed navbar): `.blog-post-page .main-wrapper, ...`.
+- Code blocks wrap long lines instead of scrolling sideways: `pre.prism-code` rule.
 - Zoom-on-hover dimming disabled: see [Image handling](../visuals/image-handling).
 - Link colors, including links inside admonitions: see [Link colors](../styling/links).
 
@@ -110,6 +111,18 @@ Pushes the main content area down on every page type. This compensates for the n
 This fixes a real Infima bug: a nested dropdown (a dropdown item that itself contains another dropdown, e.g. a would-be "Experience" nav item with sub-items) shows *every* nested submenu at once on hover, because Infima's CSS selector for revealing `.dropdown__menu` matches any descendant hover, not just the immediate one.
 
 **As of this writing, the navbar (`docusaurus.config.js`) has no nested dropdown items** — every navbar entry is a flat link (see [Navbar](navbar)). This CSS currently has nothing to act on. It's left in place from an earlier navbar iteration (the comment's mention of an "Experience" item matches the `src/pages/experience/*` content, which suggests a dropdown nav item was planned or previously existed there). If you reintroduce a nested dropdown navbar item, this fix is why it'll behave correctly instead of popping open every sibling submenu — keep it. If you're confident no nested dropdown is coming back, it's safe to delete.
+
+## Code block wrapping
+
+```css title="src/css/custom.css"
+pre.prism-code,
+pre.prism-code code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+```
+
+Docusaurus code blocks scroll sideways by default, and the reader has to click the word-wrap button on each block to wrap it. This rule wraps every fenced code block on the site by default, using the same two styles that button sets inline. Because the blocks already wrap, the button does nothing visible. Code blocks inside the Scalar API reference (`code.hljs`) and inside the portfolio mockups use their own classes, so this rule doesn't touch them.
 
 ## Blog and tags page styling (summary)
 

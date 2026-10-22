@@ -289,6 +289,14 @@ article h6 {
   font-weight: 500;
 }
 
+/* Wrap long lines in every fenced code block instead of scrolling
+   sideways. Same styles Docusaurus's word-wrap button applies inline. */
+pre.prism-code,
+pre.prism-code code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* Tags overview page (/blog/tags): give each letter's block (the
    <article> containing the "A", "B", ... heading and its tags) the
    same gray rounded background used by the blog post cards above
