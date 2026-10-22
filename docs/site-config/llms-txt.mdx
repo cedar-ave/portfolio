@@ -47,7 +47,7 @@ When you add a component that's a visual, add `data-markdown-ignore` to its oute
 
 The check also depends on the build's HTML keeping its optional closing tags (see [Build flags and edit links](../build-deploy/build-flags-and-edit-links.mdx#future-flags)).
 
-Each `.md` file starts with front matter (title, URL, description, and author), then a line pointing to `llms.txt`. The genericized sample guides also start with the disclaimer from `src/includes/disclaimer.md`.
+Each `.md` file starts with front matter (title, URL, description, and author), then a line pointing to `llms.txt`. The author is `Blog post by Marla Sowards` on blog posts, `Writing sample by Marla Sowards` on `/samples` and `/portfolio` pages, and `Marla Sowards` everywhere else. The genericized sample guides also start with the disclaimer from `src/includes/disclaimer.md`.
 
 The plugin writes only `.md` and `.txt` files and never changes the HTML, so the script hashes in the Content Security Policy stay valid (see [Security headers](./security-headers.mdx)). If a `.md` file already exists in `build/`, for example from a file in `static/`, the build fails rather than overwriting it.
 

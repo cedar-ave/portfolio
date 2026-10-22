@@ -96,7 +96,8 @@ const NORWAY = '/samples/norway-data-api-guides/';
 const OPENAPI_ITEM = '- [Norway Data API OpenAPI spec](https://api.marlasowards.com/openapi/norway-data.yaml): The OpenAPI 3.1 spec for the Norway Data API, which the guides above call. It is also the source of the interactive API reference on this site.';
 
 // Whose writing it is, for the author line in each page's front matter.
-const WRITING_SAMPLE = /^\/(samples|portfolio|blog)(\/|$)/;
+// Blog posts (pages with a blog post container) get their own label.
+const WRITING_SAMPLE = /^\/(samples|portfolio)(\/|$)/;
 
 // Sample guides that are genericized versions of employer work. Their .md
 // files start with the disclaimer from src/includes/disclaimer.md. (Portfolio
@@ -365,7 +366,9 @@ export async function writeMarkdownPages(outDir, { disclaimer, site }) {
 // Front matter, a pointer to llms.txt, and (on genericized samples) the
 // disclaimer. JSON strings are valid YAML double-quoted strings.
 function pageHeader(page, disclaimer, site) {
-  const author = WRITING_SAMPLE.test(page.pathname) ? 'Writing sample by Marla Sowards' : 'Marla Sowards';
+  const author = select('#__blog-post-container', page.tree)
+    ? 'Blog post by Marla Sowards'
+    : WRITING_SAMPLE.test(page.pathname) ? 'Writing sample by Marla Sowards' : 'Marla Sowards';
   const lines = [
     '---',
     `title: ${JSON.stringify(page.title)}`,
