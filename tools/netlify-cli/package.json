@@ -3,6 +3,6 @@
   "private": true,
   "description": "Pins the Netlify CLI, with a lockfile, for the optional deploy job in .github/workflows/checks.yml. Kept separate from the site's own dependencies so builds don't install it.",
   "devDependencies": {
-    "netlify-cli": "27.12.0"
+    "netlify-cli": "27.13.0"
   }
 }
