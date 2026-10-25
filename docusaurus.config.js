@@ -40,7 +40,6 @@ const taglineItems = [
   { icon: '/img/home-page/04-xml-ccms-workflows.svg', text: 'XML and CCMS workflows' },
   { icon: '/img/home-page/05-zendesk-master.svg', text: 'Zendesk CMS' },
   { icon: '/img/home-page/07-api-documentation.svg', text: 'API documentation portals' },
-  { icon: '/img/home-page/06-ai-conversation-designer.svg', text: 'AI conversation design' },
 ];
 
 /** @type {import('@docusaurus/types').Config} */

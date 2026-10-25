@@ -398,6 +398,7 @@ article h3 {
 .navbar__link,
 .navbar__title {
   font-weight: 500;
+  font-size: .95rem;
 }
 
 .button--lg {
@@ -575,6 +576,6 @@ li .alert {
 }
 
 .navbar__search-input {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 400;
 }
