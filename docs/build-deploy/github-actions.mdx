@@ -232,4 +232,6 @@ To make the checks also block merges, add a **Require status checks to pass** ru
 
 After `npm run build`, the job also makes the resume PDF from the built `/resume` page, so the PDF is never out of date. See [Resume PDF](resume-pdf).
 
-The job is the only one with a secret (the Netlify token), so it doesn't fetch the Netlify CLI with `npx`. The CLI installs from its own lockfile in `tools/netlify-cli/`, with exact versions, integrity hashes, and install scripts off. To update it, change the version in `tools/netlify-cli/package.json` and run `npm install --package-lock-only --ignore-scripts` in that folder.
+The job is the only one with a secret (the Netlify token), so it doesn't fetch the Netlify CLI with `npx`. The CLI installs from its own lockfile in `tools/netlify-cli/`, with exact versions, integrity hashes, and install scripts off. To update it, change the version in `tools/netlify-cli/package.json` and run `npx npm@10 install --package-lock-only --ignore-scripts` in that folder.
+
+Use npm 10, the version that comes with the job's Node 22. A lockfile written by npm 11 (Node 24) can leave out entries that npm 10 requires, so `npm ci` fails in the deploy job and the site isn't published, even though `npm ci` passes locally. Dependabot pull requests can cause the same problem: if the deploy job fails on `npm ci` after a Dependabot merge, regenerate the lockfile with npm 10.
