@@ -108,10 +108,10 @@
 /* Footer: navy */
 .footer {
   --ifm-footer-background-color: #202b49;
-  --ifm-footer-color: #E6EDF5;
+  --ifm-footer-color: #5e7893;
   --ifm-footer-link-color: #E6EDF5;
   --ifm-footer-title-color: #ffffff;
-  background-color: #202b49;
+  background-color: #f5f6f8;
 }
 
 a {
@@ -416,8 +416,9 @@ article h3 {
 }
 
 .hero__title {
-  font-weight: 800;
+  font-weight: 600;
   font-size: 3.5rem;
+  letter-spacing: -.8px;
 }
 
 .hero__subtitle {
@@ -578,4 +579,13 @@ li .alert {
 .navbar__search-input {
   font-size: 0.85rem;
   font-weight: 400;
+}
+
+[data-theme='light'] .navbar__search-input {
+  background-color: #f5f6f8;
+}
+
+[data-theme='light'] .navbar__search-input::placeholder {
+  color: #5e7893;
+  opacity: 1;
 }
