@@ -1,0 +1,43 @@
+---
+draft: true
+slug: automated-release-notes
+title: Generating release notes with AI isn't as simple as it sounds, but tech writers can fix it
+authors: marla
+tags: [AFDocs, AI optimization, CI pipelines]
+copy_page: true
+---
+
+# Generating release notes with AI isn't as simple as it sounds
+
+Using AI to automatically generate release notes from a work-tracking system (like Jira or Azure DevOps) or Git commits seems like a straightforward task. Can't you just point an agent to a sprint on a board or a Git repo and tell it to transform completed work into notes? Unless you're lucky, the answer is no. Delineations between products or features may not match delineations between boards or teams. Engineers or PMs may not surface relationships between work items by cross referencing or organizing them in perfect epic > feature > task hierarchies. Code changes and commits offer some clues, but work merged to a dev branch doesn't mean it will make it into prod. What's more, tracked work doesn't always describe the value a change adds to users. What a mess! But it's a solvable one. Here's how a tech writer can make sure AI has the information it needs to automate the production of accurate, complete release notes.
+
+{/* truncate */}
+
+## What the agent needs to know
+
+Here's what the AI agent needs to know to create an accurate release note from tracked work.
+
+For new or changed functionality:
+
+- Which product(s) the new functionality is added to
+- Which version(s) the new functionality applies to
+- What was added or changed, and sometimes why
+- How the change benefits the user
+- What the user needs to know
+
+For bugs:
+
+- White product(s) the bug affects
+- Which version(s) a fixed bug applies to
+- What the problem was
+- What was fixed
+
+For known issues:
+
+- White product(s) the bug affects
+- Which versions(s) a known issue applies to
+- How the known issue affects the user
+
+## How to give the agent the info it needs
+
+It's 
