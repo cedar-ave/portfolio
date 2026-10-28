@@ -9,13 +9,13 @@ copy_page: true
 
 # Drafting release notes with AI agents when your org has multiple products, versions, and audiences
 
-Using AI to draft quality release notes from git commits or a work-tracking system (like Jira or Azure DevOps) seems like a straightforward task. Can't you just point an agent to a sprint on a board or a Git repo and tell it to transform completed work into notes? Unless you're lucky, the answer is no. Delineations between products or features may not match delineations between boards or teams. Engineers or PMs may not surface relationships between work items by cross referencing or organizing them in perfect epic > feature > task hierarchies. Code changes and commits offer some clues, but the scope of a release can change, so you can't count on the idea that work merged to a release branch today is confirmation it will make it into prod next week. And even if it does, code changes can't surface critical details like the value a change provides to customers or workarounds to known issues. What a mess! But it's a solvable one. Here's one way tech writers can get AI agents the info they need to automate production of release notes.
+Using AI to draft quality release notes from git commits or a work-tracking system (like Jira or Azure DevOps) seems like a straightforward task. Can't you just point an agent to a sprint on a board or a Git repo and tell it to transform completed work into notes? Unless you're lucky, the answer is no. Delineations between products or features may not match delineations between boards or teams. Engineers or PMs may not surface relationships between work items by cross referencing or organizing them in perfect epic > feature > task hierarchies. Code changes and commits offer some clues, but the scope of a release can change, so you can't count on the idea that work merged to a release branch today is confirmation it will make it into prod next week. And even if it does, code changes can't surface critical details like the value a change provides to customers or if end users need to be made aware of a change in the first place. What a mess! But it's a solvable one. Here's one way tech writers can get AI agents the info they need to automate production of release notes.
 
 {/* truncate */}
 
 ## What the agent needs to know
 
-First, here's what an AI agent needs to know to create an accurate release note from tracked work.
+Here's what an AI agent needs to know to create an accurate release note from tracked work.
 
 For new or changed functionality:
 
@@ -29,7 +29,7 @@ For bugs:
 
 - Which products the bug affects
 - Which versions a fixed bug applies to
-- What the problem was
+- What the problem was and/or how the problem affected users
 - What was fixed
 
 For known issues:
@@ -74,44 +74,26 @@ Unless your organization is supremely disciplined, a requirement that the custom
 
 ## The logic
 
-In the stored instructions for your agent, provide examples of logic equations the agent can use to decide which notes need to be drafted. This example assumes only work items with a certain combination of product and audience should become release notes, like if the audience field includes an N/A selection to indicate no release note needs to be created to represent that work. 
+First, connect your agent tool to MCPs for the work tracking system and GitHub. In the stored instructions for your agent, provide examples of logic equations the agent can use to decide which notes need to be drafted. (This example assumes only work items with a certain combination of product and audience field values should become release notes, like if the audience field includes an **N/A** selection to indicate no release note needs to be created to represent that work.)
 
 ```txt
 
 ## Example output for notes about Product X for User Segment A
 
-#### New functionality
+### New functionality
 
 - [Work item type = Epic or feature] + [Product affected = Product X] + [Version affected = 10.11.12] + [Audience = User Segment A]
 
-#### Bugs
+### Bugs
 
 - [Work item type = Bug] + [Product affected = Product X] + [Version affected = 10.11.12] + [Audience = User Segment A]
 
-#### Known issues
+### Known issues
 
 - [Work item type = Bug] + [Product affected = Product X] + [Version affected = 10.11.12] + [Status = anything but Done] + [Audience = User Segment A]
 
 ```
 
-## The meat of the notes: What changed
+## 
 
-
-
-
-
-#### A warning about the status field
-
-- If work is tracked across multiple boards, be aware that they may use different statuses - for example, `Complete` vs. `Done` vs. `Closed`.
-- If you're drafting notes before the release, a work item representing work that will be included as part of a release may still have a status of `In progress` or `Open` or `In Testing`.
-
-### The workflow
-
-required
-
-Sometimes engineers already have custom fields, just used slightly differently that what you want to use them for.
-
-
-## Other considerations
-
-- **Timing**: When do you need to write the notes? Dev
+The fun part is setting up 
