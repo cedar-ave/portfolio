@@ -57,3 +57,8 @@ CI pipelines:
   label: CI pipelines
   permalink: /ci-pipelines
   description: Continuous integration pipelines for automating testing and deployment of documentation
+
+Release notes:
+  label: Release notes
+  permalink: /release-notes
+  description: Documentation of changes and improvements in each release
