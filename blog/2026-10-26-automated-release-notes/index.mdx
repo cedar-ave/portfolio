@@ -9,7 +9,7 @@ copy_page: true
 
 # Drafting release notes with AI agents when your org has multiple products, versions, and audiences
 
-Using AI to draft quality release notes from git commits or a work-tracking system (like Jira or Azure DevOps) seems like a straightforward task. Can't you just point an agent to a sprint on a board or a Git repo and tell it to transform completed work into notes? Unless you're lucky, the answer is no. Delineations between products or features may not match delineations between boards or teams. Engineers or PMs may not surface relationships between work items by cross referencing or organizing them in perfect epic > feature > task hierarchies. Code changes and commits offer some clues, but the scope of a release can change, so you can't count on the idea that work merged to a release branch today is confirmation it will make it into prod next week. And even if it does, code changes can't surface critical details like the value a change provides to customers or if end users need to be made aware of a change in the first place. What a mess! But it's a solvable one. Here's one way tech writers can get AI agents the info they need to automate production of release notes.
+Using AI to draft quality release notes from git commits or a work-tracking system (like Jira or Azure DevOps) seems like a straightforward task. Can't you just point an agent to a sprint on a board or a Git repo and tell it to transform completed work into notes? Unless you're lucky, the answer is no. Delineations between products or features may not match delineations between boards or teams. Engineers or PMs may not surface relationships between work items by cross referencing or organizing them in perfect epic → feature → task hierarchies. Code changes offer clues, but changes usually show how behavior changed, not what the user experiences. And even if it does, diffs can't reliably surface critical details like the value a change offers customers or workarounds to known issues. So is AI out? Also no! Here's how tech writers can get AI agents the info they need to automate production of release notes.
 
 {/* truncate */}
 
@@ -39,20 +39,22 @@ For known issues:
 - How the known issue affects the user
 - Any workarounds
 
-## How to inform the agent
+## How to collect the info
 
-Teaching the agent how to find which products and versions completed work applies to isn't always straightforward. Flagship features may be certain to ship, but decisions on whether other work will make it into a release change all the time, even up to the last minute. If a tech writer wants a few days before a release to draft notes and route them through approvals, that usually means tracking down ultra-busy PMs and engineers to ask for clarity. Unfortunately for remote tech writers, a ping may go unanswered for several hours - or more if the team member is on the other side of the world. But there's a way to get their attention asynchronously for a few seconds at a time: **custom fields on work items in the work-tracking system that must be filled out before a work item can be transitioned to a certain status**.
+How can an agent get the information it needs? That's where custom fields on work items in a work-tracking system come in: specifically, **custom fields on work items in the work-tracking system that must be filled out before a work item can be transitioned to a certain status**.
 
-### The fields
+### Default fields
 
-Text in a work item's default title and description fields help the agent draft the meat of the notes. But data in other fields help the agent figure out what type of work was completed and which products and releases it applied to. For example, work items typically have fields like these by default:
+Text in a work item's default title field, description, acceptance criteria, and even comments help the agent draft the meat of the notes. But data in other fields give the agent a framework to choose which work items should be in a set of release notes in the first place. For example: 
 
 - **Work item type**: An epic or feature represents new or enhanced functionality, a bug represents a fixed or known issue
 - **Status**: A status shows if work is in progress, undergoing testing, on pause, or complete, but as a standalone value it doesn't answer questions like which release the work is part of, or for which product
 - **Links to related work items**: A feature that tracks to an epic can give the agent added context about new functionality
 - **Link to repo commit**: A repo commit can be traced to a release branch but until release day, it's never certain if work merged today will make it to prod next week
 
-But these alone aren't enough. Custom fields like these give the agent additional context it needs to decide what work needs notes and organize them. (It wouldn't make sense to use all these at once. I'm listing several in case some combination works for an organization's unique circumstances.) **Tip**: Consult with the product and engineering teams before adding new fields. Those teams may see value in collecting the information too, and may have suggestions on ways to do it so multiple teams can benefit.
+### Custom fields
+
+But default fields alone aren't enough. An admin of the work-tracking system can add custom fields like these, which give the agent additional context:
 
 - **User(s) affected**: `End user segment A`, `End user segment C`, etc.
 - **Product(s) affected**: `Product X`, `Product Y`, etc.
@@ -60,24 +62,23 @@ But these alone aren't enough. Custom fields like these give the agent additiona
 - **Versions(s) to fix**: `10.11.10, 10.11.12`
 - **Publish as release note**: Boolean
 
-Depending on an organization's setup, it may be possible to combine fields for simplicity, like audience and product (e.g., `Product X - End user segment A`, `Product Y - End user segment B`, etc.). Also, the existence of a value in a field can substitute for a **Publish as release note** toggle if you add logic later, like notes only need to be drafted for a certain product and user segment combination.
+Depending on an organization's setup, it may be possible to combine fields for simplicity, like product and user into an `Audience` field with values like `Product X - End user segment A` and `Product Y - End user segment B`. If `None` is also an option, the selection of any other value in that field can substitute for a **Publish as release note** toggle.
 
-It's best if the custom fields are multi-select for consistency, but sometimes that's hard to keep up if only busy admins can add selection values to custom fields. This is especially true with version numbers, which might need to be added frequently. So if it's easier to ask team members to enter versions manually in a text field, the AI agent usually can infer the intent even if the syntax is not consistent (e.g., `v10.11.12` vs. `v 10.11.12` vs. `10.11.10 and 10.11.12`).
+It helps if the custom fields are multi-select for consistency, but sometimes that's hard to keep up if only busy admins can add selection values to custom fields. This is especially true with version numbers, which might need to be added frequently. So if it's easier to ask team members to enter versions manually in a text field, the AI agent usually can infer the intent even if the syntax is not consistent (e.g., `v10.11.12` vs. `v 10.11.12` vs. `10.11.10 and 10.11.12`).
 
-### The requirement
+### The transition requirement
 
-Unless your organization is supremely disciplined, a requirement that the custom fields must be filled out before a work item can be transitioned to a certain status helps make sure the info the agent needs is always included. I say *transitioned* because the values in the custom fields most likely aren't all known the moment a work item is created, and PMs or devs don't always return to update field values entered early on when decisions change. (That's why the later the transition you choose falls in the workflow, the better.) I say *certain* because which status you choose depends on an organization's release workflow. To decide, questions you might need to ask include things like:
+A requirement that the custom fields must be filled out before a work item can be transitioned to a certain status makes sure team members with the right info remember to include it. Why not make the fields required when the ticket is created and be done with it? Because the values in custom fields most likely aren't all known the moment a work item is created. Actually, the later in the workflow PMs or devs fill out the custom fields, the better - values entered early on may no longer be correct after decisions change.
 
-- When do you want the agent to draft the notes? If a dev release goes out the week before the prod release, do you want the agent to draft notes off the dev release so you have a week to circulate notes for approval?
-- If so, how will you account for work removed or added to the release during that week? Will you have the agent compare the list of work items in the dev release against the list of work items in the prod release to find out if notes you drafted early should be removed or new notes added?
-- When are work items transitioned to a complete status? Are all work items connected to a dev released marked complete at that time? Or will you find some still marked in progress or undergoing testing?
+#### Choosing a status
 
-## The logic
+Which status to gate depends on an organization's release workflow. When are work items transitioned to a complete status? Are all work items connected to a dev release marked complete at that time? Or are some still marked as in progress or undergoing testing? When do you want the agent to draft the notes? If a dev release goes out the week before the prod release, do you want the agent to draft notes off the dev release so you have a week to circulate notes for approval? If so, how will you account for work removed or added to the release during that week? Will you have the agent compare the list of work items in the dev release against the list of work items in the prod release to find out if notes you drafted early should be removed or new notes added? How will you make sure that values entered in custom fields early on are still correct? The gate only makes sure values are present, not that they are accurate. Will you request a PM or engineering lead to do a quick final pass of the values?
 
-First, connect your agent tool to MCPs for the work tracking system and GitHub. In the stored instructions for your agent, provide examples of logic equations the agent can use to decide which notes need to be drafted. (This example assumes only work items with a certain combination of product and audience field values should become release notes, like if the audience field includes an **N/A** selection to indicate no release note needs to be created to represent that work.)
+## How to inform the agent
+
+In the stored instructions for your agent, provide examples of logic equations the agent can use to decide which notes need to be drafted.
 
 ```txt
-
 ## Example output for notes about Product X for User Segment A
 
 ### New functionality
@@ -91,9 +92,10 @@ First, connect your agent tool to MCPs for the work tracking system and GitHub. 
 ### Known issues
 
 - [Work item type = Bug] + [Product affected = Product X] + [Version affected = 10.11.12] + [Status = anything but Done] + [Audience = User Segment A]
-
 ```
 
-## 
+## Next steps
 
-The fun part is setting up 
+Helping the agent know which notes to draft is the hard part. Next is the fun part: writing instructions for the agent about how to draft the actual notes. I'll share tips that helped me, and a link to one of my Claude AI agent skills, another time.
+
+Have you used custom fields in work items to group release notes by product or release? I would love to hear how that went, especially if you found a better way than what I described here.
