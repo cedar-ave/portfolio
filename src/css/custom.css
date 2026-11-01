@@ -590,3 +590,9 @@ li .alert {
   color: #5e7893;
   opacity: 1;
 }
+
+.pipe {
+  font-weight: 100;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+}
