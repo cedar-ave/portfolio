@@ -21,6 +21,11 @@ export const DownloadPdf = () => (
   </a>
 );
 
+{/* Wraps the page content so resume.module.css can style its headings and
+    text with .resume selectors. Keep a blank line after the opening tag and
+    before the closing tag so the Markdown inside still renders. */}
+<div className={styles.resume}>
+
 # Marla Sowards
 
 <p className={styles['resume-subtitle']}>AI-fluent documentation engineer</p>
@@ -36,9 +41,11 @@ Lead documentation engineer who builds AI-automated documentation ecosystems for
 
 ## Experience
 
-### Verifiable <span class="pipe">|</span> Austin, Texas (Remote)
+### Verifiable
 
-#### Lead Technical Writer <span class="pipe">|</span> 2024 - 2026
+<span class="resume-location">Austin, Texas (Remote)</span>
+
+#### Lead Technical Writer <span class="pipe">|</span> 2024–2026
 
 - Owned the end-to-end documentation strategy for a complex enterprise SaaS Salesforce product that included multiple applications and in-flight versions 
 - Built a custom-themed Zendesk help site with a taxonomy-based information architecture
@@ -50,9 +57,11 @@ Lead documentation engineer who builds AI-automated documentation ecosystems for
 - Partnered with subject matter experts in engineering, product management, customer success, and support to translate complex technical concepts into clear and accurate content for end users, admins, and API developers
 - Performed AI analysis on data joined from Google Analytics and native reporting in CMS tools, providing leadership dashboards and reports with metrics that identified knowledge gaps, ineffective searches, unhelpful content, and opportunities to improve the customer onboarding experience and ticket deflection rates
 
-### Health Catalyst <span class="pipe">|</span> Salt Lake City, Utah
+### Health Catalyst
 
-#### Senior Technical Writer <span class="pipe">|</span> 2019 - 2023
+<span class="resume-location">Salt Lake City, Utah</span>
+
+#### Senior Technical Writer <span class="pipe">|</span> 2019–2023
 
 - Built the organization's product help infrastructure for a complex suite of data platform, API, and cloud healthcare applications with multiple platforms and products, including its information architecture and content lifecycle management processes and systems
 - Engineered a docs-as-code toolchain for ~4,000 versioned articles across 5 applications: Markdown in Git repo branches; linting for broken links, spelling, and custom style rules; submitting new content and changes to reviewers in pull requests; and deploying to production through a static-site generator and automated CI/CD pipelines
@@ -62,7 +71,7 @@ Lead documentation engineer who builds AI-automated documentation ecosystems for
 - Wrote technical marketing content for the public website
 - Developed and published analytics dashboards with views into customer usage patterns, providing actionable insights across customer journey touchpoints
 
-#### Technical Writer <span class="pipe">|</span> 2017 - 2019
+#### Technical Writer <span class="pipe">|</span> 2017–2019
 
 - Managed the end-to-end content lifecycle by adding or retiring content to guides, conducting audits, tracking processes, and creating timelines
 - Tracked and met documentation needs by analyzing requirements, specifications, epics, user stories, and bugs
@@ -70,11 +79,23 @@ Lead documentation engineer who builds AI-automated documentation ecosystems for
 - Built a one-stop destination for customer success team members to track product development through sprint demo summaries, roadmap presentations, and release planning session recordings; find enablement resources; and share input and feedback with PMs
 - Developed personas through user research and data in collaboration with UX designers, PMs, support, operations, and customer success
 
-#### Technical Editor <span class="pipe">|</span> 2014 - 2017
+#### Technical Editor <span class="pipe">|</span> 2014–2017
 
 - Edited guides and customer communications for spelling, grammar, and accuracy
 - Created and applied style and usage guides, templates, and branding standards to enforce quality and consistency across all product enablement content
 - Designed, created, and maintained internal product knowledge bases in SharePoint and Jive CMS
+
+### My529 College Savings Plan
+
+<span class="resume-location">Salt Lake City, Utah</span>
+
+#### Senior Writer <span class="pipe">|</span> 2010–2014
+
+- Wrote and edited the monthly customer newsletter and other customer communications, internal documentation, and outreach materials
+- Partnered with subject matter experts to make complex financial and technical information easy to understand in the highly regulated government and finance industries
+- Maintained brand voice and editorial consistency by curating an in-house style and usage guide
+- Evaluated, proposed, and rolled out new technologies for creating and distributing content
+- Worked with executive leadership and managers to identify and meet audiences' needs
 
 ## Education
 
@@ -95,3 +116,5 @@ Lead documentation engineer who builds AI-automated documentation ecosystems for
 - **Collaboration and project tracking**: Jira, Azure DevOps, Slack
 - **Visualizations**: Microsoft Visio, Lucidchart
 - **Ecosystems**: Google Workspace, Microsoft 365 (Word, Excel, PowerPoint, SharePoint, Teams)
+
+</div>

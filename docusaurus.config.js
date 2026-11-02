@@ -148,10 +148,10 @@ const config = {
     { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
   ],
 
-  // Schibsted Grotesk: all weights (400-900) and italics
+  // Roboto: all weights (100-900) and italics
   // Roboto Mono: all weights (100-700), used for the site's monospace font
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
+    'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
   ],
 
   presets: [

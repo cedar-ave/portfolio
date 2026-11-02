@@ -15,6 +15,7 @@ The **Download PDF** button on [/resume](/resume) links to `/pdf/resume.pdf`. Th
 - To change the resume, edit `src/pages/resume.mdx`. The PDF updates on the next deploy.
 - The PDF is served at `/pdf/resume.pdf` but saves as **Resume - Marla Sowards.pdf**, and its title is **Resume - Marla Sowards**. See [File name and title](#file-name-and-title).
 - The PDF's layout comes from the `@media print` rules in `src/pages/resume.module.css`.
+- To style the resume's elements, use `.resume` selectors (for example, `.resume h1`) in `resume.module.css`. See [Print styles](#print-styles).
 - The contact line at the top of the PDF is in `resume.mdx`. It's hidden on screen and shows only in print.
 - The script is `tools/resume-pdf/make-pdf.mjs`. It uses Playwright, pinned in `tools/resume-pdf/package.json`.
 - The PDF only exists on the live site because the deploy job makes it. See [Publishing to Netlify](github-actions#publishing-to-netlify).
@@ -51,6 +52,8 @@ The PDF is the page as Chromium prints it, so its layout is set by the `@media p
 The rules are scoped to `html.resume-page`. That class comes from `wrapperClassName: resume-page` in the front matter of `resume.mdx`. Docusaurus bundles all CSS into one file in production, so without the scope, the rules would apply to every page that's printed.
 
 The same rules apply when someone prints `/resume` from their browser.
+
+To style the resume's own elements, such as its headings, use the `.resume` class in `resume.module.css` (for example, `.resume h1`). A `<div className={styles.resume}>` in `resume.mdx` wraps all of the page content, so these rules apply only to the resume and need no `:global()`. Keep a blank line after the opening `<div>` and before the closing `</div>`, or the Markdown inside won't render.
 
 ## Contact line
 

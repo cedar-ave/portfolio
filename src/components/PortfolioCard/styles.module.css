@@ -76,7 +76,7 @@
   align-self: flex-start;
   margin-top: -0.2rem;
   padding: 0.15rem 0.65rem;
-  border-radius: 999px;
+  border-radius: 7px;
   background: #e2eaf2;
   color: var(--palette-slate-blue);
   font-size: 0.75rem;

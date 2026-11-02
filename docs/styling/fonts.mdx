@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-description: "How the site loads the Schibsted Grotesk and Roboto Mono fonts from Google Fonts and applies them everywhere."
+description: "How the site loads the Roboto and Roboto Mono fonts from Google Fonts and applies them everywhere."
 copy_page: true
 ---
 
@@ -10,17 +10,17 @@ import QuickReference from '@site/src/components/QuickReference';
 
 <QuickReference>
 
-- The site's typeface is [Schibsted Grotesk](https://fonts.google.com/specimen/Schibsted+Grotesk), a Grotesque Sans Serif family from Google Fonts.
+- The site's typeface is [Roboto](https://fonts.google.com/specimen/Roboto), a neo-grotesque sans-serif family from Google Fonts.
 - It's loaded from Google Fonts in `docusaurus.config.js` and set as `--ifm-font-family-base` in `src/css/custom.css` so it applies everywhere by default — no per-component import needed.
-- The full variable font is loaded: all weights (400–900) and italics.
-- To use a specific weight inline, set `font-weight` (e.g. `font-weight: 600`) rather than adding a new font import — Schibsted Grotesk's variable weight axis already covers it. There's also a `.semibold` utility class (`font-weight: 600`) for inline emphasis.
-- The monospace font is still [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) — only the base (body/heading) font changed.
+- The full variable font is loaded: all weights (100–900) and italics.
+- To use a specific weight inline, set `font-weight` (e.g. `font-weight: 600`) rather than adding a new font import — Roboto's variable weight axis already covers it. There's also a `.semibold` utility class (`font-weight: 600`) for inline emphasis.
+- The monospace font is [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono), the monospaced companion to Roboto.
 
 </QuickReference>
 
-## Why Schibsted Grotesk
+## Why Roboto
 
-Schibsted Grotesk is a Grotesque sans-serif with a bit more character than a neutral system font — slightly rounded terminals and a warmer rhythm — while staying highly readable across sizes and weights. It's the base font family for the whole site (body text, headings, nav) via Infima's `--ifm-font-family-base`.
+Roboto is a neo-grotesque sans-serif with open, friendly curves that stays highly readable across sizes and weights. It pairs naturally with Roboto Mono, which the site already uses for code. It's the base font family for the whole site (body text, headings, nav) via Infima's `--ifm-font-family-base`.
 
 ## Where it's loaded
 
@@ -32,10 +32,10 @@ headTags: [
   { tagName: 'link', attributes: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
 ],
 
-// Schibsted Grotesk: all weights (400-900) and italics
+// Roboto: all weights (100-900) and italics
 // Roboto Mono: all weights (100-700), used for the site's monospace font
 stylesheets: [
-  'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap',
 ],
 ```
 
@@ -45,11 +45,11 @@ The `preconnect` hints open the connections to Google's font hosts early, and th
 
 ```css title="src/css/custom.css"
 :root {
-  --ifm-font-family-base: 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifm-font-family-base: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 ```
 
-`--ifm-font-family-base` is Infima's base font variable, so setting it once here makes Schibsted Grotesk the default everywhere — body copy, headings, nav, sidebar. The fallback stack (`system-ui`, `-apple-system`, `Segoe UI`, `sans-serif`) only kicks in if the Google Fonts request fails.
+`--ifm-font-family-base` is Infima's base font variable, so setting it once here makes Roboto the default everywhere — body copy, headings, nav, sidebar. The fallback stack (`system-ui`, `-apple-system`, `Segoe UI`, `sans-serif`) only kicks in if the Google Fonts request fails.
 
 Diagram components (`src/components/*Diagrams`) that render text in SVG reference the same variable (`font-family: var(--ifm-font-family-base)`) rather than hard-coding a specific font name, so they stay in sync if the base font ever changes.
 
