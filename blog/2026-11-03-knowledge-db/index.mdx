@@ -1,0 +1,175 @@
+---
+draft: true
+slug: knowledge-db
+title: How I use AI to keep track of the latest techcomm industry knowledge so I can find answers the moment I need them
+authors: marla
+tags: []
+copy_page: true
+---
+
+# How I use AI to keep track of techcomm industry knowledge so I can find answers the moment I need them
+
+Sometimes I come across a great article, podcast, post, or talk that describes a solution to a challenge I'm not facing now, but probably will in the future. My favorites are first-person accounts of a challenge a docs engineer faced, the research and reasoning behind their solution design, and the tools and methods they used to execute. Revisiting a bookmark like that has saved me more than one time! But sifting through what I've saved is always a chore.
+
+Here's how I built an AI-powered knowledge base for my best sources that answers agent questions like, _What have startups done to implement documentation drift prevention workflows?_ or _What software companies have open-sourced their AI agent skills for automating release notes?_ Yes, I could just ask an LLM to answer these questions, but the response probably isn't going to draw on that awesome 15-minute block in a podcast, detailed comment on a LinkedIn post, or insightful blog post hosted on a personal portfolio site.
+
+
+
+
+
+
+
+
+
+
+
+
+
+that uses AI to 
+
+
+
+catalog my favorite sources as Markdown files with classification schemes in YAML frontmatter (formats ideal for AI search and retrieval). For example, the frontmatter includes things like what concepts the content covers, where in the content lifecycle the ideas fit, who's behind it, the tools and organizations it references, and what types of problems it offers solutions for.
+
+Now an agent can successfully (and cheaply) respond to prompts like, 
+
+
+But shuffling through a bookmark manager and trying to remember exactly which link has the info is a bit of a chore. 
+
+
+built a workflow, researched best practices, learned , or developed a best practice.   Until now, I've dropped the link in a bookmark manager and tagged it, hoping that's enough to find it later. That's no longer enough --  
+
+
+ it when I need it. 
+
+ They may talk about their reasoning behind their solution design, research they found that informed their approach, or 
+
+I may not be facing that problem at that exact moment, but I know the info is valuable enough that I want to be able to draw on it when I do. I could just ask an LLM, but it's probably not going to draw on that 15-minute segment of a podcast where the best in the industry 
+
+The techcomm community is bursting right now with new articles, podcasts, posts, and talks about how to add value to docs ecosystems through AI tooling and workflows. It's one thing to bookmark my favorites. It's another to run into a real-life challenge, remember that one talk I saw that one time that would really help right now, and actually find it again. And asking an LLM to find it -- or for help in general -- doesn't always draw on more nuanced sources, like a LinkedIn article where someone shared how they solved the exact problem I'm looking at.
+
+Now I track what I find in a knowledge base designed to surface answers 
+
+
+
+I went way overboard on this. 
+
+{/* truncate */}
+
+## The data model
+
+First I needed a data model. Claude scanned schemas it recommended (Google Open Knowledge Format, Dublin Core, manni) and created a custom one. *Source* is the overall publication, if there is one. *Piece* is the bookmarked item.
+
+Claude then processed each article and applied metadata. Here's an example from a great article about docs metrics.
+
+```yaml
+id: web:sdeaton.com/blog/docs-metrics-stories
+type: article
+title: Docs metrics and the stories we tell ourselves
+description: Sarah Deaton (former SRE, now docs) on why docs metrics are fuzzy, incomplete and easy to bend into whatever story we already believe, and her four-step plan to measure anyway and get "less wrong" over time.
+resource: https://sdeaton.com/blog/docs-metrics-stories/
+authors:
+  - sarah-deaton
+published: 2025-09-23
+captured-on: 2026-10-29
+concepts:
+  - Docs metrics
+  - Data-informed documentation
+  - Page feedback widgets
+  - Content quality
+  - AI traffic to docs
+genre:
+  - opinion
+knowledge-types:
+  - best-practice
+lifecycle-stages:
+  - analytics
+tools:
+  - mintlify
+  - looker-studio
+  - microsoft-excel
+  - grafana
+first-hand: true
+sample-questions:
+  - Why are docs metrics so hard to interpret, and how should I treat them?
+  - Which baseline metrics should a docs team start tracking first?
+  - How can I measure docs quality when I can't directly measure reader outcomes?
+  - Can AI assistant questions serve as observability for documentation?
+  - How do I get leadership value from docs metrics without perfect data?
+part-of: web:sdeaton.com
+```
+
+
+
++sample-questions:
++  - Why does metadata matter for RAG-based AI answers over documentation?
++  - How do I define a controlled vocabulary and frontmatter schema for a docs-as-code site?
++  - Can Vale enforce frontmatter values, and what do I need for missing-field checks?
++  - How can I retrofit metadata onto an existing docs set without a big one-off project?
++  - Should an LLM be allowed to tag my docs, and how do I keep it within my vocabulary?
++  
+
+
+## I went overboard
+
+Now, I go a little overboard on this project, but I was happy for the chance to learn more about manni, schemas, First I needed a data model. I used manni as my framework, 
+
+default built-in schemas
+
+
+
+
+
+
+
+
+
+
+The project is divided in two repos: One for the kit, and one for the sources. 
+
+
+
+
+First I needed a standard set of terms to apply to my list of sources. 
+
+
+
+
+Instead of skimming URLs, I wanted to prompt an AI agent with something like,  I knew I could ask an LLM to scour the web, but I wasn't convinced the resources I personally vetted would always be included in the answer.
+
+
+
+Admission: I have little patience for watching recorded talks and listening to podcasts, even with playback at higher speeds. I needed transcripts. I also needed AI to cut out the podcast fluff. 
+
+
+
+
+
+```yaml
+  - id: q04
+    question: "How to keep documentation from drifting from product truth"
+    must:
+      - yt:3Q1WtyhO_sQ  # docs as testable claims verified automatically
+      - web:docs.doc-detective.com  # tool that runs documented procedures to catch drift
+      - web:github.com/loft-sh/vcluster-docs/tree/main/.claude/skills   # fact-check against source and drift-audit skills
+      - slack:writethedocs:C1NEAD7D4:1792531349.591609  # where code-to-docs automation helps with drift checks and where it hurts
+      - yt:xeiU5UTffsw  # docs testing as the verification layer
+    nice:
+      - web:gitbook.com/research/docs-defect-experiment # drift is the most dangerous defect for agents
+      - web:mautic.org/blog/keep-docs-up-to-date-automatically  # Mautic catching up docs with Promptless
+      - web:github.github.com/gh-aw/gallery/docs-automation # weekly agent that finds stale docs and opens PRs
+      - web:kody-with-a-k.com/blog  # generate reference docs from the source of truth
+```
+
+
+
+
+
+also optimized for AI retrival
+
+
+The skos:example property provides concrete use cases—this is gold for RAG systems that need to understand when to apply specific concepts.
+https://jessicatalisman.substack.com/p/knowledge-graph-lite-part-iii
+
+
+
