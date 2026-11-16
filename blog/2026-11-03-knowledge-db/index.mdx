@@ -1,64 +1,52 @@
 ---
 draft: true
 slug: knowledge-db
-title: How I use AI to keep track of the latest techcomm industry knowledge so I can find answers the moment I need them
+title: How I use AI to keep track of great techcomm industry knowledge so I can find answers when I need them
 authors: marla
 tags: []
 copy_page: true
 ---
 
-# How I use AI to keep track of techcomm industry knowledge so I can find answers the moment I need them
+# How I use AI and classifications to keep track of great techcomm industry knowledge so I can find answers when I need them
 
 Sometimes I come across a great article, podcast, post, or talk that describes a solution to a challenge I'm not facing now, but probably will in the future. My favorites are first-person accounts of a challenge a docs engineer faced, the research and reasoning behind their solution design, and the tools and methods they used to execute. Revisiting a bookmark like that has saved me more than one time! But sifting through what I've saved is always a chore.
 
-Here's how I built an AI-powered knowledge base for my best sources that answers agent questions like, _What have startups done to implement documentation drift prevention workflows?_ or _What software companies have open-sourced their AI agent skills for automating release notes?_ Yes, I could just ask an LLM to answer these questions, but the response probably isn't going to draw on that awesome 15-minute block in a podcast, detailed comment on a LinkedIn post, or insightful blog post hosted on a personal portfolio site.
+Here's how I used schema fields in YAML frontmatter blocks to build an AI-powered knowledge base for my best sources that answers agent questions like, _What have startups done to implement documentation drift prevention workflows?_ or _What software companies have open-sourced their AI agent skills for automating release notes?_ (Yes, I could just ask an LLM to answer these questions, but the response probably isn't going to draw on that awesome 15-minute block in a podcast, that detailed comment on that LinkedIn post, or that insightful blog post hosted on a personal portfolio site.)
 
-
-
-
-
-
-
-
-
-
-
-
-
-that uses AI to 
-
-
-
-catalog my favorite sources as Markdown files with classification schemes in YAML frontmatter (formats ideal for AI search and retrieval). For example, the frontmatter includes things like what concepts the content covers, where in the content lifecycle the ideas fit, who's behind it, the tools and organizations it references, and what types of problems it offers solutions for.
-
-Now an agent can successfully (and cheaply) respond to prompts like, 
-
-
-But shuffling through a bookmark manager and trying to remember exactly which link has the info is a bit of a chore. 
-
-
-built a workflow, researched best practices, learned , or developed a best practice.   Until now, I've dropped the link in a bookmark manager and tagged it, hoping that's enough to find it later. That's no longer enough --  
-
-
- it when I need it. 
-
- They may talk about their reasoning behind their solution design, research they found that informed their approach, or 
-
-I may not be facing that problem at that exact moment, but I know the info is valuable enough that I want to be able to draw on it when I do. I could just ask an LLM, but it's probably not going to draw on that 15-minute segment of a podcast where the best in the industry 
-
-The techcomm community is bursting right now with new articles, podcasts, posts, and talks about how to add value to docs ecosystems through AI tooling and workflows. It's one thing to bookmark my favorites. It's another to run into a real-life challenge, remember that one talk I saw that one time that would really help right now, and actually find it again. And asking an LLM to find it -- or for help in general -- doesn't always draw on more nuanced sources, like a LinkedIn article where someone shared how they solved the exact problem I'm looking at.
-
-Now I track what I find in a knowledge base designed to surface answers 
-
-
-
-I went way overboard on this. 
+Spoiler: I went way overboard on this!
 
 {/* truncate */}
 
+## The plan
+
+First, I gave Claude a couple dozen examples of questions I might ask my knowledge base, like:
+
+- How do I keep documentation from drifting from product truth?
+- How do I best use evals in my AI skills that draft content?
+- What are examples of how companies automated release notes?
+- How can analyze support tickets so they inform help center content?
+- I'm the first tech writer at a startup. How should I set up an AI-powered docs ecosystem?
+
+Claude helped me create a plan:
+
+- One Markdown file for each source
+- YAML frontmatter block with schema fields at the top of each Markdown file
+- Retrieval evals that test processed sources against my questions
+
+The YAML frontmatter contained vocabulary, 
+
+Based on lifecycle stages
+
+{"kb-items":202,"kb-concepts":171,"kb-entities":555}
+
 ## The data model
 
-First I needed a data model. Claude scanned schemas it recommended (Google Open Knowledge Format, Dublin Core, manni) and created a custom one. *Source* is the overall publication, if there is one. *Piece* is the bookmarked item.
+?? How vocab is involved?
+?? synonyms?
+
+First, I needed Claude to classify my sources so that when I asked an agent a question, the agent could easily scan them, read their contents, and return an answer. I was guided by 
+
+To create a data model, Claude scanned schemas it recommended (Google Open Knowledge Format, Dublin Core, manni) and created a custom one.
 
 Claude then processed each article and applied metadata. Here's an example from a great article about docs metrics.
 
@@ -66,7 +54,7 @@ Claude then processed each article and applied metadata. Here's an example from 
 id: web:sdeaton.com/blog/docs-metrics-stories
 type: article
 title: Docs metrics and the stories we tell ourselves
-description: Sarah Deaton (former SRE, now docs) on why docs metrics are fuzzy, incomplete and easy to bend into whatever story we already believe, and her four-step plan to measure anyway and get "less wrong" over time.
+description: Sarah Deaton on why docs metrics are fuzzy, incomplete and easy to bend into whatever story we already believe, and her four-step plan to measure anyway and get "less wrong" over time.
 resource: https://sdeaton.com/blog/docs-metrics-stories/
 authors:
   - sarah-deaton
@@ -90,69 +78,97 @@ tools:
   - microsoft-excel
   - grafana
 first-hand: true
-sample-questions:
-  - Why are docs metrics so hard to interpret, and how should I treat them?
-  - Which baseline metrics should a docs team start tracking first?
-  - How can I measure docs quality when I can't directly measure reader outcomes?
-  - Can AI assistant questions serve as observability for documentation?
-  - How do I get leadership value from docs metrics without perfect data?
 part-of: web:sdeaton.com
 ```
 
+The YAML frontmatter also included sample questions like:
+
+```yaml
+sample-questions:
+  - Why does metadata matter for RAG-based AI answers over documentation?
+  - How do I define a controlled vocabulary and frontmatter schema for a docs-as-code site?
+  - Can Vale enforce frontmatter values, and what do I need for missing-field checks?
+  - How can I retrofit metadata onto an existing docs set without a big one-off project?
+  - Should an LLM be allowed to tag my docs, and how do I keep it within my vocabulary?
+```
+
+### Events
+
+It also created one Markdown file per ..., which allows connections based on events, like:
+
+```yaml
+type: event
+title: Write the Docs Berlin 2026
+description: Event referenced by saved items.
+start-date: 2026-09-06
+resource: https://www.writethedocs.org/conf/berlin/2026/
+```
+
+### People
+
+```yaml
+type: person
+title: Steve Arrants
+description: Author or speaker of saved items.
+resource: https://stevearrants.substack.com/
+```
+
+### Series
+
+```yaml
+type: series
+title: Data-informed documentation
+description: Five-part series by Sarah Moir on using data to plan and improve documentation, from preparing to write through small, medium and large documentation projects.
+resource: https://thisisimportant.net/series/data-informed-documentation/
+```
+
+### Tools
+
+```yaml
+type: tool
+title: Vale
+description: Description pending.
+resource: https://vale.sh
+```
 
 
-+sample-questions:
-+  - Why does metadata matter for RAG-based AI answers over documentation?
-+  - How do I define a controlled vocabulary and frontmatter schema for a docs-as-code site?
-+  - Can Vale enforce frontmatter values, and what do I need for missing-field checks?
-+  - How can I retrofit metadata onto an existing docs set without a big one-off project?
-+  - Should an LLM be allowed to tag my docs, and how do I keep it within my vocabulary?
-+  
+## Segments
+
+A source may cover more than one topic, especially a recording of a talk or podcast. Claude catalogs each topic covered as a separate segment, like these few minutes on chat log analysis:
+
+```yaml
+segments:
+  - slug: the-whole-question-in-their-own-words
+    title: AI assistant analytics as user research
+    start: 00:21:44
+    knowledge-type: case-study
+    concepts:
+      - Chat log analysis
+      - User research
+    organizations:
+      - gitbook
+    tools:
+      - gitbook
+    first-hand: true
+```
+
+C:\Source\knowledge-engine-ai\concepts
 
 
-## I went overboard
+## The evals
 
-Now, I go a little overboard on this project, but I was happy for the chance to learn more about manni, schemas, First I needed a data model. I used manni as my framework, 
+manni meta validate
+Using manni.config.yaml (.)
 
-default built-in schemas
-
-
-
-
-
-
-
-
-
-
-The project is divided in two repos: One for the kit, and one for the sources. 
-
-
-
-
-First I needed a standard set of terms to apply to my list of sources. 
-
-
-
-
-Instead of skimming URLs, I wanted to prompt an AI agent with something like,  I knew I could ask an LLM to scour the web, but I wasn't convinced the resources I personally vetted would always be included in the answer.
-
-
-
-Admission: I have little patience for watching recorded talks and listening to podcasts, even with playback at higher speeds. I needed transcripts. I also needed AI to cut out the podcast fluff. 
-
-
-
-
+Claude created an eval around _golden questions_ that tested queries around each of my initial questions to see if correct sources were returned. Results were divided between _must_ and _nice_. For example, here are the sources found when an agent asked, `How do I keep documentation from drifting from product truth?`:
 
 ```yaml
   - id: q04
-    question: "How to keep documentation from drifting from product truth"
+    question: "How do I keep documentation from drifting from product truth?"
     must:
       - yt:3Q1WtyhO_sQ  # docs as testable claims verified automatically
       - web:docs.doc-detective.com  # tool that runs documented procedures to catch drift
       - web:github.com/loft-sh/vcluster-docs/tree/main/.claude/skills   # fact-check against source and drift-audit skills
-      - slack:writethedocs:C1NEAD7D4:1792531349.591609  # where code-to-docs automation helps with drift checks and where it hurts
       - yt:xeiU5UTffsw  # docs testing as the verification layer
     nice:
       - web:gitbook.com/research/docs-defect-experiment # drift is the most dangerous defect for agents
@@ -161,7 +177,41 @@ Admission: I have little patience for watching recorded talks and listening to p
       - web:kody-with-a-k.com/blog  # generate reference docs from the source of truth
 ```
 
+## The reference material
 
+The sources aren't just for agents to read.
+
+
+```md
+## Summary
+
+Tom Johnson (I'd Rather Be Writing, October 25, 2026) describes a two-stage strategy for improving docs from AI chat-session logs: turn chat failures into doc tickets, then fix them with a `fix-doc-bugs` skill and check each fix with an eval built from the original failing prompt. The real bottleneck is review, not generation.
+
+## Key takeaways
+
+- **Chat logs are a new, rich source of user feedback** (sanitized for PII). Few tech writers have had this before.
+- **Tap "input streams":** support and other teams already analyze logs but rarely connect friction to docs. Meet with them, funnel their doc gaps into your intake queue, and report back on fixes, because people stop filing when tickets sit.
+- **Own log analysis too:** a skill that turns messy logs into specific doc recommendations produced tickets that were easy to work and proved the logs → tickets → fixes pipeline.
+- **Triage tickets from non-writers** before fixing. Watch for bundled unrelated issues, edits to auto-generated files a build would overwrite, content you don't own (legal/policy), designs that aren't agent-readable, changes a pending release would overwrite, and single instances of a corpus-wide pattern.
+- **Build a fix skill that applies writer judgment:** first ask whether the ticket should be fixed at all, then review the whole product doc set so the update fits instead of bolting on a note. It checks in-flight CLs/PRs for conflicts, finds SME reviewers from file history and owners, links code elements to reference docs, uses adversarial subagents to fact-check, edits reference docs in source (not generated HTML), handles GitHub-hosted samples, stages CLs with preview links, formats Markdown to pass linters, and runs a self-reflection loop to improve itself.
+- **Tag every generated CL with the skill name** as telemetry to see who uses it.
+- **Review is the constraint:** 100 tickets overnight become 100 CLs by morning, but SME review and juggling ~10 active CLs don't scale. SMEs approved roughly 90% (ballpark) with little back-and-forth; the misses were in product areas he didn't know well, so domain-expert writers steer the skill better.
+- **Measure fixes with evals, not failure rates.** Log failure rates are slow and noisy. Turn the original failing chat prompt into an eval and rerun it against the updated docs. Rule of thumb: chat-failure fixes get an eval; trivial fixes like broken links don't.
+
+## Tools mentioned
+
+- **`fix-doc-bugs` skill** (custom, internal): turns doc tickets into staged CLs with the behaviors above.
+- **Log-analysis skill** (custom, internal): turns chat logs into specific doc recommendations. He's built 30+ internal authoring skills in the past year (release notes, policy updates and more).
+- **GitHub**: where code samples and assets live; the skill handles them there.
+- **Style linters**: the skill formats Markdown to pass them (no specific linter named).
+- Unnamed AI tools he's evaluating to monitor CL status and ping silent SMEs.
+
+## Articles & resources
+
+- [Google Maps Platform documentation](https://developers.google.com/maps/documentation): the public APIs he now documents.
+- [Write the Docs Australia 2026 speakers](https://www.writethedocs.org/conf/australia/2026/speakers/): he's speaking in December about his favorite skills.
+- [Comment on LinkedIn](https://lnkd.in/p/g9Jk4cJE): discussion thread for the post.
+```
 
 
 
@@ -172,4 +222,6 @@ The skos:example property provides concrete use cases—this is gold for RAG sys
 https://jessicatalisman.substack.com/p/knowledge-graph-lite-part-iii
 
 
+## The code
 
+The project is divided in two repos: One for the kit, and one for the sources. 
