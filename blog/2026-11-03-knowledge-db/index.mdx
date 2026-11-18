@@ -11,44 +11,36 @@ copy_page: true
 
 Sometimes I come across a great article, podcast, post, or talk that describes a solution to a challenge I'm not facing now, but probably will in the future. My favorites are first-person accounts of a challenge a docs engineer faced, the research and reasoning behind their solution design, and the tools and methods they used to execute. Revisiting a bookmark like that has saved me more than one time! But sifting through what I've saved is always a chore.
 
-Here's how I used schema fields in YAML frontmatter blocks to build an AI-powered knowledge base for my best sources that answers agent questions like, _What have startups done to implement documentation drift prevention workflows?_ or _What software companies have open-sourced their AI agent skills for automating release notes?_ (Yes, I could just ask an LLM to answer these questions, but the response probably isn't going to draw on that awesome 15-minute block in a podcast, that detailed comment on that LinkedIn post, or that insightful blog post hosted on a personal portfolio site.)
+Here's how I built an AI-powered knowledge base for my best sources that answers agent questions like, _What have startups done to implement documentation drift prevention workflows?_ or _What software companies have open-sourced their AI agent skills for automating release notes?_ using a faceted metadata model built on controlled vocabularies and authority records stored in the YAML frontmatter of Markdown files. Yes -- I could just ask an LLM to answer these questions, but the response probably isn't going to draw on that awesome 15-minute block in a podcast, that detailed comment on that LinkedIn post, or that insightful blog post hosted on a personal portfolio site.
 
-Spoiler: I went way overboard on this!
+And yes, I went way overboard on this!
 
 {/* truncate */}
 
 ## The plan
 
-First, I gave Claude a couple dozen examples of questions I might ask my knowledge base, like:
+First, I gave Claude a couple dozen examples of questions I might ask my knowledge base now or in the future, like:
 
 - How do I keep documentation from drifting from product truth?
 - How do I best use evals in my AI skills that draft content?
 - What are examples of how companies automated release notes?
 - How can analyze support tickets so they inform help center content?
 - I'm the first tech writer at a startup. How should I set up an AI-powered docs ecosystem?
+- What is the latest thinking on docs metrics?
 
-Claude helped me create a plan:
+Claude helped me create a plan to optimize my sources so that when I asked an agent a question, the agent could easily scan them, read their contents, and return an answer. The plan settled on:
 
 - One Markdown file for each source
 - YAML frontmatter block with schema fields at the top of each Markdown file
+- Vocabulary with synonyms and definitions to support a classification scheme
+- Source classifications like what stage of the docs lifecycle it fits in (like strategy, drafting, validation, etc.), a doc type (like API docs vs. release notes), organizational context (like a startup vs. enterprise), and more 
 - Retrieval evals that test processed sources against my questions
 
-The YAML frontmatter contained vocabulary, 
-
-Based on lifecycle stages
-
-{"kb-items":202,"kb-concepts":171,"kb-entities":555}
+CONCEPTS vs TOPICS etc.
 
 ## The data model
 
-?? How vocab is involved?
-?? synonyms?
-
-First, I needed Claude to classify my sources so that when I asked an agent a question, the agent could easily scan them, read their contents, and return an answer. I was guided by 
-
-To create a data model, Claude scanned schemas it recommended (Google Open Knowledge Format, Dublin Core, manni) and created a custom one.
-
-Claude then processed each article and applied metadata. Here's an example from a great article about docs metrics.
+Claude scanned schemas it recommended ([Google Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format), [Dublin Core](https://www.dublincore.org), [manni](https://hawkeyexl.github.io/manni/meta/reference/schema-resolution/#the-default-set)) and created a custom one based on my use case. Here's an example of how an article about [docs metrics](https://sdeaton.com/blog/docs-metrics-stories) is classified:
 
 ```yaml
 id: web:sdeaton.com/blog/docs-metrics-stories
@@ -81,7 +73,9 @@ first-hand: true
 part-of: web:sdeaton.com
 ```
 
-The YAML frontmatter also included sample questions like:
+My favorite part is `first-hand: true`. That tells the agent to give me real-life examples when I ask for them!
+
+The other part I love is that the YAML frontmatter also includes sample questions. The AI agent uses these to help guide which sources it retrieves.
 
 ```yaml
 sample-questions:
@@ -92,28 +86,70 @@ sample-questions:
   - Should an LLM be allowed to tag my docs, and how do I keep it within my vocabulary?
 ```
 
-### Events
+### Concepts
 
-It also created one Markdown file per ..., which allows connections based on events, like:
+Facets drew from a vocabulary with synonyms and definitions that Claude helped create. Here are a couple examples of the facets.
 
-```yaml
-type: event
-title: Write the Docs Berlin 2026
-description: Event referenced by saved items.
-start-date: 2026-09-06
-resource: https://www.writethedocs.org/conf/berlin/2026/
-```
+**Lifecycle stage:**
 
-### People
+- Analytics
+- Delivery and findability
+- Drafting
+- Feedback
+- Human review
+- Information architecture
+- Management and maintenance
+- Publishing
+- QA and testing
+- Strategy
+- Validation accuracy
 
-```yaml
-type: person
-title: Steve Arrants
-description: Author or speaker of saved items.
-resource: https://stevearrants.substack.com/
-```
+**Doc types:**
 
-### Series
+- API conceptual docs
+- API reference docs
+- Internal KB
+- Product docs
+- Release notes
+- SDK docs
+
+**Organizational context:**
+
+- Enterprise
+- Open source
+- Scaleup
+- Solo writer
+- Startup
+
+### Vocabulary
+
+Each term got a definition and synonyms. For example, for organizational context:
+
+**Enterprise:**
+- large company; big tech; large organization
+- Use for large organizations with established process and scale.
+
+**Open source:**
+- OSS; open-source project; community-maintained project
+- Use when the docs belong to an open-source project.
+
+**Scaleup:**
+- scale-up; growth stage; mid-size company
+- Use for growth-stage companies building process and teams.
+
+**Solo writer:**
+- lone writer; team of one; solo technical writer; first tech writer
+- Use when the item addresses one writer working alone, including the first writer hired.
+
+**Startup:**
+- early-stage startup; small company; seed-stage
+- Use when the context is an early-stage company with few people and little process.
+
+## The classification
+
+Claude then processed each article and applied the schema. 
+
+At the same time, it created one Markdown file per event (like a certain conference), associated people (like the author or people interviewed for a podcast), series (like a collection of articles released as a bundle), and tools (like an platform reviewed in a blog post or an open-source linting tool used in a CI/CD pipeline). For example:
 
 ```yaml
 type: series
@@ -122,14 +158,7 @@ description: Five-part series by Sarah Moir on using data to plan and improve do
 resource: https://thisisimportant.net/series/data-informed-documentation/
 ```
 
-### Tools
-
-```yaml
-type: tool
-title: Vale
-description: Description pending.
-resource: https://vale.sh
-```
+One other thing: 
 
 
 ## Segments
